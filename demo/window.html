@@ -1,0 +1,36 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>photonui.Window()</title>
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                color: #000;
+                font-family: sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../photonui/photonui.js"></script>
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/window/window.js"></script>
+
+        <script>
+            var win = new photonui.Window({
+                    title: "My Window",
+                    x: 100, y: 100
+            });
+
+            var win2 = new photonui.Window({
+                    title: "My Second Window",
+                    x: 150, y: 120
+            });
+        </script>
+    </body>
+</html>
+

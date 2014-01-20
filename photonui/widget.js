@@ -48,7 +48,14 @@ var photonui = photonui || {};
  * @constructor
  */
 photonui.Widget = function() {
+    this.__events = {};  // id: {element: DOMElement, callback: Function}
 }
+
+
+//////////////////////////////////////////
+// Getters / Setters                    //
+//////////////////////////////////////////
+
 
 /**
  * Get the HTML of the widget.
@@ -58,4 +65,49 @@ photonui.Widget = function() {
  */
 photonui.Widget.prototype.getHtml = function() {
     console.warn("Not Implemented");
+}
+
+
+//////////////////////////////////////////
+// Private Methods                      //
+//////////////////////////////////////////
+
+
+/**
+ * Basic event binding (for widget internal use).
+ *
+ * @method _bindEvent
+ * @private
+ * @param {String} id An unique id for the event.
+ * @param {DOMElement} element The element on which the event will be bind.
+ * @param {String} evName The event name (e.g. "mousemove", "click",...).
+ * @param {Function} callback The function that will be called when the event occured.
+ */
+photonui.Widget.prototype._bindEvent = function(id, element, evName, callback) {
+    this.__events[id] = {
+        evName: evName,
+        element: element,
+        callback: callback
+    };
+    this.__events[id].element.addEventListener(
+            this.__events[id].evName,
+            this.__events[id].callback,
+            false
+    );
+}
+
+/**
+ * Unbind event.
+ *
+ * @method _unbindEvent
+ * @private
+ * @param {String} id The id for the event.
+ */
+photonui.Widget.prototype._unbindEvent = function(id) {
+    this.__events[id].element.removeEventListener(
+            this.__events[id].evName,
+            this.__events[id].callback,
+            false
+    );
+    delete this.__events[id];
 }
