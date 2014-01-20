@@ -48,6 +48,7 @@ var photonui = photonui || {};
  * @constructor
  */
 photonui.Widget = function() {
+    this.visible = true;
     this.__events = {};  // id: {element: DOMElement, callback: Function}
 }
 
@@ -65,6 +66,56 @@ photonui.Widget = function() {
  */
 photonui.Widget.prototype.getHtml = function() {
     console.warn("Not Implemented");
+}
+
+/**
+ * Get the visibility of the widget.
+ *
+ * @method isVisible
+ * @return {Boolean} the widget visibility.
+ */
+photonui.Widget.prototype.isVisible = function() {
+    return this.visible;
+}
+
+/**
+ * Set the visibility of the widget.
+ *
+ * @method isVisible
+ * @param {Boolean} visible The widget visibility.
+ */
+photonui.Widget.prototype.setVisible = function(visible) {
+    this.visible = visible;
+    if (visible) {
+        this.getHtml().style.display = "block";
+    }
+    else {
+        this.getHtml().style.display = "none";
+    }
+}
+
+
+//////////////////////////////////////////
+// Public Methods                       //
+//////////////////////////////////////////
+
+
+/**
+ * Display the widget (alias of this.setVisible(true)).
+ *
+ * @method show
+ */
+photonui.Widget.prototype.show = function() {
+    this.setVisible(true);
+}
+
+/**
+ * Hide the widget (alias of this.setVisible(false)).
+ *
+ * @method hide
+ */
+photonui.Widget.prototype.hide = function() {
+    this.setVisible(false);
 }
 
 

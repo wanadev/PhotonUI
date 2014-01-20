@@ -66,6 +66,7 @@ photonui.Window = function(params) {
     this._bindEvent("move.dragstart", this._e.windowTitle, "mousedown", this._moveDragStart.bind(this));
     this._bindEvent("totop", this._e["window"], "mousedown", this.moveToFront.bind(this));
     this.moveToFront();
+    this.hide();
     this._e_parent.appendChild(this.getHtml());
 }
 
