@@ -49,6 +49,7 @@ var photonui = photonui || {};
  */
 photonui.Widget = function() {
     this.visible = true;
+    this.childWidget = null;
     this.__events = {};  // id: {element: DOMElement, callback: Function}
 }
 
@@ -65,6 +66,16 @@ photonui.Widget = function() {
  * @return {HTMLElement}
  */
 photonui.Widget.prototype.getHtml = function() {
+    console.warn("Not Implemented");
+}
+
+/**
+ * Get the container DOM Element.
+ *
+ * @method getContainer
+ * @return {HTMLElement}
+ */
+photonui.Widget.prototype.getContainer = function() {
     console.warn("Not Implemented");
 }
 
@@ -94,6 +105,41 @@ photonui.Widget.prototype.setVisible = function(visible) {
     }
 }
 
+/**
+ * Get the child of the current Widget.
+ *
+ * @method getChild
+ * @return {photonui.Widget} The child widget or null.
+ */
+photonui.Widget.prototype.getChild = function() {
+    return this.childWidget;
+}
+
+/**
+ * Set the child of the current widget.
+ *
+ * @method setChild
+ * @param {photonui.Widget} child The new child of the widget.
+ */
+photonui.Widget.prototype.setChild = function(child) {
+    if (child == this.childWidget) {
+        return;
+    }
+
+    if (this.childWidget) {
+        var e = this.getContainer();
+        while (e.firstChild) {
+            e.removeChild(e.firstChild);
+        }
+    }
+
+    this.childWidget = child;
+
+    if (this.childWidget) {
+        this.getContainer().appendChild(this.childWidget.getHtml())
+    }
+}
+
 
 //////////////////////////////////////////
 // Public Methods                       //
@@ -116,6 +162,19 @@ photonui.Widget.prototype.show = function() {
  */
 photonui.Widget.prototype.hide = function() {
     this.setVisible(false);
+}
+
+/**
+ * Destroy the widget and all its children.
+ *
+ * @method destroy
+ */
+photonui.Widget.prototype.destroy = function() {
+    if (this.childWidget) {
+        this.childWidget.destroy();
+    }
+    this.getHtml().parentNode.removeChild(this.getHtml());
+    this.childWidget = null;
 }
 
 

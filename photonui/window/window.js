@@ -133,6 +133,16 @@ photonui.Window.prototype.getHtml = function() {
     return this._e["window"];
 }
 
+/**
+ * Get the container DOM Element.
+ *
+ * @method getContainer
+ * @return {HTMLElement}
+ */
+photonui.Window.prototype.getContainer = function() {
+    return this._e.windowContent;
+}
+
 
 //////////////////////////////////////////
 // Public Methods                       //
