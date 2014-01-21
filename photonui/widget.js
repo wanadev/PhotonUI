@@ -183,6 +183,9 @@ photonui.Widget.prototype.destroy = function() {
     }
     this.getHtml().parentNode.removeChild(this.getHtml());
     this.childWidget = null;
+    for (var id in this.__events) {
+        this._unbindEvent(id);
+    }
 }
 
 /**
