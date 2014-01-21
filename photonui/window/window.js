@@ -157,10 +157,7 @@ photonui.Window.prototype.setMovable = function(movable) {
  * @return {Number} the Width;
  */
 photonui.Window.prototype.getWidth = function() {
-    if (this.width == null) {
-        return this._e.windowContent.offsetHeight
-    }
-    return this.width;
+    return this._e.windowContent.offsetWidth;
 }
 
 /**
@@ -176,7 +173,7 @@ photonui.Window.prototype.setWidth = function(width) {
     }
     else {
         this._e.windowContent.style.width = width + "px";
-        this.width = this._e.windowContent.offsetHeight;
+        this.width = this._e.windowContent.offsetWidth;
     }
 }
 
@@ -187,10 +184,7 @@ photonui.Window.prototype.setWidth = function(width) {
  * @return {Number} the Height;
  */
 photonui.Window.prototype.getHeight = function() {
-    if (this.height == null) {
-        return this._e.windowContent.offsetHeight
-    }
-    return this.height;
+    return this._e.windowContent.offsetHeight;
 }
 
 /**
@@ -436,7 +430,13 @@ photonui.Window.prototype._moveDragStart = function(event) {
  * @param {Object} event
  */
 photonui.Window.prototype._moveDragging = function(offsetX, offsetY, event) {
-    this.setPosition(event.pageX - offsetX, event.pageY - offsetY);
+    var e_body = document.getElementsByTagName("body")[0];
+    var x = Math.min(Math.max(event.pageX - offsetX, 40 - this.getWidth()), e_body.offsetWidth - 40);
+    var y = Math.max(event.pageY - offsetY, 0);
+    if (e_body.offsetHeight > 0) {
+        y = Math.min(y, e_body.offsetHeight - this._e.windowTitle.offsetHeight);
+    }
+    this.setPosition(x, y);
 }
 
 /**
