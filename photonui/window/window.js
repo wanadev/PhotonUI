@@ -357,6 +357,17 @@ photonui.Window.prototype.getContainer = function() {
     return this._e.windowContent;
 }
 
+// Documentation in photonui.Widget
+photonui.Window.prototype.setVisible = function(visible) {
+    photonui.Widget.prototype.setVisible.call(this, visible);
+    if (visible) {
+        this.moveToFront();
+    }
+    else {
+        this.moveToBack();
+    }
+}
+
 
 //////////////////////////////////////////
 // Public Methods                       //
@@ -374,16 +385,30 @@ photonui.Window.prototype.moveToFront = function() {
         photonui._windowList.splice(index, 1);
     }
     photonui._windowList.unshift(this);
-    for (var i=photonui._windowList.length-1, z=0 ; i>=0 ; i--, z++) {
-        if (i == 0) {
-            photonui._windowList[i].getHtml().style.zIndex = 2001;
-            photonui._windowList[i].addClass("photonui-active");
-        }
-        else {
-            photonui._windowList[i].getHtml().style.zIndex = 1000+z;
-            photonui._windowList[i].removeClass("photonui-active");
-        }
+    this._updateWindowList();
+}
+
+/**
+ * Bring the window to the back.
+ *
+ * @method moveToBack
+ */
+photonui.Window.prototype.moveToBack = function() {
+    var index = photonui._windowList.indexOf(this);
+    if (index >= 0) {
+        photonui._windowList.splice(index, 1);
     }
+    photonui._windowList.push(this);
+    this._updateWindowList();
+}
+
+// Documentation in photonui.Widget
+photonui.Window.prototype.destroy = function() {
+    var index = photonui._windowList.indexOf(this);
+    if (index >= 0) {
+        photonui._windowList.splice(index, 1);
+    }
+    photonui.Widget.prototype.destroy.call(this);
 }
 
 
@@ -431,6 +456,25 @@ photonui.Window.prototype._buildHtml = function() {
     this.setMinHeight(this.minHeight);
     this.setMaxWidth(this.maxWidth);
     this.setMaxHeight(this.maxHeight);
+}
+
+/**
+ * Update all the windows.
+ *
+ * @method _updateWindowList
+ * @private
+ */
+photonui.Window.prototype._updateWindowList = function() {
+    for (var i=photonui._windowList.length-1, z=0 ; i>=0 ; i--, z++) {
+        if (i == 0) {
+            photonui._windowList[i].getHtml().style.zIndex = 2001;
+            photonui._windowList[i].addClass("photonui-active");
+        }
+        else {
+            photonui._windowList[i].getHtml().style.zIndex = 1000+z;
+            photonui._windowList[i].removeClass("photonui-active");
+        }
+    }
 }
 
 
