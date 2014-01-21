@@ -44,6 +44,12 @@ photonui._windowList = [];
 /**
  * Window.
  *
+ * wEvents:
+ *
+ *   * position-changed:
+ *      - description: called when the widows is moved.
+ *      - callback:    function(widget, x, y)
+ *
  * @class Window
  * @constructor
  * @param {String} params.title The window title.
@@ -69,9 +75,12 @@ photonui.Window = function(params) {
     this._e_parent = params.e_parent || photonui.e_parent;
     this._e = {};  // HTML Elements
 
+    this._registerWidgetEvents(["position-changed", "close-button-clicked"]);
+
     // Build and bind
     this._buildHtml();
     this._bindEvent("move.dragstart", this._e.windowTitle, "mousedown", this._moveDragStart.bind(this));
+    this._bindEvent("closeButton.click", this._e.windowTitleCloseButton, "click", this._closeButtonClicked.bind(this));
     this._bindEvent("totop", this._e["window"], "mousedown", this.moveToFront.bind(this));
     this.moveToFront();
     this.hide();
@@ -129,6 +138,7 @@ photonui.Window.prototype.setPosition = function(x, y) {
     this.position.x = y;
     this._e["window"].style.left = x + "px";
     this._e["window"].style.top = y + "px";
+    this._callCallbacks("position-changed", [x, y]);
 }
 
 /**
@@ -529,4 +539,15 @@ photonui.Window.prototype._moveDragEnd = function(event) {
     this._e.windowTitle.style.cursor = "default";
     this._unbindEvent("move.dragging");
     this._unbindEvent("move.dragend");
+}
+
+/**
+ * Close button clicked.
+ *
+ * @method _closeButtonClicked
+ * @private
+ * @param {Object} event
+ */
+photonui.Window.prototype._closeButtonClicked = function(event) {
+    this._callCallbacks("close-button-clicked");
 }

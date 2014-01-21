@@ -24,6 +24,7 @@
         <script src="../photonui/window/window.js"></script>
 
         <script>
+            // Create some windows
             var win = new photonui.Window({
                     title: "My Window (not movable)",
                     x: 100, y: 100,
@@ -44,9 +45,22 @@
                     minWidth: 300, minHeight: 150
             });
 
+            // Display the windows
             win.show();
             win2.show();
             win3.show();
+
+            // Register some callback
+            function windowMoved(widget, x, y) {
+                    widget.setTitle("Window Position: (" + x + ", " + y + ")");
+            }
+            function windowClosed(widget, x, y) {
+                    widget.hide();
+            }
+            win2.registerCallback("window moved", "position-changed", windowMoved);
+            win3.registerCallback("window moved", "position-changed", windowMoved);
+            win2.registerCallback("window closed", "close-button-clicked", windowClosed);
+            win3.registerCallback("window closed", "close-button-clicked", windowClosed);
         </script>
     </body>
 </html>

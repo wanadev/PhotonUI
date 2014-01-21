@@ -31,6 +31,20 @@
 /**
  * PhotonUI - Javascript Web User Interface.
  *
+ * wEvents:
+ *
+ *   * destroy:
+ *      - description: called before the widget was destroyed.
+ *      - callback:    function(widget)
+ *
+ *   * show:
+ *      - description: called when the widget is displayed.
+ *      - callback:    function(widget)
+ *
+ *   * hidden:
+ *      - description: called when the widget is hidden.
+ *      - callback:    function(widget)
+ *
  * @module PhotonUI
  * @submodule Widget
  * @main widget
