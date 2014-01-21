@@ -29,37 +29,15 @@
  */
 
 
-.photonui-window {
-    position: absolute;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+.photonui-widget {
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
 }
 
-.photonui-window-title {
-    overflow: hidden;
-}
-
-.photonui-active .photonui-window-title {
-}
-
-.photonui-window-title-close-button {
-    float: right;
-}
-
-.photonui-window-title-text {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    pointer-events: none;
-}
-
-.photonui-window-have-button .photonui-window-title-text {
-    width: calc(100% - 40px);
-}
-
-.photonui-window-content {
+.photonui-widget button::-moz-focus-inner,
+.photonui-widget input[type="submit"]::-moz-focus-inner,
+button.photonui-widget::-moz-focus-inner,
+input[type="submit"].photonui-widget::-moz-focus-inner {
+    border: 0;
+    padding: 0;
 }

@@ -55,9 +55,10 @@ photonui.Window = function(params) {
     var params = params || {};
 
     // Attrs
-    this.title = params.title || "Window";
+    this.title = params.title || "Window";  // FIXME i18n
     this.position = {x: params.x || 0, y: params.y || 0};
     this.movable = (params.movable != undefined) ? params.movable : true;
+    this.closeButton = (params.closeButton != undefined) ? params.closeButton : true;
     this.width = params.width || null;
     this.height = params.height || null;
     this.minWidth = params.minWidth || null;
@@ -141,13 +142,41 @@ photonui.Window.prototype.isMovable = function() {
 }
 
 /**
- * Determine if the window can be moved or not.
+ * Define if the window can be moved or not.
  *
  * @method setMovable
  * @param {Boolean} movable
  */
 photonui.Window.prototype.setMovable = function(movable) {
     this.movable = movable;
+}
+
+/**
+ * Know if the window have a "close" button.
+ *
+ * @method haveCloseButton
+ * @return {Boolean}
+ */
+photonui.Window.prototype.haveCloseButton = function() {
+    return this.movable;
+}
+
+/**
+ * Define if the window have a "close" button.
+ *
+ * @method setCloseButton
+ * @param {Boolean} closeButton
+ */
+photonui.Window.prototype.setCloseButton = function(closeButton) {
+    this.closeButton = closeButton;
+    if (closeButton) {
+        this.addClass("photonui-window-have-button");
+        this._e.windowTitleCloseButton.style.display = "block";
+    }
+    else {
+        this.removeClass("photonui-window-have-button");
+        this._e.windowTitleCloseButton.style.display = "none";
+    }
 }
 
 /**
@@ -379,6 +408,11 @@ photonui.Window.prototype._buildHtml = function() {
     this._e.windowTitle.className = "photonui-window-title";
     this._e["window"].appendChild(this._e.windowTitle);
 
+    this._e.windowTitleCloseButton = document.createElement("button");
+    this._e.windowTitleCloseButton.className = "photonui-window-title-close-button";
+    this._e.windowTitleCloseButton.title = "Close";  // FIXME i18n
+    this._e.windowTitle.appendChild(this._e.windowTitleCloseButton);
+
     this._e.windowTitleText = document.createElement("span");
     this._e.windowTitleText.className = "photonui-window-title-text";
     this._e.windowTitle.appendChild(this._e.windowTitleText);
@@ -390,6 +424,7 @@ photonui.Window.prototype._buildHtml = function() {
     // Update
     this.setTitle(this.title);
     this.setPosition(this.position.x, this.position.y);
+    this.setCloseButton(this.closeButton);
     this.setWidth(this.width);
     this.setHeight(this.height);
     this.setMinWidth(this.minWidth);
