@@ -22,17 +22,27 @@
 
         <script>
             var win = new photonui.Window({
-                    title: "My Window",
-                    x: 100, y: 100
+                    title: "My Window (not movable)",
+                    x: 100, y: 100,
+                    width: 150, height: 100,
+                    movable: false
             });
 
             var win2 = new photonui.Window({
                     title: "My Second Window",
-                    x: 150, y: 120
+                    x: 150, y: 150,
+                    width: 250, height: 125
+            });
+
+            var win3 = new photonui.Window({
+                    title: "My Third Window",
+                    x: 200, y: 200,
+                    minWidth: 300, minHeight: 150
             });
 
             win.show();
             win2.show();
+            win3.show();
         </script>
     </body>
 </html>

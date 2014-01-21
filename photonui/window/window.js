@@ -57,6 +57,13 @@ photonui.Window = function(params) {
     // Attrs
     this.title = params.title || "Window";
     this.position = {x: params.x || 0, y: params.y || 0};
+    this.movable = (params.movable != undefined) ? params.movable : true;
+    this.width = params.width || null;
+    this.height = params.height || null;
+    this.minWidth = params.minWidth || null;
+    this.minHeight = params.minHeight || null;
+    this.maxWidth = params.maxWidth || null;
+    this.maxHeight = params.maxHeight || null;
 
     this._e_parent = params.e_parent || photonui.e_parent;
     this._e = {};  // HTML Elements
@@ -124,6 +131,190 @@ photonui.Window.prototype.setPosition = function(x, y) {
 }
 
 /**
+ * Know if the window can be moved or not.
+ *
+ * @method isMovable
+ * @return {Boolean}
+ */
+photonui.Window.prototype.isMovable = function() {
+    return this.movable;
+}
+
+/**
+ * Determine if the window can be moved or not.
+ *
+ * @method setMovable
+ * @param {Boolean} movable
+ */
+photonui.Window.prototype.setMovable = function(movable) {
+    this.movable = movable;
+}
+
+/**
+ * Get window content width.
+ *
+ * @method getWidth
+ * @return {Number} the Width;
+ */
+photonui.Window.prototype.getWidth = function() {
+    if (this.width == null) {
+        return this._e.windowContent.offsetHeight
+    }
+    return this.width;
+}
+
+/**
+ * Set window content width.
+ *
+ * @method setWidth
+ * @param {Number} width the Width (`null` = auto);
+ */
+photonui.Window.prototype.setWidth = function(width) {
+    this.width = width;
+    if (width == null) {
+        this._e.windowContent.style.width = "auto";
+    }
+    else {
+        this._e.windowContent.style.width = width + "px";
+        this.width = this._e.windowContent.offsetHeight;
+    }
+}
+
+/**
+ * Get window content height.
+ *
+ * @method getHeight
+ * @return {Number} the Height;
+ */
+photonui.Window.prototype.getHeight = function() {
+    if (this.height == null) {
+        return this._e.windowContent.offsetHeight
+    }
+    return this.height;
+}
+
+/**
+ * Set window content height.
+ *
+ * @method setHeight
+ * @param {Number} height the Height (`null` = auto);
+ */
+photonui.Window.prototype.setHeight = function(height) {
+    this.height = height;
+    if (height == null) {
+        this._e.windowContent.style.height = "auto";
+    }
+    else {
+        this._e.windowContent.style.height = height + "px";
+        this.height = this._e.windowContent.offsetHeight;
+    }
+}
+
+/**
+ * Get window content minimum width.
+ *
+ * @method getMinWidth
+ * @return {Number} the minimum Width or `null`;
+ */
+photonui.Window.prototype.getMinWidth = function() {
+    return this.minWidth;
+}
+
+/**
+ * Set window content minimum width.
+ *
+ * @method setMinWidth
+ * @param {Number} minWidth the minimum Width (`null` = no minimum);
+ */
+photonui.Window.prototype.setMinWidth = function(minWidth) {
+    this.minWidth = minWidth;
+    if (minWidth == null) {
+        this._e.windowContent.style.minWidth = "0px";
+    }
+    else {
+        this._e.windowContent.style.minWidth = minWidth + "px";
+    }
+}
+
+/**
+ * Get window content minimum height.
+ *
+ * @method getMinHeight
+ * @return {Number} the minimum Height or `null`;
+ */
+photonui.Window.prototype.getMinHeight = function() {
+    return this.minHeight;
+}
+
+/**
+ * Set window content minimum height.
+ *
+ * @method setMinHeight
+ * @param {Number} minHeight the minimum Height (`null` = no minimum);
+ */
+photonui.Window.prototype.setMinHeight = function(minHeight) {
+    this.minHeight = minHeight;
+    if (minHeight == null) {
+        this._e.windowContent.style.minHeight = "0px";
+    }
+    else {
+        this._e.windowContent.style.minHeight = minHeight + "px";
+    }
+}
+
+/**
+ * Get window content maximum width.
+ *
+ * @method getMaxWidth
+ * @return {Number} the maximum Width or `null`;
+ */
+photonui.Window.prototype.getMaxWidth = function() {
+    return this.maxWidth;
+}
+
+/**
+ * Set window content maximum width.
+ *
+ * @method setMaxWidth
+ * @param {Number} maxWidth the maximum Width (`null` = no maximum);
+ */
+photonui.Window.prototype.setMaxWidth = function(maxWidth) {
+    this.maxWidth = maxWidth;
+    if (maxWidth == null) {
+        this._e.windowContent.style.maxWidth = "none";
+    }
+    else {
+        this._e.windowContent.style.maxWidth = maxWidth + "px";
+    }
+}
+
+/**
+ * Get window content maximum height.
+ *
+ * @method getMaxHeight
+ * @return {Number} the maximum Height or `null`;
+ */
+photonui.Window.prototype.getMaxHeight = function() {
+    return this.maxHeight;
+}
+
+/**
+ * Set window content maximum height.
+ *
+ * @method setMaxHeight
+ * @param {Number} maxHeight the maximum Height (`null` = no maximum);
+ */
+photonui.Window.prototype.setMaxHeight = function(maxHeight) {
+    this.maxHeight = maxHeight;
+    if (maxHeight == null) {
+        this._e.windowContent.style.maxHeight = "none";
+    }
+    else {
+        this._e.windowContent.style.maxHeight = maxHeight + "px";
+    }
+}
+
+/**
  * Get the HTML of the window.
  *
  * @method getHtml
@@ -155,19 +346,19 @@ photonui.Window.prototype.getContainer = function() {
  * @method moveToFront
  */
 photonui.Window.prototype.moveToFront = function() {
-    for (var i=0 ; i<photonui._windowList.length ; i++) {
-        if (photonui._windowList[i] == this) {
-            photonui._windowList.splice(i, 1);
-            break;
-        }
+    var index = photonui._windowList.indexOf(this);
+    if (index >= 0) {
+        photonui._windowList.splice(index, 1);
     }
     photonui._windowList.unshift(this);
     for (var i=photonui._windowList.length-1, z=0 ; i>=0 ; i--, z++) {
         if (i == 0) {
             photonui._windowList[i].getHtml().style.zIndex = 2001;
+            photonui._windowList[i].addClass("photonui-active");
         }
         else {
             photonui._windowList[i].getHtml().style.zIndex = 1000+z;
+            photonui._windowList[i].removeClass("photonui-active");
         }
     }
 }
@@ -188,7 +379,7 @@ photonui.Window.prototype.moveToFront = function() {
 photonui.Window.prototype._buildHtml = function() {
     // Builde the HTML
     this._e["window"] = document.createElement("div");
-    this._e["window"].className = "photonui-window";
+    this._e["window"].className = "photonui-widget photonui-window";
 
     this._e.windowTitle = document.createElement("div");
     this._e.windowTitle.className = "photonui-window-title";
@@ -202,9 +393,15 @@ photonui.Window.prototype._buildHtml = function() {
     this._e.windowContent.className = "photonui-window-content";
     this._e["window"].appendChild(this._e.windowContent);
 
-    // Update some part
+    // Update
     this.setTitle(this.title);
     this.setPosition(this.position.x, this.position.y);
+    this.setWidth(this.width);
+    this.setHeight(this.height);
+    this.setMinWidth(this.minWidth);
+    this.setMinHeight(this.minHeight);
+    this.setMaxWidth(this.maxWidth);
+    this.setMaxHeight(this.maxHeight);
 }
 
 
@@ -221,6 +418,9 @@ photonui.Window.prototype._buildHtml = function() {
  * @param {Object} event
  */
 photonui.Window.prototype._moveDragStart = function(event) {
+    if (!this.movable) {
+        return;
+    }
     this._e.windowTitle.style.cursor = "move";
     this._bindEvent("move.dragging", document, "mousemove", this._moveDragging.bind(this, event.layerX, event.layerY));
     this._bindEvent("move.dragend", document, "mouseup", this._moveDragEnd.bind(this));

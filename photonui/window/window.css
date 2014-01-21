@@ -31,6 +31,10 @@
 
 .photonui-window {
     position: absolute;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
     border: silver solid 1px;
     background: #f1f1f1;
@@ -43,15 +47,17 @@
     background: silver;
 }
 
+.photonui-active .photonui-window-title {
+}
+
 .photonui-window-title-text {
+    display: block;
+    width: calc(100% - 40px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     pointer-events: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 
 .photonui-window-content {
-    min-height: 30px;  /* FIXME */
-    min-width: 100px;  /* FIXME */
 }
