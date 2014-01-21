@@ -51,6 +51,9 @@ photonui.Widget = function() {
     this.visible = true;
     this.childWidget = null;
     this.__events = {};  // id: {element: DOMElement, callback: Function}
+    this.__callback = {};  // wEvent: {id: {callback: Function, thisArg: ...}}
+
+    this._registerWidgetEvents(["destroy", "show", "hide"]);
 }
 
 
@@ -104,9 +107,11 @@ photonui.Widget.prototype.setVisible = function(visible) {
     this.visible = visible;
     if (visible) {
         this.getHtml().style.display = "block";
+        this._callCallbacks("show");
     }
     else {
         this.getHtml().style.display = "none";
+        this._callCallbacks("hide");
     }
 }
 
@@ -178,6 +183,7 @@ photonui.Widget.prototype.destroy = function() {
     if (this.childWidget) {
         this.childWidget.destroy();
     }
+    this._callCallbacks("destroy");
     if (!this.getHtml()) {
         return;
     }
@@ -225,6 +231,45 @@ photonui.Widget.prototype.removeClass = function(class_) {
     e.className = classes.join(" ");
 }
 
+/**
+ * Register a callback for any widget event.
+ *
+ * Callback signature:
+ *
+ *     function(widget [, arg1 [, arg2 [, ...]]])
+ *
+ * @function registerCallback
+ * @param {String} id An unique id for the callback.
+ * @param {String} wEvent the widget event name.
+ * @param {Function} callback The callback function.
+ * @param thisArg The value of this (optionnal, default = current widget).
+ */
+photonui.Widget.prototype.registerCallback = function(id, wEvent, callback, thisArg) {
+    if (!this.__callback[wEvent]) {
+        console.error("This widget have no '" + wEvent + "' event.");
+        return;
+    }
+    this.__callback[wEvent][id] = {
+        callback: callback,
+        thisArg: thisArg || null
+    }
+}
+
+/**
+ * Remove a registered callback.
+ *
+ * @function removeCallback
+ * @param {String} id The id of the callback.
+ */
+photonui.Widget.prototype.removeCallback = function(id) {
+    for (var wEvent in this.__callback) {
+        if (this.__callback[wEvent][id]) {
+            delete this.__callback[wEvent][id];
+        }
+    }
+}
+
+
 //////////////////////////////////////////
 // Private Methods                      //
 //////////////////////////////////////////
@@ -267,4 +312,38 @@ photonui.Widget.prototype._unbindEvent = function(id) {
             false
     );
     delete this.__events[id];
+}
+
+/**
+ * Register widgets available events.
+ *
+ * @method _registerWidgetEvents
+ * @private
+ * @param {Array} wEvents
+ */
+photonui.Widget.prototype._registerWidgetEvents = function(wEvents) {
+    for (var i in wEvents) {
+        this.__callback[wEvents[i]] = {};
+    }
+}
+
+/**
+ * Call all callbacks for the given widget event.
+ *
+ * NOTE: the first argument passed to the callback is the current widget.
+ * NOTE²: if the thisArg of the callback is null, this will be binded to the current widget.
+ *
+ * @method _callCallbacks
+ * @private
+ * @param {String} wEvent The widget event.
+ * @param {Array} params Parametters that will be sent to the callbacks.
+ */
+photonui.Widget.prototype._callCallbacks = function(wEvent, params) {
+    var params = params || [];
+    for (var id in this.__callback[wEvent]) {
+        this.__callback[wEvent][id].callback.apply(
+                this.__callback[wEvent][id].thisArg || this,
+                [this].concat(params)
+                );
+    }
 }
