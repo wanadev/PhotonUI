@@ -66,7 +66,8 @@ photonui.Widget = function() {
  * @return {HTMLElement}
  */
 photonui.Widget.prototype.getHtml = function() {
-    console.warn("Not Implemented");
+    console.warn("getHtml() method not implemented for this widget.");
+    return null;
 }
 
 /**
@@ -76,7 +77,8 @@ photonui.Widget.prototype.getHtml = function() {
  * @return {HTMLElement}
  */
 photonui.Widget.prototype.getContainer = function() {
-    console.warn("Not Implemented");
+    console.warn("getContainer() method not implemented for this widget.");
+    return null;
 }
 
 /**
@@ -96,6 +98,9 @@ photonui.Widget.prototype.isVisible = function() {
  * @param {Boolean} visible The widget visibility.
  */
 photonui.Widget.prototype.setVisible = function(visible) {
+    if (!this.getHtml()) {
+        return;
+    }
     this.visible = visible;
     if (visible) {
         this.getHtml().style.display = "block";
@@ -122,7 +127,7 @@ photonui.Widget.prototype.getChild = function() {
  * @param {photonui.Widget} child The new child of the widget.
  */
 photonui.Widget.prototype.setChild = function(child) {
-    if (child == this.childWidget) {
+    if (child == this.childWidget || !this.getContainer()) {
         return;
     }
 
@@ -173,10 +178,49 @@ photonui.Widget.prototype.destroy = function() {
     if (this.childWidget) {
         this.childWidget.destroy();
     }
+    if (!this.getHtml()) {
+        return;
+    }
     this.getHtml().parentNode.removeChild(this.getHtml());
     this.childWidget = null;
 }
 
+/**
+ * Add a class to the root HTML element of the widget.
+ *
+ * @method addClass
+ * @param {String} class_ The class.
+ */
+photonui.Widget.prototype.addClass = function(class_) {
+    var e = this.getHtml();
+    if (!e) {
+        return;
+    }
+    var classes = e.className.split(" ");
+    if (classes.indexOf(class_) < 0) {
+        classes.push(class_);
+    }
+    e.className = classes.join(" ");
+}
+
+/**
+ * Remove a class from the root HTML element of the widget.
+ *
+ * @method removeClass
+ * @param {String} class_ The class.
+ */
+photonui.Widget.prototype.removeClass = function(class_) {
+    var e = this.getHtml();
+    if (!e) {
+        return;
+    }
+    var classes = e.className.split(" ");
+    var index = classes.indexOf(class_);
+    if (index >= 0) {
+        classes.splice(index, 1);
+    }
+    e.className = classes.join(" ");
+}
 
 //////////////////////////////////////////
 // Private Methods                      //
