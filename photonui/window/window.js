@@ -50,9 +50,24 @@ photonui._windowList = [];
  *      - description: called when the widows is moved.
  *      - callback:    function(widget, x, y)
  *
+ *   * close-button-clicked:
+ *      - description: called when the close button was clicked.
+ *      - callback:    function(widget)
+ *
  * @class Window
  * @constructor
- * @param {String} params.title The window title.
+ * @param {String} params.title The window title (optional, default = "Window").
+ * @param {Number} params.x The window X position (optional, default = 0).
+ * @param {Number} params.y The window Y position (optional, default = 0).
+ * @param {Boolean} params.movable Define if the window can be moved (optional, default = true).
+ * @param {Boolean} params.closeButton Define if the window have a "close" button (optional, default = true).
+ * @param {Number} params.width The window content width (none = auto, optional, default = none).
+ * @param {Number} params.height The window content height (none = auto, optional, default = none).
+ * @param {Number} params.minWidth The window content minimum width (none = no limite, optional, default = none).
+ * @param {Number} params.minHeight The window content minimum height (none = no limite, optional, default = none).
+ * @param {Number} params.maxWidth The window content maximum width (none = no limite, optional, default = none).
+ * @param {Number} params.maxHeight The window content maximum height (none = no limite, optional, default = none).
+ * @param {HTMLElement} params.e_parent The DOM node where the window will be inserted (none = no limite, optional, default = none).
  * @extends Widget
  */
 photonui.Window = function(params) {
@@ -135,7 +150,7 @@ photonui.Window.prototype.getPosition = function() {
  */
 photonui.Window.prototype.setPosition = function(x, y) {
     this.position.x = x;
-    this.position.x = y;
+    this.position.y = y;
     this._e["window"].style.left = x + "px";
     this._e["window"].style.top = y + "px";
     this._callCallbacks("position-changed", [x, y]);

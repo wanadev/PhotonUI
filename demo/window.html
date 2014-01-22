@@ -54,7 +54,7 @@
             function windowMoved(widget, x, y) {
                     widget.setTitle("Window Position: (" + x + ", " + y + ")");
             }
-            function windowClosed(widget, x, y) {
+            function windowClosed(widget) {
                     widget.hide();
             }
             win2.registerCallback("window moved", "position-changed", windowMoved);
