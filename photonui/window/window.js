@@ -63,12 +63,13 @@ photonui._windowList = [];
  * @param {Boolean} params.closeButton Define if the window have a "close" button (optional, default = true).
  * @param {Number} params.width The window content width (none = auto, optional, default = none).
  * @param {Number} params.height The window content height (none = auto, optional, default = none).
- * @param {Number} params.minWidth The window content minimum width (none = no limite, optional, default = none).
- * @param {Number} params.minHeight The window content minimum height (none = no limite, optional, default = none).
- * @param {Number} params.maxWidth The window content maximum width (none = no limite, optional, default = none).
- * @param {Number} params.maxHeight The window content maximum height (none = no limite, optional, default = none).
- * @param {HTMLElement} params.e_parent The DOM node where the window will be inserted (none = no limite, optional, default = none).
- * @extends Widget
+ * @param {Number} params.minWidth The window content minimum width (none = no limit, optional, default = none).
+ * @param {Number} params.minHeight The window content minimum height (none = no limit, optional, default = none).
+ * @param {Number} params.maxWidth The window content maximum width (none = no limit, optional, default = none).
+ * @param {Number} params.maxHeight The window content maximum height (none = no limit, optional, default = none).
+ * @param {Number} params.padding The window content padding (optional, default = 5).
+ * @param {HTMLElement} params.e_parent The DOM node where the window will be inserted (none = no limit, optional, default = none).
+ * @extends photonui.Widget
  */
 photonui.Window = function(params) {
     photonui.Widget.call(this);
@@ -86,6 +87,7 @@ photonui.Window = function(params) {
     this.minHeight = params.minHeight || null;
     this.maxWidth = params.maxWidth || null;
     this.maxHeight = params.maxHeight || null;
+    this.padding = (params.padding != undefined) ? params.padding : 5;
 
     this._e_parent = params.e_parent || photonui.e_parent;
     this._e = {};  // HTML Elements
@@ -363,6 +365,27 @@ photonui.Window.prototype.setMaxHeight = function(maxHeight) {
 }
 
 /**
+ * Get the window content padding.
+ *
+ * @method getPadding
+ * @return {Number} The padding.
+ */
+photonui.Window.prototype.getPadding = function() {
+    return this.padding;
+}
+
+/**
+ * Set the window content padding.
+ *
+ * @method setPadding
+ * @param {Number} padding The padding.
+ */
+photonui.Window.prototype.setPadding = function(padding) {
+    this.padding = padding;
+    this._e.windowContent.style.padding = padding + "px";
+}
+
+/**
  * Get the HTML of the window.
  *
  * @method getHtml
@@ -493,6 +516,7 @@ photonui.Window.prototype._buildHtml = function() {
     this.setMinHeight(this.minHeight);
     this.setMaxWidth(this.maxWidth);
     this.setMaxHeight(this.maxHeight);
+    this.setPadding(this.padding);
 }
 
 /**

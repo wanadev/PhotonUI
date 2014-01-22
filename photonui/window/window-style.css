@@ -117,7 +117,7 @@
     font-size: 110%;
     font-weight: bold;
     color: #aaa;
-    text-shadow: -1px -1px 0 #111;
+    text-shadow: -1px -1px 0 #333;
 }
 
 .photonui-window-have-button .photonui-window-title-text {
@@ -127,6 +127,7 @@
 
 .photonui-active .photonui-window-title-text {
     color: #fff;
+    text-shadow: -1px -1px 0 #111;
 }
 
 .photonui-window-content {
