@@ -427,6 +427,18 @@ photonui.Window.prototype.moveToBack = function() {
     this._updateWindowList();
 }
 
+/**
+ * Center the window on its parent.
+ *
+ * @method center
+ */
+photonui.Window.prototype.center = function() {
+    this.setPosition(
+            Math.round((this._e_parent.offsetWidth - this.getWidth()) / 2),
+            Math.round((this._e_parent.offsetHeight - this.getHeight()) / 2)
+    );
+}
+
 // Documentation in photonui.Widget
 photonui.Window.prototype.destroy = function() {
     var index = photonui._windowList.indexOf(this);
