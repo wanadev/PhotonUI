@@ -31,6 +31,19 @@
 /**
  * PhotonUI - Javascript Web User Interface.
  *
+ * @module PhotonUI
+ * @submodule Widget
+ * @main widget
+ * @namespace photonui
+ */
+
+
+var photonui = photonui || {};
+
+
+/**
+ * Base class for all PhotonUI widgets.
+ *
  * wEvents:
  *
  *   * destroy:
@@ -44,19 +57,6 @@
  *   * hidden:
  *      - description: called when the widget is hidden.
  *      - callback:    function(widget)
- *
- * @module PhotonUI
- * @submodule Widget
- * @main widget
- * @namespace photonui
- */
-
-
-var photonui = photonui || {};
-
-
-/**
- * Base class for all PhotonUI widgets.
  *
  * @class Widget
  * @constructor

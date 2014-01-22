@@ -1,0 +1,60 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>photonui.Button()</title>
+
+        <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window-style.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button-style.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                color: #000;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../photonui/photonui.js"></script>
+
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/window/window.js"></script>
+        <script src="../photonui/button/button.js"></script>
+
+        <script>
+            // Create a window
+            var win = new photonui.Window({
+                    title: "My Window",
+                    x: 100, y: 100,
+                    closeButton: false
+            });
+
+            // Create a button
+            var btn = new photonui.Button({
+                    text: "Hide this window 2 seconds"
+            });
+
+            // Register a callback on the button
+            btn.registerCallback("button clicked", "click", function(widget, event) {
+                    win.hide();
+                    setTimeout(function() { win.show(); }, 2000);
+            });
+
+            // Put the button in the window
+            win.setChild(btn);
+
+            // Display the window
+            win.show();
+        </script>
+    </body>
+</html>
+

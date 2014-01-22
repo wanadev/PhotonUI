@@ -29,15 +29,9 @@
  */
 
 
-.photonui-widget {
-    font-family: Arial, sans-serif;
-    font-size: 11pt;
-}
-
-.photonui-widget button::-moz-focus-inner,
-.photonui-widget input[type="submit"]::-moz-focus-inner,
-button.photonui-widget::-moz-focus-inner,
-input[type="submit"].photonui-widget::-moz-focus-inner {
-    border: 0;
-    padding: 0;
+.photonui-button {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
