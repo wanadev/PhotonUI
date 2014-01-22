@@ -35,6 +35,10 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    min-width: -webkit-max-content;
+    min-width: -moz-max-content;
+    min-width: -ms-max-content;
+    min-width: max-content;
 }
 
 .photonui-window-title {
