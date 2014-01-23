@@ -97,7 +97,7 @@ photonui.Button.prototype.getText = function() {
  */
 photonui.Button.prototype.setText = function(text) {
     this.text = text;
-    this._e.button.innerHTML = text;
+    this._e.button.innerHTML = photonui.Helpers.escapeHtml(text);
 }
 
 /**

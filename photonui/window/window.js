@@ -130,7 +130,7 @@ photonui.Window.prototype.getTitle = function() {
  */
 photonui.Window.prototype.setTitle = function(title) {
     this.title = title;
-    this._e.windowTitleText.innerHTML = title;
+    this._e.windowTitleText.innerHTML = photonui.Helpers.escapeHtml(title);
 }
 
 /**

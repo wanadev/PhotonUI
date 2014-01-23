@@ -33,7 +33,7 @@
  *
  * @module PhotonUI
  * @submodule Widget
- * @main widget
+ * @main Widget
  * @namespace photonui
  */
 
