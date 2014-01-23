@@ -503,7 +503,7 @@ photonui.Window.prototype._buildHtml = function() {
     this._e.windowTitle.appendChild(this._e.windowTitleText);
 
     this._e.windowContent = document.createElement("div");
-    this._e.windowContent.className = "photonui-window-content";
+    this._e.windowContent.className = "photonui-window-content photonui-container-expend-child";
     this._e["window"].appendChild(this._e.windowContent);
 
     // Update
@@ -552,7 +552,7 @@ photonui.Window.prototype._updateWindowList = function() {
  * @param {Object} event
  */
 photonui.Window.prototype._moveDragStart = function(event) {
-    if (!this.movable) {
+    if (!this.movable || event.button > 0) {
         return;
     }
     this._e.windowTitle.style.cursor = "move";

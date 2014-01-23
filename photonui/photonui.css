@@ -41,3 +41,9 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
     border: 0;
     padding: 0;
 }
+
+.photonui-container-expend-child > * {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+}
