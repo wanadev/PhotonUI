@@ -207,6 +207,7 @@ photonui.Widget.prototype.destroy = function() {
         this.childWidget.destroy();
     }
     this._callCallbacks("destroy");
+    delete photonui.widgets[this.name];
     if (!this.getHtml()) {
         return;
     }
@@ -386,4 +387,7 @@ photonui.Widget.prototype._updateAttributes = function() {
         this.addClass(this.__additionalClass);
     }
     this.setVisible(this.visible);
+
+    // Register the widget
+    photonui.widgets[this.name] = this;
 }

@@ -1,0 +1,68 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>photonui.Button()</title>
+
+        <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window-style.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button-style.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                color: #000;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../photonui/photonui.js"></script>
+        <script src="../photonui/helpers.js"></script>
+
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/window/window.js"></script>
+        <script src="../photonui/button/button.js"></script>
+
+        <script>
+            // Create an UI
+            var ui = [
+                {
+                    __widget__: "Window",
+                    name: "window1",
+                    title: "First Window",
+                    visible: true,
+                    __child__: {
+                        __widget__: "Button",
+                        name: "button1",
+                        text: ">>> Click Me <<<"
+                    }
+                },
+                {
+                    __widget__: "Window",
+                    name: "window2",
+                    title: "Second Window",
+                    x: 100,
+                    y: 100,
+                    width: 200,
+                    height: 75,
+                    visible: true
+                }
+            ];
+
+            // Build the UI
+            photonui.build(ui);
+
+            // Get and center the first window
+            photonui.getWidget("window1").center();
+        </script>
+    </body>
+</html>
+

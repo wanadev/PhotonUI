@@ -41,3 +41,54 @@ var photonui = photonui || {};
 
 
 photonui.e_parent = document.getElementsByTagName("body")[0];
+photonui.widgets = {};
+
+
+/*
+ * Get a widget.
+ *
+ * @method getWidget
+ * @param {String} name The widget name.
+ *
+ * @return {photonui.Widget} The widget or null.
+ */
+photonui.getWidget = function(name) {
+    if (photonui.widgets[name]) {
+        return photonui.widgets[name];
+    }
+    return null;
+}
+
+/*
+ * Build widgets for an object or a list of object.
+ *
+ * @method build
+ * @param {Object/Array} widgets
+ */
+photonui.build = function(widgets) {
+    if (!(widgets instanceof Array)) {
+        var widgets = [widgets];
+    }
+
+    function buildWidget(parentWidget, widget) {
+        if (widget.__widget__ == undefined) {
+            throw "Structure error: __widget__ is not defined";
+        }
+        if (photonui[widget.__widget__] == undefined) {
+            throw "Structure error: The '" + widget.__widget__ + "'widget does not exist";
+        }
+
+        var w = new photonui[widget.__widget__](widget);
+        if (parentWidget) {
+            parentWidget.setChild(w);
+        }
+
+        if (widget.__child__ != undefined) {
+            buildWidget(w, widget.__child__);
+        }
+    }
+
+    for (var i in widgets) {
+        buildWidget(null, widgets[i]);
+    }
+}
