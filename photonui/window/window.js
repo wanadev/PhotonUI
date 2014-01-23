@@ -68,11 +68,12 @@ photonui._windowList = [];
  * @param {Number} params.maxWidth The window content maximum width (none = no limit, optional, default = none).
  * @param {Number} params.maxHeight The window content maximum height (none = no limit, optional, default = none).
  * @param {Number} params.padding The window content padding (optional, default = 5).
+ * @param {Boolean} params.visible Is the widget displayed or hidden (optional, default=false).
  * @param {HTMLElement} params.e_parent The DOM node where the window will be inserted (none = no limit, optional, default = none).
  * @extends photonui.Widget
  */
 photonui.Window = function(params) {
-    photonui.Widget.call(this);
+    photonui.Widget.call(this, params);
 
     var params = params || {};
 
@@ -88,6 +89,7 @@ photonui.Window = function(params) {
     this.maxWidth = params.maxWidth || null;
     this.maxHeight = params.maxHeight || null;
     this.padding = (params.padding != undefined) ? params.padding : 5;
+    this.visible = (params.visible != undefined) ? params.visible : false;
 
     this._e_parent = params.e_parent || photonui.e_parent;
     this._e = {};  // HTML Elements
@@ -96,11 +98,11 @@ photonui.Window = function(params) {
 
     // Build and bind
     this._buildHtml();
+    this._updateAttributes();
     this._bindEvent("move.dragstart", this._e.windowTitle, "mousedown", this._moveDragStart.bind(this));
     this._bindEvent("closeButton.click", this._e.windowTitleCloseButton, "click", this._closeButtonClicked.bind(this));
     this._bindEvent("totop", this._e["window"], "mousedown", this.moveToFront.bind(this));
     this.moveToFront();
-    this.hide();
     this._e_parent.appendChild(this.getHtml());
 }
 
@@ -505,8 +507,17 @@ photonui.Window.prototype._buildHtml = function() {
     this._e.windowContent = document.createElement("div");
     this._e.windowContent.className = "photonui-window-content photonui-container-expend-child";
     this._e["window"].appendChild(this._e.windowContent);
+}
 
-    // Update
+/**
+ * Update attributes.
+ *
+ * @method _updateAttributes
+ * @private
+ */
+photonui.Window.prototype._updateAttributes = function() {
+    photonui.Widget.prototype._updateAttributes.call(this);
+
     this.setTitle(this.title);
     this.setPosition(this.position.x, this.position.y);
     this.setCloseButton(this.closeButton);

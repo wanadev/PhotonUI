@@ -59,11 +59,20 @@ var photonui = photonui || {};
  *      - callback:    function(widget)
  *
  * @class Widget
+ * @param {String} params.name The name of the widget (optional, default=photonui.Helpers.uuid4()).
+ * @param {String} params.className Classes (HTML) of the widget (optional, default=null).
+ * @param {Boolean} params.visible Is the widget displayed or hidden (optional, default=true).
  * @constructor
  */
-photonui.Widget = function() {
-    this.visible = true;
+photonui.Widget = function(params) {
+    var params = params || {};
+
+    this.name = params.name || photonui.Helpers.uuid4();
+    this.visible = (params.visible != undefined) ? params.visible : true;
     this.childWidget = null;
+
+    this.__additionalClass = params.className || null;
+
     this.__events = {};  // id: {element: DOMElement, callback: Function}
     this.__callback = {};  // wEvent: {id: {callback: Function, thisArg: ...}}
 
@@ -360,4 +369,21 @@ photonui.Widget.prototype._callCallbacks = function(wEvent, params) {
                 [this].concat(params)
                 );
     }
+}
+
+/**
+ * Update attributes.
+ *
+ * @method _updateAttributes
+ * @private
+ */
+photonui.Widget.prototype._updateAttributes = function() {
+    var e = this.getHtml();
+    if (e) {
+        e.id = this.name;
+    }
+    if (this.__additionalClass) {
+        this.addClass(this.__additionalClass);
+    }
+    this.setVisible(this.visible);
 }

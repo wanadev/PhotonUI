@@ -43,7 +43,9 @@ var photonui = photonui || {};
 /**
  * Button.
  *
- *  * destroy:
+ *  wEvents:
+ *
+ *    * destroy:
  *      - description: called when the button was clicked.
  *      - callback:    function(widget, event)
  *
@@ -53,7 +55,7 @@ var photonui = photonui || {};
  * @extends photonui.Widget
  */
 photonui.Button = function(params) {
-    photonui.Widget.call(this);
+    photonui.Widget.call(this, params);
 
     var params = params || {};
 
@@ -66,6 +68,7 @@ photonui.Button = function(params) {
 
     // Build and bind
     this._buildHtml();
+    this._updateAttributes();
     this._bindEvent("click", this._e.button, "click", function(event) {
         this._callCallbacks("click", [event]);
     }.bind(this));
@@ -137,7 +140,15 @@ photonui.Button.prototype._buildHtml = function() {
     // Builde the HTML;
     this._e.button = document.createElement("button");
     this._e.button.className = "photonui-widget photonui-button";
+}
 
-    // Update
+/**
+ * Update attributes.
+ *
+ * @method _updateAttributes
+ * @private
+ */
+photonui.Button.prototype._updateAttributes = function() {
+    photonui.Widget.prototype._updateAttributes.call(this);
     this.setText(this.text);
 }
