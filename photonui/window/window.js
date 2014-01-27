@@ -56,6 +56,7 @@ photonui._windowList = [];
  *
  * @class Window
  * @constructor
+ * @extends photonui.Widget
  * @param {String} params.title The window title (optional, default = "Window").
  * @param {Number} params.x The window X position (optional, default = 0).
  * @param {Number} params.y The window Y position (optional, default = 0).
@@ -70,7 +71,6 @@ photonui._windowList = [];
  * @param {Number} params.padding The window content padding (optional, default = 5).
  * @param {Boolean} params.visible Is the widget displayed or hidden (optional, default=false).
  * @param {HTMLElement} params.e_parent The DOM node where the window will be inserted (none = no limit, optional, default = none).
- * @extends photonui.Widget
  */
 photonui.Window = function(params) {
     photonui.Widget.call(this, params);
@@ -480,11 +480,10 @@ photonui.Window.prototype.destroy = function() {
 
 
 /**
- * Get the HTML of the window.
+ * Build the HTML of the window.
  *
  * @method _buildHtml
  * @private
- * @return {HTMLElement}
  */
 photonui.Window.prototype._buildHtml = function() {
     // Builde the HTML
@@ -505,7 +504,7 @@ photonui.Window.prototype._buildHtml = function() {
     this._e.windowTitle.appendChild(this._e.windowTitleText);
 
     this._e.windowContent = document.createElement("div");
-    this._e.windowContent.className = "photonui-window-content photonui-container-expend-child";
+    this._e.windowContent.className = "photonui-window-content photonui-container-expand-child";
     this._e["window"].appendChild(this._e.windowContent);
 }
 

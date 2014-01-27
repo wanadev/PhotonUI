@@ -41,40 +41,22 @@ var photonui = photonui || {};
 
 
 /**
- * Button.
+ * Base class for layout.
  *
- *  wEvents:
- *
- *    * destroy:
- *      - description: called when the button was clicked.
- *      - callback:    function(widget, event)
- *
- * @class Button
+ * @class Layout
  * @constructor
  * @extends photonui.Widget
- * @param {String} params.text The text of the button (optional, default = "Button").
  */
-photonui.Button = function(params) {
+photonui.Layout = function(params) {
     photonui.Widget.call(this, params);
 
     var params = params || {};
 
     // Attrs
-    this.text = params.text || "Button";  // FIXME i18n
-
-    this._e = {};  // HTML Elements
-
-    this._registerWidgetEvents(["click"]);
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-    this._bindEvent("click", this._e.button, "click", function(event) {
-        this._callCallbacks("click", [event]);
-    }.bind(this));
+    this.childrenWidgets = [];
 }
 
-photonui.Button.prototype = new photonui.Widget();
+photonui.Layout.prototype = new photonui.Widget();
 
 
 //////////////////////////////////////////
@@ -83,44 +65,68 @@ photonui.Button.prototype = new photonui.Widget();
 
 
 /**
- * Get button text.
+ * Get children widgets.
  *
- * @method getText
- * @return {string} The button text.
+ * @method getChildren
+ * @return {Array} List of `photonui.Widget`.
  */
-photonui.Button.prototype.getText = function() {
-    return this.text;
+photonui.Layout.prototype.getChildren = function() {
+    return this.childrenWidgets;
+}
+
+// Documentation in photonui.Widget
+photonui.Layout.prototype.getChild = function() {
+    console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
+}
+
+// Documentation in photonui.Widget
+photonui.Layout.prototype.setChild = function(child) {
+    console.warn("Warning: You cannot use setChild() on layout widgets, please use addChild() instead.");
+}
+
+
+//////////////////////////////////////////
+// Public Methods                       //
+//////////////////////////////////////////
+
+
+/**
+ * Add a widget to the layout.
+ *
+ * @method addChild
+ * @param {photonui.Widget} widget The widget to add.
+ * @param {Object} layoutOption Specific option for the layout (optional).
+ */
+photonui.Layout.prototype.addChild = function(widget, layoutOptions) {
+    if (layoutOptions) {
+        for (var option in layoutOptions) {
+            widget.layoutOptions[option] = layoutOptions[option];
+        }
+    }
+    this.childrenWidgets.push(widget);
+    this._updateLayout();
 }
 
 /**
- * Set button text.
+ * Remove a widget from the layout.
  *
- * @method setText
- * @param {string} text The button text.
+ * @method removeChild
+ * @param {photonui.Widget} widget The widget to remove.
  */
-photonui.Button.prototype.setText = function(text) {
-    this.text = text;
-    this._e.button.innerHTML = photonui.Helpers.escapeHtml(text);
+photonui.Layout.prototype.removeChild = function(widget) {
+    var index = this.childrenWidgets.indexOf(widget);
+    if (index >= 0) {
+        this.childrenWidgets.splice(widget, 1);
+    }
+    this._updateLayout();
 }
 
-/**
- * Get the HTML of the button.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Button.prototype.getHtml = function() {
-    return this._e.button;
-}
-
-/**
- * Get the container DOM Element.
- *
- * @method getContainer
- * @return {HTMLElement}
- */
-photonui.Button.prototype.getContainer = function() {
-    return null;  // Cannot have a child
+// Documentation in photonui.Widget
+photonui.Layout.prototype.destroy = function() {
+    for (var i in this.childrenWidgets) {
+        this.childrenWidgets[i].destroy();
+    }
+    photonui.Widget.prototype.destroy.call(this);
 }
 
 
@@ -130,24 +136,11 @@ photonui.Button.prototype.getContainer = function() {
 
 
 /**
- * Build the HTML of the button.
+ * Update the layout.
  *
- * @method _buildHtml
+ * @method _updateLayout
  * @private
  */
-photonui.Button.prototype._buildHtml = function() {
-    // Builde the HTML;
-    this._e.button = document.createElement("button");
-    this._e.button.className = "photonui-widget photonui-button";
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Button.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
-    this.setText(this.text);
+photonui.Layout.prototype._updateLayout = function() {
+    throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
 }

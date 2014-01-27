@@ -1,0 +1,83 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>PhotonUI Layout</title>
+
+        <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window-style.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button-style.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/layout/boxlayout.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                color: #000;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../photonui/photonui.js"></script>
+        <script src="../photonui/helpers.js"></script>
+
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/window/window.js"></script>
+        <script src="../photonui/button/button.js"></script>
+        <script src="../photonui/layout/layout.js"></script>
+        <script src="../photonui/layout/boxlayout.js"></script>
+
+        <script>
+            // Vertical Layout
+            var vwin = new photonui.Window({
+                    title: "Vertical Box",
+                    x: 50, y: 50,
+                    width: 200, height: 65,
+                    closeButton: false,
+                    visible: true
+            });
+            var vbox = new photonui.BoxLayout({
+                    orientation: "vertical"
+            });
+            var vbtn1 = new photonui.Button({
+                    text: "Vertical Button 1"
+            })
+            var vbtn2 = new photonui.Button({
+                    text: "Vertical Button 2"
+            })
+            vwin.setChild(vbox);
+            vbox.addChild(vbtn1, {verticalExpansion: false});  // No vertical Expension (webkit bug...)
+            vbox.addChild(vbtn2, {verticalExpansion: false});  // No vertical Expension (webkit bug...)
+
+            // Horizontal Layout
+            var hwin = new photonui.Window({
+                    title: "Horizontal Box",
+                    x: 270, y: 50,
+                    height: 65,
+                    closeButton: false,
+                    visible: true
+            });
+            var hbox = new photonui.BoxLayout({
+                    orientation: "horizontal"
+            });
+            var hbtn1 = new photonui.Button({
+                    text: "Horizontal Button 1"
+            })
+            var hbtn2 = new photonui.Button({
+                    text: "Horizontal Button 2"
+            })
+            hwin.setChild(hbox);
+            hbox.addChild(hbtn1);
+            hbox.addChild(hbtn2);
+        </script>
+    </body>
+</html>
+

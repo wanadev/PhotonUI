@@ -67,10 +67,12 @@ var photonui = photonui || {};
 photonui.Widget = function(params) {
     var params = params || {};
 
+    // Attrs
     this.name = params.name || photonui.Helpers.uuid4();
     this.visible = (params.visible != undefined) ? params.visible : true;
-    this.childWidget = null;
+    this.layoutOptions = params.__layout__ || {};
 
+    this.childWidget = null;
     this.__additionalClass = params.className || null;
 
     this.__events = {};  // id: {element: DOMElement, callback: Function}
