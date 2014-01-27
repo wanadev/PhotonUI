@@ -74,6 +74,29 @@ photonui.Layout.prototype.getChildren = function() {
     return this.childrenWidgets;
 }
 
+/**
+ * Get the layout options of the given widget.
+ *
+ * @method getLayoutOptions
+ * @param {photonui.Widget} widget
+ * @return {Object} The layoutOptions widget.
+ */
+photonui.Layout.prototype.getLayoutOptions = function(widget) {
+    return widget.layoutOptions;
+}
+
+/**
+ * Set the layout options of the given widget.
+ *
+ * @method setLayoutOptions
+ * @param {photonui.Widget} widget
+ * @param {Object} options The layoutOptions widget.
+ */
+photonui.Layout.prototype.setLayoutOptions = function(widget, options) {
+    widget.layoutOptions = options || {};
+    this._updateLayout();
+}
+
 // Documentation in photonui.Widget
 photonui.Layout.prototype.getChild = function() {
     console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");

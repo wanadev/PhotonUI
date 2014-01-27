@@ -68,30 +68,34 @@
                 __widget__: "Window",
                 x: 300, y: 50,
                 width: 200,
-                height: 120,
                 visible: true,
                 __child__: {
                     __widget__: "BoxLayout",
+                    name: "testLayout",
                     __children__: [
                         {
                             __widget__: "Button"
                         },
                         {
                             __widget__: "Viewport",
+                            name: "testViewport",
+                            __layout__: {"height": 100},
                             __child__: {
                                 __widget__: "BoxLayout",
                                 __children__: [
-                                    {__widget__: "Button"},
-                                    {__widget__: "Button"},
-                                    {__widget__: "Button"},
-                                    {__widget__: "Button"},
-                                    {__widget__: "Button"}
+                                    {__widget__: "Button", text: "Button 1"},
+                                    {__widget__: "Button", text: "Button 2"},
+                                    {__widget__: "Button", text: "Button 3"},
+                                    {__widget__: "Button", text: "Button 4"},
+                                    {__widget__: "Button", text: "Button 5"}
                                 ]
                             }
                         }
                     ]
                 }
-            })
+            });
+            var testBL = photonui.getWidget("testLayout");
+            var testVP = photonui.getWidget("testViewport");
         </script>
     </body>
 </html>

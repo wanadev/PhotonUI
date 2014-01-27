@@ -46,8 +46,14 @@ var photonui = photonui || {};
  * Layout Options:
  *
  *     {
- *          "verticalExpansion": <Boolean, default: true>,
- *          "horizontalExpansion": <Boolean, default: true>
+ *          verticalExpansion: <Boolean, default: true>,
+ *          horizontalExpansion: <Boolean, default: true>,
+ *          width: <Number, default: undefined>,
+ *          height: <Number, default: undefined>,
+ *          minWidth: <Number, default: undefined>,
+ *          minHeight: <Number, default: undefined>,
+ *          maxWidth: <Number, default: undefined>,
+ *          maxHeight: <Number, default: undefined>
  *     }
  *
  * @class BoxLayout
@@ -204,6 +210,31 @@ photonui.BoxLayout.prototype._updateLayout = function() {
         ||  this.childrenWidgets[i].layoutOptions.verticalExpansion) {
             widgetInnerbox.className += " photonui-container-expand-child-vertical"
         }
+        // Layout Options: width
+        if (this.childrenWidgets[i].layoutOptions.width != undefined) {
+            widgetInnerbox.style.height = this.childrenWidgets[i].layoutOptions.width + "px";
+        }
+        // Layout Options: height
+        if (this.childrenWidgets[i].layoutOptions.height != undefined) {
+            widgetInnerbox.style.height = this.childrenWidgets[i].layoutOptions.height + "px";
+        }
+        // Layout Options: minWidth
+        if (this.childrenWidgets[i].layoutOptions.minWidth != undefined) {
+            widgetInnerbox.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
+        }
+        // Layout Options: minHeight
+        if (this.childrenWidgets[i].layoutOptions.minHeight != undefined) {
+            widgetInnerbox.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
+        }
+        // Layout Options: maxWidth
+        if (this.childrenWidgets[i].layoutOptions.maxWidth != undefined) {
+            widgetInnerbox.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
+        }
+        // Layout Options: maxHeight
+        if (this.childrenWidgets[i].layoutOptions.maxHeight != undefined) {
+            widgetInnerbox.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
+        }
+
 
         widgetInnerbox.appendChild(this.childrenWidgets[i].getHtml());
         this.childrenWidgets[i]._updateAttributes();  // Fix for MSIE
