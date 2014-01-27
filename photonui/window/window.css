@@ -66,4 +66,5 @@
 }
 
 .photonui-window-content {
+    overflow: hidden;
 }

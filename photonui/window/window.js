@@ -565,8 +565,10 @@ photonui.Window.prototype._moveDragStart = function(event) {
     if (!this.movable || event.button > 0) {
         return;
     }
+    var offsetX = (event.offsetX != undefined) ? event.offsetX : event.layerX;
+    var offsetY = (event.offsetY != undefined) ? event.offsetY : event.layerY;
     this._e.windowTitle.style.cursor = "move";
-    this._bindEvent("move.dragging", document, "mousemove", this._moveDragging.bind(this, event.layerX, event.layerY));
+    this._bindEvent("move.dragging", document, "mousemove", this._moveDragging.bind(this, offsetX, offsetY));
     this._bindEvent("move.dragend", document, "mouseup", this._moveDragEnd.bind(this));
 }
 

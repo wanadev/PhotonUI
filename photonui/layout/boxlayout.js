@@ -205,6 +205,7 @@ photonui.BoxLayout.prototype._updateLayout = function() {
         }
 
         widgetInnerbox.appendChild(this.childrenWidgets[i].getHtml());
+        this.childrenWidgets[i]._updateAttributes();  // Fix for MSIE
         this._e.innerbox.appendChild(widgetOuterbox);
     }
 }

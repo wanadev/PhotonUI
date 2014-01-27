@@ -40,7 +40,7 @@
             var vwin = new photonui.Window({
                     title: "Vertical Box",
                     x: 50, y: 50,
-                    width: 200, height: 65,
+                    width: 200,
                     closeButton: false,
                     visible: true
             });
@@ -49,13 +49,13 @@
             });
             var vbtn1 = new photonui.Button({
                     text: "Vertical Button 1"
-            })
+            });
             var vbtn2 = new photonui.Button({
                     text: "Vertical Button 2"
-            })
+            });
             vwin.setChild(vbox);
-            vbox.addChild(vbtn1, {verticalExpansion: false});  // No vertical Expension (webkit bug...)
-            vbox.addChild(vbtn2, {verticalExpansion: false});  // No vertical Expension (webkit bug...)
+            vbox.addChild(vbtn1, {verticalExpansion: false});  // No vertical Expension (webkit and trident bug...)
+            vbox.addChild(vbtn2, {verticalExpansion: false});  // No vertical Expension (webkit and trident bug...)
 
             // Horizontal Layout
             var hwin = new photonui.Window({
@@ -70,10 +70,10 @@
             });
             var hbtn1 = new photonui.Button({
                     text: "Horizontal Button 1"
-            })
+            });
             var hbtn2 = new photonui.Button({
                     text: "Horizontal Button 2"
-            })
+            });
             hwin.setChild(hbox);
             hbox.addChild(hbtn1);
             hbox.addChild(hbtn2);
