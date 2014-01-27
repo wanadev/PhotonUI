@@ -136,7 +136,6 @@ photonui.Button.prototype.getContainer = function() {
  * @private
  */
 photonui.Button.prototype._buildHtml = function() {
-    // Builde the HTML;
     this._e.button = document.createElement("button");
     this._e.button.className = "photonui-widget photonui-button";
 }

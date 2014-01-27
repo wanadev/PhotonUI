@@ -1,0 +1,98 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>PhotonUI Viewport</title>
+
+        <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/window/window-style.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/button/button-style.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/layout/boxlayout.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/viewport/viewport.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                color: #000;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../photonui/photonui.js"></script>
+        <script src="../photonui/helpers.js"></script>
+
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/window/window.js"></script>
+        <script src="../photonui/button/button.js"></script>
+        <script src="../photonui/layout/layout.js"></script>
+        <script src="../photonui/layout/boxlayout.js"></script>
+        <script src="../photonui/viewport/viewport.js"></script>
+
+        <script>
+            var win = new photonui.Window({
+                    title: "Viewport Demo",
+                    x: 50, y: 50,
+                    width: 200,
+                    height: 120,
+                    padding: 0,
+                    closeButton: false,
+                    visible: true
+            });
+
+            var vp = new photonui.Viewport({
+                    padding: 5
+            });
+
+            var vbox = new photonui.BoxLayout();
+
+            vp.setChild(vbox);
+            win.setChild(vp);
+
+            for (var i=0 ; i<10 ; i++) {
+                    var btn = new photonui.Button({text: "Button " + i});
+                    vbox.addChild(btn);
+            }
+
+            // Another test
+            photonui.build({
+                __widget__: "Window",
+                x: 300, y: 50,
+                width: 200,
+                height: 120,
+                visible: true,
+                __child__: {
+                    __widget__: "BoxLayout",
+                    __children__: [
+                        {
+                            __widget__: "Button"
+                        },
+                        {
+                            __widget__: "Viewport",
+                            __child__: {
+                                __widget__: "BoxLayout",
+                                __children__: [
+                                    {__widget__: "Button"},
+                                    {__widget__: "Button"},
+                                    {__widget__: "Button"},
+                                    {__widget__: "Button"},
+                                    {__widget__: "Button"}
+                                ]
+                            }
+                        }
+                    ]
+                }
+            })
+        </script>
+    </body>
+</html>
+

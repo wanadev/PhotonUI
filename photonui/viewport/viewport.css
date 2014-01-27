@@ -29,50 +29,9 @@
  */
 
 
-.photonui-boxlayout-outerbox {
-}
-
-.photonui-boxlayout-innerbox {
-    display: table;
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
-}
-
-.photonui-boxlayout-widgetinnerbox {
-    vertical-align: middle;
-    text-align: center;
-}
-
-
-/** Vertical Box **/
-
-
-.photonui-layout-orientation-vertical > .photonui-boxlayout-innerbox > .photonui-boxlayout-widgetouterbox {
-    display: table-row;
-}
-
-.photonui-layout-orientation-vertical > .photonui-boxlayout-innerbox > .photonui-boxlayout-widgetouterbox > .photonui-boxlayout-widgetinnerbox {
-    /*display: table-cell;*/  /** FIXME bug with webkit and trident */
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    height: 0%;
-}
-
-
-/** Horizontal Box **/
-
-
-.photonui-layout-orientation-horizontal > .photonui-boxlayout-innerbox > .photonui-boxlayout-widgetouterbox {
-    display: table-cell;
-    height: 100%;
-}
-
-.photonui-layout-orientation-horizontal > .photonui-boxlayout-innerbox > .photonui-boxlayout-widgetouterbox > .photonui-boxlayout-widgetinnerbox {
-    width: 100%;
-    height: 100%;
+.photonui-viewport {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
