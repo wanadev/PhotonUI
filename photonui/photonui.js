@@ -86,6 +86,14 @@ photonui.build = function(widgets) {
         if (widget.__child__ != undefined) {
             buildWidget(w, widget.__child__);
         }
+
+        if (widget.__children__ != undefined) {
+            for (var i in widget.__children__) {
+                w.addChild(buildWidget(null, widget.__children__[i]));
+            }
+        }
+
+        return w;
     }
 
     for (var i in widgets) {

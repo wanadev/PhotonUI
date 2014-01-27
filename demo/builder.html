@@ -12,6 +12,8 @@
 
         <link type="text/css" rel="stylesheet" href="../photonui/button/button.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/button/button-style.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/layout/boxlayout.css" />
         <style>
             html, body {
                 margin: 0;
@@ -30,6 +32,8 @@
         <script src="../photonui/widget.js"></script>
         <script src="../photonui/window/window.js"></script>
         <script src="../photonui/button/button.js"></script>
+        <script src="../photonui/layout/layout.js"></script>
+        <script src="../photonui/layout/boxlayout.js"></script>
 
         <script>
             // Create an UI
@@ -41,7 +45,7 @@
                     visible: true,
                     __child__: {
                         __widget__: "Button",
-                        name: "button1",
+                        name: "clickmeButton",
                         text: ">>> Click Me <<<"
                     }
                 },
@@ -52,8 +56,29 @@
                     x: 100,
                     y: 100,
                     width: 200,
-                    height: 75,
-                    visible: true
+                    visible: true,
+                    __child__: {
+                        __widget__: "BoxLayout",
+                        name: "boxlayout1",
+                        orientation: "horizontal",
+                        __children__: [
+                            {
+                                __widget__: "Button",
+                                name: "helloButton",
+                                text: "Hello",
+                            },
+                            {
+                                __widget__: "Button",
+                                name: "worldButton",
+                                text: "World"
+                            },
+                            {
+                                __widget__: "Button",
+                                name: "smileButton",
+                                text: ":)"
+                            },
+                        ]
+                    }
                 }
             ];
 
@@ -62,6 +87,12 @@
 
             // Get and center the first window
             photonui.getWidget("window1").center();
+
+            // Change the second window layout when clicking the button in the first window
+            photonui.getWidget("clickmeButton").registerCallback("ClickMe", "click", function(widget, event) {
+                    var w = photonui.getWidget("boxlayout1");
+                    w.setOrientation((w.getOrientation() == "vertical") ? "horizontal" : "vertical");
+            });
         </script>
     </body>
 </html>

@@ -103,8 +103,9 @@ photonui.BoxLayout.prototype.setOrientation = function(orientation) {
     }
     this.orientation = orientation;
     this.removeClass("photonui-layout-orientation-vertical");
-    this.removeClass("photonui-layout-orientation-hotizontal");
+    this.removeClass("photonui-layout-orientation-horizontal");
     this.addClass("photonui-layout-orientation-" + this.orientation);
+    this._updateLayout();
 }
 
 /**
@@ -179,10 +180,10 @@ photonui.BoxLayout.prototype._updateAttributes = function() {
 photonui.BoxLayout.prototype._updateLayout = function() {
     this._e.innerbox.innerHTML = "";
     for (var i in this.childrenWidgets) {
-        var widgetOuterbox = this._e.outerbox = document.createElement("div");
+        var widgetOuterbox = document.createElement("div");
         widgetOuterbox.className = "photonui-boxlayout-widgetouterbox";
 
-        var widgetInnerbox = this._e.outerbox = document.createElement("div");
+        var widgetInnerbox = document.createElement("div");
         widgetInnerbox.className = "photonui-boxlayout-widgetinnerbox";
         widgetOuterbox.appendChild(widgetInnerbox);
 
