@@ -30,9 +30,8 @@
 
 
 .photonui-button {
-    padding: 0 7px;
+    padding: 0 10px;
     display: inline-block;
-    /*font-weight: bold;*/
     cursor: pointer;
     border-radius: 2px;
     text-decoration: none !important;
@@ -72,5 +71,5 @@
 
 .photonui-button:focus {
     border-color: #777;
-    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .5), inset -1px -1px 0 rgba(255, 255, 255, .2), 1px 1px 3px rgba(0, 0, 0, .2);
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .5), inset -1px -1px 0 rgba(255, 255, 255, .2), 0 0 3px rgba(0, 0, 0, .4);
 }

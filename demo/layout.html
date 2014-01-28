@@ -84,7 +84,7 @@
             var gwin = new photonui.Window({
                     title: "Grid Layout",
                     x: 50, y: 180,
-                    width: 300, height: 150,
+                    width: 300, //height: 150,
                     padding: 0,
                     visible: true
             });
@@ -101,6 +101,14 @@
             grid.addChild(new photonui.Button(), {gridX: 0, gridY: 3, gridWidth: 1, gridHeight: 1});
             grid.addChild(new photonui.Button(), {gridX: 1, gridY: 3, gridWidth: 1, gridHeight: 1});
             grid.addChild(new photonui.Button(), {gridX: 2, gridY: 3, gridWidth: 1, gridHeight: 1});
+
+            // ---- Widget Expansion Test -----------------------
+            //grid.addChild(new photonui.Button(), {gridX: 0, gridY: 4, gridWidth: 2, gridHeight: 2});
+            grid.addChild(new photonui.Button(), {gridX: 0, gridY: 4, gridWidth: 2, gridHeight: 2, horizontalExpansion: false, verticalExpansion: false});
+            // --------------------------------------------------
+
+            grid.addChild(new photonui.Button(), {gridX: 2, gridY: 4, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 2, gridY: 5, gridWidth: 1, gridHeight: 1});
         </script>
     </body>
 </html>
