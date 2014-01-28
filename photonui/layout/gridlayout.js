@@ -57,8 +57,8 @@ var photonui = photonui || {};
  * @class GridLayout
  * @constructor
  * @extends photonui.Layout
- * @param {Number} params.verticalSpacing Spacing between widgets (optional, default = 5).
- * @param {Number} params.horizontalSpacing Spacing between widgets (optional, default = 5).
+ * @param {Number} params.verticalSpacing Vertical spacing between widgets (optional, default = 5).
+ * @param {Number} params.horizontalSpacing Horizontal spacing between widgets (optional, default = 5).
  */
 photonui.GridLayout = function(params) {
     photonui.Layout.call(this, params);
@@ -133,7 +133,7 @@ photonui.GridLayout.prototype.setHorizontalSpacing = function(spacing) {
  * @return {HTMLElement}
  */
 photonui.GridLayout.prototype.getHtml = function() {
-    return this._e.outer;
+    return this._e.outerbox;
 }
 
 
@@ -149,14 +149,14 @@ photonui.GridLayout.prototype.getHtml = function() {
  * @private
  */
 photonui.GridLayout.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("div");
-    this._e.outer.className = "photonui-widget photonui-gridlayout";
+    this._e.outerbox = document.createElement("div");
+    this._e.outerbox.className = "photonui-widget photonui-gridlayout";
 
     this._e.grid = document.createElement("table");
-    this._e.outer.appendChild(this._e.grid);
+    this._e.outerbox.appendChild(this._e.grid);
 
-    this._e.gridInner = document.createElement("tbody");
-    this._e.grid.appendChild(this._e.gridInner);
+    this._e.gridBody = document.createElement("tbody");
+    this._e.grid.appendChild(this._e.gridBody);
 }
 
 /**
@@ -200,7 +200,7 @@ photonui.GridLayout.prototype._updateLayout = function() {
     // TODO
 
     // Build
-    this._e.gridInner.innerHTML = "";
+    this._e.gridBody.innerHTML = "";
     var map = [];
     for (var y=0 ; y<nr ; y++) {
         var row = [];
@@ -211,7 +211,7 @@ photonui.GridLayout.prototype._updateLayout = function() {
     }
     for (var y=0 ; y<nr ; y++) {
         var e_tr = document.createElement("tr");
-        this._e.gridInner.appendChild(e_tr);
+        this._e.gridBody.appendChild(e_tr);
         for (var x=0 ; x<nc ; x++) {
             if (map[y][x]) {
                 continue;
@@ -255,7 +255,7 @@ photonui.GridLayout.prototype._updateLayout = function() {
 
     // Hack for Gecko and Trident
     var cells = document.getElementsByClassName("photonui-gridlayout-cell");
-    var heights = []
+    var heights = [];
     for (var i=0 ; i<cells.length ; i++) {
         heights[i] = cells[i].offsetHeight + "px";
     }

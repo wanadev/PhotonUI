@@ -37,7 +37,6 @@
 }
 
 .photonui-gridlayout-cell {
-    /*height: 0%;  /* Hack for Gecko, break Trident => replaced by a js hack that fix Gecko AND Trident*/
     padding: 0;
 }
 

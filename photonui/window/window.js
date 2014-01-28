@@ -68,7 +68,7 @@ photonui._windowList = [];
  * @param {Number} params.minHeight The window content minimum height (none = no limit, optional, default = none).
  * @param {Number} params.maxWidth The window content maximum width (none = no limit, optional, default = none).
  * @param {Number} params.maxHeight The window content maximum height (none = no limit, optional, default = none).
- * @param {Number} params.padding The window content padding (optional, default = 5).
+ * @param {Number} params.padding The window content padding (optional, default = 0).
  * @param {Boolean} params.visible Is the widget displayed or hidden (optional, default=false).
  * @param {HTMLElement} params.e_parent The DOM node where the window will be inserted (none = no limit, optional, default = none).
  */
@@ -88,7 +88,7 @@ photonui.Window = function(params) {
     this.minHeight = params.minHeight || null;
     this.maxWidth = params.maxWidth || null;
     this.maxHeight = params.maxHeight || null;
-    this.padding = (params.padding != undefined) ? params.padding : 5;
+    this.padding = (params.padding != undefined) ? params.padding : 0;
     this.visible = (params.visible != undefined) ? params.visible : false;
 
     this._e_parent = params.e_parent || photonui.e_parent;

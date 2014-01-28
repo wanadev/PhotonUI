@@ -49,9 +49,7 @@
                     visible: true
             });
 
-            var vp = new photonui.Viewport({
-                    padding: 5
-            });
+            var vp = new photonui.Viewport();
 
             var vbox = new photonui.BoxLayout();
 
@@ -82,6 +80,7 @@
                             __layout__: {"height": 100},
                             __child__: {
                                 __widget__: "BoxLayout",
+                                horizontalSpacing: 0,
                                 __children__: [
                                     {__widget__: "Button", text: "Button 1"},
                                     {__widget__: "Button", text: "Button 2"},
