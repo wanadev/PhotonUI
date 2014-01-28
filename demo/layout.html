@@ -14,6 +14,7 @@
         <link type="text/css" rel="stylesheet" href="../photonui/button/button-style.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/layout/boxlayout.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/layout/gridlayout.css" />
         <style>
             html, body {
                 margin: 0;
@@ -34,11 +35,12 @@
         <script src="../photonui/button/button.js"></script>
         <script src="../photonui/layout/layout.js"></script>
         <script src="../photonui/layout/boxlayout.js"></script>
+        <script src="../photonui/layout/gridlayout.js"></script>
 
         <script>
             // Vertical Layout
             var vwin = new photonui.Window({
-                    title: "Vertical Box",
+                    title: "Vertical Box Layout",
                     x: 50, y: 50,
                     width: 200,
                     closeButton: false,
@@ -59,7 +61,7 @@
 
             // Horizontal Layout
             var hwin = new photonui.Window({
-                    title: "Horizontal Box",
+                    title: "Horizontal Box Layout",
                     x: 270, y: 50,
                     height: 65,
                     closeButton: false,
@@ -77,6 +79,28 @@
             hwin.setChild(hbox);
             hbox.addChild(hbtn1);
             hbox.addChild(hbtn2);
+
+            // Grid Layout
+            var gwin = new photonui.Window({
+                    title: "Grid Layout",
+                    x: 50, y: 180,
+                    width: 300, height: 150,
+                    padding: 0,
+                    visible: true
+            });
+            var grid = new photonui.GridLayout();
+            gwin.setChild(grid);
+
+            grid.addChild(new photonui.Button(), {gridX: 0, gridY: 0, gridWidth: 2, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 2, gridY: 0, gridWidth: 1, gridHeight: 2});
+            grid.addChild(new photonui.Button(), {gridX: 0, gridY: 1, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 1, gridY: 1, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 0, gridY: 2, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 1, gridY: 2, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 2, gridY: 2, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 0, gridY: 3, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 1, gridY: 3, gridWidth: 1, gridHeight: 1});
+            grid.addChild(new photonui.Button(), {gridX: 2, gridY: 3, gridWidth: 1, gridHeight: 1});
         </script>
     </body>
 </html>
