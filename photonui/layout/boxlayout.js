@@ -60,7 +60,8 @@ var photonui = photonui || {};
  * @constructor
  * @extends photonui.Layout
  * @param {String} params.orientation The orientation of the box layout: `"vertical"` or `"horizontal"` (optional, default = "vertical").
- * @param {Number} params.spacing Spacing between widgets (optional, default = 5).
+ * @param {Number} params.verticalSpacing Vertical spacing between widgets (optional, default = 5).
+ * @param {Number} params.horizontalSpacing Horizontal spacing between widgets (optional, default = 5).
  */
 photonui.BoxLayout = function(params) {
     photonui.Layout.call(this, params);
@@ -69,7 +70,8 @@ photonui.BoxLayout = function(params) {
 
     // Attrs
     this.orientation = params.orientation || "vertical";
-    this.spacing = (params.spacing != undefined) ? params.spacing : 5;
+    this.verticalSpacing = (params.verticalSpacing != undefined) ? params.verticalSpacing : 5;
+    this.horizontalSpacing = (params.horizontalSpacing != undefined) ? params.horizontalSpacing : 5;
 
     this._e = {};  // HTML elements
 
@@ -115,24 +117,45 @@ photonui.BoxLayout.prototype.setOrientation = function(orientation) {
 }
 
 /**
- * Get the spacing.
+ * Get the vertical spacing.
  *
- * @method getSpacing
- * @return {Number} The spacing between widgets.
+ * @method getVerticalSpacing
+ * @return {Number} The vertical spacing between widgets.
  */
-photonui.BoxLayout.prototype.getSpacing = function() {
-    return this.spacing;
+photonui.BoxLayout.prototype.getVerticalSpacing = function() {
+    return this.verticalSpacing;
 }
 
 /**
- * Set widgets spacing.
+ * Set the vertical spacing.
  *
- * @method setSpacing
- * @param {Number} spacing The spacing between widgets.
+ * @method setVerticalSpacing
+ * @param {Number} spacing The vertical spacing between widgets.
  */
-photonui.BoxLayout.prototype.setSpacing = function(spacing) {
-    this.spacing = spacing;
-    this._updateLayout();
+photonui.BoxLayout.prototype.setVerticalSpacing = function(spacing) {
+    this.verticalSpacing = spacing;
+    this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
+}
+
+/**
+ * Get the horizontal spacing.
+ *
+ * @method getHorizontalSpacing
+ * @return {Number} The horizontal spacing between widgets.
+ */
+photonui.BoxLayout.prototype.getHorizontalSpacing = function() {
+    return this.horizontalSpacing;
+}
+
+/**
+ * Set the horizontal spacing.
+ *
+ * @method setHorizontalSpacing
+ * @param {Number} spacing The horizontal spacing between widgets.
+ */
+photonui.BoxLayout.prototype.setHorizontalSpacing = function(spacing) {
+    this.horizontalSpacing = spacing;
+    this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
 }
 
 /**
@@ -159,11 +182,13 @@ photonui.BoxLayout.prototype.getHtml = function() {
  */
 photonui.BoxLayout.prototype._buildHtml = function() {
     this._e.outerbox = document.createElement("div");
-    this._e.outerbox.className = "photonui-widget photonui-boxlayout photonui-boxlayout-outerbox";
+    this._e.outerbox.className = "photonui-widget photonui-boxlayout";
 
-    this._e.innerbox = document.createElement("div");
-    this._e.innerbox.className = "photonui-boxlayout-innerbox";
-    this._e.outerbox.appendChild(this._e.innerbox);
+    this._e.grid = document.createElement("table");
+    this._e.outerbox.appendChild(this._e.grid);
+
+    this._e.gridBody = document.createElement("tbody");
+    this._e.grid.appendChild(this._e.gridBody);
 }
 
 /**
@@ -175,6 +200,7 @@ photonui.BoxLayout.prototype._buildHtml = function() {
 photonui.BoxLayout.prototype._updateAttributes = function() {
     photonui.Layout.prototype._updateAttributes.call(this);
     this.setOrientation(this.orientation);
+    this.setVerticalSpacing(this.verticalSpacing);
 }
 
 /**
@@ -184,60 +210,70 @@ photonui.BoxLayout.prototype._updateAttributes = function() {
  * @private
  */
 photonui.BoxLayout.prototype._updateLayout = function() {
-    this._e.innerbox.innerHTML = "";
-    for (var i in this.childrenWidgets) {
-        var widgetOuterbox = document.createElement("div");
-        widgetOuterbox.className = "photonui-boxlayout-widgetouterbox";
+    this._e.gridBody.innerHTML = "";
 
-        var widgetInnerbox = document.createElement("div");
-        widgetInnerbox.className = "photonui-boxlayout-widgetinnerbox";
-        widgetOuterbox.appendChild(widgetInnerbox);
+    var e_tr = null;
+    if (this.getOrientation() == "horizontal") {
+        e_tr = document.createElement("tr");
+        this._e.gridBody.appendChild(e_tr);
+    }
 
-        // Padding
-        if (i > 0 && this.orientation == "vertical") {
-            widgetInnerbox.style.paddingTop = this.spacing + "px";
+    for (var i=0 ; i<this.childrenWidgets.length ; i++) {
+        if (this.getOrientation() == "vertical") {
+            e_tr = document.createElement("tr");
+            this._e.gridBody.appendChild(e_tr);
         }
-        else if (i > 0 && this.orientation == "horizontal") {
-            widgetInnerbox.style.paddingLeft = this.spacing + "px";
-        }
+
+        var e_td = document.createElement("td");
+        e_td.className = "photonui-boxlayout-cell";
+        e_tr.appendChild(e_td);
 
         // Layout Options: Expansion
         if (this.childrenWidgets[i].layoutOptions.horizontalExpansion == undefined
         ||  this.childrenWidgets[i].layoutOptions.horizontalExpansion) {
-            widgetInnerbox.className += " photonui-container-expand-child-horizontal"
+            e_td.className += " photonui-container-expand-child-horizontal";
         }
         if (this.childrenWidgets[i].layoutOptions.verticalExpansion == undefined
         ||  this.childrenWidgets[i].layoutOptions.verticalExpansion) {
-            widgetInnerbox.className += " photonui-container-expand-child-vertical"
+            e_td.className += " photonui-container-expand-child-vertical";
         }
+
         // Layout Options: width
         if (this.childrenWidgets[i].layoutOptions.width != undefined) {
-            widgetInnerbox.style.height = this.childrenWidgets[i].layoutOptions.width + "px";
+            e_td.style.height = this.childrenWidgets[i].layoutOptions.width + "px";
         }
         // Layout Options: height
         if (this.childrenWidgets[i].layoutOptions.height != undefined) {
-            widgetInnerbox.style.height = this.childrenWidgets[i].layoutOptions.height + "px";
+            e_td.style.height = this.childrenWidgets[i].layoutOptions.height + "px";
         }
         // Layout Options: minWidth
         if (this.childrenWidgets[i].layoutOptions.minWidth != undefined) {
-            widgetInnerbox.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
+            e_td.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
         }
         // Layout Options: minHeight
         if (this.childrenWidgets[i].layoutOptions.minHeight != undefined) {
-            widgetInnerbox.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
+            e_td.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
         }
         // Layout Options: maxWidth
         if (this.childrenWidgets[i].layoutOptions.maxWidth != undefined) {
-            widgetInnerbox.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
+            e_td.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
         }
         // Layout Options: maxHeight
         if (this.childrenWidgets[i].layoutOptions.maxHeight != undefined) {
-            widgetInnerbox.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
+            e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
         }
 
-
-        widgetInnerbox.appendChild(this.childrenWidgets[i].getHtml());
+        e_td.appendChild(this.childrenWidgets[i].getHtml());
         this.childrenWidgets[i]._updateAttributes();  // Fix for MSIE
-        this._e.innerbox.appendChild(widgetOuterbox);
+    }
+
+    // Hack for Gecko and Trident
+    var cells = document.getElementsByClassName("photonui-boxlayout-cell");
+    var heights = [];
+    for (var i=0 ; i<cells.length ; i++) {
+        heights[i] = cells[i].offsetHeight + "px";
+    }
+    for (var i=0 ; i<cells.length ; i++) {
+        cells[i].style.height = heights[i];
     }
 }
