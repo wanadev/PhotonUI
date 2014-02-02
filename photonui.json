@@ -1,0 +1,44 @@
+{
+    "Core": {
+        "javascript": ["photonui.js", "helpers.js", "widget.js"],
+        "css": ["photonui.css"],
+        "themeCss": [],
+        "dependencies": []
+    },
+    "Window": {
+        "javascript": ["window/window.js"],
+        "css": ["window/window.css"],
+        "themeCss": ["window/window-style.css"],
+        "dependencies": ["Core"]
+    },
+    "Layout": {
+        "javascript": ["layout/layout.js"],
+        "css": [],
+        "themeCss": [],
+        "dependencies": ["Core"]
+    },
+    "BoxLayout": {
+        "javascript": ["layout/boxlayout.js"],
+        "css": ["layout/boxlayout.css"],
+        "themeCss": [],
+        "dependencies": ["Core", "Layout"]
+    },
+    "GridLayout": {
+        "javascript": ["layout/gridlayout.js"],
+        "css": ["layout/gridlayout.css"],
+        "themeCss": [],
+        "dependencies": ["Core", "Layout"]
+    },
+    "Viewport": {
+        "javascript": ["viewport/viewport.js"],
+        "css": ["viewport/viewport.css"],
+        "themeCss": [],
+        "dependencies": ["Core"]
+    },
+    "Button": {
+        "javascript": ["button/button.js"],
+        "css": ["button/button.css"],
+        "themeCss": ["button/button-style.css"],
+        "dependencies": ["Core"]
+    }
+}

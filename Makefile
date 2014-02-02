@@ -1,3 +1,6 @@
+photonui: FORCE
+	python build.py
+
 doc: FORCE
 	yuidoc
 
