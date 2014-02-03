@@ -32,7 +32,7 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Widget
+ * @submodule Container
  * @namespace photonui
  */
 
@@ -45,13 +45,13 @@ var photonui = photonui || {};
  *
  * @class Viewport
  * @constructor
- * @extends photonui.Widget
+ * @extends photonui.Container
  * @param {Number} params.padding The padding (optional, default = 0).
  * @param {Boolean} params.verticalScrollbar Enable the vertical scrollbar: `true`=display, `false`=hide, `null`=auto (optional, default = `null`).
  * @param {Boolean} params.horizontalScrollbar Enable the vertical scrollbar: `true`=display, `false`=hide, `null`=auto (optional, default = `null`).
  */
 photonui.Viewport = function(params) {
-    photonui.Widget.call(this, params);
+    photonui.Container.call(this, params);
 
     var params = params || {};
 
@@ -67,7 +67,7 @@ photonui.Viewport = function(params) {
     this._updateAttributes();
 }
 
-photonui.Viewport.prototype = new photonui.Widget();
+photonui.Viewport.prototype = new photonui.Container();
 
 
 //////////////////////////////////////////
@@ -167,10 +167,10 @@ photonui.Viewport.prototype.getHtml = function() {
 /**
  * Get the container DOM Element.
  *
- * @method getContainer
+ * @method getContainerNode
  * @return {HTMLElement}
  */
-photonui.Viewport.prototype.getContainer = function() {
+photonui.Viewport.prototype.getContainerNode = function() {
     return this._e.viewport;
 }
 
@@ -198,7 +198,7 @@ photonui.Viewport.prototype._buildHtml = function() {
  * @private
  */
 photonui.Viewport.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
+    photonui.Container.prototype._updateAttributes.call(this);
 
     this.setPadding(this.padding);
     this.setVerticalScrollbar(this.verticalScrollbar);

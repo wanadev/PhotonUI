@@ -123,6 +123,11 @@ if __name__ == "__main__":
             const=True,
             help="show the available modules and exit",
     )
+    parser.add_argument("-a", "--list-all",
+            action="store_const",
+            const=True,
+            help="show all the available modules (including abstract ones) and exit",
+    )
     parser.add_argument("-o", "--output",
             default="./photonui.out/",
             help="the output directory ('./photonui.out/' by default)",
@@ -136,6 +141,11 @@ if __name__ == "__main__":
 
     # List modules
     if args.list:
+        print(", ".join(sorted(filter(lambda k: not photonui_modules[k]["abstract"], photonui_modules.keys()))))
+        sys.exit(0)
+
+    # List all modules
+    if args.list_all:
         print(", ".join(sorted(photonui_modules.keys())))
         sys.exit(0)
 

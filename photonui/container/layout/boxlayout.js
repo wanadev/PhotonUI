@@ -32,7 +32,7 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Widget
+ * @submodule Container
  * @namespace photonui
  */
 
@@ -41,31 +41,35 @@ var photonui = photonui || {};
 
 
 /**
- * Grid layout.
+ * Vertical and horizontal box layout.
  *
  * Layout Options:
  *
  *     {
  *          verticalExpansion: <Boolean, default: true>,
  *          horizontalExpansion: <Boolean, default: true>,
- *          gridX: <Number, default: 0>,
- *          gridY: <Number, default: 0>,
- *          gridWidth: <Number, default: 1>,
- *          gridHeight: <Number, default: 1>,
+ *          width: <Number, default: undefined>,
+ *          height: <Number, default: undefined>,
+ *          minWidth: <Number, default: undefined>,
+ *          minHeight: <Number, default: undefined>,
+ *          maxWidth: <Number, default: undefined>,
+ *          maxHeight: <Number, default: undefined>
  *     }
  *
- * @class GridLayout
+ * @class BoxLayout
  * @constructor
  * @extends photonui.Layout
+ * @param {String} params.orientation The orientation of the box layout: `"vertical"` or `"horizontal"` (optional, default = "vertical").
  * @param {Number} params.verticalSpacing Vertical spacing between widgets (optional, default = 5).
  * @param {Number} params.horizontalSpacing Horizontal spacing between widgets (optional, default = 5).
  */
-photonui.GridLayout = function(params) {
+photonui.BoxLayout = function(params) {
     photonui.Layout.call(this, params);
 
     var params = params || {};
 
     // Attrs
+    this.orientation = params.orientation || "vertical";
     this.verticalSpacing = (params.verticalSpacing != undefined) ? params.verticalSpacing : 5;
     this.horizontalSpacing = (params.horizontalSpacing != undefined) ? params.horizontalSpacing : 5;
 
@@ -76,7 +80,7 @@ photonui.GridLayout = function(params) {
     this._updateAttributes();
 }
 
-photonui.GridLayout.prototype = new photonui.Layout();
+photonui.BoxLayout.prototype = new photonui.Layout();
 
 
 //////////////////////////////////////////
@@ -85,12 +89,40 @@ photonui.GridLayout.prototype = new photonui.Layout();
 
 
 /**
+ * Get the orientation of the layout.
+ *
+ * @method getOrientation
+ * @return {String} The layout orientation: `"vertical"` or `"horizontal"`.
+ */
+photonui.BoxLayout.prototype.getOrientation = function() {
+    return this.orientation;
+}
+
+/**
+ * Set the orientation of the layout.
+ *
+ * @method setOrientation
+ * @param {String} orientation The layout orientation: `"vertical"` or `"horizontal"`.
+ */
+photonui.BoxLayout.prototype.setOrientation = function(orientation) {
+    if (orientation != "vertical" && orientation != "horizontal") {
+        throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+        return;
+    }
+    this.orientation = orientation;
+    this.removeClass("photonui-layout-orientation-vertical");
+    this.removeClass("photonui-layout-orientation-horizontal");
+    this.addClass("photonui-layout-orientation-" + this.orientation);
+    this._updateLayout();
+}
+
+/**
  * Get the vertical spacing.
  *
  * @method getVerticalSpacing
  * @return {Number} The vertical spacing between widgets.
  */
-photonui.GridLayout.prototype.getVerticalSpacing = function() {
+photonui.BoxLayout.prototype.getVerticalSpacing = function() {
     return this.verticalSpacing;
 }
 
@@ -100,7 +132,7 @@ photonui.GridLayout.prototype.getVerticalSpacing = function() {
  * @method setVerticalSpacing
  * @param {Number} spacing The vertical spacing between widgets.
  */
-photonui.GridLayout.prototype.setVerticalSpacing = function(spacing) {
+photonui.BoxLayout.prototype.setVerticalSpacing = function(spacing) {
     this.verticalSpacing = spacing;
     this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
 }
@@ -111,7 +143,7 @@ photonui.GridLayout.prototype.setVerticalSpacing = function(spacing) {
  * @method getHorizontalSpacing
  * @return {Number} The horizontal spacing between widgets.
  */
-photonui.GridLayout.prototype.getHorizontalSpacing = function() {
+photonui.BoxLayout.prototype.getHorizontalSpacing = function() {
     return this.horizontalSpacing;
 }
 
@@ -121,7 +153,7 @@ photonui.GridLayout.prototype.getHorizontalSpacing = function() {
  * @method setHorizontalSpacing
  * @param {Number} spacing The horizontal spacing between widgets.
  */
-photonui.GridLayout.prototype.setHorizontalSpacing = function(spacing) {
+photonui.BoxLayout.prototype.setHorizontalSpacing = function(spacing) {
     this.horizontalSpacing = spacing;
     this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
 }
@@ -132,7 +164,7 @@ photonui.GridLayout.prototype.setHorizontalSpacing = function(spacing) {
  * @method getHtml
  * @return {HTMLElement}
  */
-photonui.GridLayout.prototype.getHtml = function() {
+photonui.BoxLayout.prototype.getHtml = function() {
     return this._e.outerbox;
 }
 
@@ -148,9 +180,9 @@ photonui.GridLayout.prototype.getHtml = function() {
  * @method _buildHtml
  * @private
  */
-photonui.GridLayout.prototype._buildHtml = function() {
+photonui.BoxLayout.prototype._buildHtml = function() {
     this._e.outerbox = document.createElement("div");
-    this._e.outerbox.className = "photonui-widget photonui-gridlayout";
+    this._e.outerbox.className = "photonui-widget photonui-boxlayout";
 
     this._e.grid = document.createElement("table");
     this._e.outerbox.appendChild(this._e.grid);
@@ -165,9 +197,9 @@ photonui.GridLayout.prototype._buildHtml = function() {
  * @method _updateAttributes
  * @private
  */
-photonui.GridLayout.prototype._updateAttributes = function() {
+photonui.BoxLayout.prototype._updateAttributes = function() {
     photonui.Layout.prototype._updateAttributes.call(this);
-
+    this.setOrientation(this.orientation);
     this.setVerticalSpacing(this.verticalSpacing);
 }
 
@@ -177,84 +209,66 @@ photonui.GridLayout.prototype._updateAttributes = function() {
  * @method _updateLayout
  * @private
  */
-photonui.GridLayout.prototype._updateLayout = function() {
-    // Calculate geometry
-    var ox = Infinity;  // Offset X
-    var oy = Infinity;  // Offset Y
-    var nc = 0;  // Number of columns
-    var nr = 0;  // Number of rows
-    for (var i=0 ; i<this.childrenWidgets.length ; i++) {
-        this.childrenWidgets[i].layoutOptions.gridX = (this.childrenWidgets[i].layoutOptions.gridX != undefined) ? this.childrenWidgets[i].layoutOptions.gridX : 0;
-        this.childrenWidgets[i].layoutOptions.gridY = (this.childrenWidgets[i].layoutOptions.gridY != undefined) ? this.childrenWidgets[i].layoutOptions.gridY : 0;
-        this.childrenWidgets[i].layoutOptions.gridWidth = Math.max(this.childrenWidgets[i].layoutOptions.gridWidth, 1) || 1;
-        this.childrenWidgets[i].layoutOptions.gridHeight = Math.max(this.childrenWidgets[i].layoutOptions.gridHeight, 1) || 1;
-        ox = Math.min(ox, this.childrenWidgets[i].layoutOptions.gridX);
-        oy = Math.min(oy, this.childrenWidgets[i].layoutOptions.gridY);
-        nc = Math.max(nc, this.childrenWidgets[i].layoutOptions.gridX + this.childrenWidgets[i].layoutOptions.gridWidth);
-        nr = Math.max(nr, this.childrenWidgets[i].layoutOptions.gridY + this.childrenWidgets[i].layoutOptions.gridHeight);
-    }
-    nc -= ox;
-    nr -= oy;
-
-    // Find and fix conflicts
-    // TODO
-
-    // Build
+photonui.BoxLayout.prototype._updateLayout = function() {
     this._e.gridBody.innerHTML = "";
-    var map = [];
-    for (var y=0 ; y<nr ; y++) {
-        var row = [];
-        for (var x=0 ; x<nc ; x++) {
-            row.push(false);
-        }
-        map.push(row);
-    }
-    for (var y=0 ; y<nr ; y++) {
-        var e_tr = document.createElement("tr");
+
+    var e_tr = null;
+    if (this.getOrientation() == "horizontal") {
+        e_tr = document.createElement("tr");
         this._e.gridBody.appendChild(e_tr);
-        for (var x=0 ; x<nc ; x++) {
-            if (map[y][x]) {
-                continue;
-            }
-            var widget = false;
-            var e_td = document.createElement("td");
-            e_td.className = "photonui-gridlayout-cell";
-            e_tr.appendChild(e_td);
-            for (var i=0 ; i<this.childrenWidgets.length ; i++) {
-                if (this.childrenWidgets[i].layoutOptions.gridX - ox == x && this.childrenWidgets[i].layoutOptions.gridY - oy == y) {
-                    widget = true;
-                    var cs = this.childrenWidgets[i].layoutOptions.gridWidth;
-                    var rs = this.childrenWidgets[i].layoutOptions.gridHeight;
-                    e_td.colSpan = cs;
-                    e_td.rowSpan = rs;
-                    e_td.appendChild(this.childrenWidgets[i].getHtml());
-                    this.childrenWidgets[i]._updateAttributes();  // Fix for MSIE
-                    if (this.childrenWidgets[i].layoutOptions.horizontalExpansion == undefined
-                    ||  this.childrenWidgets[i].layoutOptions.horizontalExpansion) {
-                        e_td.className += " photonui-container-expand-child-horizontal"
-                    }
-                    if (this.childrenWidgets[i].layoutOptions.verticalExpansion == undefined
-                    ||  this.childrenWidgets[i].layoutOptions.verticalExpansion) {
-                        e_td.className += " photonui-container-expand-child-vertical"
-                    }
-                    if (cs > 1 || rs > 1) {
-                        for (var r=y ; r<y+rs ; r++) {
-                            for (var c=x ; c<x+cs ; c++) {
-                                map[r][c] = true;
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-            if (!widget) {
-                e_td.innerHTML = "&nbsp;";
-            }
+    }
+
+    for (var i=0 ; i<this.childrenWidgets.length ; i++) {
+        if (this.getOrientation() == "vertical") {
+            e_tr = document.createElement("tr");
+            this._e.gridBody.appendChild(e_tr);
         }
+
+        var e_td = document.createElement("td");
+        e_td.className = "photonui-boxlayout-cell";
+        e_tr.appendChild(e_td);
+
+        // Layout Options: Expansion
+        if (this.childrenWidgets[i].layoutOptions.horizontalExpansion == undefined
+        ||  this.childrenWidgets[i].layoutOptions.horizontalExpansion) {
+            e_td.className += " photonui-container-expand-child-horizontal";
+        }
+        if (this.childrenWidgets[i].layoutOptions.verticalExpansion == undefined
+        ||  this.childrenWidgets[i].layoutOptions.verticalExpansion) {
+            e_td.className += " photonui-container-expand-child-vertical";
+        }
+
+        // Layout Options: width
+        if (this.childrenWidgets[i].layoutOptions.width != undefined) {
+            e_td.style.height = this.childrenWidgets[i].layoutOptions.width + "px";
+        }
+        // Layout Options: height
+        if (this.childrenWidgets[i].layoutOptions.height != undefined) {
+            e_td.style.height = this.childrenWidgets[i].layoutOptions.height + "px";
+        }
+        // Layout Options: minWidth
+        if (this.childrenWidgets[i].layoutOptions.minWidth != undefined) {
+            e_td.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
+        }
+        // Layout Options: minHeight
+        if (this.childrenWidgets[i].layoutOptions.minHeight != undefined) {
+            e_td.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
+        }
+        // Layout Options: maxWidth
+        if (this.childrenWidgets[i].layoutOptions.maxWidth != undefined) {
+            e_td.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
+        }
+        // Layout Options: maxHeight
+        if (this.childrenWidgets[i].layoutOptions.maxHeight != undefined) {
+            e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
+        }
+
+        e_td.appendChild(this.childrenWidgets[i].getHtml());
+        this.childrenWidgets[i]._updateAttributes();  // Fix for MSIE
     }
 
     // Hack for Gecko and Trident
-    var cells = document.getElementsByClassName("photonui-gridlayout-cell");
+    var cells = document.getElementsByClassName("photonui-boxlayout-cell");
     var heights = [];
     for (var i=0 ; i<cells.length ; i++) {
         heights[i] = cells[i].offsetHeight + "px";

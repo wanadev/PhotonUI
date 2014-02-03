@@ -32,7 +32,7 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Widget
+ * @submodule Container
  * @namespace photonui
  */
 
@@ -56,7 +56,7 @@ photonui._windowList = [];
  *
  * @class Window
  * @constructor
- * @extends photonui.Widget
+ * @extends photonui.Container
  * @param {String} params.title The window title (optional, default = "Window").
  * @param {Number} params.x The window X position (optional, default = 0).
  * @param {Number} params.y The window Y position (optional, default = 0).
@@ -73,7 +73,7 @@ photonui._windowList = [];
  * @param {HTMLElement} params.e_parent The DOM node where the window will be inserted (none = no limit, optional, default = none).
  */
 photonui.Window = function(params) {
-    photonui.Widget.call(this, params);
+    photonui.Container.call(this, params);
 
     var params = params || {};
 
@@ -106,7 +106,7 @@ photonui.Window = function(params) {
     this._e_parent.appendChild(this.getHtml());
 }
 
-photonui.Window.prototype = new photonui.Widget();
+photonui.Window.prototype = new photonui.Container();
 
 
 //////////////////////////////////////////
@@ -400,16 +400,21 @@ photonui.Window.prototype.getHtml = function() {
 /**
  * Get the container DOM Element.
  *
- * @method getContainer
+ * @method getContainerNode
  * @return {HTMLElement}
  */
-photonui.Window.prototype.getContainer = function() {
+photonui.Window.prototype.getContainerNode = function() {
     return this._e.windowContent;
 }
 
-// Documentation in photonui.Widget
+/**
+ * Display or hide the window.
+ *
+ * @method setVisible
+ * @param {Boolean} visible The window visibility
+ */
 photonui.Window.prototype.setVisible = function(visible) {
-    photonui.Widget.prototype.setVisible.call(this, visible);
+    photonui.Container.prototype.setVisible.call(this, visible);
     if (visible) {
         this.moveToFront();
     }
@@ -464,13 +469,17 @@ photonui.Window.prototype.center = function() {
     );
 }
 
-// Documentation in photonui.Widget
+/**
+ * Destroy the window.
+ *
+ * @method destroy
+ */
 photonui.Window.prototype.destroy = function() {
     var index = photonui._windowList.indexOf(this);
     if (index >= 0) {
         photonui._windowList.splice(index, 1);
     }
-    photonui.Widget.prototype.destroy.call(this);
+    photonui.Container.prototype.destroy.call(this);
 }
 
 
@@ -515,7 +524,7 @@ photonui.Window.prototype._buildHtml = function() {
  * @private
  */
 photonui.Window.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
+    photonui.Container.prototype._updateAttributes.call(this);
 
     this.setTitle(this.title);
     this.setPosition(this.position.x, this.position.y);

@@ -1,44 +1,58 @@
 {
     "Core": {
+        "abstract": true,
         "javascript": ["photonui.js", "helpers.js", "widget.js"],
         "css": ["photonui.css"],
         "themeCss": [],
         "dependencies": []
     },
-    "Window": {
-        "javascript": ["window/window.js"],
-        "css": ["window/window.css"],
-        "themeCss": ["window/window-style.css"],
-        "dependencies": ["Core"]
-    },
-    "Layout": {
-        "javascript": ["layout/layout.js"],
+    "Container": {
+        "abstract": true,
+        "javascript": ["container/container.js"],
         "css": [],
         "themeCss": [],
         "dependencies": ["Core"]
     },
-    "BoxLayout": {
-        "javascript": ["layout/boxlayout.js"],
-        "css": ["layout/boxlayout.css"],
+    "Window": {
+        "abstract": false,
+        "javascript": ["container/window/window.js"],
+        "css": ["container/window/window.css"],
+        "themeCss": ["container/window/window-theme.css"],
+        "dependencies": ["Container"]
+    },
+    "Layout": {
+        "abstract": true,
+        "javascript": ["container/layout/layout.js"],
+        "css": [],
         "themeCss": [],
-        "dependencies": ["Core", "Layout"]
+        "dependencies": ["Container"]
+    },
+    "BoxLayout": {
+        "abstract": false,
+        "javascript": ["container/layout/boxlayout.js"],
+        "css": ["container/layout/boxlayout.css"],
+        "themeCss": [],
+        "dependencies": ["Layout"]
     },
     "GridLayout": {
-        "javascript": ["layout/gridlayout.js"],
-        "css": ["layout/gridlayout.css"],
+        "abstract": false,
+        "javascript": ["container/layout/gridlayout.js"],
+        "css": ["container/layout/gridlayout.css"],
         "themeCss": [],
-        "dependencies": ["Core", "Layout"]
+        "dependencies": ["Layout"]
     },
     "Viewport": {
-        "javascript": ["viewport/viewport.js"],
-        "css": ["viewport/viewport.css"],
+        "abstract": false,
+        "javascript": ["container/viewport/viewport.js"],
+        "css": ["container/viewport/viewport.css"],
         "themeCss": [],
-        "dependencies": ["Core"]
+        "dependencies": ["Container"]
     },
     "Button": {
-        "javascript": ["button/button.js"],
-        "css": ["button/button.css"],
-        "themeCss": ["button/button-style.css"],
+        "abstract": false,
+        "javascript": ["input/button/button.js"],
+        "css": ["input/button/button.css"],
+        "themeCss": ["input/button/button-theme.css"],
         "dependencies": ["Core"]
     }
 }

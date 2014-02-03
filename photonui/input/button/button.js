@@ -32,7 +32,7 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Widget
+ * @submodule Input
  * @namespace photonui
  */
 
@@ -111,16 +111,6 @@ photonui.Button.prototype.setText = function(text) {
  */
 photonui.Button.prototype.getHtml = function() {
     return this._e.button;
-}
-
-/**
- * Get the container DOM Element.
- *
- * @method getContainer
- * @return {HTMLElement}
- */
-photonui.Button.prototype.getContainer = function() {
-    return null;  // Cannot have a child
 }
 
 

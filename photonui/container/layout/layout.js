@@ -32,7 +32,7 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Widget
+ * @submodule Container
  * @namespace photonui
  */
 
@@ -45,10 +45,10 @@ var photonui = photonui || {};
  *
  * @class Layout
  * @constructor
- * @extends photonui.Widget
+ * @extends photonui.Container
  */
 photonui.Layout = function(params) {
-    photonui.Widget.call(this, params);
+    photonui.Container.call(this, params);
 
     var params = params || {};
 
@@ -56,7 +56,7 @@ photonui.Layout = function(params) {
     this.childrenWidgets = [];
 }
 
-photonui.Layout.prototype = new photonui.Widget();
+photonui.Layout.prototype = new photonui.Container();
 
 
 //////////////////////////////////////////
@@ -149,7 +149,7 @@ photonui.Layout.prototype.destroy = function() {
     for (var i in this.childrenWidgets) {
         this.childrenWidgets[i].destroy();
     }
-    photonui.Widget.prototype.destroy.call(this);
+    photonui.Container.prototype.destroy.call(this);
 }
 
 
