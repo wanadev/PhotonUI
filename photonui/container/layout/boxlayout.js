@@ -268,10 +268,15 @@ photonui.BoxLayout.prototype._updateLayout = function() {
     }
 
     // Hack for Gecko and Trident
-    var cells = document.getElementsByClassName("photonui-boxlayout-cell");
+    var cells = document.querySelectorAll("#" + this.name + " td");
     var heights = [];
+    var padding = 0;
     for (var i=0 ; i<cells.length ; i++) {
-        heights[i] = cells[i].offsetHeight + "px";
+        if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
+            padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
+            padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
+        }
+        heights[i] = (cells[i].offsetHeight - padding) + "px";
     }
     for (var i=0 ; i<cells.length ; i++) {
         cells[i].style.height = heights[i];

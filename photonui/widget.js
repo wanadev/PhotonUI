@@ -66,7 +66,7 @@ photonui.Widget = function(params) {
     var params = params || {};
 
     // Attrs
-    this.name = params.name || photonui.Helpers.uuid4();
+    this.name = params.name || "widget-" + photonui.Helpers.uuid4();
     this.visible = (params.visible != undefined) ? params.visible : true;
     this.layoutOptions = params.__layout__ || {};
 

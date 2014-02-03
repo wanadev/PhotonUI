@@ -43,11 +43,11 @@ var photonui = photonui || {};
 /**
  * Button.
  *
- *  wEvents:
+ * wEvents:
  *
- *    * destroy:
- *      - description: called when the button was clicked.
- *      - callback:    function(widget, event)
+ *   * click:
+ *     - description: called when the button was clicked.
+ *     - callback:    function(widget, event)
  *
  * @class Button
  * @constructor
