@@ -43,38 +43,23 @@ var photonui = photonui || {};
 /**
  * Button.
  *
- * wEvents:
- *
- *   * click:
- *     - description: called when the button was clicked.
- *     - callback:    function(widget, event)
- *
- * @class Button
+ * @class Field
  * @constructor
- * @extends photonui.Widget
- * @param {String} params.text The text of the button (optional, default = "Button").
+ * @extends photonui.Field
  */
-photonui.Button = function(params) {
-    photonui.Widget.call(this, params);
+photonui.TextField = function(params) {
+    photonui.Field.call(this, params);
 
     var params = params || {};
+    this.type = params.type || "text";
 
-    // Attrs
-    this.text = (params.text != undefined) ? params.text : "Button";  // FIXME i18n
-
-    this._e = {};  // HTML Elements
-
-    this._registerWidgetEvents(["click"]);
-
-    // Build and bind
+    // Build
     this._buildHtml();
     this._updateAttributes();
-    this._bindEvent("click", this._e.button, "click", function(event) {
-        this._callCallbacks("click", [event]);
-    }.bind(this));
+    this._bindEvents();
 }
 
-photonui.Button.prototype = new photonui.Widget();
+photonui.TextField.prototype = new photonui.Field();
 
 
 //////////////////////////////////////////
@@ -83,34 +68,28 @@ photonui.Button.prototype = new photonui.Widget();
 
 
 /**
- * Get button text.
+ * Get the type of the text field.
  *
- * @method getText
- * @return {string} The button text.
+ * @method getType
+ * @return {String} The type (`text`, `password`, `email`, `search`, `tel`, `url`).
  */
-photonui.Button.prototype.getText = function() {
-    return this.text;
+photonui.TextField.prototype.getType = function() {
+    return this._e.field.type;
 }
 
 /**
- * Set button text.
+ * Set the type of the text field.
  *
- * @method setText
- * @param {string} text The button text.
+ * @method setType
+ * @param {String} type The type (`text`, `password`, `email`, `search`, `tel`, `url`).
  */
-photonui.Button.prototype.setText = function(text) {
-    this.text = text;
-    this._e.button.innerHTML = photonui.Helpers.escapeHtml(text);
-}
-
-/**
- * Get the HTML of the button.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Button.prototype.getHtml = function() {
-    return this._e.button;
+photonui.TextField.prototype.setType = function(type) {
+    if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
+        throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
+        return;
+    }
+    this.type = type;
+    this._e.field.type = type;
 }
 
 
@@ -120,14 +99,16 @@ photonui.Button.prototype.getHtml = function() {
 
 
 /**
- * Build the HTML of the button.
+ * Build the HTML of the text field.
  *
  * @method _buildHtml
  * @private
  */
-photonui.Button.prototype._buildHtml = function() {
-    this._e.button = document.createElement("button");
-    this._e.button.className = "photonui-widget photonui-button";
+photonui.TextField.prototype._buildHtml = function() {
+    this._e.field = document.createElement("input");
+    this._e.field.className = "photonui-widget photonui-field photonui-field-text";
+    this._e.field.type = "text";
+    this._e.field.name = this.name;
 }
 
 /**
@@ -136,7 +117,7 @@ photonui.Button.prototype._buildHtml = function() {
  * @method _updateAttributes
  * @private
  */
-photonui.Button.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
-    this.setText(this.text);
+photonui.TextField.prototype._updateAttributes = function() {
+    photonui.Field.prototype._updateAttributes.call(this);
+    this.setType(this.type);
 }

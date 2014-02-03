@@ -1,0 +1,100 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>PhotonUI Fields</title>
+
+        <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/window.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/window-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/container/layout/boxlayout.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/layout/gridlayout.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/input/field/field.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/field/field-theme.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                color: #000;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../photonui/photonui.js"></script>
+        <script src="../photonui/helpers.js"></script>
+
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/container/container.js"></script>
+        <script src="../photonui/container/window/window.js"></script>
+        <script src="../photonui/container/layout/layout.js"></script>
+        <script src="../photonui/container/layout/boxlayout.js"></script>
+        <script src="../photonui/container/layout/gridlayout.js"></script>
+        <script src="../photonui/input/button/button.js"></script>
+        <script src="../photonui/input/field/field.js"></script>
+        <script src="../photonui/input/field/textfield.js"></script>
+
+        <script>
+            var win = new photonui.Window({
+                    title: "Fields",
+                    x: 50, y: 50,
+                    width: 200,
+                    //height: 200,
+                    visible: true
+            });
+
+            var vbox = new photonui.BoxLayout();
+            win.setChild(vbox);
+
+            var textField = new photonui.TextField({
+                    value: "Text Field"
+            });
+            vbox.addChild(textField);
+
+            var textFieldEmail = new photonui.TextField({
+                    placeholder: "email@example.com",
+                    type: "email"
+            });
+            vbox.addChild(textFieldEmail);
+
+            var textFieldPassword = new photonui.TextField({
+                    value: "password",
+                    type: "password"
+            });
+            vbox.addChild(textFieldPassword);
+
+
+            // test
+            photonui.build(
+                    {
+                        __widget__: "Window",
+                        title: "Test Window",
+                        visible: true,
+                        x: 300, y: 50,
+                        __child__: {
+                            __widget__: "BoxLayout",
+                            orientation: "horizontal",
+                            __children__: [
+                                {__widget__: "TextField", name: "field1", value: "Hello"},
+                                {__widget__: "Button", name: "button1", text: "Hello"}
+                            ]
+                        }
+                    }
+            );
+
+            photonui.getWidget("field1").registerCallback("foo", "keyup", function(widget, event) {
+                    photonui.getWidget("button1").setText(widget.getValue());
+            })
+        </script>
+    </body>
+</html>
+

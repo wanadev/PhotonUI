@@ -54,5 +54,19 @@
         "css": ["input/button/button.css"],
         "themeCss": ["input/button/button-theme.css"],
         "dependencies": ["Core"]
+    },
+    "Field": {
+        "abstract": true,
+        "javascript": ["input/field/field.js"],
+        "css": ["input/field/field.css"],
+        "themeCss": ["input/field/field-theme.css"],
+        "dependencies": ["Core"]
+    },
+    "TextField": {
+        "abstract": false,
+        "javascript": ["input/field/textfield.js"],
+        "css": [],
+        "themeCss": [],
+        "dependencies": ["Field"]
     }
 }

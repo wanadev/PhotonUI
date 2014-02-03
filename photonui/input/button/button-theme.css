@@ -42,6 +42,7 @@
     outline: none;
     vertical-align: middle;
     line-height: 2em;
+    transition: border-color .1s, box-shadow .1s;
 
     /** color **/
     background: #eeeeee; /* Old browsers */
