@@ -283,10 +283,12 @@ photonui.NumericField.prototype._updateFieldValue = function() {
 
 photonui.NumericField.prototype._onKeypress = function(event) {
     if (event.charCode == 45) {  // Minus
-        if (this.getHtml().selectionStart > 0 || this.getValue() < 0) {
+        if (this._e.field.selectionStart > 0 || (this.min != null && this.min >= 0)) {
             event.preventDefault();
         }
-        console.log("minus");
+        else if (this.getValue() < 0 && this._e.field.selectionStart - this._e.field.selectionEnd == 0) {
+            event.preventDefault();
+        }
     }
     else if ((event.charCode == 46 || event.charCode == 44) && (this.decimalDigits > 0 || this.decimalDigits == null)) {  // Dot & Comma
         var value = this._e.field.value;

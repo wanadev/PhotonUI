@@ -210,7 +210,7 @@ photonui.BoxLayout.prototype._updateAttributes = function() {
  * @private
  */
 photonui.BoxLayout.prototype._updateLayout = function() {
-    this._e.gridBody.innerHTML = "";
+    photonui.Helpers.cleanNode(this._e.gridBody);
 
     var e_tr = null;
     if (this.getOrientation() == "horizontal") {
@@ -264,7 +264,6 @@ photonui.BoxLayout.prototype._updateLayout = function() {
         }
 
         e_td.appendChild(this.childrenWidgets[i].getHtml());
-        this.childrenWidgets[i]._updateAttributes();  // Fix for MSIE
     }
 
     // Hack for Gecko and Trident

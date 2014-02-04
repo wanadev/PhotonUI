@@ -200,7 +200,7 @@ photonui.GridLayout.prototype._updateLayout = function() {
     // TODO
 
     // Build
-    this._e.gridBody.innerHTML = "";
+    photonui.Helpers.cleanNode(this._e.gridBody);
     var map = [];
     for (var y=0 ; y<nr ; y++) {
         var row = [];
@@ -228,7 +228,6 @@ photonui.GridLayout.prototype._updateLayout = function() {
                     e_td.colSpan = cs;
                     e_td.rowSpan = rs;
                     e_td.appendChild(this.childrenWidgets[i].getHtml());
-                    this.childrenWidgets[i]._updateAttributes();  // Fix for MSIE
                     if (this.childrenWidgets[i].layoutOptions.horizontalExpansion == undefined
                     ||  this.childrenWidgets[i].layoutOptions.horizontalExpansion) {
                         e_td.className += " photonui-container-expand-child-horizontal"

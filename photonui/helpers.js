@@ -59,7 +59,7 @@ photonui.Helpers = function() {
  * @return {String}
  */
 photonui.Helpers.escapeHtml = function(string) {
-    return string 
+    return string
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
@@ -80,4 +80,17 @@ photonui.Helpers.uuid4 = function() {
         var r = Math.random()*16|0, v = c == "x" ? r : (r&0x3|0x8);
         return v.toString(16);
     });
+}
+
+/**
+ * Clean node (remove all children of the node).
+ *
+ * @method cleanNode
+ * @static
+ * @param {HTMLElement} node
+ */
+photonui.Helpers.cleanNode = function(node) {
+    while (node.hasChildNodes()) {
+        node.removeChild(node.lastChild);
+    }
 }
