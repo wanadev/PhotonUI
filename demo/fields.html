@@ -18,6 +18,8 @@
 
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/field.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/field-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
         <style>
             html, body {
                 margin: 0;
@@ -42,44 +44,47 @@
         <script src="../photonui/input/button/button.js"></script>
         <script src="../photonui/input/field/field.js"></script>
         <script src="../photonui/input/field/textfield.js"></script>
+        <script src="../photonui/visual/label.js"></script>
 
         <script>
             var win = new photonui.Window({
                     title: "Fields",
                     x: 50, y: 50,
-                    width: 200,
-                    //height: 200,
                     visible: true
             });
 
-            var vbox = new photonui.BoxLayout();
-            win.setChild(vbox);
+            var grid = new photonui.GridLayout();
+            win.setChild(grid);
 
-            var textField = new photonui.TextField({
-                    value: "Text Field"
-            });
-            vbox.addChild(textField);
+            // Text Field
+            var textField = new photonui.TextField({value: "Hello World"});
+            grid.addChild(textField, {gridX: 1, gridY: 0});
+            grid.addChild(new photonui.Label({text: "Text:", forInput: textField}), {gridX: 0, gridY: 0});
 
+            // Text Field type=email
             var textFieldEmail = new photonui.TextField({
                     placeholder: "email@example.com",
                     type: "email"
             });
-            vbox.addChild(textFieldEmail);
+            grid.addChild(textFieldEmail, {gridX: 1, gridY: 1});
+            grid.addChild(new photonui.Label({text: "Email:", forInput: textFieldEmail}), {gridX: 0, gridY: 1});
 
+            // Text Field type=password
             var textFieldPassword = new photonui.TextField({
                     value: "password",
                     type: "password"
             });
-            vbox.addChild(textFieldPassword);
+            grid.addChild(textFieldPassword, {gridX: 1, gridY: 2});
+            grid.addChild(new photonui.Label({text: "Password:", forInput: textFieldPassword}), {gridX: 0, gridY: 2});
 
 
-            // test
+            // Event test
             photonui.build(
                     {
                         __widget__: "Window",
                         title: "Test Window",
                         visible: true,
-                        x: 300, y: 50,
+                        x: 400, y: 50,
                         __child__: {
                             __widget__: "BoxLayout",
                             orientation: "horizontal",
@@ -93,7 +98,7 @@
 
             photonui.getWidget("field1").registerCallback("foo", "keyup", function(widget, event) {
                     photonui.getWidget("button1").setText(widget.getValue());
-            })
+            });
         </script>
     </body>
 </html>

@@ -68,5 +68,12 @@
         "css": [],
         "themeCss": [],
         "dependencies": ["Field"]
+    },
+    "Label": {
+        "abstract": false,
+        "javascript": ["visual/label.js"],
+        "css": [],
+        "themeCss": ["visual/label-theme.css"],
+        "dependencies": ["Core"]
     }
 }
