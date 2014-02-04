@@ -189,7 +189,7 @@ photonui.Field.prototype._bindEvents = function() {
         this._callCallbacks("selection-changed", [
             this._e.field.selectionStart,
             this._e.field.selectionEnd,
-            this.getValue().substring(this._e.field.selectionStart, this._e.field.selectionEnd),
+            ("" + this.getValue()).substring(this._e.field.selectionStart, this._e.field.selectionEnd),
             event]);
     }.bind(this));
 }

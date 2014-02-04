@@ -69,6 +69,13 @@
         "themeCss": [],
         "dependencies": ["Field"]
     },
+    "NumericField": {
+        "abstract": false,
+        "javascript": ["input/field/numericfield.js"],
+        "css": [],
+        "themeCss": [],
+        "dependencies": ["Field"]
+    },
     "Label": {
         "abstract": false,
         "javascript": ["visual/label.js"],

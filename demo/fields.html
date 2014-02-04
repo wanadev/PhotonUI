@@ -44,6 +44,7 @@
         <script src="../photonui/input/button/button.js"></script>
         <script src="../photonui/input/field/field.js"></script>
         <script src="../photonui/input/field/textfield.js"></script>
+        <script src="../photonui/input/field/numericfield.js"></script>
         <script src="../photonui/visual/label.js"></script>
 
         <script>
@@ -76,6 +77,34 @@
             });
             grid.addChild(textFieldPassword, {gridX: 1, gridY: 2});
             grid.addChild(new photonui.Label({text: "Password:", forInput: textFieldPassword}), {gridX: 0, gridY: 2});
+
+            // Numeric Field
+            var numField= new photonui.NumericField({
+                    value: 42,
+                    decimalDigits: null
+            });
+            grid.addChild(numField, {gridX: 1, gridY: 3});
+            grid.addChild(new photonui.Label({text: "Free Number:", forInput: numField}), {gridX: 0, gridY: 3});
+
+            // Numeric Field int min max
+            var numField2= new photonui.NumericField({
+                    value: 42,
+                    min: 1,
+                    max: 100,
+                    decimalDigits: 0
+            });
+            grid.addChild(numField2, {gridX: 1, gridY: 4});
+            grid.addChild(new photonui.Label({text: "Integer (1-100):", forInput: numField2}), {gridX: 0, gridY: 4});
+
+            // Numeric Field float (2 decimal) min max
+            var numField3= new photonui.NumericField({
+                    value: 42,
+                    decimalDigits: 2,
+                    decimalSymbol: ",",
+                    step: 0.1
+            });
+            grid.addChild(numField3, {gridX: 1, gridY: 5});
+            grid.addChild(new photonui.Label({text: "Float:", forInput: numField3}), {gridX: 0, gridY: 5});
 
 
             // Event test
