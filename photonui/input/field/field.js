@@ -41,7 +41,7 @@ var photonui = photonui || {};
 
 
 /**
- * Button.
+ * Base class for fields.
  *
  * wEvents:
  *

@@ -41,11 +41,12 @@ var photonui = photonui || {};
 
 
 /**
- * Button.
+ * Text, Password, Email, Search, Tel, URL Fields.
  *
- * @class Field
+ * @class TextField
  * @constructor
  * @extends photonui.Field
+ * @param {String} params.type The text field type (optional, default="text").
  */
 photonui.TextField = function(params) {
     photonui.Field.call(this, params);
