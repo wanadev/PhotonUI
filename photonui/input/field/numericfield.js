@@ -282,6 +282,9 @@ photonui.NumericField.prototype._updateFieldValue = function() {
 
 
 photonui.NumericField.prototype._onKeypress = function(event) {
+    if (event.ctrlKey) {
+        return;
+    }
     if (event.charCode == 45) {  // Minus
         if (this._e.field.selectionStart > 0 || (this.min != null && this.min >= 0)) {
             event.preventDefault();
@@ -313,6 +316,10 @@ photonui.NumericField.prototype._onKeypress = function(event) {
 }
 
 photonui.NumericField.prototype._onKeyup = function(event) {
+    var value = this._e.field.value.replace(/[^0-9.,-]*/g, "");
+    if (value != this._e.field.value) {
+        this._e.field.value = value;
+    }
     this._updateValue(this._e.field.value);
 }
 
