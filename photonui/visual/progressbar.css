@@ -139,3 +139,58 @@
     -moz-transform: rotate(90deg);
     transform: rotate(90deg);
 }
+
+
+/** Pulsate **/
+
+
+.photonui-progressbar.photonui-progressbar-pulsate .photonui-progressbar-text {
+    display: none;
+}
+
+
+/** Horizontal Pulsate **/
+
+
+@keyframes photonui-progressbar-pulsate-horizontal {
+      0% { margin-left:  0%; }
+     50% { margin-left: 80%; }
+    100% { margin-left:  0%; }
+}
+
+@-webkit-keyframes photonui-progressbar-pulsate-horizontal {
+      0% { margin-left:  0%; }
+     50% { margin-left: 80%; }
+    100% { margin-left:  0%; }
+}
+
+.photonui-progressbar.photonui-progressbar-horizontal.photonui-progressbar-pulsate .photonui-progressbar-bar {
+    width: 20%;
+    margin-left: 0%;
+    -webkit-animation: photonui-progressbar-pulsate-horizontal linear 1.5s infinite;
+    animation: photonui-progressbar-pulsate-horizontal linear 1.5s infinite;
+}
+
+
+/** Vertical Pulsate **/
+
+
+@keyframes photonui-progressbar-pulsate-vertical {
+      0% { opacity: 0; transform: scale(1, .1); }
+     20% { opacity: 1; }
+     80% { opacity: 0; transform: scale(1, 1.1); }
+    100% { opacity: 0; }
+}
+
+@-webkit-keyframes photonui-progressbar-pulsate-vertical {
+      0% { opacity: 0; -webkit-transform: scale(1, .1); }
+     20% { opacity: 1; }
+     80% { opacity: 0; -webkit-transform: scale(1, 1.1); }
+    100% { opacity: 0; }
+}
+
+.photonui-progressbar.photonui-progressbar-vertical.photonui-progressbar-pulsate .photonui-progressbar-bar {
+    height: 100%;
+    -webkit-animation: photonui-progressbar-pulsate-vertical linear .8s infinite;
+    animation: photonui-progressbar-pulsate-vertical ease .8s infinite;
+}

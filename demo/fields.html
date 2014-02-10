@@ -146,13 +146,22 @@
             grid.addChild(new photonui.Label({text: "Vertical Progress Bar:"}), {gridX: 0, gridY: 13});
 
             function progress() {
-                if (pbar.getValue() < 1) {
+                if (pbar.getValue() < 1 && !pbar.getPulsate()) {
                     pbar.setValue(pbar.getValue() + 0.01);
                     pbar2.setValue(pbar2.getValue() + 0.01);
                     setTimeout(progress, 50);
                 }
             }
             setTimeout(progress, 500);
+
+            btnPBarPulse = new photonui.Button({text: "Progress / Pulsate"});
+            btnPBarPulse.registerCallback("progress-pulseate", "click", function(widget) {
+                    pbar.setPulsate(!pbar.getPulsate());
+                    pbar2.setPulsate(!pbar2.getPulsate());
+                    progress();
+            });
+
+            grid.addChild(btnPBarPulse, {gridX: 1, gridY: 14});
 
 
             // Event test

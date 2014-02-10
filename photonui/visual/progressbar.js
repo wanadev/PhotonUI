@@ -49,6 +49,7 @@ var photonui = photonui || {};
  * @param {Number} params.value The progress fraction (0..1, optional, default=0).
  * @param {Number} params.showText Display or hide the progression text (optional, default=true).
  * @param {String} params.orientation The orientation of the progress bar: `"vertical"` or `"horizontal"` (optional, default = "horizontal").
+ * @param {Boolean} params.pulsate Does the progressbar pulsate? (optional, default = `false`).
  */
 photonui.ProgressBar = function(params) {
     photonui.Widget.call(this, params);
@@ -58,6 +59,7 @@ photonui.ProgressBar = function(params) {
     // Attrs
     this.value = (params.value != undefined) ? params.value : 0;
     this.showText = (params.showText != undefined) ? params.showText : true;
+    this.pulsate = (params.pulsate != undefined) ? params.pulsate : false;
     this.orientation = params.orientation || "horizontal";
 
     this._e = {};  // HTML Elements
@@ -130,6 +132,65 @@ photonui.ProgressBar.prototype.setOrientation = function(orientation) {
 }
 
 /**
+ * Know if the pulsate mode is enabled or not.
+ *
+ * @method getPulsate
+ * @return {Boolean}
+ */
+photonui.ProgressBar.prototype.getPulsate = function() {
+    return this.pulsate;
+}
+
+/**
+ * Enable/Disable the pulsate mode.
+ *
+ * @method setPulsate
+ * @param {Boolean} pulsate
+ */
+photonui.ProgressBar.prototype.setPulsate = function(pulsate) {
+    this.pulsate = pulsate;
+    if (pulsate) {
+        this.addClass("photonui-progressbar-pulsate");
+        if (this.getOrientation() == "horizontal") {
+            this._e.bar.style.width = "";
+        }
+        else {
+            this._e.bar.style.height = "";
+        }
+    }
+    else {
+        this.removeClass("photonui-progressbar-pulsate");
+        this.setValue(this.value);
+    }
+}
+
+/**
+ * Know if the progression text is displayed or not.
+ *
+ * @method getShowText
+ * @return {Boolean}
+ */
+photonui.ProgressBar.prototype.getShowText = function() {
+    return this.showText;
+}
+
+/**
+ * Display/hide the progression text.
+ *
+ * @method setShowText
+ * @param {Boolean} showText
+ */
+photonui.ProgressBar.prototype.setShowText = function(showText) {
+    this.showText;
+    if (showText) {
+        this._e.text.style.display = "";
+    }
+    else {
+        this._e.text.style.display = "none";
+    }
+}
+
+/**
  * Get the HTML of the progress bar.
  *
  * @method getHtml
@@ -177,4 +238,5 @@ photonui.ProgressBar.prototype._updateAttributes = function() {
     photonui.Widget.prototype._updateAttributes.call(this);
     this.setOrientation(this.orientation);
     this.setValue(this.value);
+    this.setPulsate(this.pulsate);
 }
