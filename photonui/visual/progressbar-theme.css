@@ -1,0 +1,111 @@
+/*
+ * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <http://flozz.fr/>
+ */
+
+
+.photonui-progressbar {
+    padding: 1px;
+    background: #fff;
+    border: #888 solid 1px;
+    border-radius: 3px;
+}
+
+.photonui-progressbar-bar {
+    border-radius: 2px;
+    background: #25a9b5;
+}
+
+.photonui-progressbar-text {
+    color: #0D2A2D;
+}
+
+.photonui-progressbar-text span {
+    pointer-events: none;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+/** Horizontal **/
+
+
+.photonui-progressbar.photonui-progressbar-horizontal {
+    background: -moz-linear-gradient(top, #ededed 0%, #f6f6f6 55%, #ffffff 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededed), color-stop(55%,#f6f6f6), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ededed 0%,#f6f6f6 55%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ededed 0%,#f6f6f6 55%,#ffffff 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ededed 0%,#f6f6f6 55%,#ffffff 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #ededed 0%,#f6f6f6 55%,#ffffff 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+}
+
+.photonui-progressbar.photonui-progressbar-horizontal .photonui-progressbar-bar {
+    background: -moz-linear-gradient(top, #25a9b5 0%, #008091 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#25a9b5), color-stop(100%,#008091)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #25a9b5 0%,#008091 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #25a9b5 0%,#008091 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #25a9b5 0%,#008091 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #25a9b5 0%,#008091 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#25a9b5', endColorstr='#008091',GradientType=0 ); /* IE6-9 */
+    box-shadow: inset 1px 1px 0 #028393, inset -1px 1px 0 #028393;
+}
+
+.photonui-progressbar.photonui-progressbar-horizontal .photonui-progressbar-text {
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, .3);
+}
+
+/** Vertical **/
+
+
+.photonui-progressbar.photonui-progressbar-vertical {
+    background: -moz-linear-gradient(left, #ededed 1%, #f6f6f6 59%, #ffffff 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(1%,#ededed), color-stop(59%,#f6f6f6), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, #ededed 1%,#f6f6f6 59%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left, #ededed 1%,#f6f6f6 59%,#ffffff 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left, #ededed 1%,#f6f6f6 59%,#ffffff 100%); /* IE10+ */
+    background: linear-gradient(to right, #ededed 1%,#f6f6f6 59%,#ffffff 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
+}
+
+.photonui-progressbar.photonui-progressbar-vertical .photonui-progressbar-bar {
+    background: -moz-linear-gradient(left, #008091 0%, #25a9b5 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#008091), color-stop(100%,#25a9b5)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, #008091 0%,#25a9b5 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left, #008091 0%,#25a9b5 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left, #008091 0%,#25a9b5 100%); /* IE10+ */
+    background: linear-gradient(to right, #008091 0%,#25a9b5 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#008091', endColorstr='#25a9b5',GradientType=1 ); /* IE6-9 */
+    box-shadow: inset -1px -1px 0 #028393, inset -1px 1px 0 #028393;
+}
+
+.photonui-progressbar.photonui-progressbar-vertical .photonui-progressbar-text {
+    text-shadow: -1px 1px 0 rgba(255, 255, 255, .3);
+}

@@ -96,5 +96,12 @@
         "css": ["visual/separator.css"],
         "themeCss": ["visual/separator-theme.css"],
         "dependencies": ["Core"]
+    },
+    "ProgressBar": {
+        "abstract": false,
+        "javascript": ["visual/progressbar.js"],
+        "css": ["visual/progressbar.css"],
+        "themeCss": ["visual/progressbar-theme.css"],
+        "dependencies": ["Core"]
     }
 }

@@ -18,11 +18,16 @@
 
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/field.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/field-theme.css" />
+
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/textareafield.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
+
         <link type="text/css" rel="stylesheet" href="../photonui/visual/separator.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/visual/separator-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/progressbar.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/progressbar-theme.css" />
         <style>
             html, body {
                 margin: 0;
@@ -51,6 +56,7 @@
         <script src="../photonui/input/field/numericfield.js"></script>
         <script src="../photonui/visual/label.js"></script>
         <script src="../photonui/visual/separator.js"></script>
+        <script src="../photonui/visual/progressbar.js"></script>
 
         <script>
             var win = new photonui.Window({
@@ -127,6 +133,26 @@
             // Vertical Separator
             grid.addChild(new photonui.Label({text: "Vertical Separator:"}), {gridX: 0, gridY: 10});
             grid.addChild(new photonui.Separator({orientation: "vertical"}), {gridX: 1, gridY: 10});
+
+            grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 11, gridWidth: 2});
+
+            // Progress Bar
+            var pbar = new photonui.ProgressBar();
+            grid.addChild(pbar, {gridX: 1, gridY: 12});
+            grid.addChild(new photonui.Label({text: "Progress Bar:"}), {gridX: 0, gridY: 12});
+
+            var pbar2 = new photonui.ProgressBar({orientation: "vertical"});
+            grid.addChild(pbar2, {gridX: 1, gridY: 13, horizontalExpansion: false});
+            grid.addChild(new photonui.Label({text: "Vertical Progress Bar:"}), {gridX: 0, gridY: 13});
+
+            function progress() {
+                if (pbar.getValue() < 1) {
+                    pbar.setValue(pbar.getValue() + 0.01);
+                    pbar2.setValue(pbar2.getValue() + 0.01);
+                    setTimeout(progress, 50);
+                }
+            }
+            setTimeout(progress, 500);
 
 
             // Event test

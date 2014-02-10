@@ -46,8 +46,8 @@ var photonui = photonui || {};
  * @class TextAreaField
  * @constructor
  * @extends photonui.Field
- * @params {Number} params.cols Number of columns in the textarea (optional, default=20).
- * @params {Number} params.rows Number of rows in the textarea (optional, default=3).
+ * @param {Number} params.cols Number of columns in the textarea (optional, default=20).
+ * @param {Number} params.rows Number of rows in the textarea (optional, default=3).
  */
 photonui.TextAreaField = function(params) {
     photonui.Field.call(this, params);
