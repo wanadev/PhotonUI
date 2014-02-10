@@ -69,6 +69,13 @@
         "themeCss": [],
         "dependencies": ["Field"]
     },
+    "TextAreaField": {
+        "abstract": false,
+        "javascript": ["input/field/textareafield.js"],
+        "css": ["input/field/textareafield.css"],
+        "themeCss": [],
+        "dependencies": ["Field"]
+    },
     "NumericField": {
         "abstract": false,
         "javascript": ["input/field/numericfield.js"],

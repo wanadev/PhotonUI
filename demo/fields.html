@@ -18,6 +18,7 @@
 
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/field.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/field-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/field/textareafield.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
         <style>
@@ -44,6 +45,7 @@
         <script src="../photonui/input/button/button.js"></script>
         <script src="../photonui/input/field/field.js"></script>
         <script src="../photonui/input/field/textfield.js"></script>
+        <script src="../photonui/input/field/textareafield.js"></script>
         <script src="../photonui/input/field/numericfield.js"></script>
         <script src="../photonui/visual/label.js"></script>
 
@@ -79,7 +81,7 @@
             grid.addChild(new photonui.Label({text: "Password:", forInput: textFieldPassword}), {gridX: 0, gridY: 2});
 
             // Numeric Field
-            var numField= new photonui.NumericField({
+            var numField = new photonui.NumericField({
                     value: 42,
                     decimalDigits: null
             });
@@ -87,7 +89,7 @@
             grid.addChild(new photonui.Label({text: "Free Number:", forInput: numField}), {gridX: 0, gridY: 3});
 
             // Numeric Field int min max
-            var numField2= new photonui.NumericField({
+            var numField2 = new photonui.NumericField({
                     value: 42,
                     min: 1,
                     max: 100,
@@ -97,7 +99,7 @@
             grid.addChild(new photonui.Label({text: "Integer (1-100):", forInput: numField2}), {gridX: 0, gridY: 4});
 
             // Numeric Field float (2 decimal) min max
-            var numField3= new photonui.NumericField({
+            var numField3 = new photonui.NumericField({
                     value: 42,
                     decimalDigits: 2,
                     decimalSymbol: ",",
@@ -106,6 +108,13 @@
             grid.addChild(numField3, {gridX: 1, gridY: 5});
             grid.addChild(new photonui.Label({text: "Float:", forInput: numField3}), {gridX: 0, gridY: 5});
 
+            // Text Area Field
+            var textAreaField = new photonui.TextAreaField({
+                    placeholder: "Your text here..."
+            });
+            grid.addChild(textAreaField, {gridX: 1, gridY: 6});
+            grid.addChild(new photonui.Label({text: "Text Area:", forInput: textAreaField}), {gridX: 0, gridY: 6});
+
 
             // Event test
             photonui.build(
@@ -113,7 +122,7 @@
                         __widget__: "Window",
                         title: "Test Window",
                         visible: true,
-                        x: 400, y: 50,
+                        x: 450, y: 50,
                         __child__: {
                             __widget__: "BoxLayout",
                             orientation: "horizontal",
