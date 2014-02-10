@@ -89,5 +89,12 @@
         "css": [],
         "themeCss": ["visual/label-theme.css"],
         "dependencies": ["Core"]
+    },
+    "Separator": {
+        "abstract": false,
+        "javascript": ["visual/separator.js"],
+        "css": ["visual/separator.css"],
+        "themeCss": ["visual/separator-theme.css"],
+        "dependencies": ["Core"]
     }
 }

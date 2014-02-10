@@ -28,8 +28,16 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
+.photonui-separator hr {
+    border: none;
+}
 
-.photonui-field-textarea {
-    resize: none;
-    min-height: 50px;
+.photonui-separator.photonui-separator-horizontal hr {
+    border-top: #bbb solid 1px;
+    border-bottom: #fff solid 1px;
+}
+
+.photonui-separator.photonui-separator-vertical hr {
+    border-left: #bbb solid 1px;
+    border-right: #fff solid 1px;
 }

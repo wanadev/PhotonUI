@@ -41,7 +41,7 @@ var photonui = photonui || {};
 
 
 /**
- * Button.
+ * Label.
  *
  * @class Label
  * @constructor
@@ -145,7 +145,9 @@ photonui.Label.prototype.setFor = function(forInput) {
     else {
         this.forInput = forInput;
     }
-    this._e.label.setAttribute("for", photonui.Helpers.escapeHtml(this.forInput));
+    if (this.forInput) {
+        this._e.label.setAttribute("for", photonui.Helpers.escapeHtml(this.forInput));
+    }
 }
 
 /**

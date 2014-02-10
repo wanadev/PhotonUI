@@ -21,6 +21,8 @@
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/textareafield.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/separator.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/separator-theme.css" />
         <style>
             html, body {
                 margin: 0;
@@ -48,6 +50,7 @@
         <script src="../photonui/input/field/textareafield.js"></script>
         <script src="../photonui/input/field/numericfield.js"></script>
         <script src="../photonui/visual/label.js"></script>
+        <script src="../photonui/visual/separator.js"></script>
 
         <script>
             var win = new photonui.Window({
@@ -80,13 +83,15 @@
             grid.addChild(textFieldPassword, {gridX: 1, gridY: 2});
             grid.addChild(new photonui.Label({text: "Password:", forInput: textFieldPassword}), {gridX: 0, gridY: 2});
 
+            grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 3, gridWidth: 2});
+
             // Numeric Field
             var numField = new photonui.NumericField({
                     value: 42,
                     decimalDigits: null
             });
-            grid.addChild(numField, {gridX: 1, gridY: 3});
-            grid.addChild(new photonui.Label({text: "Free Number:", forInput: numField}), {gridX: 0, gridY: 3});
+            grid.addChild(numField, {gridX: 1, gridY: 4});
+            grid.addChild(new photonui.Label({text: "Free Number:", forInput: numField}), {gridX: 0, gridY: 4});
 
             // Numeric Field int min max
             var numField2 = new photonui.NumericField({
@@ -95,8 +100,8 @@
                     max: 100,
                     decimalDigits: 0
             });
-            grid.addChild(numField2, {gridX: 1, gridY: 4});
-            grid.addChild(new photonui.Label({text: "Integer (1-100):", forInput: numField2}), {gridX: 0, gridY: 4});
+            grid.addChild(numField2, {gridX: 1, gridY: 5});
+            grid.addChild(new photonui.Label({text: "Integer (1-100):", forInput: numField2}), {gridX: 0, gridY: 5});
 
             // Numeric Field float (2 decimal) min max
             var numField3 = new photonui.NumericField({
@@ -105,15 +110,23 @@
                     decimalSymbol: ",",
                     step: 0.1
             });
-            grid.addChild(numField3, {gridX: 1, gridY: 5});
-            grid.addChild(new photonui.Label({text: "Float:", forInput: numField3}), {gridX: 0, gridY: 5});
+            grid.addChild(numField3, {gridX: 1, gridY: 6});
+            grid.addChild(new photonui.Label({text: "Float:", forInput: numField3}), {gridX: 0, gridY: 6});
+
+            grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 7, gridWidth: 2});
 
             // Text Area Field
             var textAreaField = new photonui.TextAreaField({
                     placeholder: "Your text here..."
             });
-            grid.addChild(textAreaField, {gridX: 1, gridY: 6});
-            grid.addChild(new photonui.Label({text: "Text Area:", forInput: textAreaField}), {gridX: 0, gridY: 6});
+            grid.addChild(textAreaField, {gridX: 1, gridY: 8});
+            grid.addChild(new photonui.Label({text: "Text Area:", forInput: textAreaField}), {gridX: 0, gridY: 8});
+
+            grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 9, gridWidth: 2});
+
+            // Vertical Separator
+            grid.addChild(new photonui.Label({text: "Vertical Separator:"}), {gridX: 0, gridY: 10});
+            grid.addChild(new photonui.Separator({orientation: "vertical"}), {gridX: 1, gridY: 10});
 
 
             // Event test
