@@ -84,7 +84,7 @@ photonui.TextAreaField.prototype.getCols = function() {
  * Set the number of columns.
  *
  * @method setCols
- * @params {Number} cols
+ * @param {Number} cols
  */
 photonui.TextAreaField.prototype.setCols = function(cols) {
     this.cols = cols;
@@ -105,7 +105,7 @@ photonui.TextAreaField.prototype.getRows = function() {
  * Set the number of rowns.
  *
  * @method setRows
- * @params {Number} rows
+ * @param {Number} rows
  */
 photonui.TextAreaField.prototype.setRows = function(rows) {
     this.rows = rows;

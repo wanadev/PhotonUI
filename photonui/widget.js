@@ -210,7 +210,7 @@ photonui.Widget.prototype.removeClass = function(class_) {
  *
  *     function(widget [, arg1 [, arg2 [, ...]]])
  *
- * @function registerCallback
+ * @method registerCallback
  * @param {String} id An unique id for the callback.
  * @param {String} wEvent the widget event name.
  * @param {Function} callback The callback function.
@@ -230,7 +230,7 @@ photonui.Widget.prototype.registerCallback = function(id, wEvent, callback, this
 /**
  * Remove a registered callback.
  *
- * @function removeCallback
+ * @method removeCallback
  * @param {String} id The id of the callback.
  */
 photonui.Widget.prototype.removeCallback = function(id) {

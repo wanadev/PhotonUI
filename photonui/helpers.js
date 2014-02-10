@@ -45,7 +45,7 @@ var photonui = photonui || {};
  * Helpers.
  *
  * @class Helpers
- * @construcutor
+ * @constructor
  */
 photonui.Helpers = function() {
 }
