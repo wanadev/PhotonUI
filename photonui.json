@@ -4,6 +4,7 @@
         "javascript": ["photonui.js", "helpers.js", "widget.js"],
         "css": ["photonui.css"],
         "themeCss": [],
+        "assets": [],
         "dependencies": []
     },
     "Container": {
@@ -11,6 +12,7 @@
         "javascript": ["container/container.js"],
         "css": [],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Core"]
     },
     "Window": {
@@ -18,6 +20,7 @@
         "javascript": ["container/window/window.js"],
         "css": ["container/window/window.css"],
         "themeCss": ["container/window/window-theme.css"],
+        "assets": [],
         "dependencies": ["Container"]
     },
     "Layout": {
@@ -25,6 +28,7 @@
         "javascript": ["container/layout/layout.js"],
         "css": [],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Container"]
     },
     "BoxLayout": {
@@ -32,6 +36,7 @@
         "javascript": ["container/layout/boxlayout.js"],
         "css": ["container/layout/boxlayout.css"],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Layout"]
     },
     "GridLayout": {
@@ -39,6 +44,7 @@
         "javascript": ["container/layout/gridlayout.js"],
         "css": ["container/layout/gridlayout.css"],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Layout"]
     },
     "Viewport": {
@@ -46,6 +52,7 @@
         "javascript": ["container/viewport/viewport.js"],
         "css": ["container/viewport/viewport.css"],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Container"]
     },
     "Button": {
@@ -53,6 +60,7 @@
         "javascript": ["input/button/button.js"],
         "css": ["input/button/button.css"],
         "themeCss": ["input/button/button-theme.css"],
+        "assets": [],
         "dependencies": ["Core"]
     },
     "Field": {
@@ -60,6 +68,7 @@
         "javascript": ["input/field/field.js"],
         "css": ["input/field/field.css"],
         "themeCss": ["input/field/field-theme.css"],
+        "assets": [],
         "dependencies": ["Core"]
     },
     "TextField": {
@@ -67,6 +76,7 @@
         "javascript": ["input/field/textfield.js"],
         "css": [],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Field"]
     },
     "TextAreaField": {
@@ -74,6 +84,7 @@
         "javascript": ["input/field/textareafield.js"],
         "css": ["input/field/textareafield.css"],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Field"]
     },
     "NumericField": {
@@ -81,6 +92,7 @@
         "javascript": ["input/field/numericfield.js"],
         "css": [],
         "themeCss": [],
+        "assets": [],
         "dependencies": ["Field"]
     },
     "CheckBox": {
@@ -88,6 +100,7 @@
         "javascript": ["input/checkbox/checkbox.js"],
         "css": [],
         "themeCss": ["input/checkbox/checkbox-theme.css"],
+        "assets": [],
         "dependencies": ["Core"]
     },
     "Switch": {
@@ -95,6 +108,7 @@
         "javascript": ["input/checkbox/switch.js"],
         "css": ["input/checkbox/switch.css"],
         "themeCss": ["input/checkbox/switch-theme.css"],
+        "assets": [],
         "dependencies": ["CheckBox"]
     },
     "Label": {
@@ -102,6 +116,7 @@
         "javascript": ["visual/label.js"],
         "css": [],
         "themeCss": ["visual/label-theme.css"],
+        "assets": [],
         "dependencies": ["Core"]
     },
     "Separator": {
@@ -109,6 +124,7 @@
         "javascript": ["visual/separator.js"],
         "css": ["visual/separator.css"],
         "themeCss": ["visual/separator-theme.css"],
+        "assets": [],
         "dependencies": ["Core"]
     },
     "ProgressBar": {
@@ -116,6 +132,7 @@
         "javascript": ["visual/progressbar.js"],
         "css": ["visual/progressbar.css"],
         "themeCss": ["visual/progressbar-theme.css"],
+        "assets": [],
         "dependencies": ["Core"]
     }
 }

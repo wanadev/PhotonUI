@@ -39,6 +39,7 @@ default theme).
 import os
 import sys
 import json
+import shutil
 import argparse
 
 
@@ -100,6 +101,16 @@ class PhotonUiBuilder(object):
         """
         for moduleName in self.modules:
             for file_ in self._module_index[moduleName]["themeCss"]:
+                yield file_
+
+    def get_assets(self):
+        """Get the asset files list.
+
+        Return:
+            A generator that lists the asset files.
+        """
+        for moduleName in self.modules:
+            for file_ in self._module_index[moduleName]["assets"]:
                 yield file_
 
     def _calc_priority(self, moduleName):
@@ -193,3 +204,12 @@ if __name__ == "__main__":
         output.write("\n/%s\n * %-73s *\n %s/\n\n"  % ("*"*77, file_, "*"*76))
         output.write(open(os.path.join(PHOTONUI_PATH, file_), "r").read())
     output.close()
+
+    # Add Assets
+    print("\n\nCopying assets:\n")
+    dest = os.path.join(args.output, "assets");
+    for file_ in builder.get_assets():
+        if not os.path.isdir(dest):
+            os.makedirs(dest)
+        print("  * %s" % file_)
+        shutil.copy(os.path.join(PHOTONUI_PATH, file_), dest)
