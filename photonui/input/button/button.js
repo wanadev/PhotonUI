@@ -61,8 +61,15 @@ photonui.Button = function(params) {
 
     // Attrs
     this.text = (params.text != undefined) ? params.text : "Button";  // FIXME i18n
+    this.textVisible = (params.textVisible != undefined) ? params.textVisible : true;
+    this.leftIcon = params.leftIcon || null;
+    this.leftIconVisible = (params.leftIconVisible != undefined) ? params.leftIconVisible : true;
+    this.rightIcon = params.rightIcon || null;
+    this.rightIconVisible = (params.rightIconVisible != undefined) ? params.rightIconVisible : true;
 
     this._e = {};  // HTML Elements
+    this._leftIcon = null;
+    this._rightIcon = null;
 
     this._registerWidgetEvents(["click"]);
 
@@ -100,7 +107,130 @@ photonui.Button.prototype.getText = function() {
  */
 photonui.Button.prototype.setText = function(text) {
     this.text = text;
-    this._e.button.innerHTML = photonui.Helpers.escapeHtml(text);
+    this._e.text.innerHTML = photonui.Helpers.escapeHtml(text);
+}
+
+/**
+ * Know if the button text is visible.
+ *
+ * @method isTextVisible.
+ * @return {Boolean}
+ */
+photonui.Button.prototype.isTextVisible = function() {
+    return this.textVisible;
+}
+
+/**
+ * Define if the button text is displayed or not.
+ *
+ * @method setTextVisible.
+ * @param {Boolean} visible
+ */
+photonui.Button.prototype.setTextVisible = function(visible) {
+    this.textVisible = visible;
+    this._update();
+}
+
+/**
+ * Know if the button left icon is visible.
+ *
+ * @method isLeftIconVisible.
+ * @return {Boolean}
+ */
+photonui.Button.prototype.isLeftIconVisible = function() {
+    return this.leftIconVisible;
+}
+
+/**
+ * Define if the button left icon is displayed or not.
+ *
+ * @method setLeftIconVisible.
+ * @param {Boolean} visible
+ */
+photonui.Button.prototype.setLeftIconVisible = function(visible) {
+    this.leftIconVisible = visible;
+    this._update();
+}
+
+/**
+ * Know if the button right icon is visible.
+ *
+ * @method isRightIconVisible.
+ * @return {Boolean}
+ */
+photonui.Button.prototype.isRightIconVisible = function() {
+    return this.rightIconVisible;
+}
+
+/**
+ * Define if the button right icon is displayed or not.
+ *
+ * @method setRightIconVisible.
+ * @param {Boolean} visible
+ */
+photonui.Button.prototype.setRightIconVisible = function(visible) {
+    this.rightIconVisible = visible;
+    this._update();
+}
+
+/**
+ * Get the button left icon name.
+ *
+ * @method getLeftIcon
+ * @return {String}
+ */
+photonui.Button.prototype.getLeftIcon = function() {
+    return this.leftIcon;
+}
+
+/**
+ * Set the button left icon.
+ *
+ * @method setLeftIcon
+ * @param {String} icon
+ */
+photonui.Button.prototype.setLeftIcon = function(icon) {
+    this.leftIcon = icon;
+    if (this.leftIcon) {
+        this._leftIcon = photonui.iconFactory(icon);
+        if (this._leftIcon) {
+            photonui.Helpers.cleanNode(this._e.leftIcon);
+            this._e.leftIcon.appendChild(this._leftIcon.getHtml());
+        }
+        else {
+            this.leftIcon = null;
+        }
+    }
+}
+
+/**
+ * Get the button right icon name.
+ *
+ * @method getRightIcon
+ * @return {String}
+ */
+photonui.Button.prototype.getRightIcon = function() {
+    return this.leftIcon;
+}
+
+/**
+ * Set the button right icon.
+ *
+ * @method setRightIcon
+ * @param {String} icon
+ */
+photonui.Button.prototype.setRightIcon = function(icon) {
+    this.rightIcon = icon;
+    if (this.rightIcon) {
+        this._rightIcon = photonui.iconFactory(icon);
+        if (this._rightIcon) {
+            photonui.Helpers.cleanNode(this._e.rightIcon);
+            this._e.rightIcon.appendChild(this._rightIcon.getHtml());
+        }
+        else {
+            this.rightIcon = null;
+        }
+    }
 }
 
 /**
@@ -120,6 +250,30 @@ photonui.Button.prototype.getHtml = function() {
 
 
 /**
+ * Update the button content
+ *
+ * @method _update
+ * @private
+ */
+photonui.Button.prototype._update = function() {
+    this._e.button.removeChild(this._e.leftIcon);
+    this._e.button.removeChild(this._e.text);
+    this._e.button.removeChild(this._e.rightIcon);
+
+    if (this.leftIcon && this.leftIconVisible) {
+        this._e.button.appendChild(this._e.leftIcon);
+    }
+
+    if (this.text && this.textVisible) {
+        this._e.button.appendChild(this._e.text);
+    }
+
+    if (this.rightIcon && this.rightIconVisible) {
+        this._e.button.appendChild(this._e.rightIcon);
+    }
+}
+
+/**
  * Build the HTML of the button.
  *
  * @method _buildHtml
@@ -128,6 +282,18 @@ photonui.Button.prototype.getHtml = function() {
 photonui.Button.prototype._buildHtml = function() {
     this._e.button = document.createElement("button");
     this._e.button.className = "photonui-widget photonui-button";
+
+    this._e.leftIcon = document.createElement("span");
+    this._e.leftIcon.className = "photonui-button-icon";
+    this._e.button.appendChild(this._e.leftIcon);
+
+    this._e.text = document.createElement("span");
+    this._e.text.className = "photonui-button-text";
+    this._e.button.appendChild(this._e.text);
+
+    this._e.rightIcon = document.createElement("span");
+    this._e.rightIcon.className = "photonui-button-icon";
+    this._e.button.appendChild(this._e.rightIcon);
 }
 
 /**
@@ -139,4 +305,7 @@ photonui.Button.prototype._buildHtml = function() {
 photonui.Button.prototype._updateAttributes = function() {
     photonui.Widget.prototype._updateAttributes.call(this);
     this.setText(this.text);
+    this.setLeftIcon(this.leftIcon);
+    this.setRightIcon(this.rightIcon);
+    this._update();
 }

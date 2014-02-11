@@ -61,7 +61,7 @@
         "css": ["input/button/button.css"],
         "themeCss": ["input/button/button-theme.css"],
         "assets": [],
-        "dependencies": ["Core"]
+        "dependencies": ["Core", "BaseIcon"]
     },
     "Field": {
         "abstract": true,
@@ -154,6 +154,6 @@
             "visual/assets/fontawesome-webfont.ttf",
             "visual/assets/fontawesome-webfont.woff"
         ],
-        "dependencies": ["Core"]
+        "dependencies": ["BaseIcon"]
     }
 }

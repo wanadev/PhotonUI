@@ -212,6 +212,22 @@
 
             bl.addChild(grid2);
             bl.addChild(grid3);
+
+
+            // ====== Button ======
+            win3 = new photonui.Window({
+                    title: "Buttons",
+                    x: 450, y: 300,
+                    visible: true
+            });
+
+            var grid4 = new photonui.GridLayout();
+            win3.setChild(grid4);
+
+            grid4.addChild(new photonui.Button({text: "Simple Button"}), {gridX: 1, gridY: 1});
+            grid4.addChild(new photonui.Button({leftIcon: "fa-cog", textVisible: false}), {gridX: 2, gridY: 1});
+            grid4.addChild(new photonui.Button({leftIcon: "fa-cog", text: "Button with left icon"}), {gridX: 1, gridY: 2, gridWidth: 2});
+            grid4.addChild(new photonui.Button({rightIcon: "fa-caret-down", text: "Button with right icon"}), {gridX: 1, gridY: 3, gridWidth: 2});
         </script>
     </body>
 </html>

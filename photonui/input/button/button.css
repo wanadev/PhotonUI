@@ -34,4 +34,13 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    text-align: center;
+}
+
+.photonui-button span {
+    display: inline !important;
+}
+
+.photonui-button span + span {
+    margin-left: 5px;
 }
