@@ -41,7 +41,7 @@ var photonui = photonui || {};
 
 
 /**
- * Base class for fields.
+ * Checkbox.
  *
  * wEvents:
  *
@@ -49,43 +49,28 @@ var photonui = photonui || {};
  *     - description: called when the value was modified.
  *     - callback:    function(widget, value)
  *
- *   * keydown:
- *     - description: called when a key is pressed.
- *     - callback:    function(widget, event)
- *
- *   * keyup:
- *     - description: called when a key is released.
- *     - callback:    function(widget, event)
- *
- *   * keypress:
- *     - description: called just before the insertion of a char.
- *     - callback:    function(widget, event)
- *
- *   * selection-changed:
- *     - description: called when the selection was changed.
- *     - callback:    function(widget, selectionStart, selectionEnd, selectedText, event)
- *
  * @class Field
  * @constructor
  * @extends photonui.Widget
- * @param params.value The field value (optional).
- * @param {String} params.placeholer The field placeholder (optional).
+ * @param {Boolean} params.value The field value (optional, dafault=`false`).
  */
-photonui.Field = function(params) {
+photonui.CheckBox = function(params) {
     photonui.Widget.call(this, params);
 
     var params = params || {};
 
     // Attrs
+    this.inputId = this.name + "-input";
     this.value = (params.value != undefined) ? params.value : "";
-    this.placeholder = (params.placeholder != undefined) ? params.placeholder : "";
 
     this._e = {};  // HTML Elements
 
-    this._registerWidgetEvents(["value-changed", "keydown", "keyup", "keypress", "selection-changed"]);
+    this._registerWidgetEvents(["value-changed"]);
+    this._buildHtml();
+    this._bindEvents();
 }
 
-photonui.Field.prototype = new photonui.Widget();
+photonui.CheckBox.prototype = new photonui.Widget();
 
 
 //////////////////////////////////////////
@@ -99,8 +84,8 @@ photonui.Field.prototype = new photonui.Widget();
  * @method getValue
  * @return {String} The value
  */
-photonui.Field.prototype.getValue = function() {
-    return this._e.field.value;
+photonui.CheckBox.prototype.getValue = function() {
+    return this._e.checkbox.checked;
 }
 
 /**
@@ -109,41 +94,20 @@ photonui.Field.prototype.getValue = function() {
  * @method setValue
  * @param {String} value The value
  */
-photonui.Field.prototype.setValue = function(value) {
+photonui.CheckBox.prototype.setValue = function(value) {
     this.value = value;
-    this._e.field.value = value;
+    this._e.checkbox.checked = value;
     this._callCallbacks("value-changed", [this.getValue()]);
 }
 
 /**
- * Get the field placeholder.
- *
- * @method getPlaceholder
- * @return {String} The placeholder
- */
-photonui.Field.prototype.getPlaceholder = function() {
-    return this._e.field.placeholder;
-}
-
-/**
- * Set the field placeholder.
- *
- * @method setPlaceholder
- * @param {String} placeholder The placeholder
- */
-photonui.Field.prototype.setPlaceholder = function(placeholder) {
-    this.placeholder = placeholder;
-    this._e.field.placeholder = placeholder;
-}
-
-/**
- * Get the HTML of the field.
+ * Get the HTML of the button.
  *
  * @method getHtml
  * @return {HTMLElement}
  */
-photonui.Field.prototype.getHtml = function() {
-    return this._e.field;
+photonui.CheckBox.prototype.getHtml = function() {
+    return this._e.outer;
 }
 
 
@@ -153,15 +117,35 @@ photonui.Field.prototype.getHtml = function() {
 
 
 /**
+ * Build the HTML of the check.
+ *
+ * @method _buildHtml
+ * @private
+ */
+photonui.CheckBox.prototype._buildHtml = function() {
+    this._e.outer = document.createElement("div");
+    this._e.outer.className = "photonui-widget photonui-checkbox";
+
+    this._e.checkbox = document.createElement("input");
+    this._e.checkbox.type = "checkbox";
+    this._e.checkbox.name = this.name;
+    this._e.checkbox.id = this.inputId;
+    this._e.outer.appendChild(this._e.checkbox);
+
+    this._e.span = document.createElement("span");
+    this._e.span.tabIndex = "0";
+    this._e.outer.appendChild(this._e.span);
+}
+
+/**
  * Update attributes.
  *
  * @method _updateAttributes
  * @private
  */
-photonui.Field.prototype._updateAttributes = function() {
+photonui.CheckBox.prototype._updateAttributes = function() {
     photonui.Widget.prototype._updateAttributes.call(this);
     this.setValue(this.value);
-    this.setPlaceholder(this.placeholder);
 }
 
 /**
@@ -170,28 +154,22 @@ photonui.Field.prototype._updateAttributes = function() {
  * @method _bindEvents
  * @private
  */
-photonui.Field.prototype._bindEvents = function() {
-    this._bindEvent("value-changed", this._e.field, "change", function(event) {
-        this._callCallbacks("value-changed", [this.getValue()]);
+photonui.CheckBox.prototype._bindEvents = function() {
+    this._bindEvent("value-changed", this._e.checkbox, "change", function(event) {
+        this.setValue(this.getValue());
+        // Focus the span ff the real checkbox is hidden (happen when a label is clicked).
+        if (window.getComputedStyle(this._e.checkbox).display == "none") {
+            this._e.span.focus();
+        }
     }.bind(this));
 
-    this._bindEvent("keydown", this._e.field, "keydown", function(event) {
-        this._callCallbacks("keydown", [event]);
+    this._bindEvent("span-click", this._e.span, "click", function(event) {
+        this.setValue(!this.getValue());
     }.bind(this));
 
-    this._bindEvent("keyup", this._e.field, "keyup", function(event) {
-        this._callCallbacks("keyup", [event]);
-    }.bind(this));
-
-    this._bindEvent("keypress", this._e.field, "keypress", function(event) {
-        this._callCallbacks("keypress", [event]);
-    }.bind(this));
-
-    this._bindEvent("selection-changed", this._e.field, "select", function(event) {
-        this._callCallbacks("selection-changed", [
-            this._e.field.selectionStart,
-            this._e.field.selectionEnd,
-            ("" + this.getValue()).substring(this._e.field.selectionStart, this._e.field.selectionEnd),
-            event]);
+    this._bindEvent("span-kbd", this._e.span, "keypress", function(event) {
+        if (event.charCode == 32 || event.keyCode == 13) {
+            this.setValue(!this.getValue());
+        }
     }.bind(this));
 }

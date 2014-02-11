@@ -83,6 +83,13 @@
         "themeCss": [],
         "dependencies": ["Field"]
     },
+    "CheckBox": {
+        "abstract": false,
+        "javascript": ["input/checkbox/checkbox.js"],
+        "css": [],
+        "themeCss": ["input/checkbox/checkbox-theme.css"],
+        "dependencies": ["Core"]
+    },
     "Label": {
         "abstract": false,
         "javascript": ["visual/label.js"],

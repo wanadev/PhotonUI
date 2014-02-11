@@ -140,7 +140,7 @@ photonui.Label.prototype.getFor = function() {
  */
 photonui.Label.prototype.setFor = function(forInput) {
     if (forInput instanceof photonui.Widget) {
-        this.forInput = forInput.name;
+        this.forInput = forInput.inputId || forInput.name;
     }
     else {
         this.forInput = forInput;

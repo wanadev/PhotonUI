@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>PhotonUI Fields</title>
+        <title>PhotonUI Widgets</title>
 
         <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
 
@@ -20,6 +20,8 @@
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/field-theme.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/input/field/textareafield.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/checkbox-theme.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
 
@@ -54,13 +56,17 @@
         <script src="../photonui/input/field/textfield.js"></script>
         <script src="../photonui/input/field/textareafield.js"></script>
         <script src="../photonui/input/field/numericfield.js"></script>
+        <script src="../photonui/input/checkbox/checkbox.js"></script>
         <script src="../photonui/visual/label.js"></script>
         <script src="../photonui/visual/separator.js"></script>
         <script src="../photonui/visual/progressbar.js"></script>
 
         <script>
+            // ====== Fields ======
+
+
             var win = new photonui.Window({
-                    title: "Fields",
+                    title: "Input Based Widgets",
                     x: 50, y: 50,
                     visible: true
             });
@@ -130,20 +136,30 @@
 
             grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 9, gridWidth: 2});
 
-            // Vertical Separator
-            grid.addChild(new photonui.Label({text: "Vertical Separator:"}), {gridX: 0, gridY: 10});
-            grid.addChild(new photonui.Separator({orientation: "vertical"}), {gridX: 1, gridY: 10});
+            // Checkbox &co
+            var cb1 = new photonui.CheckBox();
+            grid.addChild(new photonui.Label({text: "Checkbox:", forInput: cb1}), {gridX: 0, gridY: 10});
+            grid.addChild(cb1, {gridX: 1, gridY: 10});
 
-            grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 11, gridWidth: 2});
+
+            // ====== Visual ======
+
+
+            var win2 = new photonui.Window({
+                    title: "Visual Widgets",
+                    x: 450, y: 50,
+                    visible: true
+            });
+
+            var grid2 = new photonui.GridLayout();
+            win2.setChild(grid2);
 
             // Progress Bar
             var pbar = new photonui.ProgressBar();
-            grid.addChild(pbar, {gridX: 1, gridY: 12});
-            grid.addChild(new photonui.Label({text: "Progress Bar:"}), {gridX: 0, gridY: 12});
+            grid2.addChild(pbar, {gridX: 0, gridY: 0, gridWidth: 3});
 
             var pbar2 = new photonui.ProgressBar({orientation: "vertical"});
-            grid.addChild(pbar2, {gridX: 1, gridY: 13, horizontalExpansion: false});
-            grid.addChild(new photonui.Label({text: "Vertical Progress Bar:"}), {gridX: 0, gridY: 13});
+            grid2.addChild(pbar2, {gridX: 0, gridY: 1, horizontalExpansion: false});
 
             function progress() {
                 if (pbar.getValue() < 1 && !pbar.getPulsate()) {
@@ -154,6 +170,10 @@
             }
             setTimeout(progress, 500);
 
+            // Vertical Separator
+            grid2.addChild(new photonui.Separator({orientation: "vertical"}), {gridX: 1, gridY: 1});
+
+            // Btn toggle
             btnPBarPulse = new photonui.Button({text: "Progress / Pulsate"});
             btnPBarPulse.registerCallback("progress-pulseate", "click", function(widget) {
                     pbar.setPulsate(!pbar.getPulsate());
@@ -161,30 +181,7 @@
                     progress();
             });
 
-            grid.addChild(btnPBarPulse, {gridX: 1, gridY: 14});
-
-
-            // Event test
-            photonui.build(
-                    {
-                        __widget__: "Window",
-                        title: "Test Window",
-                        visible: true,
-                        x: 450, y: 50,
-                        __child__: {
-                            __widget__: "BoxLayout",
-                            orientation: "horizontal",
-                            __children__: [
-                                {__widget__: "TextField", name: "field1", value: "Hello"},
-                                {__widget__: "Button", name: "button1", text: "Hello"}
-                            ]
-                        }
-                    }
-            );
-
-            photonui.getWidget("field1").registerCallback("foo", "keyup", function(widget, event) {
-                    photonui.getWidget("button1").setText(widget.getValue());
-            });
+            grid2.addChild(btnPBarPulse, {gridX: 2, gridY: 1});
         </script>
     </body>
 </html>
