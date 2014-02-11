@@ -53,7 +53,8 @@ var photonui = photonui || {};
  *          minWidth: <Number, default: undefined>,
  *          minHeight: <Number, default: undefined>,
  *          maxWidth: <Number, default: undefined>,
- *          maxHeight: <Number, default: undefined>
+ *          maxHeight: <Number, default: undefined>,
+ *          horizontalAlign: <String (left, center, right), default: undefined>
  *     }
  *
  * @class BoxLayout
@@ -261,6 +262,10 @@ photonui.BoxLayout.prototype._updateLayout = function() {
         // Layout Options: maxHeight
         if (this.childrenWidgets[i].layoutOptions.maxHeight != undefined) {
             e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
+        }
+        // Layout Options: horizontalAlign
+        if (this.childrenWidgets[i].layoutOptions.horizontalAlign != undefined) {
+            e_td.style.textAlign = this.childrenWidgets[i].layoutOptions.horizontalAlign; console.log("hhhh");
         }
 
         e_td.appendChild(this.childrenWidgets[i].getHtml());

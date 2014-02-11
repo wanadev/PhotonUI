@@ -48,6 +48,13 @@ var photonui = photonui || {};
  *     {
  *          verticalExpansion: <Boolean, default: true>,
  *          horizontalExpansion: <Boolean, default: true>,
+ *          width: <Number, default: undefined>,
+ *          height: <Number, default: undefined>,
+ *          minWidth: <Number, default: undefined>,
+ *          minHeight: <Number, default: undefined>,
+ *          maxWidth: <Number, default: undefined>,
+ *          maxHeight: <Number, default: undefined>,
+ *          horizontalAlign: <String (left, center, right), default: center>,
  *          gridX: <Number, default: 0>,
  *          gridY: <Number, default: 0>,
  *          gridWidth: <Number, default: 1>,
@@ -228,6 +235,7 @@ photonui.GridLayout.prototype._updateLayout = function() {
                     e_td.colSpan = cs;
                     e_td.rowSpan = rs;
                     e_td.appendChild(this.childrenWidgets[i].getHtml());
+
                     if (this.childrenWidgets[i].layoutOptions.horizontalExpansion == undefined
                     ||  this.childrenWidgets[i].layoutOptions.horizontalExpansion) {
                         e_td.className += " photonui-container-expand-child-horizontal"
@@ -236,6 +244,36 @@ photonui.GridLayout.prototype._updateLayout = function() {
                     ||  this.childrenWidgets[i].layoutOptions.verticalExpansion) {
                         e_td.className += " photonui-container-expand-child-vertical"
                     }
+
+                    // Layout Options: width
+                    if (this.childrenWidgets[i].layoutOptions.width != undefined) {
+                        e_td.style.height = this.childrenWidgets[i].layoutOptions.width + "px";
+                    }
+                    // Layout Options: height
+                    if (this.childrenWidgets[i].layoutOptions.height != undefined) {
+                        e_td.style.height = this.childrenWidgets[i].layoutOptions.height + "px";
+                    }
+                    // Layout Options: minWidth
+                    if (this.childrenWidgets[i].layoutOptions.minWidth != undefined) {
+                        e_td.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
+                    }
+                    // Layout Options: minHeight
+                    if (this.childrenWidgets[i].layoutOptions.minHeight != undefined) {
+                        e_td.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
+                    }
+                    // Layout Options: maxWidth
+                    if (this.childrenWidgets[i].layoutOptions.maxWidth != undefined) {
+                        e_td.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
+                    }
+                    // Layout Options: maxHeight
+                    if (this.childrenWidgets[i].layoutOptions.maxHeight != undefined) {
+                        e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
+                    }
+                    // Layout Options: horizontalAlign
+                    if (this.childrenWidgets[i].layoutOptions.horizontalAlign != undefined) {
+                        e_td.style.textAlign = this.childrenWidgets[i].layoutOptions.horizontalAlign;
+                    }
+
                     if (cs > 1 || rs > 1) {
                         for (var r=y ; r<y+rs ; r++) {
                             for (var c=x ; c<x+cs ; c++) {

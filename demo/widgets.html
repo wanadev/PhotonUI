@@ -135,7 +135,7 @@
             var textAreaField = new photonui.TextAreaField({
                     placeholder: "Your text here..."
             });
-            grid.addChild(textAreaField, {gridX: 1, gridY: 8});
+            grid.addChild(textAreaField, {gridX: 1, gridY: 8, minWidth: 250});
             grid.addChild(new photonui.Label({text: "Text Area:", forInput: textAreaField}), {gridX: 0, gridY: 8});
 
             grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 9, gridWidth: 2});
