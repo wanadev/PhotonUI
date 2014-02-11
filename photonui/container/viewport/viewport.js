@@ -188,7 +188,7 @@ photonui.Viewport.prototype.getContainerNode = function() {
  */
 photonui.Viewport.prototype._buildHtml = function() {
     this._e.viewport = document.createElement("div");
-    this._e.viewport.className = "photonui-widget photonui-viewport";
+    this._e.viewport.className = "photonui-widget photonui-viewport photonui-container";
 }
 
 /**

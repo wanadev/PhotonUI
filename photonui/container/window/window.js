@@ -513,7 +513,7 @@ photonui.Window.prototype._buildHtml = function() {
     this._e.windowTitle.appendChild(this._e.windowTitleText);
 
     this._e.windowContent = document.createElement("div");
-    this._e.windowContent.className = "photonui-window-content photonui-container-expand-child";
+    this._e.windowContent.className = "photonui-container photonui-window-content photonui-container-expand-child";
     this._e["window"].appendChild(this._e.windowContent);
 }
 

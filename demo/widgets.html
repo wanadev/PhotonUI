@@ -33,6 +33,9 @@
 
         <link type="text/css" rel="stylesheet" href="../photonui/visual/progressbar.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/visual/progressbar-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/baseicon.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/faicon-fontawesome.css" />
         <style>
             html, body {
                 margin: 0;
@@ -64,6 +67,9 @@
         <script src="../photonui/visual/label.js"></script>
         <script src="../photonui/visual/separator.js"></script>
         <script src="../photonui/visual/progressbar.js"></script>
+        <script src="../photonui/visual/baseicon-helpers.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
+        <script src="../photonui/visual/faicon.js"></script>
 
         <script>
             // ====== Fields ======
@@ -159,8 +165,10 @@
                     visible: true
             });
 
+            var bl = new photonui.BoxLayout({verticalSpacing: 0, horizontalSpacing: 0});
+            win2.setChild(bl);
+
             var grid2 = new photonui.GridLayout();
-            win2.setChild(grid2);
 
             // Progress Bar
             var pbar = new photonui.ProgressBar();
@@ -190,6 +198,20 @@
             });
 
             grid2.addChild(btnPBarPulse, {gridX: 2, gridY: 1});
+
+            var grid3 = new photonui.GridLayout();
+
+            // Font Awesome Icon
+            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro"}), {gridX: 1, gridY: 1});
+            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-lg"}), {gridX: 2, gridY: 1});
+            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-2x", color: "#002B2E"}), {gridX: 3, gridY: 1});
+            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-3x", color: "#00454A"}), {gridX: 4, gridY: 1});
+            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-4x", color: "#01585F"}), {gridX: 5, gridY: 1});
+            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-5x", color: "#08666E"}), {gridX: 6, gridY: 1});
+
+
+            bl.addChild(grid2);
+            bl.addChild(grid3);
         </script>
     </body>
 </html>

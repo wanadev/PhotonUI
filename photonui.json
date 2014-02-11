@@ -134,5 +134,26 @@
         "themeCss": ["visual/progressbar-theme.css"],
         "assets": [],
         "dependencies": ["Core"]
+    },
+    "BaseIcon": {
+        "abstract": true,
+        "javascript": ["visual/baseicon-helpers.js", "visual/baseicon.js"],
+        "css": ["visual/baseicon.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
+    },
+    "FAIcon": {
+        "abstract": false,
+        "javascript": ["visual/faicon.js"],
+        "css": ["visual/faicon-fontawesome.css"],
+        "themeCss": [],
+        "assets": [
+            "visual/assets/fontawesome-webfont.eot",
+            "visual/assets/fontawesome-webfont.svg",
+            "visual/assets/fontawesome-webfont.ttf",
+            "visual/assets/fontawesome-webfont.woff"
+        ],
+        "dependencies": ["Core"]
     }
 }

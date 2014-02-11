@@ -226,7 +226,7 @@ photonui.BoxLayout.prototype._updateLayout = function() {
         }
 
         var e_td = document.createElement("td");
-        e_td.className = "photonui-boxlayout-cell";
+        e_td.className = "photonui-container photonui-boxlayout-cell";
         e_tr.appendChild(e_td);
 
         // Layout Options: Expansion

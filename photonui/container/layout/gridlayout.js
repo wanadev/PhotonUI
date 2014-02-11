@@ -225,7 +225,7 @@ photonui.GridLayout.prototype._updateLayout = function() {
             }
             var widget = false;
             var e_td = document.createElement("td");
-            e_td.className = "photonui-gridlayout-cell";
+            e_td.className = "photonui-container photonui-gridlayout-cell";
             e_tr.appendChild(e_td);
             for (var i=0 ; i<this.childrenWidgets.length ; i++) {
                 if (this.childrenWidgets[i].layoutOptions.gridX - ox == x && this.childrenWidgets[i].layoutOptions.gridY - oy == y) {
