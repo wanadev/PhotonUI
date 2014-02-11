@@ -28,51 +28,29 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule Input
+ * @namespace photonui
+ */
 
-.photonui-checkbox {
+
+var photonui = photonui || {};
+
+
+/**
+ * Switch.
+ *
+ * @class Switch
+ * @constructor
+ * @extends photonui.CheckBox
+ */
+photonui.Switch = function(params) {
+    photonui.CheckBox.call(this, params);
+    this.removeClass("photonui-checkbox");
+    this.addClass("photonui-switch");
 }
 
-.photonui-checkbox input {
-    display: none;
-}
-
-.photonui-checkbox span {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    padding: 2px;
-    vertical-align: middle;
-
-    cursor: pointer;
-    background: #fff;
-    color: #333;
-    border: #a5a5a5 solid 1px;
-    border-radius: 2px;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, .1);
-    outline: none;
-    transition: all .1s;
-}
-
-.photonui-checkbox span:focus {
-    border-color: #777;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, .1), 0 0 3px rgba(0, 0, 0, .3);
-}
-
-.photonui-checkbox input:checked + span:after {
-    content: "";
-    display: block;
-    width: 12px;
-    height: 12px;
-
-    border-radius: 1px;
-    background: #25a9b5;
-
-    background: -moz-linear-gradient(top, #25a9b5 0%, #008091 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#25a9b5), color-stop(100%,#008091)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #25a9b5 0%,#008091 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #25a9b5 0%,#008091 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #25a9b5 0%,#008091 100%); /* IE10+ */
-    background: linear-gradient(to bottom, #25a9b5 0%,#008091 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#25a9b5', endColorstr='#008091',GradientType=0 ); /* IE6-9 */
-
-}
+photonui.Switch.prototype = new photonui.CheckBox();

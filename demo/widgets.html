@@ -23,6 +23,9 @@
 
         <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/checkbox-theme.css" />
 
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/switch.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/switch-theme.css" />
+
         <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/visual/separator.css" />
@@ -57,6 +60,7 @@
         <script src="../photonui/input/field/textareafield.js"></script>
         <script src="../photonui/input/field/numericfield.js"></script>
         <script src="../photonui/input/checkbox/checkbox.js"></script>
+        <script src="../photonui/input/checkbox/switch.js"></script>
         <script src="../photonui/visual/label.js"></script>
         <script src="../photonui/visual/separator.js"></script>
         <script src="../photonui/visual/progressbar.js"></script>
@@ -140,6 +144,10 @@
             var cb1 = new photonui.CheckBox();
             grid.addChild(new photonui.Label({text: "Checkbox:", forInput: cb1}), {gridX: 0, gridY: 10});
             grid.addChild(cb1, {gridX: 1, gridY: 10});
+
+            var cb2 = new photonui.Switch();
+            grid.addChild(new photonui.Label({text: "Switch:", forInput: cb2}), {gridX: 0, gridY: 11});
+            grid.addChild(cb2, {gridX: 1, gridY: 11});
 
 
             // ====== Visual ======

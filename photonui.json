@@ -90,6 +90,13 @@
         "themeCss": ["input/checkbox/checkbox-theme.css"],
         "dependencies": ["Core"]
     },
+    "Switch": {
+        "abstract": false,
+        "javascript": ["input/checkbox/switch.js"],
+        "css": ["input/checkbox/switch.css"],
+        "themeCss": ["input/checkbox/switch-theme.css"],
+        "dependencies": ["CheckBox"]
+    },
     "Label": {
         "abstract": false,
         "javascript": ["visual/label.js"],

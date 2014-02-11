@@ -49,7 +49,7 @@ var photonui = photonui || {};
  *     - description: called when the value was modified.
  *     - callback:    function(widget, value)
  *
- * @class Field
+ * @class CheckBox
  * @constructor
  * @extends photonui.Widget
  * @param {Boolean} params.value The field value (optional, dafault=`false`).
