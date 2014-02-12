@@ -11,6 +11,8 @@
         <link type="text/css" rel="stylesheet" href="../photonui/container/window/window-theme.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menuitem.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menu.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menu-theme.css" />
 
         <link type="text/css" rel="stylesheet" href="../photonui/input/button/button.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/input/button/button-theme.css" />
@@ -45,8 +47,9 @@
         <script src="../photonui/widget.js"></script>
         <script src="../photonui/container/container.js"></script>
         <script src="../photonui/container/window/window.js"></script>
-        <script src="../photonui/container/menu/menuitem.js"></script>
         <script src="../photonui/container/layout/layout.js"></script>
+        <script src="../photonui/container/menu/menuitem.js"></script>
+        <script src="../photonui/container/menu/menu.js"></script>
         <script src="../photonui/input/button/button.js"></script>
         <script src="../photonui/visual/label.js"></script>
         <script src="../photonui/input/checkbox/checkbox.js"></script>
@@ -58,22 +61,50 @@
 
         <script>
             var win = new photonui.Window({
-                    title: "Menu (test)",
+                    title: "Menu",
                     x: 50, y: 50,
                     width: 260,
                     visible: true
             });
 
+            var menu = new photonui.Menu();
+            win.setChild(menu);
+
             var item1 = new photonui.MenuItem({
                     icon: "fa-cog",
-                    text: "Hello World"
+                    text: "Show Icons"
             });
+            var icoSwitch = new photonui.Switch({value: true});
+            icoSwitch.registerCallback("toggle-icons", "value-changed", function(widget) {menu.setHideIcons(!menu.getHideIcons())});
+            item1.setChild(icoSwitch);
+            menu.addChild(item1);
 
-            win.setChild(item1);
+            menu.addChild(new photonui.MenuItem({
+                    icon: "fa-users",
+                    text: "Item 2"
+            }));
 
-            //item1.setChild(new photonui.CheckBox());
-            item1.setChild(new photonui.Switch());
-            //item1.setChild(new photonui.Button());
+            menu.addChild(new photonui.MenuItem({
+                    icon: "fa-plane",
+                    text: "Item 3"
+            }));
+
+            menu.addChild(new photonui.MenuItem({
+                    icon: "fa-cloud",
+                    text: "Item 4"
+            }));
+
+            menu.addChild(new photonui.Separator());
+
+            menu.addChild(new photonui.MenuItem({
+                    text: "Item 5",
+                    active: true
+            }));
+
+            menu.addChild(new photonui.MenuItem({
+                    text: "Item 6"
+            }));
+
         </script>
     </body>
 </html>

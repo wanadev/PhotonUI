@@ -163,5 +163,13 @@
         "themeCss": [],
         "assets": [],
         "dependencies": ["Container", "BaseIcon"]
+    },
+    "Menu": {
+        "abstract": false,
+        "javascript": ["container/menu/menu.js"],
+        "css": ["container/menu/menu.css"],
+        "themeCss": ["container/menu/menu-theme.css"],
+        "assets": [],
+        "dependencies": ["Layout", "MenuItem"]
     }
 }

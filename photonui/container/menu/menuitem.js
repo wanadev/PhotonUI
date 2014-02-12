@@ -46,6 +46,9 @@ var photonui = photonui || {};
  * @class MenuItem
  * @constructor
  * @extends photonui.Container
+ * @param {String} text The item text (optional, default="Menu Item").
+ * @param icon The item icon (optional, default="").
+ * @param {Boolean} active Highlight the menu item if true (optional, default=`false`).
  */
 photonui.MenuItem = function(params) {
     photonui.Container.call(this, params);
@@ -55,6 +58,7 @@ photonui.MenuItem = function(params) {
     // Attrs
     this.text = params.text || "Menu Item";  // FIXME i18n
     this.icon = params.icon || "";
+    this.active = (params.active != undefined) ? params.active : false;
 
     this._e = {};  // HTML Elements
     this._icon = null;
@@ -123,6 +127,33 @@ photonui.MenuItem.prototype.setIcon = function(icon) {
 }
 
 /**
+ * Get the active state of the item (highlight).
+ *
+ * @method isActive
+ * @return {Boolean}
+ */
+photonui.MenuItem.prototype.isActive = function() {
+    return this.active;
+}
+
+/**
+ * Set the active state of the item (highlight).
+ *
+ * @method setActive
+ * @param {Boolean} active
+ */
+photonui.MenuItem.prototype.setActive = function(active) {
+    this.active = active;
+
+    if (active) {
+        this.addClass("photonui-menuitem-active");
+    }
+    else {
+        this.removeClass("photonui-menuitem-active");
+    }
+}
+
+/**
  * Get the HTML of the item.
  *
  * @method getHtml
@@ -182,4 +213,5 @@ photonui.MenuItem.prototype._updateAttributes = function() {
 
     this.setText(this.text);
     this.setIcon(this.icon);
+    this.setActive(this.active);
 }
