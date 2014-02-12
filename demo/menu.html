@@ -75,8 +75,17 @@
                     text: "Show Icons"
             });
             var icoSwitch = new photonui.Switch({value: true});
-            icoSwitch.registerCallback("toggle-icons", "value-changed", function(widget) {menu.setHideIcons(!menu.getHideIcons())});
+            icoSwitch.registerCallback("toggle-icons", "value-changed", function(widget) {
+                    menu.setHideIcons(!widget.getValue());
+            });
+            icoSwitch.registerCallback("toggle-icons", "click", function(widget, event) {
+                    event.stopPropagation();
+            });
             item1.setChild(icoSwitch);
+            item1.registerCallback("click", "click", function(widget, event) {
+                    var c = widget.getChild();
+                    c.setValue(!c.getValue());
+            });
             menu.addChild(item1);
 
             menu.addChild(new photonui.MenuItem({

@@ -65,7 +65,7 @@ photonui.CheckBox = function(params) {
 
     this._e = {};  // HTML Elements
 
-    this._registerWidgetEvents(["value-changed"]);
+    this._registerWidgetEvents(["value-changed", "click"]);
     this._buildHtml();
     this._updateAttributes();
     this._bindEvents();
@@ -166,6 +166,7 @@ photonui.CheckBox.prototype._bindEvents = function() {
 
     this._bindEvent("span-click", this._e.span, "click", function(event) {
         this.setValue(!this.getValue());
+        this._callCallbacks("click", [event]);
     }.bind(this));
 
     this._bindEvent("span-kbd", this._e.span, "keypress", function(event) {

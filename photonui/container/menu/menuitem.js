@@ -63,9 +63,14 @@ photonui.MenuItem = function(params) {
     this._e = {};  // HTML Elements
     this._icon = null;
 
+    this._registerWidgetEvents(["click"]);
+
     // Build and bind
     this._buildHtml();
     this._updateAttributes();
+    this._bindEvent("click", this._e.outer, "click", function(event) {
+        this._callCallbacks("click", [event]);
+    }.bind(this));
 }
 
 photonui.MenuItem.prototype = new photonui.Container();
