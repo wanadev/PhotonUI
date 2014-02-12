@@ -30,6 +30,10 @@
 
 
 .photonui-menuitem {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     display: table !important;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;

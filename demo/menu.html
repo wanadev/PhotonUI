@@ -95,7 +95,8 @@
 
             menu.addChild(new photonui.MenuItem({
                     icon: "fa-plane",
-                    text: "Item 3"
+                    text: "Item 3",
+                    active: false
             }));
 
             menu.addChild(new photonui.MenuItem({
@@ -106,12 +107,21 @@
             menu.addChild(new photonui.Separator());
 
             menu.addChild(new photonui.MenuItem({
-                    text: "Item 5",
-                    active: true
+                    text: "Item 5"
             }));
 
+            // -- submenu
+
+            var submenu = new photonui.Menu({visible: false});
+            menu.addSubmenu(new photonui.MenuItem({icon: "", text: "Submenu"}), submenu);
+            submenu.addChild(new photonui.MenuItem({icon: "fa-cloud-download", text: "Subitem 1"}));
+            submenu.addChild(new photonui.MenuItem({icon: "fa-eye",text: "Subitem 2"}));
+            submenu.addChild(new photonui.MenuItem({text: "Subitem 3"}));
+
+            // -- /submenu
+
             menu.addChild(new photonui.MenuItem({
-                    text: "Item 6"
+                    text: "Item 7"
             }));
 
         </script>

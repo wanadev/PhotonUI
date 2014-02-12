@@ -109,6 +109,40 @@ photonui.Menu.prototype.getHtml = function() {
 
 
 //////////////////////////////////////////
+// Public Methods                       //
+//////////////////////////////////////////
+
+
+/**
+ * Add submenu.
+ *
+ * @method addSubmenu
+ * @param {photonui.MenuItem} menuItem The menu item that will fold/unfold the submenu
+ * @param {photonui.Menu} menu The submenu
+ */
+photonui.Menu.prototype.addSubmenu = function (menuItem, menu) {
+    // Prepare item
+    menuItem.addClass("photonui-menuitem-submenu");
+    menuItem.registerCallback("toggle-folding", "click", function(widget, event) {
+        menu.setVisible(!menu.isVisible());
+    });
+
+    // Prepare menu
+    menu.registerCallback("fold", "hide", function(widget, event) {
+        menuItem.removeClass("photonui-menuitem-active");
+    });
+    menu.registerCallback("unfold", "show", function(widget, event) {
+        menuItem.addClass("photonui-menuitem-active");
+    });
+    menu.setVisible(menu.isVisible());
+
+    // Append to current menu
+    this.addChild(menuItem);
+    this.addChild(menu);
+}
+
+
+//////////////////////////////////////////
 // Private Methods                      //
 //////////////////////////////////////////
 

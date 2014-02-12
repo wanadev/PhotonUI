@@ -73,3 +73,47 @@
 .photonui-menu.photonui-menu-style-default.photonui-menu-noicon > .photonui-menuitem .photonui-menuitem-text {
     padding-left: 5px;
 }
+
+/** Submenu item **/
+
+.photonui-menu.photonui-menu-style-default .photonui-menuitem-submenu:after {
+    content: "";
+    display: block;
+    float: right;
+    border-top: transparent solid 4px;
+    border-right: #333 solid 4px;
+    border-bottom: #333 solid 4px;
+    border-left: transparent solid 4px;
+    margin-right: 5px;
+    margin-top: calc(25% - 3px);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    transition: all .1s;
+}
+
+/** Submenu item + active **/
+
+.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-menuitem-submenu.photonui-menuitem-active {
+    background: #08666E;
+    box-shadow: 0 -1px 0 #01585F, inset -1px 0 0 #01585F, inset 1px 0 0 #01585F, inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 -1px 0 #0C474C, inset 0 -2px 0 rgba(255, 255, 255, .1), inset 2px 0 0 rgba(255, 255, 255, .2), inset -2px 0 0 rgba(255, 255, 255, .1);
+    color: #fff;
+    text-shadow: -1px -1px 0 #0C474C;
+}
+
+.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-menuitem-submenu.photonui-menuitem-active:after {
+    margin-top: calc(25% - 4px);
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    border-right-color: #fff;
+    border-bottom-color: #fff;
+}
+
+/** Submenu **/
+
+.photonui-menu.photonui-menu-style-default > .photonui-menu.photonui-menu-style-default {
+    margin-left: 2px;
+    margin-top: -2px;
+    padding-top: 2px;
+    border-left: #08666E solid 4px;
+    box-shadow: -1px 0 0 #39858B, -2px 0 0 #01585F;
+}
