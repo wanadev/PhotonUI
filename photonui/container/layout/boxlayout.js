@@ -176,7 +176,7 @@ photonui.BoxLayout.prototype.getHtml = function() {
 
 
 /**
- * Build the HTML of the bow layout.
+ * Build the HTML of the box layout.
  *
  * @method _buildHtml
  * @private

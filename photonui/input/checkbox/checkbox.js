@@ -61,12 +61,13 @@ photonui.CheckBox = function(params) {
 
     // Attrs
     this.inputId = this.name + "-input";
-    this.value = (params.value != undefined) ? params.value : "";
+    this.value = (params.value != undefined) ? params.value : false;
 
     this._e = {};  // HTML Elements
 
     this._registerWidgetEvents(["value-changed"]);
     this._buildHtml();
+    this._updateAttributes();
     this._bindEvents();
 }
 
