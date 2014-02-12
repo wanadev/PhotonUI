@@ -155,5 +155,13 @@
             "visual/assets/fontawesome-webfont.woff"
         ],
         "dependencies": ["BaseIcon"]
+    },
+    "MenuItem": {
+        "abstract": true,
+        "javascript": ["container/menu/menuitem.js"],
+        "css": ["container/menu/menuitem.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Container", "BaseIcon"]
     }
 }

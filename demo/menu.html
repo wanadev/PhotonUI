@@ -1,0 +1,80 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>PhotonUI Menu</title>
+
+        <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/window.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/window-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menuitem.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/checkbox-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/switch.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/switch-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/separator.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/separator-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/baseicon.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/faicon-fontawesome.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                color: #000;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../photonui/photonui.js"></script>
+        <script src="../photonui/helpers.js"></script>
+
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/container/container.js"></script>
+        <script src="../photonui/container/window/window.js"></script>
+        <script src="../photonui/container/menu/menuitem.js"></script>
+        <script src="../photonui/container/layout/layout.js"></script>
+        <script src="../photonui/input/button/button.js"></script>
+        <script src="../photonui/visual/label.js"></script>
+        <script src="../photonui/input/checkbox/checkbox.js"></script>
+        <script src="../photonui/input/checkbox/switch.js"></script>
+        <script src="../photonui/visual/separator.js"></script>
+        <script src="../photonui/visual/baseicon-helpers.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
+        <script src="../photonui/visual/faicon.js"></script>
+
+        <script>
+            var win = new photonui.Window({
+                    title: "Menu (test)",
+                    x: 50, y: 50,
+                    width: 260,
+                    visible: true
+            });
+
+            var item1 = new photonui.MenuItem({
+                    icon: "fa-cog",
+                    text: "Hello World"
+            });
+
+            win.setChild(item1);
+
+            //item1.setChild(new photonui.CheckBox());
+            item1.setChild(new photonui.Switch());
+            //item1.setChild(new photonui.Button());
+        </script>
+    </body>
+</html>
+
