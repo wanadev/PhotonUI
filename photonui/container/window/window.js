@@ -102,6 +102,7 @@ photonui.Window = function(params) {
     this._bindEvent("move.dragstart", this._e.windowTitle, "mousedown", this._moveDragStart.bind(this));
     this._bindEvent("closeButton.click", this._e.windowTitleCloseButton, "click", this._closeButtonClicked.bind(this));
     this._bindEvent("totop", this._e["window"], "mousedown", this.moveToFront.bind(this));
+    this._bindEvent("closeButton.mousedown", this._e.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
     this.moveToFront();
     this._e_parent.appendChild(this.getHtml());
 }
