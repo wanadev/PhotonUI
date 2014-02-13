@@ -126,6 +126,35 @@ photonui.Widget.prototype.setVisible = function(visible) {
     }
 }
 
+/**
+ * Get the absolute position of the widget.
+ *
+ * @method getAbsolutePosition
+ * @return {Object} `{x: <Number>, y: <Number>}`
+ */
+photonui.Widget.prototype.getAbsolutePosition = function() {
+    return photonui.Helpers.getAbsolutePosition(this.getHtml());
+}
+
+/**
+ * Get the widget width.
+ *
+ * @method getWidth
+ * @return {Number}
+ */
+photonui.Widget.prototype.getWidth = function() {
+    return this.getHtml().offsetWidth;
+}
+
+/**
+ * Get the widget height.
+ *
+ * @method getHeight
+ * @return {Number}
+ */
+photonui.Widget.prototype.getHeight = function() {
+    return this.getHtml().offsetHeight;
+}
 
 //////////////////////////////////////////
 // Public Methods                       //
