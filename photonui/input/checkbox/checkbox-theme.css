@@ -37,6 +37,7 @@
 }
 
 .photonui-checkbox span {
+    margin-top: -1px;
     display: inline-block;
     width: 12px;
     height: 12px;

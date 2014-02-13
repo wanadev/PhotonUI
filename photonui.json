@@ -187,5 +187,13 @@
         "themeCss": ["container/menu/menu-theme.css"],
         "assets": [],
         "dependencies": ["Layout", "MenuItem"]
+    },
+    "PopupMenu": {
+        "abstract": false,
+        "javascript": ["composite/popupmenu.js"],
+        "css": [],
+        "themeCss": ["composite/popupmenu-theme.css"],
+        "assets": [],
+        "dependencies": ["PopupWindow", "Menu"]
     }
 }

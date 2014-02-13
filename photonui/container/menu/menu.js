@@ -74,7 +74,7 @@ photonui.Menu.prototype = new photonui.Layout;
 /**
  * 
  * @method getHideIcons
- * return {Boolean}
+ * @return {Boolean}
  */
 photonui.Menu.prototype.getHideIcons = function() {
     return this.hideIcons;
@@ -84,7 +84,7 @@ photonui.Menu.prototype.getHideIcons = function() {
  * Hide or display menu item icons.
  *
  * @method setHideIcons
- * param {Boolean} hide
+ * @param {Boolean} hide
  */
 photonui.Menu.prototype.setHideIcons = function(hide) {
     this.hideIcons = hide;

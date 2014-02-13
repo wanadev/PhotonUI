@@ -38,7 +38,6 @@
 
 
 var photonui = photonui || {};
-photonui._windowList = [];
 
 
 /**
@@ -172,11 +171,3 @@ photonui.PopupWindow.prototype._buildHtml = function() {
 photonui.PopupWindow.prototype._updateAttributes = function() {
     photonui.BaseWindow.prototype._updateAttributes.call(this);
 }
-
-
-//////////////////////////////////////////
-// Internal Events Callbacks            //
-//////////////////////////////////////////
-
-
-//TODO
