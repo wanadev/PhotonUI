@@ -28,30 +28,15 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-.photonui-window-title {
-    overflow: hidden;
-}
 
-.photonui-active .photonui-window-title {
-}
-
-.photonui-window-title-close-button {
-    float: right;
-}
-
-.photonui-window-title-text {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    pointer-events: none;
-}
-
-.photonui-window-have-button .photonui-window-title-text {
-    width: calc(100% - 40px);
-}
-
-.photonui-window-content {
-    overflow: hidden;
+.photonui-basewindow {
+    position: absolute;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    min-width: -webkit-max-content;
+    min-width: -moz-max-content;
+    min-width: -ms-max-content;
+    min-width: max-content;
 }

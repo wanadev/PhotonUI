@@ -15,13 +15,21 @@
         "assets": [],
         "dependencies": ["Core"]
     },
+    "BaseWindow": {
+        "abstract": true,
+        "javascript": ["container/window/basewindow.js"],
+        "css": ["container/window/basewindow.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Container"]
+    },
     "Window": {
         "abstract": false,
         "javascript": ["container/window/window.js"],
         "css": ["container/window/window.css"],
         "themeCss": ["container/window/window-theme.css"],
         "assets": [],
-        "dependencies": ["Container"]
+        "dependencies": ["BaseWindow"]
     },
     "Layout": {
         "abstract": true,
