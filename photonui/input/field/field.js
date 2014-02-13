@@ -195,3 +195,20 @@ photonui.Field.prototype._bindEvents = function() {
             event]);
     }.bind(this));
 }
+
+
+//////////////////////////////////////////
+// Internal Events Callbacks            //
+//////////////////////////////////////////
+
+
+/**
+ * Called when the context menu should be displayed.
+ *
+ * @method _onContextMenu
+ * @private
+ * @param event
+ */
+photonui.Field.prototype._onContextMenu = function(event) {
+    event.stopPropagation();
+}

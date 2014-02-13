@@ -60,6 +60,7 @@ var photonui = photonui || {};
  * @param {String} params.name The name of the widget (optional, default=photonui.Helpers.uuid4()).
  * @param {String} params.className Classes (HTML) of the widget (optional, default=null).
  * @param {Boolean} params.visible Is the widget displayed or hidden (optional, default=true).
+ * @param {String} params.contextMenuName The name of the context menu (optional, default=null).
  * @constructor
  */
 photonui.Widget = function(params) {
@@ -68,6 +69,7 @@ photonui.Widget = function(params) {
     // Attrs
     this.name = params.name || "widget-" + photonui.Helpers.uuid4();
     this.visible = (params.visible != undefined) ? params.visible : true;
+    this.contextMenuName = params.contextMenuName || null;
     this.layoutOptions = params.__layout__ || {};
 
     this.__additionalClass = params.className || null;
@@ -155,6 +157,39 @@ photonui.Widget.prototype.getWidth = function() {
 photonui.Widget.prototype.getHeight = function() {
     return this.getHtml().offsetHeight;
 }
+
+/**
+ * Get the context menu (photonui.PopupWindow) attached to the widget.
+ *
+ * @method getContextMenu
+ * @return {photonui.PopupMenu} menu The context menu widget.
+ */
+photonui.Widget.prototype.getContextMenu = function() {
+    if (this.contextMenuName) {
+        return photonui.getWidget(this.contextMenuName);
+    }
+    return null;
+}
+
+/**
+ * Attache a context menu (photonui.PopupWindow) to the widget.
+ *
+ * @method setContextMenu
+ * @param {photonui.PopupMenu} menu The context menu widget.
+ * @param {String} menu The context menu name.
+ */
+photonui.Widget.prototype.setContextMenu = function(menu) {
+    if (menu instanceof photonui.PopupWindow) {
+        this.contextMenuName = menu.name;
+        return;
+    }
+    else if (typeof(menu) == "string") {
+        this.contextMenuName = menu;
+        return;
+    }
+    this.contextMenuName = null;
+}
+
 
 //////////////////////////////////////////
 // Public Methods                       //
@@ -367,4 +402,28 @@ photonui.Widget.prototype._updateAttributes = function() {
 
     // Register the widget
     photonui.widgets[this.name] = this;
+
+    // Bind
+    this._bindEvent("popup-click-close", this.getHtml(), "contextmenu", this._onContextMenu.bind(this));
+}
+
+
+//////////////////////////////////////////
+// Internal Events Callbacks            //
+//////////////////////////////////////////
+
+
+/**
+ * Called when the context menu should be displayed.
+ *
+ * @method _onContextMenu
+ * @private
+ * @param event
+ */
+photonui.Widget.prototype._onContextMenu = function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (this.contextMenuName) {
+        photonui.getWidget(this.contextMenuName).popupXY(event.pageX, event.pageY);
+    }
 }
