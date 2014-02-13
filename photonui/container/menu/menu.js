@@ -83,7 +83,7 @@ photonui.Menu.prototype.getHideIcons = function() {
 /**
  * Hide or display menu item icons.
  *
- * @setHideIcons
+ * @method setHideIcons
  * param {Boolean} hide
  */
 photonui.Menu.prototype.setHideIcons = function(hide) {

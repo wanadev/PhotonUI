@@ -94,3 +94,31 @@ photonui.Helpers.cleanNode = function(node) {
         node.removeChild(node.lastChild);
     }
 }
+
+/**
+ * Get the absolute position of an HTML Element.
+ *
+ * @method getAbsolutePosition
+ * @static
+ * @param {HTMLElement} element
+ * @return {Object} `{x: <Number>, y: <Number>}
+ */
+photonui.Helpers.getAbsolutePosition = function(element) {
+    var css = getComputedStyle(element);
+    var x = - parseInt(css.borderLeftWidth);
+    var y = - parseInt(css.borderTopWidth);;
+
+    while (element.offsetParent) {
+        css = getComputedStyle(element);
+
+        x += element.offsetLeft || 0;
+        x += parseInt(css.borderLeftWidth);
+
+        y += element.offsetTop || 0;
+        y += parseInt(css.borderTopWidth);
+
+        element = element.offsetParent;
+    }
+
+    return {x: x, y: y};
+}

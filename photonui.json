@@ -31,6 +31,14 @@
         "assets": [],
         "dependencies": ["BaseWindow"]
     },
+    "PopupWindow": {
+        "abstract": false,
+        "javascript": ["container/window/popupwindow.js"],
+        "css": ["container/window/popupwindow.css"],
+        "themeCss": ["container/window/popupwindow-theme.css"],
+        "assets": [],
+        "dependencies": ["BaseWindow"]
+    },
     "Layout": {
         "abstract": true,
         "javascript": ["container/layout/layout.js"],
