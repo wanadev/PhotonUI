@@ -71,7 +71,7 @@ photonui.CheckBox = function(params) {
     this._bindEvents();
 }
 
-photonui.CheckBox.prototype = new photonui.Widget();
+photonui.CheckBox.prototype = new photonui.Widget;
 
 
 //////////////////////////////////////////

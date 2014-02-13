@@ -85,7 +85,7 @@ photonui.Field = function(params) {
     this._registerWidgetEvents(["value-changed", "keydown", "keyup", "keypress", "selection-changed"]);
 }
 
-photonui.Field.prototype = new photonui.Widget();
+photonui.Field.prototype = new photonui.Widget;
 
 
 //////////////////////////////////////////

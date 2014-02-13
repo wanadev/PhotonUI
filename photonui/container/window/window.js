@@ -79,7 +79,7 @@ photonui.Window = function(params) {
     this.moveToFront();
 }
 
-photonui.Window.prototype = new photonui.BaseWindow();
+photonui.Window.prototype = new photonui.BaseWindow;
 
 
 //////////////////////////////////////////

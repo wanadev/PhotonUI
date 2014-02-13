@@ -66,7 +66,7 @@ photonui.Separator = function(params) {
     this._updateAttributes();
 }
 
-photonui.Separator.prototype = new photonui.Widget();
+photonui.Separator.prototype = new photonui.Widget;
 
 
 //////////////////////////////////////////

@@ -81,7 +81,7 @@ photonui.Button = function(params) {
     }.bind(this));
 }
 
-photonui.Button.prototype = new photonui.Widget();
+photonui.Button.prototype = new photonui.Widget;
 
 
 //////////////////////////////////////////

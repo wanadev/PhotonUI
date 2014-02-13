@@ -86,7 +86,7 @@ photonui.BaseWindow = function(params) {
     this._registerWidgetEvents(["position-changed"]);
 }
 
-photonui.BaseWindow.prototype = new photonui.Container();
+photonui.BaseWindow.prototype = new photonui.Container;
 
 
 //////////////////////////////////////////

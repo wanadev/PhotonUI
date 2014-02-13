@@ -69,7 +69,7 @@ photonui.ProgressBar = function(params) {
     this._updateAttributes();
 }
 
-photonui.ProgressBar.prototype = new photonui.Widget();
+photonui.ProgressBar.prototype = new photonui.Widget;
 
 
 //////////////////////////////////////////

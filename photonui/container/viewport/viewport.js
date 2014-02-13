@@ -67,7 +67,7 @@ photonui.Viewport = function(params) {
     this._updateAttributes();
 }
 
-photonui.Viewport.prototype = new photonui.Container();
+photonui.Viewport.prototype = new photonui.Container;
 
 
 //////////////////////////////////////////

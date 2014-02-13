@@ -73,7 +73,7 @@ photonui.MenuItem = function(params) {
     }.bind(this));
 }
 
-photonui.MenuItem.prototype = new photonui.Container();
+photonui.MenuItem.prototype = new photonui.Container;
 
 
 //////////////////////////////////////////

@@ -63,7 +63,7 @@ photonui.Menu = function(params) {
     this._updateAttributes();
 }
 
-photonui.Menu.prototype = new photonui.Layout();
+photonui.Menu.prototype = new photonui.Layout;
 
 
 //////////////////////////////////////////

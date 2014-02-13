@@ -68,7 +68,7 @@ photonui.FAIcon = function(params) {
     this._updateAttributes();
 }
 
-photonui.FAIcon.prototype = new photonui.BaseIcon();
+photonui.FAIcon.prototype = new photonui.BaseIcon;
 
 
 //////////////////////////////////////////

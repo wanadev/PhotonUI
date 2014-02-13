@@ -81,7 +81,7 @@ photonui.BoxLayout = function(params) {
     this._updateAttributes();
 }
 
-photonui.BoxLayout.prototype = new photonui.Layout();
+photonui.BoxLayout.prototype = new photonui.Layout;
 
 
 //////////////////////////////////////////

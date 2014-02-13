@@ -76,7 +76,7 @@ photonui.NumericField = function(params) {
     this._bindEvent("mousewheel-firefox", this._e.field, "DOMMouseScroll", this._onMouseWheel.bind(this));
 }
 
-photonui.NumericField.prototype = new photonui.Field();
+photonui.NumericField.prototype = new photonui.Field;
 
 
 //////////////////////////////////////////

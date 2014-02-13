@@ -56,7 +56,7 @@ photonui.Layout = function(params) {
     this.childrenWidgets = [];
 }
 
-photonui.Layout.prototype = new photonui.Container();
+photonui.Layout.prototype = new photonui.Container;
 
 
 //////////////////////////////////////////

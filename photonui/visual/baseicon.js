@@ -52,4 +52,4 @@ photonui.BaseIcon = function(params) {
     photonui.Widget.call(this, params);
 }
 
-photonui.BaseIcon.prototype = new photonui.Widget();
+photonui.BaseIcon.prototype = new photonui.Widget;

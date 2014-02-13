@@ -62,7 +62,7 @@ photonui.PopupWindow = function(params) {
     }.bind(this));
 }
 
-photonui.PopupWindow.prototype = new photonui.BaseWindow();
+photonui.PopupWindow.prototype = new photonui.BaseWindow;
 
 
 //////////////////////////////////////////

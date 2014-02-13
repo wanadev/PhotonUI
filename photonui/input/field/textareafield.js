@@ -62,7 +62,7 @@ photonui.TextAreaField = function(params) {
     this._bindEvents();
 }
 
-photonui.TextAreaField.prototype = new photonui.Field();
+photonui.TextAreaField.prototype = new photonui.Field;
 
 
 //////////////////////////////////////////

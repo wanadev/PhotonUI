@@ -83,7 +83,7 @@ photonui.GridLayout = function(params) {
     this._updateAttributes();
 }
 
-photonui.GridLayout.prototype = new photonui.Layout();
+photonui.GridLayout.prototype = new photonui.Layout;
 
 
 //////////////////////////////////////////

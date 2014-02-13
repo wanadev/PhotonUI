@@ -69,7 +69,7 @@ photonui.Label = function(params) {
     this._updateAttributes();
 }
 
-photonui.Label.prototype = new photonui.Widget();
+photonui.Label.prototype = new photonui.Widget;
 
 
 //////////////////////////////////////////

@@ -53,4 +53,4 @@ photonui.Switch = function(params) {
     this.addClass("photonui-switch");
 }
 
-photonui.Switch.prototype = new photonui.CheckBox();
+photonui.Switch.prototype = new photonui.CheckBox;
