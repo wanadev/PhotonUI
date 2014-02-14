@@ -41,29 +41,28 @@ var photonui = photonui || {};
 
 
 /**
- * Menu.
+ * Submenu Menu item.
  *
- * @class Menu
+ * @class SubMenuItem
  * @constructor
- * @extends photonui.Layout
- * @param {Boolean} hideIcon Hide the icons of the menu items (optional, default=`false`).
+ * @extends photonui.MenuItem
+ * @param {String} subMenuName The name of the menu (optional, default=null).
  */
-photonui.Menu = function(params) {
-    photonui.Layout.call(this, params);
+photonui.SubMenuItem = function(params) {
+    photonui.MenuItem.call(this, params);
 
     var params = params || {};
 
-    // Args
-    this.hideIcons = (params.hideIcons != undefined) ? params.hideIcons : false;
+    // Attrs
+    this.subMenuName = params.subMenuName || null;
 
-    this._e = {};  // HTML elements
+    this.addClass("photonui-submenuitem");
 
-    // Build and bind
-    this._buildHtml();
+    this.registerCallback("toggle-folding", "click", this._onItemClicked, this);
     this._updateAttributes();
 }
 
-photonui.Menu.prototype = new photonui.Layout;
+photonui.SubMenuItem.prototype = new photonui.MenuItem;
 
 
 //////////////////////////////////////////
@@ -72,57 +71,50 @@ photonui.Menu.prototype = new photonui.Layout;
 
 
 /**
- * 
- * @method getHideIcons
- * @return {Boolean}
+ * Get the submenu.
+ *
+ * @method getSubMenu
+ * @return {photonui.Menu}
  */
-photonui.Menu.prototype.getHideIcons = function() {
-    return this.hideIcons;
+photonui.SubMenuItem.prototype.getSubMenu = function() {
+    if (this.subMenuName) {
+        return photonui.getWidget(this.subMenuName);
+    }
+    return null;
 }
 
 /**
- * Hide or display menu item icons.
+ * Set the submenu
  *
- * @method setHideIcons
- * @param {Boolean} hide
+ * @method setSubMenu
+ * @param {photonui.Menu} menu The submenu
+ * @param {String} menu The menu name.
  */
-photonui.Menu.prototype.setHideIcons = function(hide) {
-    this.hideIcons = hide;
-
-    if (hide) {
-        this.addClass("photonui-menu-noicon");
+photonui.SubMenuItem.prototype.setSubMenu = function(menu) {
+    if (this.subMenuName) {
+        this.getSubMenu().removeCallback("fold");
+        this.getSubMenu().removeCallback("unfold");
     }
-    else {
-        this.removeClass("photonui-menu-noicon");
+    this.subMenuName = null;
+    if (menu instanceof photonui.Menu) {
+        this.subMenuName = menu.name;
     }
-}
-
-/**
- * Get the HTML of the menu.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Menu.prototype.getHtml = function() {
-    return this._e.outer;
+    else if (typeof(menu) == "string") {
+        this.subMenuName = menu;
+    }
+    if (this.subMenuName) {
+        var submenu = this.getSubMenu();
+        submenu.registerCallback("fold", "hide", this._onToggleFold, this);
+        submenu.registerCallback("unfold", "show", this._onToggleFold, this);
+        this.setActive(submenu.isVisible());
+    }
 }
 
 
 //////////////////////////////////////////
-// Private Methods                      //
+// Getters / Setters                    //
 //////////////////////////////////////////
 
-
-/**
- * Build the HTML of the menu.
- *
- * @method _buildHtml
- * @private
- */
-photonui.Menu.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("div");
-    this._e.outer.className = "photonui-widget photonui-menu photonui-menu-style-default";
-}
 
 /**
  * Update attributes.
@@ -130,28 +122,32 @@ photonui.Menu.prototype._buildHtml = function() {
  * @method _updateAttributes
  * @private
  */
-photonui.Menu.prototype._updateAttributes = function() {
-    photonui.Layout.prototype._updateAttributes.call(this);
+photonui.SubMenuItem.prototype._updateAttributes = function() {
+    photonui.MenuItem.prototype._updateAttributes.call(this);
+    this.setSubMenu(this.subMenuName);
+}
+
+
+//////////////////////////////////////////
+// Internal Events Callbacks            //
+//////////////////////////////////////////
+
+
+/**
+ *
+ * @method _onToggleFold
+ * @private
+ */
+photonui.SubMenuItem.prototype._onToggleFold = function(widget) {
+    this.setActive(widget.isVisible());
 }
 
 /**
- * Update the layout.
  *
- * @method _updateLayout
+ * @method _onItemClicked
  * @private
  */
-photonui.Menu.prototype._updateLayout = function() {
-    // Detache the outer element from the document tree
-    //TODO
-
-    // Clean
-    photonui.Helpers.cleanNode(this._e.outer);
-
-    // Append children
-    for (var i=0 ; i<this.childrenWidgets.length ; i++) {
-        this._e.outer.appendChild(this.childrenWidgets[i].getHtml());
-    }
-
-    // Attache the outer element into the document tree
-    // TODO
+photonui.SubMenuItem.prototype._onItemClicked = function(widget) {
+    var submenu = this.getSubMenu();
+    submenu.setVisible(!submenu.isVisible());
 }

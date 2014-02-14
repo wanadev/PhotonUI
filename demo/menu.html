@@ -56,6 +56,7 @@
         <script src="../photonui/container/window/popupwindow.js"></script>
         <script src="../photonui/container/layout/layout.js"></script>
         <script src="../photonui/container/menu/menuitem.js"></script>
+        <script src="../photonui/container/menu/submenuitem.js"></script>
         <script src="../photonui/container/menu/menu.js"></script>
         <script src="../photonui/input/button/button.js"></script>
         <script src="../photonui/visual/label.js"></script>
@@ -120,8 +121,12 @@
 
             // -- submenu
 
-            var submenu = new photonui.Menu({visible: false});
-            menu.addSubmenu(new photonui.MenuItem({icon: "", text: "Submenu"}), submenu);
+            var submenu = new photonui.Menu({visible: false, name: "submenu1"});
+            var submenuitem = new photonui.SubMenuItem({text: "Submenu", subMenuName: "submenu1"});
+
+            menu.addChild(submenuitem);
+            menu.addChild(submenu);
+
             submenu.addChild(new photonui.MenuItem({icon: "fa-cloud-download", text: "Subitem 1"}));
             submenu.addChild(new photonui.MenuItem({icon: "fa-eye",text: "Subitem 2"}));
             submenu.addChild(new photonui.MenuItem({text: "Subitem 3"}));

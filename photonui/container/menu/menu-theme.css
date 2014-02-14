@@ -76,7 +76,7 @@
 
 /** Submenu item **/
 
-.photonui-menu.photonui-menu-style-default .photonui-menuitem-submenu:after {
+.photonui-menu.photonui-menu-style-default .photonui-submenuitem:after {
     content: "";
     display: block;
     float: right;
@@ -93,14 +93,14 @@
 
 /** Submenu item + active **/
 
-.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-menuitem-submenu.photonui-menuitem-active {
+.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-submenuitem.photonui-menuitem-active {
     background: #08666E;
     box-shadow: 0 -1px 0 #01585F, inset -1px 0 0 #01585F, inset 1px 0 0 #01585F, inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 -1px 0 #0C474C, inset 0 -2px 0 rgba(255, 255, 255, .1), inset 2px 0 0 rgba(255, 255, 255, .2), inset -2px 0 0 rgba(255, 255, 255, .1);
     color: #fff;
     text-shadow: -1px -1px 0 #0C474C;
 }
 
-.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-menuitem-submenu.photonui-menuitem-active:after {
+.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-submenuitem.photonui-menuitem-active:after {
     margin-top: calc(25% - 4px);
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);

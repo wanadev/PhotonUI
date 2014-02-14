@@ -172,21 +172,17 @@
         ],
         "dependencies": ["BaseIcon"]
     },
-    "MenuItem": {
-        "abstract": true,
-        "javascript": ["container/menu/menuitem.js"],
-        "css": ["container/menu/menuitem.css"],
-        "themeCss": [],
-        "assets": [],
-        "dependencies": ["Container", "BaseIcon"]
-    },
     "Menu": {
         "abstract": false,
-        "javascript": ["container/menu/menu.js"],
-        "css": ["container/menu/menu.css"],
+        "javascript": [
+            "container/menu/menu.js",
+            "container/menu/menuitem.js",
+            "container/menu/submenuitem.js"
+        ],
+        "css": ["container/menu/menu.css", "container/menu/menuitem.css"],
         "themeCss": ["container/menu/menu-theme.css"],
         "assets": [],
-        "dependencies": ["Layout", "MenuItem"]
+        "dependencies": ["Layout", "BaseIcon"]
     },
     "PopupMenu": {
         "abstract": false,
