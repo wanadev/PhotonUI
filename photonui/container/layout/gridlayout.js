@@ -97,7 +97,7 @@ photonui.GridLayout = photonui.Layout.$extend({
 
     setVerticalSpacing: function(verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
-        this.__html.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
+        this.__html.grid.style.borderSpacing = this.verticalSpacing + "px " + this.horizontalSpacing + "px";
     },
 
     /**
@@ -115,7 +115,7 @@ photonui.GridLayout = photonui.Layout.$extend({
 
     setHorizontalSpacing: function(horizontalSpacing) {
         this._verticalSpacing = horizontalSpacing;
-        this.__html.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
+        this.__html.grid.style.borderSpacing = this.verticalSpacing + "px " + this.horizontalSpacing + "px";
     },
 
     /**
