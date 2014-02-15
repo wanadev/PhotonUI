@@ -37,6 +37,23 @@
 
 
 var photonui = photonui || {};
+var _widgets = {};
+
+
+/*
+ * Get a widget.
+ *
+ * @method getWidget
+ * @param {String} name The widget name.
+ *
+ * @return {photonui.Widget} The widget or null.
+ */
+photonui.getWidget = function(name) {
+    if (_widgets[name] !== undefined) {
+        return _widgets[name];
+    }
+    return null
+}
 
 
 /**
@@ -57,373 +74,505 @@ var photonui = photonui || {};
  *      - callback:    function(widget)
  *
  * @class Widget
- * @param {String} params.name The name of the widget (optional, default=photonui.Helpers.uuid4()).
- * @param {String} params.className Classes (HTML) of the widget (optional, default=null).
- * @param {Boolean} params.visible Is the widget displayed or hidden (optional, default=true).
- * @param {String} params.contextMenuName The name of the context menu (optional, default=null).
+ * @param {Object} params An object that can contain any property of the widget (optional).
  * @constructor
  */
-photonui.Widget = function(params) {
-    var params = params || {};
+photonui.Widget = Class.$extend({
 
-    // Attrs
-    this.name = params.name || "widget-" + photonui.Helpers.uuid4();
-    this.visible = (params.visible != undefined) ? params.visible : true;
-    this.contextMenuName = params.contextMenuName || null;
-    this.layoutOptions = params.__layout__ || {};
+    // Constructor
+    __init__: function(params) {
+        // New instances for object properties
+        this.__html = {};
+        this.__events = {};
+        this.__callbacks = {};
+        this._layoutOptions = {};
 
-    this.__additionalClass = params.className || null;
+        // Build the html
+        this._buildHtml();
 
-    this.__events = {};  // id: {element: DOMElement, callback: Function}
-    this.__callback = {};  // wEvent: {id: {callback: Function, thisArg: ...}}
+        // wEvents
+        this._registerWEvents(["destroy", "show", "hide"]);
 
-    this._registerWidgetEvents(["destroy", "show", "hide"]);
-}
+        // Bind properties with accessorts
+        for (var prop in this) {
+            if (prop.indexOf("get") == 0) {
+                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+                Object.defineProperty(this, propName, {
+                    get: this[prop],
+                    enumerable: true,
+                    configurable: true
+                });
+            }
+            else if (prop.indexOf("set") == 0) {
+                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+                Object.defineProperty(this, propName, {
+                    set: this[prop],
+                    enumerable: true,
+                    configurable: true
+                });
+            }
+            else if (prop.indexOf("is") == 0) {
+                var propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
+                Object.defineProperty(this, propName, {
+                    get: this[prop],
+                    enumerable: true,
+                    configurable: true
+                });
+            }
+        }
+
+        // Apply params
+        var params = params || {};
+        for (param in params) {
+            if (this[param] !== undefined) {
+                this[param] = params[param];
+            }
+        }
+
+        // Default name
+        if (!this.name) {
+            this.name = "widget-" + photonui.Helpers.uuid4();
+        }
+
+        // Additional className
+        if (params.className) {
+            this.addClass(params.className);
+        }
+
+        // Bind some events
+        if (this.html) {
+            this._bindEvent("pop-contextmenu", this.html, "contextmenu", this.__onContextMenu.bind(this));
+        }
+
+        // Register the widget
+        _widgets[this.name] = this;
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the HTML of the widget.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Widget.prototype.getHtml = function() {
-    console.warn("getHtml() method not implemented for this widget.");
-    return null;
-}
+    // ====== Public properties ======
 
-/**
- * Get the visibility of the widget.
- *
- * @method isVisible
- * @return {Boolean} the widget visibility.
- */
-photonui.Widget.prototype.isVisible = function() {
-    return this.visible;
-}
 
-/**
- * Set the visibility of the widget.
- *
- * @method isVisible
- * @param {Boolean} visible The widget visibility.
- */
-photonui.Widget.prototype.setVisible = function(visible) {
-    if (!this.getHtml()) {
-        return;
-    }
-    this.visible = visible;
-    if (visible) {
-        this.getHtml().style.display = "block";
-        this._callCallbacks("show");
-    }
-    else {
-        this.getHtml().style.display = "none";
-        this._callCallbacks("hide");
-    }
-}
+    /**
+     * The unique name of the widget.
+     *
+     * @property name
+     * @type String
+     * @default "widget-" + photonui.Helpers.uuid4()
+     */
+    _name: null,
 
-/**
- * Get the absolute position of the widget.
- *
- * @method getAbsolutePosition
- * @return {Object} `{x: <Number>, y: <Number>}`
- */
-photonui.Widget.prototype.getAbsolutePosition = function() {
-    return photonui.Helpers.getAbsolutePosition(this.getHtml());
-}
+    getName: function() {
+        return this._name;
+    },
 
-/**
- * Get the widget width.
- *
- * @method getWidth
- * @return {Number}
- */
-photonui.Widget.prototype.getWidth = function() {
-    return this.getHtml().offsetWidth;
-}
+    setName: function(name) {
+        delete _widgets[this.name];
+        this._name = name;
+        _widgets[name] = this;
+        if (this.html) {
+            this.html.id = this.name;
+        }
+    },
 
-/**
- * Get the widget height.
- *
- * @method getHeight
- * @return {Number}
- */
-photonui.Widget.prototype.getHeight = function() {
-    return this.getHtml().offsetHeight;
-}
+    /**
+     * Is the widget visible or hidden.
+     *
+     * @property visible
+     * @type Boolean
+     * @default true
+     */
+    _visible: true,
 
-/**
- * Get the context menu (photonui.PopupWindow) attached to the widget.
- *
- * @method getContextMenu
- * @return {photonui.PopupMenu} menu The context menu widget.
- */
-photonui.Widget.prototype.getContextMenu = function() {
-    if (this.contextMenuName) {
+    isVisible: function() {
+        return this._visible;
+    },
+
+    setVisible: function(visible) {
+        this._visible = visible;
+        if (!this.html) {
+            return;
+        }
+        if (this.visible) {
+            this.html.style.display = "block";  // FIXME
+            this._callCallbacks("show");
+        }
+        else {
+            this.html.style.display = "none";
+            this._callCallbacks("hide");
+        }
+    },
+
+    /**
+     * The name of the managed contextual menu (`photonui.PopupWindow().name`).
+     *
+     * @property contextMenuName
+     * @type String
+     * @default null (= no context menu)
+     */
+    _contextMenuName: null,
+
+    getContextMenuName: function() {
+        return this._contextMenuName;
+    },
+
+    setContextMenuName: function(contextMenuName) {
+        this._contextMenuName = contextMenuName;
+    },
+
+    /**
+     * The managed contextual menu.
+     *
+     * @property contextMenuName
+     * @type photonui.PopupWindow
+     * @default null (= no context menu)
+     */
+    getContextMenu: function() {
         return photonui.getWidget(this.contextMenuName);
-    }
-    return null;
-}
+    },
 
-/**
- * Attache a context menu (photonui.PopupWindow) to the widget.
- *
- * @method setContextMenu
- * @param {photonui.PopupMenu} menu The context menu widget.
- * @param {String} menu The context menu name.
- */
-photonui.Widget.prototype.setContextMenu = function(menu) {
-    if (menu instanceof photonui.PopupWindow) {
-        this.contextMenuName = menu.name;
-        return;
-    }
-    else if (typeof(menu) == "string") {
-        this.contextMenuName = menu;
-        return;
-    }
-    this.contextMenuName = null;
-}
+    setContextMenu: function(contextMenu) {
+        if (contextMenu instanceof photonui.PopupWindow) {
+            this.contextMenuName = contextMenu.name
+        }
+        else {
+            this.contextMenuName = null;
+        }
+    },
+
+    /**
+     * Layout options.
+     *
+     * @property layoutOptions
+     * @type Object
+     * @default {}
+     */
+    _layoutOptions: {},
+
+    getLayoutOptions: function() {
+        return this.getLayoutOptions;
+    },
+
+    setLayoutOptions: function(layoutOptions) {
+        for (option in layoutOptions) {
+            this._layoutOptions[option] = layoutOptions[option];
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        console.warn("getHtml() method not implemented for this widget.");
+        return null;
+    },
+
+    /**
+     * Absolute position of the widget on the page.
+     *
+     * `{x: Number, y: Number}`
+     *
+     * @property absolutePosition
+     * @type Object
+     * @readOnly
+     */
+    getAbsolutePosition: function() {
+        if (!this.html) {
+            return {x: 0, y: 0};
+        }
+        return photonui.Helpers.getAbsolutePosition(this.html);
+    },
+
+    /**
+     * Widget width (outer HTML element).
+     *
+     * @property offsetWidth
+     * @type Number
+     * @readOnly
+     */
+    getOffsetWidth: function() {
+        if (!this.html) {
+            return 0;
+        }
+        return this.html.offsetWidth;
+    },
+
+    /**
+     * Widget height (outer HTML element).
+     *
+     * @property offsetHeight
+     * @type Number
+     * @readOnly
+     */
+    getOffsetHeight: function() {
+        if (!this.html) {
+            return 0;
+        }
+        return this.html.offsetHeight;
+    },
 
 
-//////////////////////////////////////////
-// Public Methods                       //
-//////////////////////////////////////////
+    // ====== Private properties ======
 
 
-/**
- * Display the widget (alias of this.setVisible(true)).
- *
- * @method show
- */
-photonui.Widget.prototype.show = function() {
-    this.setVisible(true);
-}
+    /**
+     * Object containing references to the widget HTML elements
+     *
+     * @property __html
+     * @type Object
+     * @private
+     */
+    __html: {},      // HTML Elements
 
-/**
- * Hide the widget (alias of this.setVisible(false)).
- *
- * @method hide
- */
-photonui.Widget.prototype.hide = function() {
-    this.setVisible(false);
-}
+    /**
+     * Object containing references javascript events binding (for widget
+     * internal use).
+     *
+     * @property __events
+     * @type Object
+     * @private
+     */
+    __events: {},    // Javascript internal event
 
-/**
- * Destroy the widget.
- *
- * @method destroy
- */
-photonui.Widget.prototype.destroy = function() {
-    this._callCallbacks("destroy");
-    delete photonui.widgets[this.name];
-    if (this.getHtml()) {
-        this.getHtml().parentNode.removeChild(this.getHtml());
-    }
-    for (var id in this.__events) {
-        this._unbindEvent(id);
-    }
-}
+    /**
+     * Object containing references to registered callbacks.
+     *
+     * @property __callbacks
+     * @type Object
+     * @private
+     */
+    __callbacks: {},  // Registered callback
 
-/**
- * Add a class to the root HTML element of the widget.
- *
- * @method addClass
- * @param {String} class_ The class.
- */
-photonui.Widget.prototype.addClass = function(class_) {
-    var e = this.getHtml();
-    if (!e) {
-        return;
-    }
-    var classes = e.className.split(" ");
-    if (classes.indexOf(class_) < 0) {
-        classes.push(class_);
-    }
-    e.className = classes.join(" ");
-}
 
-/**
- * Remove a class from the root HTML element of the widget.
- *
- * @method removeClass
- * @param {String} class_ The class.
- */
-photonui.Widget.prototype.removeClass = function(class_) {
-    var e = this.getHtml();
-    if (!e) {
-        return;
-    }
-    var classes = e.className.split(" ");
-    var index = classes.indexOf(class_);
-    if (index >= 0) {
-        classes.splice(index, 1);
-    }
-    e.className = classes.join(" ");
-}
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
-/**
- * Register a callback for any widget event.
- *
- * Callback signature:
- *
- *     function(widget [, arg1 [, arg2 [, ...]]])
- *
- * @method registerCallback
- * @param {String} id An unique id for the callback.
- * @param {String} wEvent the widget event name.
- * @param {Function} callback The callback function.
- * @param thisArg The value of this (optionnal, default = current widget).
- */
-photonui.Widget.prototype.registerCallback = function(id, wEvent, callback, thisArg) {
-    if (!this.__callback[wEvent]) {
-        console.error("This widget have no '" + wEvent + "' event.");
-        return;
-    }
-    this.__callback[wEvent][id] = {
-        callback: callback,
-        thisArg: thisArg || null
-    }
-}
 
-/**
- * Remove a registered callback.
- *
- * @method removeCallback
- * @param {String} id The id of the callback.
- */
-photonui.Widget.prototype.removeCallback = function(id) {
-    for (var wEvent in this.__callback) {
-        if (this.__callback[wEvent][id]) {
-            delete this.__callback[wEvent][id];
+    // ====== Public methods ======
+
+
+    /**
+     * Display the widget (equivalent to widget.visible = true).
+     *
+     * @method show
+     */
+    show: function() {
+        this.visible = true;
+    },
+
+    /**
+     * DHide the widget (equivalent to widget.visible = false).
+     *
+     * @method hide
+     */
+    hide: function() {
+        this.visible = false;
+    },
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function() {
+        this._callCallbacks("destroy");
+        delete _widgets[this.name];
+        if (this.html) {
+            this.html.parentNode.removeChild(this.html);
+        }
+        for (var id in this.__events) {
+            this._unbindEvent(id);
+        }
+    },
+
+    /**
+     * Add a class to the outer HTML element of the widget.
+     *
+     * @method addClass
+     * @param {String} className The class to add.
+     */
+    addClass: function(className) {
+        if (!this.html) {
+            return;
+        }
+        var classes = this.html.className.split(" ");
+        if (classes.indexOf(className) < 0) {
+            classes.push(className);
+        }
+        this.html.className = classes.join(" ");
+    },
+
+    /**
+     * Remove a class from the outer HTML element of the widget.
+     *
+     * @method removeClass
+     * @param {String} className The class to remove.
+     */
+    removeClass: function(className) {
+        if (!this.html) {
+            return;
+        }
+        var classes = this.html.className.split(" ");
+        var index = classes.indexOf(className);
+        if (index >= 0) {
+            classes.splice(index, 1);
+        }
+        this.html.className = classes.join(" ");
+    },
+
+    /**
+     * Register a callback for any widget event (called wEvent).
+     *
+     * Callback signature:
+     *
+     *     function(widget [, arg1 [, arg2 [, ...]]])
+     *
+     * @method registerCallback
+     * @param {String} id An unique id for the callback.
+     * @param {String} wEvent the widget event name.
+     * @param {Function} callback The callback function.
+     * @param {Object} thisArg The value of this (optionnal, default = current widget).
+     */
+    registerCallback: function(id, wEvent, callback, thisArg) {
+        if (!this.__callbacks[wEvent]) {
+            console.error("This widget have no '" + wEvent + "' event.");
+            return;
+        }
+        this.__callbacks[wEvent][id] = {
+            callback: callback,
+            thisArg: thisArg || null
+        }
+    },
+
+    /**
+     * Remove a registered callback.
+     *
+     * @method removeCallback
+     * @param {String} id The id of the callback.
+     */
+    removeCallback: function(id) {
+        for (var wEvent in this.__callbacks) {
+            if (this.__callbacks[wEvent][id]) {
+                delete this.__callbacks[wEvent][id];
+            }
+        }
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Javascript event binding (for widget internal use).
+     *
+     * @method _bindEvent
+     * @private
+     * @param {String} id An unique id for the event.
+     * @param {DOMElement} element The element on which the event will be bind.
+     * @param {String} evName The event name (e.g. "mousemove", "click",...).
+     * @param {Function} callback The function that will be called when the event occured.
+     */
+    _bindEvent: function(id, element, evName, callback) {
+        this.__events[id] = {
+            evName: evName,
+            element: element,
+            callback: callback
+        };
+        this.__events[id].element.addEventListener(
+                this.__events[id].evName,
+                this.__events[id].callback,
+                false
+        );
+    },
+
+    /**
+     * Unbind javascript event.
+     *
+     * @method _unbindEvent
+     * @private
+     * @param {String} id The id of the event.
+     */
+    _unbindEvent: function(id) {
+        this.__events[id].element.removeEventListener(
+                this.__events[id].evName,
+                this.__events[id].callback,
+                false
+        );
+        delete this.__events[id];
+    },
+
+    /**
+     * Register widgets available events (wEvent).
+     *
+     * @method _registerWidgetEvents
+     * @private
+     * @param {Array} wEvents
+     */
+    _registerWEvents: function(wEvents) {
+        for (var i in wEvents) {
+            this.__callbacks[wEvents[i]] = {};
+        }
+    },
+
+    /**
+     * Call all callbacks for the given widget event (wEvent).
+     *
+     * NOTE: the first argument passed to the callback is the current widget.
+     * NOTE²: if the thisArg of the callback is null, this will be binded to the current widget.
+     *
+     * @method _callCallbacks
+     * @private
+     * @param {String} wEvent The widget event.
+     * @param {Array} params Parametters that will be sent to the callbacks.
+     */
+    _callCallbacks: function(wEvent, params) {
+        var params = params || [];
+        for (var id in this.__callbacks[wEvent]) {
+            this.__callbacks[wEvent][id].callback.apply(
+                    this.__callbacks[wEvent][id].thisArg || this,
+                    [this].concat(params)
+            );
+        }
+    },
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        console.warn("_buildHtml() method not implemented for this widget.");
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the context menu should be displayed.
+     *
+     * @method __onContextMenu
+     * @private
+     * @param event
+     */
+    __onContextMenu: function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.contextMenuName) {
+            this.contextMenu.popupXY(event.pageX, event.pageY);
         }
     }
-}
-
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Basic event binding (for widget internal use).
- *
- * @method _bindEvent
- * @private
- * @param {String} id An unique id for the event.
- * @param {DOMElement} element The element on which the event will be bind.
- * @param {String} evName The event name (e.g. "mousemove", "click",...).
- * @param {Function} callback The function that will be called when the event occured.
- */
-photonui.Widget.prototype._bindEvent = function(id, element, evName, callback) {
-    this.__events[id] = {
-        evName: evName,
-        element: element,
-        callback: callback
-    };
-    this.__events[id].element.addEventListener(
-            this.__events[id].evName,
-            this.__events[id].callback,
-            false
-    );
-}
-
-/**
- * Unbind event.
- *
- * @method _unbindEvent
- * @private
- * @param {String} id The id for the event.
- */
-photonui.Widget.prototype._unbindEvent = function(id) {
-    this.__events[id].element.removeEventListener(
-            this.__events[id].evName,
-            this.__events[id].callback,
-            false
-    );
-    delete this.__events[id];
-}
-
-/**
- * Register widgets available events.
- *
- * @method _registerWidgetEvents
- * @private
- * @param {Array} wEvents
- */
-photonui.Widget.prototype._registerWidgetEvents = function(wEvents) {
-    for (var i in wEvents) {
-        this.__callback[wEvents[i]] = {};
-    }
-}
-
-/**
- * Call all callbacks for the given widget event.
- *
- * NOTE: the first argument passed to the callback is the current widget.
- * NOTE²: if the thisArg of the callback is null, this will be binded to the current widget.
- *
- * @method _callCallbacks
- * @private
- * @param {String} wEvent The widget event.
- * @param {Array} params Parametters that will be sent to the callbacks.
- */
-photonui.Widget.prototype._callCallbacks = function(wEvent, params) {
-    var params = params || [];
-    for (var id in this.__callback[wEvent]) {
-        this.__callback[wEvent][id].callback.apply(
-                this.__callback[wEvent][id].thisArg || this,
-                [this].concat(params)
-                );
-    }
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Widget.prototype._updateAttributes = function() {
-    var e = this.getHtml();
-    if (e) {
-        e.id = this.name;
-    }
-    if (this.__additionalClass) {
-        this.addClass(this.__additionalClass);
-    }
-    this.setVisible(this.visible);
-
-    // Register the widget
-    photonui.widgets[this.name] = this;
-
-    // Bind
-    this._bindEvent("popup-click-close", this.getHtml(), "contextmenu", this._onContextMenu.bind(this));
-}
-
-
-//////////////////////////////////////////
-// Internal Events Callbacks            //
-//////////////////////////////////////////
-
-
-/**
- * Called when the context menu should be displayed.
- *
- * @method _onContextMenu
- * @private
- * @param event
- */
-photonui.Widget.prototype._onContextMenu = function(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    if (this.contextMenuName) {
-        photonui.getWidget(this.contextMenuName).popupXY(event.pageX, event.pageY);
-    }
-}
+});

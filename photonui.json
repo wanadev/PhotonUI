@@ -1,11 +1,19 @@
 {
+    "lib": {
+        "abstract": true,
+        "javascript": ["../lib/classy.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": []
+    },
     "Core": {
         "abstract": true,
         "javascript": ["photonui.js", "helpers.js", "widget.js"],
         "css": ["photonui.css"],
         "themeCss": [],
         "assets": [],
-        "dependencies": []
+        "dependencies": ["lib"]
     },
     "Container": {
         "abstract": true,

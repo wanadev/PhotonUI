@@ -38,7 +38,7 @@
 
 
 var photonui = photonui || {};
-photonui._windowList = [];
+var _windowList = [];
 
 
 /**
@@ -53,312 +53,285 @@ photonui._windowList = [];
  * @class Window
  * @constructor
  * @extends photonui.BaseWindow
- * @param {String} params.title The window title (optional, default = "Window").
- * @param {Boolean} params.movable Define if the window can be moved (optional, default = true).
- * @param {Boolean} params.closeButton Define if the window have a "close" button (optional, default = true).
  */
-photonui.Window = function(params) {
-    photonui.BaseWindow.call(this, params);
+photonui.Window = photonui.BaseWindow.$extend({
 
-    var params = params || {};
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
 
-    // Attrs
-    this.title = params.title || "Window";  // FIXME i18n
-    this.movable = (params.movable != undefined) ? params.movable : true;
-    this.closeButton = (params.closeButton != undefined) ? params.closeButton : true;
+        // wEvents
+        this._registerWEvents(["close-button-clicked"]);
 
-    this._registerWidgetEvents(["close-button-clicked"]);
+        // Bind js events
+        this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
+        this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click", this.__closeButtonClicked.bind(this));
+        this._bindEvent("totop", this.__html["window"], "mousedown", this.moveToFront.bind(this));
+        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
 
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-    this._bindEvent("move.dragstart", this._e.windowTitle, "mousedown", this._moveDragStart.bind(this));
-    this._bindEvent("closeButton.click", this._e.windowTitleCloseButton, "click", this._closeButtonClicked.bind(this));
-    this._bindEvent("totop", this._e["window"], "mousedown", this.moveToFront.bind(this));
-    this._bindEvent("closeButton.mousedown", this._e.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
-    this.moveToFront();
-}
-
-photonui.Window.prototype = new photonui.BaseWindow;
-
-
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
-
-
-/**
- * Get window title.
- *
- * @method getTitle
- * @return {string} The window title.
- */
-photonui.Window.prototype.getTitle = function() {
-    return this.title;
-}
-
-/**
- * Set window title.
- *
- * @method setTitle
- * @param {string} title The window title.
- */
-photonui.Window.prototype.setTitle = function(title) {
-    this.title = title;
-    this._e.windowTitleText.innerHTML = photonui.Helpers.escapeHtml(title);
-}
-
-/**
- * Know if the window can be moved or not.
- *
- * @method isMovable
- * @return {Boolean}
- */
-photonui.Window.prototype.isMovable = function() {
-    return this.movable;
-}
-
-/**
- * Define if the window can be moved or not.
- *
- * @method setMovable
- * @param {Boolean} movable
- */
-photonui.Window.prototype.setMovable = function(movable) {
-    this.movable = movable;
-}
-
-/**
- * Know if the window have a "close" button.
- *
- * @method haveCloseButton
- * @return {Boolean}
- */
-photonui.Window.prototype.haveCloseButton = function() {
-    return this.movable;
-}
-
-/**
- * Define if the window have a "close" button.
- *
- * @method setCloseButton
- * @param {Boolean} closeButton
- */
-photonui.Window.prototype.setCloseButton = function(closeButton) {
-    this.closeButton = closeButton;
-    if (closeButton) {
-        this.addClass("photonui-window-have-button");
-        this._e.windowTitleCloseButton.style.display = "block";
-    }
-    else {
-        this.removeClass("photonui-window-have-button");
-        this._e.windowTitleCloseButton.style.display = "none";
-    }
-}
-
-/**
- * Get the container DOM Element.
- *
- * @method getContainerNode
- * @return {HTMLElement}
- */
-photonui.Window.prototype.getContainerNode = function() {
-    return this._e.windowContent;
-}
-
-/**
- * Display or hide the window.
- *
- * @method setVisible
- * @param {Boolean} visible The window visibility
- */
-photonui.Window.prototype.setVisible = function(visible) {
-    photonui.BaseWindow.prototype.setVisible.call(this, visible);
-    if (visible) {
+        // Update attributes
+        var attrs = ["title", "closeButtonVisible"];
+        for (var i=0 ; i<attrs.length ; i++) {
+            this[attrs[i]] = this[attrs[i]];
+        }
         this.moveToFront();
-    }
-    else {
-        this.moveToBack();
-    }
-}
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-//////////////////////////////////////////
-// Public Methods                       //
-//////////////////////////////////////////
+    // ====== Public properties ======
 
 
-/**
- * Bring the window to front.
- *
- * @method moveToFront
- */
-photonui.Window.prototype.moveToFront = function() {
-    var index = photonui._windowList.indexOf(this);
-    if (index >= 0) {
-        photonui._windowList.splice(index, 1);
-    }
-    photonui._windowList.unshift(this);
-    this._updateWindowList();
-}
+    /**
+     * The window title.
+     *
+     * @property title
+     * @type String
+     * @default "Window"
+     */
+    _title: "Window",
 
-/**
- * Bring the window to the back.
- *
- * @method moveToBack
- */
-photonui.Window.prototype.moveToBack = function() {
-    var index = photonui._windowList.indexOf(this);
-    if (index >= 0) {
-        photonui._windowList.splice(index, 1);
-    }
-    photonui._windowList.push(this);
-    this._updateWindowList();
-}
+    getTitle: function() {
+        return this._title;
+    },
 
-/**
- * Destroy the window.
- *
- * @method destroy
- */
-photonui.Window.prototype.destroy = function() {
-    var index = photonui._windowList.indexOf(this);
-    if (index >= 0) {
-        photonui._windowList.splice(index, 1);
-    }
-    photonui.BaseWindow.prototype.destroy.call(this);
-}
+    setTitle: function(title) {
+        this._title = title;
+        this.__html.windowTitleText.innerHTML = photonui.Helpers.escapeHtml(title);
+    },
 
+    /**
+     * Determine if the window can be moved (drag & drop) by the user.
+     *
+     * @property movable
+     * @type Boolean
+     * @default true
+     */
+    _movable: true,
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    isMovable: function() {
+        return this._movable;
+    },
 
+    setMovable: function(movable) {
+        this._movable = movable;
+    },
 
-/**
- * Build the HTML of the window.
- *
- * @method _buildHtml
- * @private
- */
-photonui.Window.prototype._buildHtml = function() {
-    photonui.BaseWindow.prototype._buildHtml.call(this);
-    // Builde the HTML
-    this._e["window"].className += " photonui-window";
+    /**
+     * Determine if the close button in the title bar is displayed or not.
+     *
+     * @property closeButtonVisible
+     * @type Boolean
+     * default: true
+     */
+    _closeButtonVisible: true,
 
-    this._e.windowTitle = document.createElement("div");
-    this._e.windowTitle.className = "photonui-window-title";
-    this._e["window"].appendChild(this._e.windowTitle);
+    getCloseButtonVisible: function() {
+        return this._closeButtonVisible;
+    },
 
-    this._e.windowTitleCloseButton = document.createElement("button");
-    this._e.windowTitleCloseButton.className = "photonui-window-title-close-button";
-    this._e.windowTitleCloseButton.title = "Close";  // FIXME i18n
-    this._e.windowTitle.appendChild(this._e.windowTitleCloseButton);
+    setCloseButtonVisible: function(closeButtonVisible) {
+        this._closeButtonVisible = closeButtonVisible;
 
-    this._e.windowTitleText = document.createElement("span");
-    this._e.windowTitleText.className = "photonui-window-title-text";
-    this._e.windowTitle.appendChild(this._e.windowTitleText);
-
-    this._e.windowContent = document.createElement("div");
-    this._e.windowContent.className = "photonui-container photonui-window-content photonui-container-expand-child";
-    this._e["window"].appendChild(this._e.windowContent);
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Window.prototype._updateAttributes = function() {
-    photonui.BaseWindow.prototype._updateAttributes.call(this);
-
-    this.setTitle(this.title);
-    this.setCloseButton(this.closeButton);
-}
-
-/**
- * Update all the windows.
- *
- * @method _updateWindowList
- * @private
- */
-photonui.Window.prototype._updateWindowList = function() {
-    for (var i=photonui._windowList.length-1, z=0 ; i>=0 ; i--, z++) {
-        if (i == 0) {
-            photonui._windowList[i].getHtml().style.zIndex = 2001;
-            photonui._windowList[i].addClass("photonui-active");
+        if (closeButtonVisible) {
+            this.addClass("photonui-window-have-button");
+            this.__html.windowTitleCloseButton.style.display = "block";
         }
         else {
-            photonui._windowList[i].getHtml().style.zIndex = 1000+z;
-            photonui._windowList[i].removeClass("photonui-active");
+            this.removeClass("photonui-window-have-button");
+            this.__html.windowTitleCloseButton.style.display = "none";
         }
+    },
+
+    /**
+     * HTML Element that contain the child widget HTML.
+     *
+     * @property containerNode
+     * @type HTMLElement
+     */
+    getContainerNode: function() {
+        return this.__html.windowContent;
+    },
+
+
+    setVisible: function(visible) {
+        this.$super(visible);
+        if (this.visible) {
+            this.moveToFront();
+        }
+        else {
+            this.moveToBack();
+        }
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Public methods ======
+
+
+    /**
+     * Bring the window to front.
+     *
+     * @method moveToFront
+     */
+    moveToFront: function() {
+        var index = _windowList.indexOf(this);
+        if (index >= 0) {
+            _windowList.splice(index, 1);
+        }
+        _windowList.unshift(this);
+        this._updateWindowList();
+    },
+
+    /**
+     * Bring the window to the back.
+     *
+     * @method moveToBack
+     */
+    moveToBack: function() {
+        var index = _windowList.indexOf(this);
+        if (index >= 0) {
+            _windowList.splice(index, 1);
+        }
+        _windowList.push(this);
+        this._updateWindowList();
+    },
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function() {
+        var index = _windowList.indexOf(this);
+        if (index >= 0) {
+            _windowList.splice(index, 1);
+        }
+        this.$super();
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.__html["window"].className += " photonui-window";
+
+        this.__html.windowTitle = document.createElement("div");
+        this.__html.windowTitle.className = "photonui-window-title";
+        this.__html["window"].appendChild(this.__html.windowTitle);
+
+        this.__html.windowTitleCloseButton = document.createElement("button");
+        this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button";
+        this.__html.windowTitleCloseButton.title = "Close";  // FIXME i18n
+        this.__html.windowTitle.appendChild(this.__html.windowTitleCloseButton);
+
+        this.__html.windowTitleText = document.createElement("span");
+        this.__html.windowTitleText.className = "photonui-window-title-text";
+        this.__html.windowTitle.appendChild(this.__html.windowTitleText);
+
+        this.__html.windowContent = document.createElement("div");
+        this.__html.windowContent.className = "photonui-container photonui-window-content photonui-container-expand-child";
+        this.__html["window"].appendChild(this.__html.windowContent);
+    },
+
+    /**
+     * Update all the windows.
+     *
+     * @method _updateWindowList
+     * @private
+     */
+    _updateWindowList: function() {
+        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {
+            if (i == 0) {
+                _windowList[i].getHtml().style.zIndex = 2001;
+                _windowList[i].addClass("photonui-active");
+            }
+            else {
+                _windowList[i].getHtml().style.zIndex = 1000+z;
+                _windowList[i].removeClass("photonui-active");
+            }
+        }
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Start moving the window.
+     *
+     * @method _moveDragStart
+     * @private
+     * @param {Object} event
+     */
+    __moveDragStart: function(event) {
+        if (!this.movable || event.button > 0) {
+            return;
+        }
+        var offsetX = (event.offsetX != undefined) ? event.offsetX : event.layerX;
+        var offsetY = (event.offsetY != undefined) ? event.offsetY : event.layerY;
+        this.__html.windowTitle.style.cursor = "move";
+        this._bindEvent("move.dragging", document, "mousemove", this.__moveDragging.bind(this, offsetX, offsetY));
+        this._bindEvent("move.dragend", document, "mouseup", this.__moveDragEnd.bind(this));
+    },
+
+    /**
+     * Move the window.
+     *
+     * @method _moveDragging
+     * @private
+     * @param {Number} offsetX
+     * @param {Number} offsetY
+     * @param {Object} event
+     */
+    __moveDragging: function(offsetX, offsetY, event) {
+        var e_body = document.getElementsByTagName("body")[0];
+        var x = Math.min(Math.max(event.pageX - offsetX, 40 - this.offsetWidth), e_body.offsetWidth - 40);
+        var y = Math.max(event.pageY - offsetY, 0);
+        if (e_body.offsetHeight > 0) {
+            y = Math.min(y, e_body.offsetHeight - this.__html.windowTitle.offsetHeight);
+        }
+        this.setPosition(x, y);
+    },
+
+    /**
+     * Stop moving the window.
+     *
+     * @method _moveDragEnd
+     * @private
+     * @param {Object} event
+     */
+    __moveDragEnd: function(event) {
+        this.__html.windowTitle.style.cursor = "default";
+        this._unbindEvent("move.dragging");
+        this._unbindEvent("move.dragend");
+    },
+
+    /**
+     * Close button clicked.
+     *
+     * @method _closeButtonClicked
+     * @private
+     * @param {Object} event
+     */
+    __closeButtonClicked: function(event) {
+        this._callCallbacks("close-button-clicked");
     }
-}
-
-
-//////////////////////////////////////////
-// Internal Events Callbacks            //
-//////////////////////////////////////////
-
-
-/**
- * Start moving the window.
- *
- * @method _moveDragStart
- * @private
- * @param {Object} event
- */
-photonui.Window.prototype._moveDragStart = function(event) {
-    if (!this.movable || event.button > 0) {
-        return;
-    }
-    var offsetX = (event.offsetX != undefined) ? event.offsetX : event.layerX;
-    var offsetY = (event.offsetY != undefined) ? event.offsetY : event.layerY;
-    this._e.windowTitle.style.cursor = "move";
-    this._bindEvent("move.dragging", document, "mousemove", this._moveDragging.bind(this, offsetX, offsetY));
-    this._bindEvent("move.dragend", document, "mouseup", this._moveDragEnd.bind(this));
-}
-
-/**
- * Move the window.
- *
- * @method _moveDragging
- * @private
- * @param {Number} offsetX
- * @param {Number} offsetY
- * @param {Object} event
- */
-photonui.Window.prototype._moveDragging = function(offsetX, offsetY, event) {
-    var e_body = document.getElementsByTagName("body")[0];
-    var x = Math.min(Math.max(event.pageX - offsetX, 40 - this.getWidth()), e_body.offsetWidth - 40);
-    var y = Math.max(event.pageY - offsetY, 0);
-    if (e_body.offsetHeight > 0) {
-        y = Math.min(y, e_body.offsetHeight - this._e.windowTitle.offsetHeight);
-    }
-    this.setPosition(x, y);
-}
-
-/**
- * Stop moving the window.
- *
- * @method _moveDragEnd
- * @private
- * @param {Object} event
- */
-photonui.Window.prototype._moveDragEnd = function(event) {
-    this._e.windowTitle.style.cursor = "default";
-    this._unbindEvent("move.dragging");
-    this._unbindEvent("move.dragend");
-}
-
-/**
- * Close button clicked.
- *
- * @method _closeButtonClicked
- * @private
- * @param {Object} event
- */
-photonui.Window.prototype._closeButtonClicked = function(event) {
-    this._callCallbacks("close-button-clicked");
-}
+});

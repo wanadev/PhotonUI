@@ -47,76 +47,88 @@ var photonui = photonui || {};
  * @constructor
  * @extends photonui.Widget
  */
-photonui.Container = function(params) {
-    photonui.Widget.call(this, params);
+photonui.Container = photonui.Widget.$extend({
 
-    var params = params || {};
-    this.childWidget = null;
-}
-
-photonui.Container.prototype = new photonui.Widget;
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    // ====== Public properties ======
 
 
-/**
- * Get the container DOM Element.
- *
- * @method getContainerNode
- * @return {HTMLElement}
- */
-photonui.Container.prototype.getContainerNode = function() {
-    console.warn("getContainerNode() method not implemented for this widget.");
-    return null;
-}
+    /**
+     * The child widget name.
+     *
+     * @property childName
+     * @type String
+     * @default null (no child)
+     */
+    _childName: null,
 
-/**
- * Get the child of the current Widget.
- *
- * @method getChild
- * @return {photonui.Widget} The child widget or null.
- */
-photonui.Container.prototype.getChild = function() {
-    return this.childWidget;
-}
+    getChildName: function() {
+        return this._childName;
+    },
 
-/**
- * Set the child of the current widget.
- *
- * @method setChild
- * @param {photonui.Widget} child The new child of the widget.
- */
-photonui.Container.prototype.setChild = function(child) {
-    if (child == this.childWidget || !this.getContainerNode()) {
-        return;
-    }
-
-    if (this.childWidget) {
-        var e = this.getContainerNode();
-        while (e.firstChild) {
-            e.removeChild(e.firstChild);
+    setChildName: function(childName) {
+        if (this.childName && this.containerNode) {
+            this.containerNode.removeChild(this.child.html);
         }
-    }
+        this._childName = childName;
+        if (this.childName && this.containerNode) {
+            this.containerNode.appendChild(this.child);
+        }
+    },
 
-    this.childWidget = child;
+    /**
+     * The child widget.
+     *
+     * @property child
+     * @type photonui.Widget
+     * @default null (no child)
+     */
+    getChild: function() {
+        return photonui.getWidget(this.childName);
+    },
 
-    if (this.childWidget) {
-        this.getContainerNode().appendChild(this.childWidget.getHtml())
-    }
-}
+    setChild: function(child) {
+        if (!child instanceof photonui.Widget) {
+            this.childName = null;
+            return;
+        }
+        this.childName = child.name;
+    },
 
-/**
- * Destroy the widget and all its children.
- *
- * @method destroy
- */
-photonui.Container.prototype.destroy = function() {
-    if (this.childWidget) {
-        this.childWidget.destroy();
+    /**
+     * HTML Element that contain the child widget HTML.
+     *
+     * @property containerNode
+     * @type HTMLElement
+     */
+    getContainerNode: function() {
+        console.warn("getContainerNode() method not implemented for this widget.");
+        return null;
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Public methods ======
+
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function() {
+        if (this.childName) {
+            this.child.destroy();
+        }
+        this.childName = null;
+        this.$super();
     }
-    this.childWidget = null;
-    photonui.Widget.prototype.destroy.call(this);
-}
+});

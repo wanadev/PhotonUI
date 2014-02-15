@@ -41,23 +41,20 @@ var photonui = photonui || {};
 
 
 photonui.e_parent = document.getElementsByTagName("body")[0];
-photonui.widgets = {};
 
 
 /*
- * Get a widget.
+ * Insert a widget in the DOM/
  *
- * @method getWidget
- * @param {String} name The widget name.
- *
- * @return {photonui.Widget} The widget or null.
+ * method domInsert
+ * @param {photonui.Widget} widget The widget to insert.
+ * @param {HTMLElement} element The DOM node (optional, default=photonui.e_parent)
  */
-photonui.getWidget = function(name) {
-    if (photonui.widgets[name]) {
-        return photonui.widgets[name];
-    }
-    return null;
+photonui.domInsert = function(widget, element) {
+    var element = element || photonui.e_parent;
+    element.appendChild(widget.html);
 }
+
 
 /*
  * Build widgets for an object or a list of object.
