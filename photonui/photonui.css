@@ -43,17 +43,17 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 
 .photonui-container-expand-child > * {
-    display: block !important;
+    display: block;
     width: 100% !important;
     height: 100% !important;
 }
 
 .photonui-container-expand-child-horizontal > * {
-    display: block !important;
+    display: block;
     width: 100% !important;
 }
 
 .photonui-container-expand-child-vertical > * {
-    display: block !important;
+    display: block;
     height: 100% !important;
 }

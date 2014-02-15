@@ -128,6 +128,7 @@ photonui.Widget = Class.$extend({
                 this[param] = params[param];
             }
         }
+        this._updateProperties(["visible"]);
 
         // Default name
         if (!this.name) {
@@ -227,7 +228,7 @@ photonui.Widget = Class.$extend({
     /**
      * The managed contextual menu.
      *
-     * @property contextMenuName
+     * @property contextMenu
      * @type photonui.PopupWindow
      * @default null (= no context menu)
      */
