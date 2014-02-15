@@ -69,7 +69,7 @@ photonui.GridLayout = photonui.Layout.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super();
+        this.$super(params);
         this._updateProperties(["verticalSpacing"]);
     },
 

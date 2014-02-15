@@ -65,7 +65,7 @@ photonui.BoxLayout = photonui.GridLayout.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super();
+        this.$super(params);
         this._updateProperties(["orientation"]);
     },
 
