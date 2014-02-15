@@ -69,11 +69,8 @@ photonui.Window = photonui.BaseWindow.$extend({
         this._bindEvent("totop", this.__html["window"], "mousedown", this.moveToFront.bind(this));
         this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
 
-        // Update attributes
-        var attrs = ["title", "closeButtonVisible"];
-        for (var i=0 ; i<attrs.length ; i++) {
-            this[attrs[i]] = this[attrs[i]];
-        }
+        // Update Properties
+        this._updateProperties(["title", "closeButtonVisible"]);
         this.moveToFront();
     },
 

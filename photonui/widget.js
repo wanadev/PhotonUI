@@ -74,8 +74,8 @@ photonui.getWidget = function(name) {
  *      - callback:    function(widget)
  *
  * @class Widget
- * @param {Object} params An object that can contain any property of the widget (optional).
  * @constructor
+ * @param {Object} params An object that can contain any property of the widget (optional).
  */
 photonui.Widget = Class.$extend({
 
@@ -471,6 +471,19 @@ photonui.Widget = Class.$extend({
 
     // ====== Private methods ======
 
+
+    /**
+     * Force the update of the given properties.
+     *
+     * @method _updateProperties
+     * @private
+     * @param {Array} properties The properties to update.
+     */
+    _updateProperties: function(properties) {
+        for (var i=0 ; i<properties.length ; i++) {
+            this[properties[i]] = this[properties[i]];
+        }
+    },
 
     /**
      * Javascript event binding (for widget internal use).

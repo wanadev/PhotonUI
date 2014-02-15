@@ -71,14 +71,11 @@ photonui.BaseWindow = photonui.Container.$extend({
         // Insert the window in the DOM tree
         photonui.domInsert(this);
 
-        // Update attributes
-        var attrs = [
+        // Update properties
+        this._updateProperties([
             "position", "width", "height", "minWidth", "minHeight",
             "maxWidth", "maxHeight", "padding"
-        ];
-        for (var i=0 ; i<attrs.length ; i++) {
-            this[attrs[i]] = this[attrs[i]];
-        }
+        ]);
     },
 
 
