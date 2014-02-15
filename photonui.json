@@ -161,7 +161,7 @@
     },
     "BaseIcon": {
         "abstract": true,
-        "javascript": ["visual/baseicon-helpers.js", "visual/baseicon.js"],
+        "javascript": ["visual/baseicon.js"],
         "css": ["visual/baseicon.css"],
         "themeCss": [],
         "assets": [],

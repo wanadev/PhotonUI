@@ -13,6 +13,8 @@
 
         <link type="text/css" rel="stylesheet" href="../photonui/input/button/button.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/input/button/button-theme.css" />
+
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/faicon-fontawesome.css" />
         <style>
             html, body {
                 margin: 0;
@@ -25,10 +27,14 @@
         </style>
     </head>
     <body>
+        <script src="../lib/classy.js"></script>
+
         <script src="../photonui/photonui.js"></script>
         <script src="../photonui/helpers.js"></script>
 
         <script src="../photonui/widget.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
+        <script src="../photonui/visual/faicon.js"></script>
         <script src="../photonui/container/container.js"></script>
         <script src="../photonui/container/window/basewindow.js"></script>
         <script src="../photonui/container/window/window.js"></script>
@@ -46,8 +52,10 @@
 
             // Create a button
             var btn = new photonui.Button({
-                    text: "Hide this window 2 seconds"
+                    text: "Hide this window 2 seconds",
+                    leftIcon: new photonui.FAIcon("fa-eye-slash", {size: "fa-lg", color: "gray"})
             });
+
 
             // Register a callback on the button
             btn.registerCallback("button clicked", "click", function(widget, event) {
@@ -56,7 +64,7 @@
             });
 
             // Put the button in the window
-            win.setChild(btn);
+            win.child = btn;
 
             // Display the window
             win.show();

@@ -48,8 +48,4 @@ var photonui = photonui || {};
  * @constructor
  * @extends photonui.Widget
  */
-photonui.BaseIcon = function(params) {
-    photonui.Widget.call(this, params);
-}
-
-photonui.BaseIcon.prototype = new photonui.Widget;
+photonui.BaseIcon = photonui.Widget.$extend({});

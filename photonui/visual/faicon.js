@@ -44,139 +44,134 @@ var photonui = photonui || {};
 /**
  * Font Awesome Icon.
  *
+ * Special contructor params:
+ *
+ *      new photonui.FAIcon( {optional params...} )
+ *      new photonui.FAIcon( "iconName", {optional params...} )
+ *
  * @class FAIcon
  * @constructor
  * @extends photonui.BaseIcon
- * @param {String} params.icon The Font Awesome icon name (optional, list: http://fontawesome.io/icons/, default="fa-square-o").
- * @param {String} params.size The Font Awesome icon size (optional, list: http://fontawesome.io/examples/#larger, default="").
- * @param {String} params.color The icon color (optional, default="").
  */
-photonui.FAIcon = function(params) {
-    photonui.BaseIcon.call(this, params);
+photonui.FAIcon = photonui.BaseIcon.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.icon = params.icon || "fa-square-o";
-    this.size = params.size || "";
-    this.color = params.color || "";
-
-    this._e = {};  // HTML Elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.FAIcon.prototype = new photonui.BaseIcon;
-
-
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    // Constructor
+    __init__: function(params1, params2) {
+        var params = {};
+        if (params1 && typeof(params1) == "string") {
+            params.iconName = params1;
+            if (params2 && typeof(params2) == "object") {
+                for (var i in params2) {
+                    params[i] = params2[i];
+                }
+            }
+        }
+        else if (params1) {
+            params = params1;
+        }
+        this.$super(params);
+        this._updateProperties(["iconName", "size", "color"]);
+    },
 
 
-/**
- * Get the icon name.
- *
- * @method getIcon
- * @return {String}
- */
-photonui.FAIcon.prototype.getIcon = function() {
-    return this.icon;
-}
-
-/**
- * Set the icon name.
- *
- * @method setIcon
- * @param {String} icon The Font Awesome icon name (eg. "fa-cog").
- */
-photonui.FAIcon.prototype.setIcon = function(icon) {
-    this.icon = icon;
-    this._e.icon.className = "fa " + this.icon + " " + this.size;
-}
-
-/**
- * Get the icon size.
- *
- * @method getSize
- * @return {String}
- */
-photonui.FAIcon.prototype.getSize = function() {
-    return this.size;
-}
-
-/**
- * Set the icon size.
- *
- * @method setSize
- * @param {String} size The Font Awesome icon size ("", "fa-lg", "fa-2x".."fa-5x").
- */
-photonui.FAIcon.prototype.setSize = function(size) {
-    this.size = size;
-    this._e.icon.className = "fa " + this.icon + " " + this.size;
-}
-
-/**
- * Get the icon color.
- *
- * @method getColor
- * @return {String}.
- */
-photonui.FAIcon.prototype.getColor = function() {
-    return this.color;
-}
-
-/**
- * Set the icon color.
- *
- * @method setColor
- * @param {String} color The HTML color ("" = default).
- */
-photonui.FAIcon.prototype.setColor = function(color) {
-    this.color = color;
-    this._e.icon.style.color = color;
-}
-
-/**
- * Get the HTML of the icon.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.FAIcon.prototype.getHtml = function() {
-    return this._e.outer;
-}
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    // ====== Public properties ======
 
 
-/**
- * Build the HTML of the icon.
- *
- * @method _buildHtml
- * @private
- */
-photonui.FAIcon.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("span");
-    this._e.outer.className = "photonui-widget photonui-icon photonui-faicon";
+    /**
+     * The Font Awesome icon name (e.g. "fa-cog").
+     *
+     * Icon list: http://fontawesome.io/icons/
+     *
+     * @property iconName
+     * @type String
+     * @default ""
+     */
+    _iconName: "",
 
-    this._e.icon = document.createElement("i");
-    this._e.outer.appendChild(this._e.icon);
-}
+    getIconName: function() {
+        return this._iconName;
+    },
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.FAIcon.prototype._updateAttributes = function() {
-    photonui.BaseIcon.prototype._updateAttributes.call(this);
-    this.setIcon(this.icon);
-    this.setColor(this.color);
-}
+    setIconName: function(iconName) {
+        this._iconName = iconName || "";
+        this.__html.icon.className = "fa " + this.iconName + " " + this.size;
+    },
+
+    /**
+     * Font Awesome icon size (e.g. "fa-2x").
+     *
+     * Icon sizes list: http://fontawesome.io/examples/#larger
+     *
+     * @property size
+     * @type String
+     * @default ""
+     */
+    _size: "",
+
+    getSize: function() {
+        return this._size;
+    },
+
+    setSize: function(size) {
+        this._size = size || "";
+        this.__html.icon.className = "fa " + this.iconName + " " + this.size;
+    },
+
+    /**
+     * The icon color.
+     *
+     * @property color
+     * @type String
+     * default: "inherit"
+     */
+    _color: "inherit",
+
+    getColor: function() {
+        return this._color;
+    },
+
+    setColor: function(color) {
+        this._color = color || "inherit";
+        this.__html.icon.style.color = this.color;
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outer = document.createElement("span");
+        this.__html.outer.className = "photonui-widget photonui-icon photonui-faicon";
+
+        this.__html.icon = document.createElement("i");
+        this.__html.outer.appendChild(this.__html.icon);
+    }
+});
