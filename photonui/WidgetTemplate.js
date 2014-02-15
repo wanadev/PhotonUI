@@ -32,7 +32,7 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Container
+ * @submodule <SUBMUDULE (Input, Container, Visual, Event, Composite,...)>
  * @namespace photonui
  */
 
@@ -41,13 +41,26 @@ var photonui = photonui || {};
 
 
 /**
- * Base class for container widgets.
+ * <WIDGET DESCRIPTION>.
  *
- * @class Container
+ * wEvents:
+ *
+ *   * <WEVENT NAME>:
+ *      - description: <WEVENT DESCRIPTION>
+ *      - callback:    <CALLBACK SIGNATURE (function(widget, ...))>
+ *
+ * @class <WIDGET CLASS NAME>
  * @constructor
  * @extends photonui.Widget
+ * @param {Object} params An object that can contain any property of the widget (optional).
  */
-photonui.Container = photonui.Widget.$extend({
+photonui.MyWidget = photonui.Widget.$extend({
+
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+    },
+
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -58,57 +71,22 @@ photonui.Container = photonui.Widget.$extend({
 
 
     /**
-     * The child widget name.
+     * Html outer element of the widget (if any).
      *
-     * @property childName
-     * @type String
-     * @default null (no child)
-     */
-    _childName: null,
-
-    getChildName: function() {
-        return this._childName;
-    },
-
-    setChildName: function(childName) {
-        if (this.childName && this.containerNode) {
-            this.containerNode.removeChild(this.child.html);
-        }
-        this._childName = childName;
-        if (this.childName && this.containerNode) {
-            this.containerNode.appendChild(this.child.html);
-        }
-    },
-
-    /**
-     * The child widget.
-     *
-     * @property child
-     * @type photonui.Widget
-     * @default null (no child)
-     */
-    getChild: function() {
-        return photonui.getWidget(this.childName);
-    },
-
-    setChild: function(child) {
-        if (!child instanceof photonui.Widget) {
-            this.childName = null;
-            return;
-        }
-        this.childName = child.name;
-    },
-
-    /**
-     * HTML Element that contain the child widget HTML.
-     *
-     * @property containerNode
+     * @property html
      * @type HTMLElement
+     * @default null
+     * @readOnly
      */
-    getContainerNode: function() {
-        console.warn("getContainerNode() method not implemented for this widget.");
-        return null;
+    getHtml: function() {
+        return null; // TODO Return the outer HTML element of the widget or remove this class
     },
+
+
+    // ====== Private properties ======
+
+
+    // TODO Private property here
 
 
     //////////////////////////////////////////
@@ -119,16 +97,27 @@ photonui.Container = photonui.Widget.$extend({
     // ====== Public methods ======
 
 
+    // TODO Public methods here
+
+
+    // ====== Private methods ======
+
+
     /**
-     * Destroy the widget.
+     * Build the widget HTML.
      *
-     * @method destroy
+     * @method _buildHtml
+     * @private
      */
-    destroy: function() {
-        if (this.childName) {
-            this.child.destroy();
-        }
-        this.childName = null;
-        this.$super();
-    }
+    _buildHtml: function() {
+        // TODO Build html here (in this.__html) or remove the method
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    // TODO Internal events callback here
 });
