@@ -254,7 +254,7 @@ photonui.Widget = Class.$extend({
     _layoutOptions: {},
 
     getLayoutOptions: function() {
-        return this.getLayoutOptions;
+        return this._layoutOptions;
     },
 
     setLayoutOptions: function(layoutOptions) {

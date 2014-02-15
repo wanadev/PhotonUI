@@ -59,230 +59,152 @@ var photonui = photonui || {};
  *
  * @class BoxLayout
  * @constructor
- * @extends photonui.Layout
- * @param {String} params.orientation The orientation of the box layout: `"vertical"` or `"horizontal"` (optional, default = "vertical").
- * @param {Number} params.verticalSpacing Vertical spacing between widgets (optional, default = 5).
- * @param {Number} params.horizontalSpacing Horizontal spacing between widgets (optional, default = 5).
+ * @extends photonui.GridLayout
  */
-photonui.BoxLayout = function(params) {
-    photonui.Layout.call(this, params);
+photonui.BoxLayout = photonui.GridLayout.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.orientation = params.orientation || "vertical";
-    this.verticalSpacing = (params.verticalSpacing != undefined) ? params.verticalSpacing : 5;
-    this.horizontalSpacing = (params.horizontalSpacing != undefined) ? params.horizontalSpacing : 5;
-
-    this._e = {};  // HTML elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.BoxLayout.prototype = new photonui.Layout;
+    // Constructor
+    __init__: function(params) {
+        this.$super();
+        this._updateProperties(["orientation"]);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the orientation of the layout.
- *
- * @method getOrientation
- * @return {String} The layout orientation: `"vertical"` or `"horizontal"`.
- */
-photonui.BoxLayout.prototype.getOrientation = function() {
-    return this.orientation;
-}
-
-/**
- * Set the orientation of the layout.
- *
- * @method setOrientation
- * @param {String} orientation The layout orientation: `"vertical"` or `"horizontal"`.
- */
-photonui.BoxLayout.prototype.setOrientation = function(orientation) {
-    if (orientation != "vertical" && orientation != "horizontal") {
-        throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-        return;
-    }
-    this.orientation = orientation;
-    this.removeClass("photonui-layout-orientation-vertical");
-    this.removeClass("photonui-layout-orientation-horizontal");
-    this.addClass("photonui-layout-orientation-" + this.orientation);
-    this._updateLayout();
-}
-
-/**
- * Get the vertical spacing.
- *
- * @method getVerticalSpacing
- * @return {Number} The vertical spacing between widgets.
- */
-photonui.BoxLayout.prototype.getVerticalSpacing = function() {
-    return this.verticalSpacing;
-}
-
-/**
- * Set the vertical spacing.
- *
- * @method setVerticalSpacing
- * @param {Number} spacing The vertical spacing between widgets.
- */
-photonui.BoxLayout.prototype.setVerticalSpacing = function(spacing) {
-    this.verticalSpacing = spacing;
-    this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
-}
-
-/**
- * Get the horizontal spacing.
- *
- * @method getHorizontalSpacing
- * @return {Number} The horizontal spacing between widgets.
- */
-photonui.BoxLayout.prototype.getHorizontalSpacing = function() {
-    return this.horizontalSpacing;
-}
-
-/**
- * Set the horizontal spacing.
- *
- * @method setHorizontalSpacing
- * @param {Number} spacing The horizontal spacing between widgets.
- */
-photonui.BoxLayout.prototype.setHorizontalSpacing = function(spacing) {
-    this.horizontalSpacing = spacing;
-    this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
-}
-
-/**
- * Get the HTML of the layout.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.BoxLayout.prototype.getHtml = function() {
-    return this._e.outerbox;
-}
+    // ====== Public properties ======
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    /**
+     * The layout orientation ("vertical" or "horizontal").
+     *
+     * @property orientation
+     * @type String
+     * @default "vertical"
+     */
+    _orientation: "vertical",
+
+    getOrientation: function() {
+        return this._orientation;
+    },
+
+    setOrientation: function(orientation) {
+        if (orientation != "vertical" && orientation != "horizontal") {
+            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            return;
+        }
+        this._orientation = orientation;
+        this.removeClass("photonui-layout-orientation-vertical");
+        this.removeClass("photonui-layout-orientation-horizontal");
+        this.addClass("photonui-layout-orientation-" + this.orientation);
+        this._updateLayout();
+    },
 
 
-/**
- * Build the HTML of the box layout.
- *
- * @method _buildHtml
- * @private
- */
-photonui.BoxLayout.prototype._buildHtml = function() {
-    this._e.outerbox = document.createElement("div");
-    this._e.outerbox.className = "photonui-widget photonui-boxlayout";
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
-    this._e.grid = document.createElement("table");
-    this._e.outerbox.appendChild(this._e.grid);
 
-    this._e.gridBody = document.createElement("tbody");
-    this._e.grid.appendChild(this._e.gridBody);
-}
+    // ====== Private methods ======
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.BoxLayout.prototype._updateAttributes = function() {
-    photonui.Layout.prototype._updateAttributes.call(this);
-    this.setOrientation(this.orientation);
-    this.setVerticalSpacing(this.verticalSpacing);
-}
 
-/**
- * Update the layout.
- *
- * @method _updateLayout
- * @private
- */
-photonui.BoxLayout.prototype._updateLayout = function() {
-    photonui.Helpers.cleanNode(this._e.gridBody);
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.__html.outerbox.className = "photonui-widget photonui-boxlayout";
+    },
 
-    var e_tr = null;
-    if (this.getOrientation() == "horizontal") {
-        e_tr = document.createElement("tr");
-        this._e.gridBody.appendChild(e_tr);
-    }
+    /**
+     * Update the layout.
+     *
+     * @method _updateLayout
+     * @private
+     */
+    _updateLayout: function() {
+        photonui.Helpers.cleanNode(this.__html.gridBody);
 
-    for (var i=0 ; i<this.childrenWidgets.length ; i++) {
-        if (this.getOrientation() == "vertical") {
+        var e_tr = null;
+        if (this.getOrientation() == "horizontal") {
             e_tr = document.createElement("tr");
-            this._e.gridBody.appendChild(e_tr);
+            this.__html.gridBody.appendChild(e_tr);
         }
 
-        var e_td = document.createElement("td");
-        e_td.className = "photonui-container photonui-boxlayout-cell";
-        e_tr.appendChild(e_td);
+        var children = this.children;
 
-        // Layout Options: Expansion
-        if (this.childrenWidgets[i].layoutOptions.horizontalExpansion == undefined
-        ||  this.childrenWidgets[i].layoutOptions.horizontalExpansion) {
-            e_td.className += " photonui-container-expand-child-horizontal";
-        }
-        if (this.childrenWidgets[i].layoutOptions.verticalExpansion == undefined
-        ||  this.childrenWidgets[i].layoutOptions.verticalExpansion) {
-            e_td.className += " photonui-container-expand-child-vertical";
+        for (var i=0 ; i<children.length ; i++) {
+            if (this.getOrientation() == "vertical") {
+                e_tr = document.createElement("tr");
+                this.__html.gridBody.appendChild(e_tr);
+            }
+
+            var e_td = document.createElement("td");
+            e_td.className = "photonui-container photonui-boxlayout-cell";
+            e_tr.appendChild(e_td);
+
+            // Layout Options: Expansion
+            if (children[i].layoutOptions.horizontalExpansion == undefined
+            ||  children[i].layoutOptions.horizontalExpansion) {
+                e_td.className += " photonui-container-expand-child-horizontal";
+            }
+            if (children[i].layoutOptions.verticalExpansion == undefined
+            ||  children[i].layoutOptions.verticalExpansion) {
+                e_td.className += " photonui-container-expand-child-vertical";
+            }
+
+            // Layout Options: width
+            if (children[i].layoutOptions.width != undefined) {
+                e_td.style.height = children[i].layoutOptions.width + "px";
+            }
+            // Layout Options: height
+            if (children[i].layoutOptions.height != undefined) {
+                e_td.style.height = children[i].layoutOptions.height + "px";
+            }
+            // Layout Options: minWidth
+            if (children[i].layoutOptions.minWidth != undefined) {
+                e_td.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
+            }
+            // Layout Options: minHeight
+            if (children[i].layoutOptions.minHeight != undefined) {
+                e_td.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
+            }
+            // Layout Options: maxWidth
+            if (children[i].layoutOptions.maxWidth != undefined) {
+                e_td.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
+            }
+            // Layout Options: maxHeight
+            if (children[i].layoutOptions.maxHeight != undefined) {
+                e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
+            }
+            // Layout Options: horizontalAlign
+            if (children[i].layoutOptions.horizontalAlign != undefined) {
+                e_td.style.textAlign = this.childrenWidgets[i].layoutOptions.horizontalAlign; console.log("hhhh");
+            }
+
+            e_td.appendChild(children[i].html);
         }
 
-        // Layout Options: width
-        if (this.childrenWidgets[i].layoutOptions.width != undefined) {
-            e_td.style.height = this.childrenWidgets[i].layoutOptions.width + "px";
+        // Hack for Gecko and Trident
+        var cells = document.querySelectorAll("#" + this.name + " td");
+        var heights = [];
+        var padding = 0;
+        for (var i=0 ; i<cells.length ; i++) {
+            if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
+                padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
+                padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
+            }
+            heights[i] = (cells[i].offsetHeight - padding) + "px";
         }
-        // Layout Options: height
-        if (this.childrenWidgets[i].layoutOptions.height != undefined) {
-            e_td.style.height = this.childrenWidgets[i].layoutOptions.height + "px";
+        for (var i=0 ; i<cells.length ; i++) {
+            cells[i].style.height = heights[i];
         }
-        // Layout Options: minWidth
-        if (this.childrenWidgets[i].layoutOptions.minWidth != undefined) {
-            e_td.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
-        }
-        // Layout Options: minHeight
-        if (this.childrenWidgets[i].layoutOptions.minHeight != undefined) {
-            e_td.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
-        }
-        // Layout Options: maxWidth
-        if (this.childrenWidgets[i].layoutOptions.maxWidth != undefined) {
-            e_td.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
-        }
-        // Layout Options: maxHeight
-        if (this.childrenWidgets[i].layoutOptions.maxHeight != undefined) {
-            e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
-        }
-        // Layout Options: horizontalAlign
-        if (this.childrenWidgets[i].layoutOptions.horizontalAlign != undefined) {
-            e_td.style.textAlign = this.childrenWidgets[i].layoutOptions.horizontalAlign; console.log("hhhh");
-        }
-
-        e_td.appendChild(this.childrenWidgets[i].getHtml());
     }
-
-    // Hack for Gecko and Trident
-    var cells = document.querySelectorAll("#" + this.name + " td");
-    var heights = [];
-    var padding = 0;
-    for (var i=0 ; i<cells.length ; i++) {
-        if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
-            padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
-            padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
-        }
-        heights[i] = (cells[i].offsetHeight - padding) + "px";
-    }
-    for (var i=0 ; i<cells.length ; i++) {
-        cells[i].style.height = heights[i];
-    }
-}
+});

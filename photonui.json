@@ -55,14 +55,6 @@
         "assets": [],
         "dependencies": ["Container"]
     },
-    "BoxLayout": {
-        "abstract": false,
-        "javascript": ["container/layout/boxlayout.js"],
-        "css": ["container/layout/boxlayout.css"],
-        "themeCss": [],
-        "assets": [],
-        "dependencies": ["Layout"]
-    },
     "GridLayout": {
         "abstract": false,
         "javascript": ["container/layout/gridlayout.js"],
@@ -70,6 +62,14 @@
         "themeCss": [],
         "assets": [],
         "dependencies": ["Layout"]
+    },
+    "BoxLayout": {
+        "abstract": false,
+        "javascript": ["container/layout/boxlayout.js"],
+        "css": ["container/layout/boxlayout.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["GridLayout"]
     },
     "Viewport": {
         "abstract": false,

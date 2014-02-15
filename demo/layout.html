@@ -28,6 +28,8 @@
         </style>
     </head>
     <body>
+        <script src="../lib/classy.js"></script>
+
         <script src="../photonui/photonui.js"></script>
         <script src="../photonui/helpers.js"></script>
 
@@ -36,8 +38,9 @@
         <script src="../photonui/container/window/basewindow.js"></script>
         <script src="../photonui/container/window/window.js"></script>
         <script src="../photonui/container/layout/layout.js"></script>
-        <script src="../photonui/container/layout/boxlayout.js"></script>
         <script src="../photonui/container/layout/gridlayout.js"></script>
+        <script src="../photonui/container/layout/boxlayout.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
         <script src="../photonui/input/button/button.js"></script>
 
         <script>
@@ -46,7 +49,7 @@
                     title: "Vertical Box Layout",
                     x: 50, y: 50,
                     width: 200,
-                    closeButton: false,
+                    closeButtonVisible: false,
                     visible: true
             });
             var vbox = new photonui.BoxLayout({
@@ -67,7 +70,7 @@
                     title: "Horizontal Box Layout",
                     x: 270, y: 50,
                     height: 65,
-                    closeButton: false,
+                    closeButtonVisible: false,
                     visible: true
             });
             var hbox = new photonui.BoxLayout({

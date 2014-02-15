@@ -66,9 +66,8 @@ photonui.Button = photonui.Widget.$extend({
         this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
 
         // Update properties
-        this._updateProperties([
-            "text", "leftIconName", "leftIcon", "rightIconName", "RightIcon"
-        ]);
+        this._updateProperties(["text", "leftIconName", "rightIconName"]);
+        this._update();
     },
 
 

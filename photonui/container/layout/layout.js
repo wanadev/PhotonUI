@@ -47,123 +47,148 @@ var photonui = photonui || {};
  * @constructor
  * @extends photonui.Container
  */
-photonui.Layout = function(params) {
-    photonui.Container.call(this, params);
+photonui.Layout = photonui.Container.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.childrenWidgets = [];
-}
-
-photonui.Layout.prototype = new photonui.Container;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._childrenNames = [];  // new instance
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get children widgets.
- *
- * @method getChildren
- * @return {Array} List of `photonui.Widget`.
- */
-photonui.Layout.prototype.getChildren = function() {
-    return this.childrenWidgets;
-}
-
-/**
- * Get the layout options of the given widget.
- *
- * @method getLayoutOptions
- * @param {photonui.Widget} widget
- * @return {Object} The layoutOptions widget.
- */
-photonui.Layout.prototype.getLayoutOptions = function(widget) {
-    return widget.layoutOptions;
-}
-
-/**
- * Set the layout options of the given widget.
- *
- * @method setLayoutOptions
- * @param {photonui.Widget} widget
- * @param {Object} options The layoutOptions widget.
- */
-photonui.Layout.prototype.setLayoutOptions = function(widget, options) {
-    widget.layoutOptions = options || {};
-    this._updateLayout();
-}
-
-// Documentation in photonui.Widget
-photonui.Layout.prototype.getChild = function() {
-    console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
-}
-
-// Documentation in photonui.Widget
-photonui.Layout.prototype.setChild = function(child) {
-    console.warn("Warning: You cannot use setChild() on layout widgets, please use addChild() instead.");
-}
+    // ====== Public properties ======
 
 
-//////////////////////////////////////////
-// Public Methods                       //
-//////////////////////////////////////////
+    /**
+     * Layout children widgets name.
+     *
+     * @property childrenNames
+     * @type Array
+     * @default []
+     */
+    _childrenNames: [],
 
+    getChildrenNames: function() {
+        return this._childrenNames;
+    },
 
-/**
- * Add a widget to the layout.
- *
- * @method addChild
- * @param {photonui.Widget} widget The widget to add.
- * @param {Object} layoutOption Specific option for the layout (optional).
- */
-photonui.Layout.prototype.addChild = function(widget, layoutOptions) {
-    if (layoutOptions) {
-        for (var option in layoutOptions) {
-            widget.layoutOptions[option] = layoutOptions[option];
+    setChildrenNames: function(childrenNames) {
+        this._childrenNames = childrenNames;
+        this._updateLayout();
+    },
+
+    /**
+     * Layout children widgets.
+     *
+     * @property children
+     * @type Array
+     * @default []
+     */
+    getChildren: function() {
+        var children = [];
+        for (var i=0 ; i<this._childrenNames.length ; i++) {
+            children.push(photonui.getWidget(this._childrenNames[i]));
         }
+        return children;
+    },
+
+    setChildren: function(children) {
+        var childrenNames = [];
+        for (var i=0 ; i<children.length ; i++) {
+            if (children[i] instanceof photonui.Widget) {
+                childrenNames.push(children[i].name);
+            }
+        }
+        this.childrenNames = childrenNames;
+    },
+
+    // Override getChildName / setChildName / getChild / setChild
+
+    getChildName: function() {
+        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
+        return null;
+    },
+
+    setChildName: function(childName) {
+        this.childrenNames = [childName];
+    },
+
+    getChild: function() {
+        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
+        return null;
+    },
+
+    setChild: function(child) {
+        this.children = [child];
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Public methods ======
+
+
+    /**
+     * Add a widget to the layout.
+     *
+     * @method addChild
+     * @param {photonui.Widget} widget The widget to add.
+     * @param {Object} layoutOption Specific option for the layout (optional).
+     */
+    addChild: function(widget, layoutOptions) {
+        if (layoutOptions) {
+            widget.layoutOptions = layoutOptions;
+        }
+        this._childrenNames.push(widget.name);
+        this._updateLayout();
+    },
+
+    /**
+     * Remove a widget from the layout.
+     *
+     * @method removeChild
+     * @param {photonui.Widget} widget The widget to remove.
+     */
+    removeChild: function(widget) {
+        var index = this.childrenWidgets.indexOf(widget.name);
+        if (index >= 0) {
+            this.childrenWidgets.splice(widget.name, 1);
+        }
+        this._updateLayout();
+    },
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function() {
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            children[i].destroy();
+        }
+        this.$super();
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Update the layout.
+     *
+     * @method _updateLayout
+     * @private
+     */
+    _updateLayout: function() {
+        throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
     }
-    this.childrenWidgets.push(widget);
-    this._updateLayout();
-}
-
-/**
- * Remove a widget from the layout.
- *
- * @method removeChild
- * @param {photonui.Widget} widget The widget to remove.
- */
-photonui.Layout.prototype.removeChild = function(widget) {
-    var index = this.childrenWidgets.indexOf(widget);
-    if (index >= 0) {
-        this.childrenWidgets.splice(widget, 1);
-    }
-    this._updateLayout();
-}
-
-// Documentation in photonui.Widget
-photonui.Layout.prototype.destroy = function() {
-    for (var i in this.childrenWidgets) {
-        this.childrenWidgets[i].destroy();
-    }
-    photonui.Container.prototype.destroy.call(this);
-}
-
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Update the layout.
- *
- * @method _updateLayout
- * @private
- */
-photonui.Layout.prototype._updateLayout = function() {
-    throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
-}
+});

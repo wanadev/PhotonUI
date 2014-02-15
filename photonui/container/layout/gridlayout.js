@@ -64,244 +64,223 @@ var photonui = photonui || {};
  * @class GridLayout
  * @constructor
  * @extends photonui.Layout
- * @param {Number} params.verticalSpacing Vertical spacing between widgets (optional, default = 5).
- * @param {Number} params.horizontalSpacing Horizontal spacing between widgets (optional, default = 5).
  */
-photonui.GridLayout = function(params) {
-    photonui.Layout.call(this, params);
+photonui.GridLayout = photonui.Layout.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.verticalSpacing = (params.verticalSpacing != undefined) ? params.verticalSpacing : 5;
-    this.horizontalSpacing = (params.horizontalSpacing != undefined) ? params.horizontalSpacing : 5;
-
-    this._e = {};  // HTML elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.GridLayout.prototype = new photonui.Layout;
+    // Constructor
+    __init__: function(params) {
+        this.$super();
+        this._updateProperties(["verticalSpacing"]);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the vertical spacing.
- *
- * @method getVerticalSpacing
- * @return {Number} The vertical spacing between widgets.
- */
-photonui.GridLayout.prototype.getVerticalSpacing = function() {
-    return this.verticalSpacing;
-}
-
-/**
- * Set the vertical spacing.
- *
- * @method setVerticalSpacing
- * @param {Number} spacing The vertical spacing between widgets.
- */
-photonui.GridLayout.prototype.setVerticalSpacing = function(spacing) {
-    this.verticalSpacing = spacing;
-    this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
-}
-
-/**
- * Get the horizontal spacing.
- *
- * @method getHorizontalSpacing
- * @return {Number} The horizontal spacing between widgets.
- */
-photonui.GridLayout.prototype.getHorizontalSpacing = function() {
-    return this.horizontalSpacing;
-}
-
-/**
- * Set the horizontal spacing.
- *
- * @method setHorizontalSpacing
- * @param {Number} spacing The horizontal spacing between widgets.
- */
-photonui.GridLayout.prototype.setHorizontalSpacing = function(spacing) {
-    this.horizontalSpacing = spacing;
-    this._e.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
-}
-
-/**
- * Get the HTML of the layout.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.GridLayout.prototype.getHtml = function() {
-    return this._e.outerbox;
-}
+    // ====== Public properties ======
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    /**
+     * The vertical spacing between children widgets.
+     *
+     * @property verticalSpacing
+     * @type Number
+     * @default 5
+     */
+    _verticalSpacing: 5,
+
+    getVerticalSpacing: function() {
+        return this._verticalSpacing;
+    },
+
+    setVerticalSpacing: function(verticalSpacing) {
+        this._verticalSpacing = verticalSpacing;
+        this.__html.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
+    },
+
+    /**
+     * The horizontal spacing between children widgets.
+     *
+     * @property horizontalSpacing
+     * @type Number
+     * @default 5
+     */
+    _horizontalSpacing: 5,
+
+    getHorizontalSpacing: function() {
+        return this._horizontalSpacing;
+    },
+
+    setHorizontalSpacing: function(horizontalSpacing) {
+        this._verticalSpacing = horizontalSpacing;
+        this.__html.grid.style.borderSpacing = this.horizontalSpacing + "px " + this.verticalSpacing + "px";
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outerbox;
+    },
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
 
-/**
- * Build the HTML of the bow layout.
- *
- * @method _buildHtml
- * @private
- */
-photonui.GridLayout.prototype._buildHtml = function() {
-    this._e.outerbox = document.createElement("div");
-    this._e.outerbox.className = "photonui-widget photonui-gridlayout";
+    // ====== Private methods ======
 
-    this._e.grid = document.createElement("table");
-    this._e.outerbox.appendChild(this._e.grid);
 
-    this._e.gridBody = document.createElement("tbody");
-    this._e.grid.appendChild(this._e.gridBody);
-}
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outerbox = document.createElement("div");
+        this.__html.outerbox.className = "photonui-widget photonui-gridlayout";
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.GridLayout.prototype._updateAttributes = function() {
-    photonui.Layout.prototype._updateAttributes.call(this);
+        this.__html.grid = document.createElement("table");
+        this.__html.outerbox.appendChild(this.__html.grid);
 
-    this.setVerticalSpacing(this.verticalSpacing);
-}
+        this.__html.gridBody = document.createElement("tbody");
+        this.__html.grid.appendChild(this.__html.gridBody);
+    },
 
-/**
- * Update the layout.
- *
- * @method _updateLayout
- * @private
- */
-photonui.GridLayout.prototype._updateLayout = function() {
-    // Calculate geometry
-    var ox = Infinity;  // Offset X
-    var oy = Infinity;  // Offset Y
-    var nc = 0;  // Number of columns
-    var nr = 0;  // Number of rows
-    for (var i=0 ; i<this.childrenWidgets.length ; i++) {
-        this.childrenWidgets[i].layoutOptions.gridX = (this.childrenWidgets[i].layoutOptions.gridX != undefined) ? this.childrenWidgets[i].layoutOptions.gridX : 0;
-        this.childrenWidgets[i].layoutOptions.gridY = (this.childrenWidgets[i].layoutOptions.gridY != undefined) ? this.childrenWidgets[i].layoutOptions.gridY : 0;
-        this.childrenWidgets[i].layoutOptions.gridWidth = Math.max(this.childrenWidgets[i].layoutOptions.gridWidth, 1) || 1;
-        this.childrenWidgets[i].layoutOptions.gridHeight = Math.max(this.childrenWidgets[i].layoutOptions.gridHeight, 1) || 1;
-        ox = Math.min(ox, this.childrenWidgets[i].layoutOptions.gridX);
-        oy = Math.min(oy, this.childrenWidgets[i].layoutOptions.gridY);
-        nc = Math.max(nc, this.childrenWidgets[i].layoutOptions.gridX + this.childrenWidgets[i].layoutOptions.gridWidth);
-        nr = Math.max(nr, this.childrenWidgets[i].layoutOptions.gridY + this.childrenWidgets[i].layoutOptions.gridHeight);
-    }
-    nc -= ox;
-    nr -= oy;
-
-    // Find and fix conflicts
-    // TODO
-
-    // Build
-    photonui.Helpers.cleanNode(this._e.gridBody);
-    var map = [];
-    for (var y=0 ; y<nr ; y++) {
-        var row = [];
-        for (var x=0 ; x<nc ; x++) {
-            row.push(false);
+    /**
+     * Update the layout.
+     *
+     * @method _updateLayout
+     * @private
+     */
+    _updateLayout: function() {
+        // Calculate geometry
+        var ox = Infinity;  // Offset X
+        var oy = Infinity;  // Offset Y
+        var nc = 0;  // Number of columns
+        var nr = 0;  // Number of rows
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            children[i].layoutOptions.gridX = (children[i].layoutOptions.gridX != undefined) ? children[i].layoutOptions.gridX : 0;
+            children[i].layoutOptions.gridY = (children[i].layoutOptions.gridY != undefined) ? children[i].layoutOptions.gridY : 0;
+            children[i].layoutOptions.gridWidth = Math.max(children[i].layoutOptions.gridWidth, 1) || 1;
+            children[i].layoutOptions.gridHeight = Math.max(children[i].layoutOptions.gridHeight, 1) || 1;
+            ox = Math.min(ox, children[i].layoutOptions.gridX);
+            oy = Math.min(oy, children[i].layoutOptions.gridY);
+            nc = Math.max(nc, children[i].layoutOptions.gridX + children[i].layoutOptions.gridWidth);
+            nr = Math.max(nr, children[i].layoutOptions.gridY + children[i].layoutOptions.gridHeight);
         }
-        map.push(row);
-    }
-    for (var y=0 ; y<nr ; y++) {
-        var e_tr = document.createElement("tr");
-        this._e.gridBody.appendChild(e_tr);
-        for (var x=0 ; x<nc ; x++) {
-            if (map[y][x]) {
-                continue;
+        nc -= ox;
+        nr -= oy;
+
+        // Find and fix conflicts
+        // TODO
+
+        // Build
+        photonui.Helpers.cleanNode(this.__html.gridBody);
+        var map = [];
+        for (var y=0 ; y<nr ; y++) {
+            var row = [];
+            for (var x=0 ; x<nc ; x++) {
+                row.push(false);
             }
-            var widget = false;
-            var e_td = document.createElement("td");
-            e_td.className = "photonui-container photonui-gridlayout-cell";
-            e_tr.appendChild(e_td);
-            for (var i=0 ; i<this.childrenWidgets.length ; i++) {
-                if (this.childrenWidgets[i].layoutOptions.gridX - ox == x && this.childrenWidgets[i].layoutOptions.gridY - oy == y) {
-                    widget = true;
-                    var cs = this.childrenWidgets[i].layoutOptions.gridWidth;
-                    var rs = this.childrenWidgets[i].layoutOptions.gridHeight;
-                    e_td.colSpan = cs;
-                    e_td.rowSpan = rs;
-                    e_td.appendChild(this.childrenWidgets[i].getHtml());
+            map.push(row);
+        }
+        for (var y=0 ; y<nr ; y++) {
+            var e_tr = document.createElement("tr");
+            this.__html.gridBody.appendChild(e_tr);
+            for (var x=0 ; x<nc ; x++) {
+                if (map[y][x]) {
+                    continue;
+                }
+                var widget = false;
+                var e_td = document.createElement("td");
+                e_td.className = "photonui-container photonui-gridlayout-cell";
+                e_tr.appendChild(e_td);
+                for (var i=0 ; i<children.length ; i++) {
+                    if (children[i].layoutOptions.gridX - ox == x && children[i].layoutOptions.gridY - oy == y) {
+                        widget = true;
+                        var cs = children[i].layoutOptions.gridWidth;
+                        var rs = children[i].layoutOptions.gridHeight;
+                        e_td.colSpan = cs;
+                        e_td.rowSpan = rs;
+                        e_td.appendChild(children[i].html);
 
-                    if (this.childrenWidgets[i].layoutOptions.horizontalExpansion == undefined
-                    ||  this.childrenWidgets[i].layoutOptions.horizontalExpansion) {
-                        e_td.className += " photonui-container-expand-child-horizontal"
-                    }
-                    if (this.childrenWidgets[i].layoutOptions.verticalExpansion == undefined
-                    ||  this.childrenWidgets[i].layoutOptions.verticalExpansion) {
-                        e_td.className += " photonui-container-expand-child-vertical"
-                    }
+                        if (children[i].layoutOptions.horizontalExpansion == undefined
+                        ||  children[i].layoutOptions.horizontalExpansion) {
+                            e_td.className += " photonui-container-expand-child-horizontal"
+                        }
+                        if (children[i].layoutOptions.verticalExpansion == undefined
+                        ||  children[i].layoutOptions.verticalExpansion) {
+                            e_td.className += " photonui-container-expand-child-vertical"
+                        }
 
-                    // Layout Options: width
-                    if (this.childrenWidgets[i].layoutOptions.width != undefined) {
-                        e_td.style.height = this.childrenWidgets[i].layoutOptions.width + "px";
-                    }
-                    // Layout Options: height
-                    if (this.childrenWidgets[i].layoutOptions.height != undefined) {
-                        e_td.style.height = this.childrenWidgets[i].layoutOptions.height + "px";
-                    }
-                    // Layout Options: minWidth
-                    if (this.childrenWidgets[i].layoutOptions.minWidth != undefined) {
-                        e_td.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
-                    }
-                    // Layout Options: minHeight
-                    if (this.childrenWidgets[i].layoutOptions.minHeight != undefined) {
-                        e_td.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
-                    }
-                    // Layout Options: maxWidth
-                    if (this.childrenWidgets[i].layoutOptions.maxWidth != undefined) {
-                        e_td.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
-                    }
-                    // Layout Options: maxHeight
-                    if (this.childrenWidgets[i].layoutOptions.maxHeight != undefined) {
-                        e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
-                    }
-                    // Layout Options: horizontalAlign
-                    if (this.childrenWidgets[i].layoutOptions.horizontalAlign != undefined) {
-                        e_td.style.textAlign = this.childrenWidgets[i].layoutOptions.horizontalAlign;
-                    }
+                        // Layout Options: width
+                        if (children[i].layoutOptions.width != undefined) {
+                            e_td.style.height = children[i].layoutOptions.width + "px";
+                        }
+                        // Layout Options: height
+                        if (children[i].layoutOptions.height != undefined) {
+                            e_td.style.height = children[i].layoutOptions.height + "px";
+                        }
+                        // Layout Options: minWidth
+                        if (children[i].layoutOptions.minWidth != undefined) {
+                            e_td.style.minWidth = children[i].layoutOptions.minWidth + "px";
+                        }
+                        // Layout Options: minHeight
+                        if (children[i].layoutOptions.minHeight != undefined) {
+                            e_td.style.minHeight = children[i].layoutOptions.minHeight + "px";
+                        }
+                        // Layout Options: maxWidth
+                        if (children[i].layoutOptions.maxWidth != undefined) {
+                            e_td.style.maxWidth = children[i].layoutOptions.maxWidth + "px";
+                        }
+                        // Layout Options: maxHeight
+                        if (children[i].layoutOptions.maxHeight != undefined) {
+                            e_td.style.maxHeight = children[i].layoutOptions.maxHeight + "px";
+                        }
+                        // Layout Options: horizontalAlign
+                        if (children[i].layoutOptions.horizontalAlign != undefined) {
+                            e_td.style.textAlign = children[i].layoutOptions.horizontalAlign;
+                        }
 
-                    if (cs > 1 || rs > 1) {
-                        for (var r=y ; r<y+rs ; r++) {
-                            for (var c=x ; c<x+cs ; c++) {
-                                map[r][c] = true;
+                        if (cs > 1 || rs > 1) {
+                            for (var r=y ; r<y+rs ; r++) {
+                                for (var c=x ; c<x+cs ; c++) {
+                                    map[r][c] = true;
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
+                }
+                if (!widget) {
+                    e_td.innerHTML = "&nbsp;";
                 }
             }
-            if (!widget) {
-                e_td.innerHTML = "&nbsp;";
-            }
         }
-    }
 
-    // Hack for Gecko and Trident
-    var cells = document.querySelectorAll("#" + this.name + " td");
-    var heights = [];
-    var padding = 0;
-    for (var i=0 ; i<cells.length ; i++) {
-        if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
-            padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
-            padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
+        // Hack for Gecko and Trident
+        var cells = document.querySelectorAll("#" + this.name + " td");
+        var heights = [];
+        var padding = 0;
+        for (var i=0 ; i<cells.length ; i++) {
+            if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
+                padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
+                padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
+            }
+            heights[i] = (cells[i].offsetHeight - padding) + "px";
         }
-        heights[i] = (cells[i].offsetHeight - padding) + "px";
+        for (var i=0 ; i<cells.length ; i++) {
+            cells[i].style.height = heights[i];
+        }
     }
-    for (var i=0 ; i<cells.length ; i++) {
-        cells[i].style.height = heights[i];
-    }
-}
+});
