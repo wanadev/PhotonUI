@@ -46,79 +46,68 @@ var photonui = photonui || {};
  * @class TextField
  * @constructor
  * @extends photonui.Field
- * @param {String} params.type The text field type (optional, default="text").
  */
-photonui.TextField = function(params) {
-    photonui.Field.call(this, params);
+photonui.TextField = photonui.Field.$extend({
 
-    var params = params || {};
-    this.type = params.type || "text";
-
-    // Build
-    this._buildHtml();
-    this._updateAttributes();
-    this._bindEvents();
-}
-
-photonui.TextField.prototype = new photonui.Field;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._bindFieldEvents();
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the type of the text field.
- *
- * @method getType
- * @return {String} The type (`text`, `password`, `email`, `search`, `tel`, `url`).
- */
-photonui.TextField.prototype.getType = function() {
-    return this._e.field.type;
-}
+    // ====== Public properties ======
 
-/**
- * Set the type of the text field.
- *
- * @method setType
- * @param {String} type The type (`text`, `password`, `email`, `search`, `tel`, `url`).
- */
-photonui.TextField.prototype.setType = function(type) {
-    if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
-        throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
-        return;
+
+    /**
+     * Type of the field.
+     *
+     *   * text
+     *   * password
+     *   * email
+     *   * search
+     *   * tel
+     *   * url
+     *
+     * @property type
+     * @type String
+     * @default text
+     */
+    getType: function() {
+        return this.__html.field.type;
+    },
+
+    setType: function(type) {
+        if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
+            throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
+            return;
+        }
+        this.__html.field.type = type;
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.field = document.createElement("input");
+        this.__html.field.className = "photonui-widget photonui-field photonui-field-text";
+        this.__html.field.type = "text";
     }
-    this.type = type;
-    this._e.field.type = type;
-}
-
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Build the HTML of the text field.
- *
- * @method _buildHtml
- * @private
- */
-photonui.TextField.prototype._buildHtml = function() {
-    this._e.field = document.createElement("input");
-    this._e.field.className = "photonui-widget photonui-field photonui-field-text";
-    this._e.field.type = "text";
-    this._e.field.name = this.name;
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.TextField.prototype._updateAttributes = function() {
-    photonui.Field.prototype._updateAttributes.call(this);
-    this.setType(this.type);
-}
+});

@@ -68,147 +68,126 @@ var photonui = photonui || {};
  * @class Field
  * @constructor
  * @extends photonui.Widget
- * @param params.value The field value (optional).
- * @param {String} params.placeholer The field placeholder (optional).
  */
-photonui.Field = function(params) {
-    photonui.Widget.call(this, params);
+photonui.Field = photonui.Widget.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.value = (params.value != undefined) ? params.value : "";
-    this.placeholder = (params.placeholder != undefined) ? params.placeholder : "";
-
-    this._e = {};  // HTML Elements
-
-    this._registerWidgetEvents(["value-changed", "keydown", "keyup", "keypress", "selection-changed"]);
-}
-
-photonui.Field.prototype = new photonui.Widget;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._registerWEvents([
+            "value-changed", "keydown", "keyup", "keypress",
+            "selection-changed"
+        ]);
+        this._updateProperties(["value", "placeholder"]);
+        this.__html.field.name = this.name;
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the field value.
- *
- * @method getValue
- * @return {String} The value
- */
-photonui.Field.prototype.getValue = function() {
-    return this._e.field.value;
-}
-
-/**
- * Set the field value.
- *
- * @method setValue
- * @param {String} value The value
- */
-photonui.Field.prototype.setValue = function(value) {
-    this.value = value;
-    this._e.field.value = value;
-    this._callCallbacks("value-changed", [this.getValue()]);
-}
-
-/**
- * Get the field placeholder.
- *
- * @method getPlaceholder
- * @return {String} The placeholder
- */
-photonui.Field.prototype.getPlaceholder = function() {
-    return this._e.field.placeholder;
-}
-
-/**
- * Set the field placeholder.
- *
- * @method setPlaceholder
- * @param {String} placeholder The placeholder
- */
-photonui.Field.prototype.setPlaceholder = function(placeholder) {
-    this.placeholder = placeholder;
-    this._e.field.placeholder = placeholder;
-}
-
-/**
- * Get the HTML of the field.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Field.prototype.getHtml = function() {
-    return this._e.field;
-}
+    // ====== Public properties ======
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    /**
+     * The field value.
+     *
+     * @property value
+     * @type String (maybe)
+     * @default ""
+     */
+    getValue: function() {
+        return this.__html.field.value;
+    },
+
+    setValue: function(value) {
+        this.__html.field.value = value;
+    },
+
+    /**
+     * The placeholder displayed if the field is empty.
+     *
+     * @property Placeholder
+     * @type String
+     * @default ""
+     */
+    getPlaceholder: function() {
+        return this.__html.field.placeholder;
+    },
+
+    setPlaceholder: function(placeholder) {
+        this.__html.field.placeholder = placeholder;
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.field;
+    },
 
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Field.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
-    this.setValue(this.value);
-    this.setPlaceholder(this.placeholder);
-}
-
-/**
- * Bind events.
- *
- * @method _bindEvents
- * @private
- */
-photonui.Field.prototype._bindEvents = function() {
-    this._bindEvent("value-changed", this._e.field, "change", function(event) {
-        this._callCallbacks("value-changed", [this.getValue()]);
-    }.bind(this));
-
-    this._bindEvent("keydown", this._e.field, "keydown", function(event) {
-        this._callCallbacks("keydown", [event]);
-    }.bind(this));
-
-    this._bindEvent("keyup", this._e.field, "keyup", function(event) {
-        this._callCallbacks("keyup", [event]);
-    }.bind(this));
-
-    this._bindEvent("keypress", this._e.field, "keypress", function(event) {
-        this._callCallbacks("keypress", [event]);
-    }.bind(this));
-
-    this._bindEvent("selection-changed", this._e.field, "select", function(event) {
-        this._callCallbacks("selection-changed", [
-            this._e.field.selectionStart,
-            this._e.field.selectionEnd,
-            ("" + this.getValue()).substring(this._e.field.selectionStart, this._e.field.selectionEnd),
-            event]);
-    }.bind(this));
-}
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
 
-//////////////////////////////////////////
-// Internal Events Callbacks            //
-//////////////////////////////////////////
+    // ====== Private methods ======
 
 
-/**
- * Called when the context menu should be displayed.
- *
- * @method _onContextMenu
- * @private
- * @param event
- */
-photonui.Field.prototype._onContextMenu = function(event) {
-    event.stopPropagation();
-}
+    /**
+     * Bind Field events.
+     *
+     * @method _bindFieldEvents
+     * @private
+     */
+    _bindFieldEvents: function() {
+        this._bindEvent("value-changed", this.__html.field, "change", function(event) {
+            this._callCallbacks("value-changed", [this.getValue()]);
+        }.bind(this));
+
+        this._bindEvent("keydown", this.__html.field, "keydown", function(event) {
+            this._callCallbacks("keydown", [event]);
+        }.bind(this));
+
+        this._bindEvent("keyup", this.__html.field, "keyup", function(event) {
+            this._callCallbacks("keyup", [event]);
+        }.bind(this));
+
+        this._bindEvent("keypress", this.__html.field, "keypress", function(event) {
+            this._callCallbacks("keypress", [event]);
+        }.bind(this));
+
+        this._bindEvent("selection-changed", this.__html.field, "select", function(event) {
+            this._callCallbacks("selection-changed", [
+                this.__html.field.selectionStart,
+                this.__html.field.selectionEnd,
+                ("" + this.getValue()).substring(this.__html.field.selectionStart, this.__html.field.selectionEnd),
+                event]);
+        }.bind(this));
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the context menu should be displayed.
+     *
+     * @method __onContextMenu
+     * @private
+     * @param event
+     */
+    __onContextMenu: function(event) {
+        event.stopPropagation();  // Enable context menu on fields
+    }
+});

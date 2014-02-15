@@ -53,6 +53,8 @@
         </style>
     </head>
     <body>
+        <script src="../lib/classy.js"></script>
+
         <script src="../photonui/photonui.js"></script>
         <script src="../photonui/helpers.js"></script>
 
@@ -60,23 +62,22 @@
         <script src="../photonui/container/container.js"></script>
         <script src="../photonui/container/window/basewindow.js"></script>
         <script src="../photonui/container/window/window.js"></script>
-        <script src="../photonui/container/window/popupwindow.js"></script>
+        <!--<script src="../photonui/container/window/popupwindow.js"></script>-->
         <script src="../photonui/container/layout/layout.js"></script>
-        <script src="../photonui/container/layout/boxlayout.js"></script>
         <script src="../photonui/container/layout/gridlayout.js"></script>
+        <script src="../photonui/container/layout/boxlayout.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
+        <script src="../photonui/visual/faicon.js"></script>
         <script src="../photonui/input/button/button.js"></script>
         <script src="../photonui/input/field/field.js"></script>
         <script src="../photonui/input/field/textfield.js"></script>
         <script src="../photonui/input/field/textareafield.js"></script>
-        <script src="../photonui/input/field/numericfield.js"></script>
-        <script src="../photonui/input/checkbox/checkbox.js"></script>
-        <script src="../photonui/input/checkbox/switch.js"></script>
+        <!--<script src="../photonui/input/field/numericfield.js"></script>-->
+        <!--<script src="../photonui/input/checkbox/checkbox.js"></script>-->
+        <!--<script src="../photonui/input/checkbox/switch.js"></script>-->
         <script src="../photonui/visual/label.js"></script>
         <script src="../photonui/visual/separator.js"></script>
-        <script src="../photonui/visual/progressbar.js"></script>
-        <script src="../photonui/visual/baseicon-helpers.js"></script>
-        <script src="../photonui/visual/baseicon.js"></script>
-        <script src="../photonui/visual/faicon.js"></script>
+        <!--<script src="../photonui/visual/progressbar.js"></script>-->
 
         <script>
             // ====== Fields ======
@@ -114,6 +115,7 @@
 
             grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 3, gridWidth: 2});
 
+            /*
             // Numeric Field
             var numField = new photonui.NumericField({
                     value: 42,
@@ -144,6 +146,7 @@
 
             grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 7, gridWidth: 2});
 
+            */
             // Text Area Field
             var textAreaField = new photonui.TextAreaField({
                     placeholder: "Your text here..."
@@ -153,6 +156,7 @@
 
             grid.addChild(new photonui.Separator(), {gridX: 0, gridY: 9, gridWidth: 2});
 
+            /*
             // Checkbox &co
             var cb1 = new photonui.CheckBox();
             grid.addChild(new photonui.Label({text: "Checkbox:", forInput: cb1}), {gridX: 0, gridY: 10});
@@ -260,7 +264,8 @@
 
             photonui.getWidget("popup-btn").registerCallback("click", "click", function (widget, event) {
                     pop.popupWidget(widget);
-            });
+            });*/
+
         </script>
     </body>
 </html>

@@ -46,145 +46,138 @@ var photonui = photonui || {};
  * @class Label
  * @constructor
  * @extends photonui.Widget
- * @param {String} params.text The text of the label (optional, default = "Label").
- * @param {String} params.textAlign The text alignement (optional, default = "left").
- * @param {photonui.Widget|String} params.forInput The "for" attribute of the label (optional).
  */
-photonui.Label = function(params) {
-    photonui.Widget.call(this, params);
+photonui.Label = photonui.Widget.$extend({
 
-    var params = params || {};
-    params.__layout__ = params.__layout__ || {};
-
-    // Attrs
-    this.text = (params.text != undefined) ? params.text : "Label";  // FIXME i18n
-    this.forInput = (params.forInput != undefined) ? params.forInput : null;
-    this.textAlign = params.textAlign || "left";
-    this.layoutOptions.verticalExpansion = (params.__layout__.verticalExpansion != undefined) ? params.__layout__.verticalExpansion : false;
-
-    this._e = {};  // HTML Elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.Label.prototype = new photonui.Widget;
+    // Constructor
+    __init__: function(params) {
+        var params = params || {};
+        params.layoutOptions = params.layoutOptions || {};
+        if (params.layoutOptions.verticalExpansion === undefined) {
+            params.layoutOptions.verticalExpansion = false;
+        }
+        this.$super(params);
+        this._updateProperties(["text", "textAlign", "forInputName"]);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get label text.
- *
- * @method getText
- * @return {String} The button text.
- */
-photonui.Label.prototype.getText = function() {
-    return this.text;
-}
+    // ====== Public properties ======
 
-/**
- * Set label text.
- *
- * @method setText
- * @param {String} text The button text.
- */
-photonui.Label.prototype.setText = function(text) {
-    this.text = text;
-    this._e.label.innerHTML = photonui.Helpers.escapeHtml(text);
-}
 
-/**
- * Get the text alignement.
- *
- * @method getTextAlign
- * @return {String} The alignement
- */
-photonui.Label.prototype.getTextAlign = function() {
-    return this.textAlign;
-}
+    /**
+     * The label text.
+     *
+     * @property text
+     * @type String
+     * @default "Label"
+     */
+    _text: "Label",
 
-/**
- * Set the text alignement.
- *
- * @method setTextAlign
- * @param {String} textAlign the text alignement (`left`, `center`, `right`).
- */
-photonui.Label.prototype.setTextAlign = function(textAlign) {
-    if (textAlign != "left" && textAlign != "center" && textAlign != "right") {
-        throw "Text alignement sould be 'left', 'center' or 'right'.";
+    getText: function() {
+        return this._text;
+    },
+
+    setText: function(text) {
+        this._text = text;
+        this.__html.label.innerHTML = photonui.Helpers.escapeHtml(text);
+    },
+
+    /**
+     * The text horizontal alignement.
+     *
+     *   * "left",
+     *   * "center",
+     *   * "right".
+     *
+     * @property textAlign
+     * @type String
+     * @default "left"
+     */
+    _textAlign: "left",
+
+    getTextAlign: function() {
+        return this._textAlign;
+    },
+
+    setTextAlign: function(textAlign) {
+        if (textAlign != "left" && textAlign != "center" && textAlign != "right") {
+            throw "Text alignement sould be 'left', 'center' or 'right'.";
+        }
+        this._textAlign = textAlign;
+        this.__html.label.style.textAlign = textAlign;
+    },
+
+    /**
+     * Link the label with the given input (Field, CheckBox,...) widget.
+     *
+     * @property forInputName
+     * @type String
+     * @default null
+     */
+    _forInputName: null,
+
+    getForInputName: function() {
+        return this._forInputName;
+    },
+
+    setForInputName: function(forInputName) {
+        this._forInputName = forInputName;
+        if (this._forInputName) {
+            this.__html.label.setAttribute("for",
+                    photonui.Helpers.escapeHtml(this.forInput.inputId || this.forInput.name)
+            );
+        }
+    },
+
+    /**
+     * Link the label with the given input (Field, CheckBox,...) widget.
+     *
+     * @property forInput
+     * @type photonui.Field, photonui.CheckBox
+     * @default null
+     */
+    getForInput: function() {
+        return photonui.getWidget(this.forInputName);
+    },
+
+    setForInput: function(forInput) {
+        this._forInputName = forInput.inputId || forInput.name;
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.label;
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.label = document.createElement("label");
+        this.__html.label.className = "photonui-widget photonui-label";
     }
-    this.textAlign = textAlign;
-    this._e.label.style.textAlign = textAlign;
-}
-
-/**
- * Get the "for" attribute of the label.
- *
- * @method getFor
- * @return {String} The input id.
- */
-photonui.Label.prototype.getFor = function() {
-    return this.forInput;
-}
-
-/**
- * Set the "for" attribute of the label (link the label with an input).
- *
- * @method setFor
- * @param {phoronui.Widget|String} forInput The widget itself or its name.
- */
-photonui.Label.prototype.setFor = function(forInput) {
-    if (forInput instanceof photonui.Widget) {
-        this.forInput = forInput.inputId || forInput.name;
-    }
-    else {
-        this.forInput = forInput;
-    }
-    if (this.forInput) {
-        this._e.label.setAttribute("for", photonui.Helpers.escapeHtml(this.forInput));
-    }
-}
-
-/**
- * Get the HTML of the label.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Label.prototype.getHtml = function() {
-    return this._e.label;
-}
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Build the HTML of the label.
- *
- * @method _buildHtml
- * @private
- */
-photonui.Label.prototype._buildHtml = function() {
-    this._e.label = document.createElement("label");
-    this._e.label.className = "photonui-widget photonui-label";
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Label.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
-    this.setText(this.text);
-    this.setFor(this.forInput);
-    this.setTextAlign(this.textAlign);
-}
+});

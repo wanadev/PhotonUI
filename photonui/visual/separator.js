@@ -46,97 +46,79 @@ var photonui = photonui || {};
  * @class Separator
  * @constructor
  * @extends photonui.Widget
- * @param {String} params.orientation The orientation of the separator: `"vertical"` or `"horizontal"` (optional, default = "horizontal").
  */
-photonui.Separator = function(params) {
-    photonui.Widget.call(this, params);
+photonui.Separator = photonui.Widget.$extend({
 
-    var params = params || {};
-    params.__layout__ = params.__layout__ || {};
-
-    // Attrs
-    this.orientation = params.orientation || "horizontal";
-
-    this.layoutOptions.verticalExpansion = (params.__layout__.verticalExpansion != undefined) ? params.__layout__.verticalExpansion : this.orientation == "vertical";
-
-    this._e = {};  // HTML Elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.Separator.prototype = new photonui.Widget;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._updateProperties(["orientation"]);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the orientation of the separator.
- *
- * @method getOrientation
- * @return {String} The separator orientation: `"vertical"` or `"horizontal"`.
- */
-photonui.Separator.prototype.getOrientation = function() {
-    return this.orientation;
-}
+    // ====== Public properties ======
 
-/**
- * Set the orientation of the separator.
- *
- * @method setOrientation
- * @param {String} orientation The separator orientation: `"vertical"` or `"horizontal"`.
- */
-photonui.Separator.prototype.setOrientation = function(orientation) {
-    if (orientation != "vertical" && orientation != "horizontal") {
-        throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-        return;
+
+    /**
+     * The separator orientation ("vertical" or "horizontal").
+     *
+     * @property orientation
+     * @type String
+     * @default "horizontal"
+     */
+    _orientation: "horizontal",
+
+    getOrientation: function() {
+        return this._orientation;
+    },
+
+    setOrientation: function(orientation) {
+        if (orientation != "vertical" && orientation != "horizontal") {
+            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            return;
+        }
+        this._orientation = orientation;
+        this.removeClass("photonui-separator-vertical");
+        this.removeClass("photonui-separator-horizontal");
+        this.addClass("photonui-separator-" + this.orientation);
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outer = document.createElement("div");
+        this.__html.outer.className = "photonui-widget photonui-separator";
+        this.__html.hr = document.createElement("hr");
+        this.__html.outer.appendChild(this.__html.hr);
     }
-    this.orientation = orientation;
-    this.removeClass("photonui-separator-vertical");
-    this.removeClass("photonui-separator-horizontal");
-    this.addClass("photonui-separator-" + this.orientation);
-}
-
-/**
- * Get the HTML of the separator.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Separator.prototype.getHtml = function() {
-    return this._e.outer;
-}
-
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Build the HTML of the separator.
- *
- * @method _buildHtml
- * @private
- */
-photonui.Separator.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("div");
-    this._e.outer.className = "photonui-widget photonui-separator";
-    this._e.hr = document.createElement("hr");
-    this._e.outer.appendChild(this._e.hr);
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Separator.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
-    this.setOrientation(this.orientation);
-}
+});

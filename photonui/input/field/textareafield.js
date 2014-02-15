@@ -46,98 +46,73 @@ var photonui = photonui || {};
  * @class TextAreaField
  * @constructor
  * @extends photonui.Field
- * @param {Number} params.cols Number of columns in the textarea (optional, default=20).
- * @param {Number} params.rows Number of rows in the textarea (optional, default=3).
  */
-photonui.TextAreaField = function(params) {
-    photonui.Field.call(this, params);
+photonui.TextAreaField = photonui.Field.$extend({
 
-    var params = params || {};
-    this.cols = params.cols || 20;
-    this.rows = params.rows || 3;
-
-    // Build
-    this._buildHtml();
-    this._updateAttributes();
-    this._bindEvents();
-}
-
-photonui.TextAreaField.prototype = new photonui.Field;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._bindFieldEvents();
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the number of columns.
- *
- * @method getCols
- * @return {Number}
- */
-photonui.TextAreaField.prototype.getCols = function() {
-    return this.cols;
-}
-
-/**
- * Set the number of columns.
- *
- * @method setCols
- * @param {Number} cols
- */
-photonui.TextAreaField.prototype.setCols = function(cols) {
-    this.cols = cols;
-    this._e.field.cols = this.cols;
-}
-
-/**
- * Get the number of rows.
- *
- * @method getRows
- * @return {Number}
- */
-photonui.TextAreaField.prototype.getRows = function() {
-    return this.rows;
-}
-
-/**
- * Set the number of rowns.
- *
- * @method setRows
- * @param {Number} rows
- */
-photonui.TextAreaField.prototype.setRows = function(rows) {
-    this.rows = rows;
-    this._e.field.rows = this.rows;
-}
+    // ====== Public properties ======
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    /**
+     * Number of columns.
+     *
+     * @property cols
+     * @type Number
+     * @default 20
+     */
+    getCols: function() {
+        return parseInt(this.__html.field.cols);
+    },
+
+    setCols: function(cols) {
+        this.__html.field.cols = cols;
+    },
+
+    /**
+     * Number of rows.
+     *
+     * @property rows
+     * @type Number
+     * @default 3
+     */
+    getRows: function() {
+        return parseInt(this.__html.field.rows);
+    },
+
+    setRows: function(rows) {
+        this.__html.field.rows = rows;
+    },
 
 
-/**
- * Build the HTML of the field.
- *
- * @method _buildHtml
- * @private
- */
-photonui.TextAreaField.prototype._buildHtml = function() {
-    this._e.field = document.createElement("textarea");
-    this._e.field.className = "photonui-widget photonui-field photonui-field-textarea";
-    this._e.field.name = this.name;
-}
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.TextAreaField.prototype._updateAttributes = function() {
-    photonui.Field.prototype._updateAttributes.call(this);
-    this.setCols(this.cols);
-    this.setRows(this.rows);
-}
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.field = document.createElement("textarea");
+        this.__html.field.className = "photonui-widget photonui-field photonui-field-textarea";
+        this.__html.field.cols = 20;
+        this.__html.field.rows = 3;
+    }
+});
