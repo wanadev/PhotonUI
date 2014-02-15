@@ -46,161 +46,142 @@ var photonui = photonui || {};
  * @class Viewport
  * @constructor
  * @extends photonui.Container
- * @param {Number} params.padding The padding (optional, default = 0).
- * @param {Boolean} params.verticalScrollbar Enable the vertical scrollbar: `true`=display, `false`=hide, `null`=auto (optional, default = `null`).
- * @param {Boolean} params.horizontalScrollbar Enable the vertical scrollbar: `true`=display, `false`=hide, `null`=auto (optional, default = `null`).
  */
-photonui.Viewport = function(params) {
-    photonui.Container.call(this, params);
+photonui.Viewport = photonui.Container.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.padding = (params.padding != undefined) ? params.padding : 0;
-    this.verticalScrollbar = (params.verticalScrollbar != undefined) ? params.verticalScrollbar : null;
-    this.horizontalScrollbar = (params.horizontalScrollbar != undefined) ? params.horizontalScrollbar : null;
-
-    this._e = {};  // HTML Elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.Viewport.prototype = new photonui.Container;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._updateProperties([
+            "padding", "verticalScrollbar", "horizontalScrollbar"
+        ]);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get padding.
- *
- * @method getPadding
- * @return {Number} The padding.
- */
-photonui.Viewport.prototype.getPadding = function() {
-    return this.padding;
-}
+    // ====== Public properties ======
 
-/**
- * Set the padding.
- *
- * @method setPadding
- * @param {Number} padding The padding.
- */
-photonui.Viewport.prototype.setPadding = function(padding) {
-    this.padding = padding;
-    this._e.viewport.style.padding = padding + "px";
-}
+    /**
+     * Window container node padding.
+     *
+     * @property padding
+     * @type Number
+     * @default 0
+     */
+    _padding: 0,
 
-/**
- * Get the visibility of the vertical scrollbar.
- *
- * @method getVerticalScrollbar
- * @return {Boolean} `true`=displayed, `false`=hidden, `null`=auto.
- */
-photonui.Viewport.prototype.getVerticalScrollbar = function() {
-    return this.verticalScrollbar;
-}
+    getPadding: function() {
+        return this._padding;
+    },
 
-/**
- * Set the visibility of the vertical scrollbar.
- *
- * @method setVerticalScrollbar
- * @param {Boolean} visibility `true`=display, `false`=hide, `null`=auto.
- */
-photonui.Viewport.prototype.setVerticalScrollbar = function(visibility) {
-    this.verticalScrollbar = visibility;
-    if (visibility == true) {
-        this._e.viewport.style.overflowY = "scroll";
-    }
-    else if (visibility == false) {
-        this._e.viewport.style.overflowY = "hidden";
-    }
-    else {
-        this._e.viewport.style.overflowY = "auto";
-    }
-}
+    setPadding: function(padding) {
+        this._padding = padding;
+        this.containerNode.style.padding = padding + "px";
+    },
 
-/**
- * Get the visibility of the horizontal scrollbar.
- *
- * @method getHorizontalScrollbar
- * @return {Boolean} `true`=displayed, `false`=hidden, `null`=auto.
- */
-photonui.Viewport.prototype.getHorizontalScrollbar = function() {
-    return this.horizontalScrollbar;
-}
+    /**
+     * Visibility of the vertical scrollbar.
+     *
+     *   * `true`: displayed,
+     *   * `false`: hidden,
+     *   * `null`: auto.
+     *
+     * @property verticalScrollbar
+     * @type Boolean
+     * @default null
+     */
+    _verticalScrollbar: null,
 
-/**
- * Set the visibility of the horizontal scrollbar.
- *
- * @method setHorizontalScrollbar
- * @param {Boolean} visibility `true`=display, `false`=hide, `null`=auto.
- */
-photonui.Viewport.prototype.setHorizontalScrollbar = function(visibility) {
-    this.horizontalScrollbar = visibility;
-    if (visibility == true) {
-        this._e.viewport.style.overflowX = "scroll";
-    }
-    else if (visibility == false) {
-        this._e.viewport.style.overflowX = "hidden";
-    }
-    else {
-        this._e.viewport.style.overflowX = "auto";
-    }
-}
+    getVerticalScrollbar: function() {
+        return this._verticalScrollbar;
+    },
 
-/**
- * Get the HTML of the viewport.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Viewport.prototype.getHtml = function() {
-    return this._e.viewport;
-}
+    setVerticalScrollbar: function(visibility) {
+        this._verticalScrollbar = visibility;
+        if (visibility === true) {
+            this.__html.viewport.style.overflowY = "scroll";
+        }
+        else if (visibility === false) {
+            this.__html.viewport.style.overflowY = "hidden";
+        }
+        else {
+            this.__html.viewport.style.overflowY = "auto";
+        }
+    },
 
-/**
- * Get the container DOM Element.
- *
- * @method getContainerNode
- * @return {HTMLElement}
- */
-photonui.Viewport.prototype.getContainerNode = function() {
-    return this._e.viewport;
-}
+    /**
+     * Visibility of the horizontal scrollbar.
+     *
+     *   * `true`: displayed,
+     *   * `false`: hidden,
+     *   * `null`: auto.
+     *
+     * @property horizontalScrollbar
+     * @type Boolean
+     * @default null
+     */
+    _horizontalScrollbar: null,
 
+    getHorizontalScrollbar: function() {
+        return this._horizontalScrollbar;
+    },
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    setHorizontalScrollbar: function(visibility) {
+        this._horizontalScrollbar = visibility;
+        if (visibility === true) {
+            this.__html.viewport.style.overflowX = "scroll";
+        }
+        else if (visibility === false) {
+            this.__html.viewport.style.overflowX = "hidden";
+        }
+        else {
+            this.__html.viewport.style.overflowX = "auto";
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.viewport;
+    },
+
+    /**
+     * HTML Element that contain the child widget HTML.
+     *
+     * @property containerNode
+     * @type HTMLElement
+     */
+    getContainerNode: function() {
+        return this.html;
+    },
 
 
-/**
- * Build the HTML of the button.
- *
- * @method _buildHtml
- * @private
- */
-photonui.Viewport.prototype._buildHtml = function() {
-    this._e.viewport = document.createElement("div");
-    this._e.viewport.className = "photonui-widget photonui-viewport photonui-container";
-}
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Viewport.prototype._updateAttributes = function() {
-    photonui.Container.prototype._updateAttributes.call(this);
 
-    this.setPadding(this.padding);
-    this.setVerticalScrollbar(this.verticalScrollbar);
-    this.setHorizontalScrollbar(this.horizontalScrollbar);
-}
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.viewport = document.createElement("div");
+        this.__html.viewport.className = "photonui-widget photonui-viewport photonui-container";
+    },
+});

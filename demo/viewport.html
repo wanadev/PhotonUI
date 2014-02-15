@@ -29,6 +29,8 @@
         </style>
     </head>
     <body>
+        <script src="../lib/classy.js"></script>
+
         <script src="../photonui/photonui.js"></script>
         <script src="../photonui/helpers.js"></script>
 
@@ -37,8 +39,10 @@
         <script src="../photonui/container/window/basewindow.js"></script>
         <script src="../photonui/container/window/window.js"></script>
         <script src="../photonui/container/layout/layout.js"></script>
+        <script src="../photonui/container/layout/gridlayout.js"></script>
         <script src="../photonui/container/layout/boxlayout.js"></script>
         <script src="../photonui/container/viewport/viewport.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
         <script src="../photonui/input/button/button.js"></script>
 
         <script>
@@ -80,7 +84,7 @@
                         {
                             __widget__: "Viewport",
                             name: "testViewport",
-                            __layout__: {"height": 100},
+                            layoutOptions: {"height": 100},
                             __child__: {
                                 __widget__: "BoxLayout",
                                 horizontalSpacing: 0,
