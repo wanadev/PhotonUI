@@ -169,7 +169,6 @@
             // ====== Visual ======
 
 
-            /*
             var win2 = new photonui.Window({
                     title: "Visual Widgets",
                     x: 450, y: 50,
@@ -182,7 +181,7 @@
             var grid2 = new photonui.GridLayout();
 
             // Progress Bar
-            var pbar = new photonui.ProgressBar();
+/*            var pbar = new photonui.ProgressBar();
             grid2.addChild(pbar, {gridX: 0, gridY: 0, gridWidth: 3});
 
             var pbar2 = new photonui.ProgressBar({orientation: "vertical"});
@@ -195,7 +194,7 @@
                     setTimeout(progress, 50);
                 }
             }
-            setTimeout(progress, 500);
+            setTimeout(progress, 500);*/
 
             // Vertical Separator
             grid2.addChild(new photonui.Separator({orientation: "vertical"}), {gridX: 1, gridY: 1});
@@ -213,12 +212,12 @@
             var grid3 = new photonui.GridLayout();
 
             // Font Awesome Icon
-            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro"}), {gridX: 1, gridY: 1});
-            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-lg"}), {gridX: 2, gridY: 1});
-            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-2x", color: "#002B2E"}), {gridX: 3, gridY: 1});
-            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-3x", color: "#00454A"}), {gridX: 4, gridY: 1});
-            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-4x", color: "#01585F"}), {gridX: 5, gridY: 1});
-            grid3.addChild(new photonui.FAIcon({icon: "fa-camera-retro", size: "fa-5x", color: "#08666E"}), {gridX: 6, gridY: 1});
+            grid3.addChild(new photonui.FAIcon("fa-camera-retro"), {gridX: 1, gridY: 1});
+            grid3.addChild(new photonui.FAIcon("fa-camera-retro", {size: "fa-lg"}), {gridX: 2, gridY: 1});
+            grid3.addChild(new photonui.FAIcon("fa-camera-retro", {size: "fa-2x", color: "#002B2E"}), {gridX: 3, gridY: 1});
+            grid3.addChild(new photonui.FAIcon("fa-camera-retro", {size: "fa-3x", color: "#00454A"}), {gridX: 4, gridY: 1});
+            grid3.addChild(new photonui.FAIcon("fa-camera-retro", {size: "fa-4x", color: "#01585F"}), {gridX: 5, gridY: 1});
+            grid3.addChild(new photonui.FAIcon("fa-camera-retro", {size: "fa-5x", color: "#08666E"}), {gridX: 6, gridY: 1});
 
 
             bl.addChild(grid2);
@@ -236,11 +235,12 @@
             win3.setChild(grid4);
 
             grid4.addChild(new photonui.Button({text: "Simple Button"}), {gridX: 1, gridY: 1});
-            grid4.addChild(new photonui.Button({leftIcon: "fa-cog", textVisible: false}), {gridX: 2, gridY: 1});
-            grid4.addChild(new photonui.Button({leftIcon: "fa-cog", text: "Button with left icon"}), {gridX: 1, gridY: 2, gridWidth: 2});
-            grid4.addChild(new photonui.Button({rightIcon: "fa-caret-down", text: "Button with right icon"}), {gridX: 1, gridY: 3, gridWidth: 2});
+            grid4.addChild(new photonui.Button({leftIcon: new photonui.FAIcon("fa-cog"), textVisible: false}), {gridX: 2, gridY: 1});
+            grid4.addChild(new photonui.Button({leftIcon: new photonui.FAIcon("fa-cog"), text: "Button with left icon"}), {gridX: 1, gridY: 2, gridWidth: 2});
+            grid4.addChild(new photonui.Button({rightIcon: new photonui.FAIcon("fa-caret-down"), text: "Button with right icon"}), {gridX: 1, gridY: 3, gridWidth: 2});
 
 
+            /*
             // ====== Popup Window =======
             photonui.build({
                     __widget__: "Window",

@@ -259,9 +259,15 @@ photonui.Button = photonui.Widget.$extend({
      * @private
      */
     _update: function() {
-        this.__html.button.removeChild(this.__html.leftIcon);
-        this.__html.button.removeChild(this.__html.text);
-        this.__html.button.removeChild(this.__html.rightIcon);
+        if (this.__html.leftIcon.parentNode == this.__html.button) {
+            this.__html.button.removeChild(this.__html.leftIcon);
+        }
+        if (this.__html.text.parentNode == this.__html.button) {
+            this.__html.button.removeChild(this.__html.text);
+        }
+        if (this.__html.rightIcon.parentNode == this.__html.button) {
+            this.__html.button.removeChild(this.__html.rightIcon);
+        }
 
         if (this.leftIconName && this.leftIconVisible) {
             this.__html.button.appendChild(this.__html.leftIcon);
