@@ -129,7 +129,6 @@ photonui.Container = photonui.Widget.$extend({
         if (this.childName) {
             this.child.destroy();
         }
-        this.childName = null;
         this.$super();
     }
 });
