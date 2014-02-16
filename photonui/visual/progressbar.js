@@ -46,197 +46,165 @@ var photonui = photonui || {};
  * @class ProgressBar
  * @constructor
  * @extends photonui.Widget
- * @param {Number} params.value The progress fraction (0..1, optional, default=0).
- * @param {Number} params.showText Display or hide the progression text (optional, default=true).
- * @param {String} params.orientation The orientation of the progress bar: `"vertical"` or `"horizontal"` (optional, default = "horizontal").
- * @param {Boolean} params.pulsate Does the progressbar pulsate? (optional, default = `false`).
  */
-photonui.ProgressBar = function(params) {
-    photonui.Widget.call(this, params);
+photonui.ProgressBar = photonui.Widget.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.value = (params.value != undefined) ? params.value : 0;
-    this.showText = (params.showText != undefined) ? params.showText : true;
-    this.pulsate = (params.pulsate != undefined) ? params.pulsate : false;
-    this.orientation = params.orientation || "horizontal";
-
-    this._e = {};  // HTML Elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.ProgressBar.prototype = new photonui.Widget;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._updateProperties(["orientation", "value"]);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get progression.
- *
- * @method getValue
- * @return {Number} The progression (0..1).
- */
-photonui.ProgressBar.prototype.getValue = function() {
-    return this.value;
-}
+    // ====== Public properties ======
 
-/**
- * Set progression.
- *
- * @method setValue
- * @param {Number} value The progression (0..1).
- */
-photonui.ProgressBar.prototype.setValue = function(value) {
-    this.value = Math.min(Math.max(value, 0), 1);
-    if (this.getOrientation() == "horizontal") {
-        this._e.bar.style.width = Math.floor(this.value * 100) + "%";
-    }
-    else {
-        this._e.bar.style.height = Math.floor(this.value * 100) + "%";
-    }
-    this._e.textContent.innerHTML = Math.floor(this.value * 100) + " %";
-}
 
-/**
- * Get the orientation of the progress bar.
- *
- * @method getOrientation
- * @return {String} The progressbar orientation: `"vertical"` or `"horizontal"`.
- */
-photonui.ProgressBar.prototype.getOrientation = function() {
-    return this.orientation;
-}
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
 
-/**
- * Set the orientation of the progress bar.
- *
- * @method setOrientation
- * @param {String} orientation The progressbar orientation: `"vertical"` or `"horizontal"`.
- */
-photonui.ProgressBar.prototype.setOrientation = function(orientation) {
-    if (orientation != "vertical" && orientation != "horizontal") {
-        throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-        return;
-    }
-    this.orientation = orientation;
-    this.removeClass("photonui-progressbar-vertical");
-    this.removeClass("photonui-progressbar-horizontal");
-    this.addClass("photonui-progressbar-" + this.orientation);
-}
 
-/**
- * Know if the pulsate mode is enabled or not.
- *
- * @method getPulsate
- * @return {Boolean}
- */
-photonui.ProgressBar.prototype.getPulsate = function() {
-    return this.pulsate;
-}
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
-/**
- * Enable/Disable the pulsate mode.
- *
- * @method setPulsate
- * @param {Boolean} pulsate
- */
-photonui.ProgressBar.prototype.setPulsate = function(pulsate) {
-    this.pulsate = pulsate;
-    if (pulsate) {
-        this.addClass("photonui-progressbar-pulsate");
-        if (this.getOrientation() == "horizontal") {
-            this._e.bar.style.width = "";
+
+    // ====== Private methods ======
+
+
+    /**
+     * The progression (form 0.00 to 1.00).
+     *
+     * @property value
+     * @type Number
+     * @default 0
+     */
+    _value: 0,
+
+    getValue: function() {
+        return this._value;
+    },
+
+    setValue: function(value) {
+        this._value = Math.min(Math.max(value, 0), 1);
+        if (this.orientation == "horizontal") {
+            this.__html.bar.style.width = Math.floor(this.value * 100) + "%";
         }
         else {
-            this._e.bar.style.height = "";
+            this.__html.bar.style.height = Math.floor(this.value * 100) + "%";
         }
+        this.__html.textContent.innerHTML = Math.floor(this.value * 100) + " %";
+    },
+
+    /**
+     * The progressbar orientation ("vertical" or "horizontal").
+     *
+     * @property orientation
+     * @type String
+     * @default "horizontal"
+     */
+    _orientation: "horizontal",
+
+    getOrientation: function() {
+        return this._orientation;
+    },
+
+    setOrientation: function(orientation) {
+        if (orientation != "vertical" && orientation != "horizontal") {
+            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            return;
+        }
+        this._orientation = orientation;
+        this.removeClass("photonui-progressbar-vertical");
+        this.removeClass("photonui-progressbar-horizontal");
+        this.addClass("photonui-progressbar-" + this.orientation);
+    },
+
+    /**
+     * Enable or disable the progressbar pulsate mode.
+     *
+     * @property pulsate
+     * @type Boolean
+     * @default false
+     */
+    _pulsate: false,
+
+    isPulsate: function() {
+        return this._pulsate;
+    },
+
+    setPulsate: function(pulsate) {
+        this._pulsate = pulsate;
+        if (pulsate) {
+            this.addClass("photonui-progressbar-pulsate");
+            if (this.orientation == "horizontal") {
+                this.__html.bar.style.width = "";
+            }
+            else {
+                this.__html.bar.style.height = "";
+            }
+        }
+        else {
+            this.removeClass("photonui-progressbar-pulsate");
+            this.value = this.value;
+        }
+    },
+
+    /**
+     * Display/hide the progression text.
+     *
+     * @property textVisible
+     * @type Boolean
+     * @default true
+     */
+    _textVisible: true,
+
+    isTextVisible: function() {
+        return this._textVisible;
+    },
+
+    setTextVisible: function(textVisible) {
+        this._textVisible = textVisible;
+        if (this.textVisible) {
+            this.__html.text.style.display = "";
+        }
+        else {
+            this.__html.text.style.display = "none";
+        }
+    },
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outer = document.createElement("div");
+        this.__html.outer.className = "photonui-widget photonui-progressbar";
+
+        this.__html.text = document.createElement("div");
+        this.__html.text.className = "photonui-progressbar-text";
+        this.__html.outer.appendChild(this.__html.text);
+
+        this.__html.textContent = document.createElement("span");
+        this.__html.text.appendChild(this.__html.textContent);
+
+        this.__html.bar = document.createElement("div");
+        this.__html.bar.className = "photonui-progressbar-bar";
+        this.__html.outer.appendChild(this.__html.bar);
     }
-    else {
-        this.removeClass("photonui-progressbar-pulsate");
-        this.setValue(this.value);
-    }
-}
-
-/**
- * Know if the progression text is displayed or not.
- *
- * @method getShowText
- * @return {Boolean}
- */
-photonui.ProgressBar.prototype.getShowText = function() {
-    return this.showText;
-}
-
-/**
- * Display/hide the progression text.
- *
- * @method setShowText
- * @param {Boolean} showText
- */
-photonui.ProgressBar.prototype.setShowText = function(showText) {
-    this.showText;
-    if (showText) {
-        this._e.text.style.display = "";
-    }
-    else {
-        this._e.text.style.display = "none";
-    }
-}
-
-/**
- * Get the HTML of the progress bar.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.ProgressBar.prototype.getHtml = function() {
-    return this._e.outer;
-}
-
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Build the HTML of the progressbar.
- *
- * @method _buildHtml
- * @private
- */
-photonui.ProgressBar.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("div");
-    this._e.outer.className = "photonui-widget photonui-progressbar";
-
-    this._e.text = document.createElement("div");
-    this._e.text.className = "photonui-progressbar-text";
-    this._e.outer.appendChild(this._e.text);
-
-    this._e.textContent = document.createElement("span");
-    this._e.text.appendChild(this._e.textContent);
-
-    this._e.bar = document.createElement("div");
-    this._e.bar.className = "photonui-progressbar-bar";
-    this._e.outer.appendChild(this._e.bar);
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.ProgressBar.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
-    this.setOrientation(this.orientation);
-    this.setValue(this.value);
-    this.setPulsate(this.pulsate);
-}
+});

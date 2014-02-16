@@ -77,7 +77,7 @@
         <script src="../photonui/input/checkbox/switch.js"></script>
         <script src="../photonui/visual/label.js"></script>
         <script src="../photonui/visual/separator.js"></script>
-        <!--<script src="../photonui/visual/progressbar.js"></script>-->
+        <script src="../photonui/visual/progressbar.js"></script>
 
         <script>
             // ====== Fields ======
@@ -181,20 +181,20 @@
             var grid2 = new photonui.GridLayout();
 
             // Progress Bar
-/*            var pbar = new photonui.ProgressBar();
+            var pbar = new photonui.ProgressBar();
             grid2.addChild(pbar, {gridX: 0, gridY: 0, gridWidth: 3});
 
             var pbar2 = new photonui.ProgressBar({orientation: "vertical"});
             grid2.addChild(pbar2, {gridX: 0, gridY: 1, horizontalExpansion: false});
 
             function progress() {
-                if (pbar.getValue() < 1 && !pbar.getPulsate()) {
-                    pbar.setValue(pbar.getValue() + 0.01);
-                    pbar2.setValue(pbar2.getValue() + 0.01);
+                if (pbar.value < 1 && !pbar.pulsate) {
+                    pbar.setValue(pbar.value + 0.01);
+                    pbar2.setValue(pbar2.value + 0.01);
                     setTimeout(progress, 50);
                 }
             }
-            setTimeout(progress, 500);*/
+            setTimeout(progress, 500);
 
             // Vertical Separator
             grid2.addChild(new photonui.Separator({orientation: "vertical"}), {gridX: 1, gridY: 1});
@@ -202,8 +202,8 @@
             // Btn toggle
             btnPBarPulse = new photonui.Button({text: "Progress / Pulsate"});
             btnPBarPulse.registerCallback("progress-pulseate", "click", function(widget) {
-                    pbar.setPulsate(!pbar.getPulsate());
-                    pbar2.setPulsate(!pbar2.getPulsate());
+                    pbar.pulsate = !pbar.pulsate;
+                    pbar2.pulsate = !pbar2.pulsate;
                     progress();
             });
 
