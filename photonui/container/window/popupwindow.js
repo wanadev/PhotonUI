@@ -47,127 +47,115 @@ var photonui = photonui || {};
  * @constructor
  * @extends photonui.BaseWindow
  */
-photonui.PopupWindow = function(params) {
-    photonui.BaseWindow.call(this, params);
+photonui.PopupWindow = photonui.BaseWindow.$extend({
 
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-
-    this._bindEvent("document-mousedown-close", document, "mousedown", this.hide.bind(this));
-    this._bindEvent("popup-click-close", this.getHtml(), "click", this.hide.bind(this));
-    this._bindEvent("mousedown-preventclose", this.getHtml(), "mousedown", function(event) {
-        event.stopPropagation();
-    }.bind(this));
-}
-
-photonui.PopupWindow.prototype = new photonui.BaseWindow;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._bindEvent("document-mousedown-close", document, "mousedown", this.hide.bind(this));
+        this._bindEvent("popup-click-close", this.html, "click", this.hide.bind(this));
+        this._bindEvent("mousedown-preventclose", this.html, "mousedown", function(event) {
+            event.stopPropagation();
+        }.bind(this));
+    },
 
 
-//////////////////////////////////////////
-// Public Methods                       //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
 
-/**
- * Pop the window at the given position.
- *
- * @method popupXY
- * @param {Number} x
- * @param {Number} y
- */
-photonui.PopupWindow.prototype.popupXY = function(x, y) {
-    this.setPosition(-1337, -1337);
-    this.show();
+    // ====== Public methods ======
 
-    var bw = document.getElementsByTagName("body")[0].offsetWidth;
-    var bh = document.getElementsByTagName("body")[0].offsetHeight;
-    var pw = this.getWidth();
-    var ph = this.getHeight();
 
-    if (x + pw > bw) {
-        x = bw - pw;
+    /**
+     * Pop the window at the given position.
+     *
+     * @method popupXY
+     * @param {Number} x
+     * @param {Number} y
+     */
+    popupXY: function(x, y) {
+        this.setPosition(-1337, -1337);
+        this.show();
+
+        var bw = document.getElementsByTagName("body")[0].offsetWidth;
+        var bh = document.getElementsByTagName("body")[0].offsetHeight;
+        var pw = this.offsetWidth;
+        var ph = this.offsetHeight;
+
+        if (x + pw > bw) {
+            x = bw - pw;
+        }
+
+        if (y + ph > bh) {
+            y -= ph;
+        }
+
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+
+        this.setPosition(x, y);
+    },
+
+    /**
+     * Pop the window at the best position for the given widget.
+     *
+     * @method popupWidget
+     * @param {photonui.Widget} widget
+     */
+    popupWidget: function(widget) {
+        this.setPosition(-1337, -1337);
+        this.show();
+
+        var e_body = document.getElementsByTagName("body")[0];
+        var x = 0;
+        var y = 0;
+        var wpos = widget.absolutePosition;
+        var wh = widget.offsetHeight;
+        var ww = widget.offsetWidth;
+        var pw = this.offsetWidth;
+        var ph = this.offsetHeight;
+
+        if (wpos.x + pw < e_body.offsetWidth) {
+            x = wpos.x;
+        }
+        else if (wpos.x + ww < e_body.offsetWidth) {
+            x = wpos.x + ww - pw;
+        }
+        else {
+            x = e_body.offsetWidth - pw;
+        }
+
+        if (wpos.y + wh + ph < e_body.offsetHeight) {
+            y = wpos.y + wh + 1;
+        }
+        else if (wpos.y - ph >= 0) {
+            y = wpos.y - ph - 1;
+        }
+
+        if (x < 0) { x = 0 };
+        if (y < 0) { y = 0 };
+
+        this.setPosition(x, y);
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.__html["window"].className += " photonui-popupwindow";
     }
-
-    if (y + ph > bh) {
-        y -= ph;
-    }
-
-    if (x < 0) {
-        x = 0;
-    }
-    if (y < 0) {
-        y = 0;
-    }
-
-    this.setPosition(x, y);
-}
-
-/**
- * Pop the window at the best position for the given widget.
- *
- * @method popupWidget
- * @param {photonui.Widget} widget
- */
-photonui.PopupWindow.prototype.popupWidget = function(widget) {
-    this.setPosition(-1337, -1337);
-    this.show();
-
-    var e_body = document.getElementsByTagName("body")[0];
-    var x = 0;
-    var y = 0;
-    var wpos = widget.getAbsolutePosition();
-    var wh = widget.getHeight();
-    var ww = widget.getWidth();
-    var pw = this.getWidth();
-    var ph = this.getHeight();
-
-    if (wpos.x + pw < e_body.offsetWidth) {
-        x = wpos.x;
-    }
-    else if (wpos.x + ww < e_body.offsetWidth) {
-        x = wpos.x + ww - pw;
-    }
-    else {
-        x = e_body.offsetWidth - pw;
-    }
-
-    if (wpos.y + wh + ph < e_body.offsetHeight) {
-        y = wpos.y + wh + 1;
-    }
-    else if (wpos.y - ph >= 0) {
-        y = wpos.y - ph - 1;
-    }
-
-    if (x < 0) { x = 0 };
-    if (y < 0) { y = 0 };
-
-    this.setPosition(x, y);
-}
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Build the HTML of the window.
- *
- * @method _buildHtml
- * @private
- */
-photonui.PopupWindow.prototype._buildHtml = function() {
-    photonui.BaseWindow.prototype._buildHtml.call(this);
-    // Builde the HTML
-    this._e["window"].className += " photonui-popupwindow";
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.PopupWindow.prototype._updateAttributes = function() {
-    photonui.BaseWindow.prototype._updateAttributes.call(this);
-}
+});

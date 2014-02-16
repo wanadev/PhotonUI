@@ -62,7 +62,7 @@
         <script src="../photonui/container/container.js"></script>
         <script src="../photonui/container/window/basewindow.js"></script>
         <script src="../photonui/container/window/window.js"></script>
-        <!--<script src="../photonui/container/window/popupwindow.js"></script>-->
+        <script src="../photonui/container/window/popupwindow.js"></script>
         <script src="../photonui/container/layout/layout.js"></script>
         <script src="../photonui/container/layout/gridlayout.js"></script>
         <script src="../photonui/container/layout/boxlayout.js"></script>
@@ -238,21 +238,18 @@
             grid4.addChild(new photonui.Button({rightIcon: new photonui.FAIcon("fa-caret-down"), text: "Button with right icon"}), {gridX: 1, gridY: 3, gridWidth: 2});
 
 
-            /*
             // ====== Popup Window =======
-            photonui.build({
-                    __widget__: "Window",
+            new photonui.Window({
                     title: "Popup Window",
                     x: 450, y: 500,
                     padding: 5,
                     visible: true,
-                    __child__: {
-                        __widget__: "Button",
+                    child: new photonui.Button({
                         name: "popup-btn",
-                        text: "Widget Popup!",
-                        rightIcon: "fa-caret-down",
+                        text: "Click to pop!",
+                        rightIcon: new photonui.FAIcon("fa-caret-down"),
                         contextMenuName: "popup1"
-                    }
+                    })
             });
 
             var pop = new photonui.PopupWindow({
@@ -262,7 +259,7 @@
 
             photonui.getWidget("popup-btn").registerCallback("click", "click", function (widget, event) {
                     pop.popupWidget(widget);
-            });*/
+            });
 
         </script>
     </body>
