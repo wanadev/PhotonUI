@@ -1,0 +1,192 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>CheckBox &amp; Switch - PhotonUI Demo</title>
+
+
+        <!-- photonui-css -->
+        <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/field/field.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/baseicon.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/separator.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/progressbar.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/faicon-fontawesome.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/viewport/viewport.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/switch.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/basewindow.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/field/textareafield.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/window.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/layout/gridlayout.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/popupwindow.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/layout/boxlayout.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menu.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menuitem.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/checkbox-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/label-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/field/field-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/separator-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/progressbar-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/switch-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/window-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/window/popupwindow-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menu-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/composite/popupmenu-theme.css" />
+        <!-- /photonui-css -->
+
+
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background-color: #fff;
+                background-image: linear-gradient(#eee 2px, transparent 2px),
+                                  linear-gradient(90deg, #eee 2px, transparent 2px),
+                                  linear-gradient(#f1f1f1 1px, transparent 1px),
+                                  linear-gradient(90deg, #f1f1f1 1px, transparent 1px);
+                background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+                background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px
+                color: #000;
+                height: 100%;
+                overflow: hidden;
+                font-family: sans-serif;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+           header {
+                background-color: #eee;
+                background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, #fff 35px, #fff 70px);
+                margin: 0;
+                padding: 10px 15px;
+                color: #444;
+                text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff;
+                border-bottom: #fff solid 1px;
+                box-shadow: 0 0 5px rgba(0, 0, 0, .3);
+            }
+
+            header h1 {
+                margin: 0;
+                font-size: 22pt;
+            }
+
+            pre {
+                position: absolute;
+                right: 10px;
+                max-width: 50%;
+                max-height: calc(100% - 80px);
+                overflow: auto;
+                padding: 0 10px;
+                background: rgba(255, 255, 255, .5);
+                box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+                border-radius: 3px;
+                font-size: 9pt;
+                color: #333;
+                outline: none;
+                transition: all .2s;
+            }
+
+            pre:focus {
+                -webkit-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
+                box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+                background: rgba(255, 255, 255, .7);
+            }
+
+            #widget-area {
+                position: absolute;
+                top: 100px;
+                left: 40px;
+                border: #bbb solid 1px;
+                background: #f1f1f1;
+                padding: 5px;
+                border-radius: 3px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+            }
+        </style>
+    </head>
+
+    <body>
+        <header>
+            <h1>PhotonUI Demo / CheckBox &amp; Switch</h1>
+        </header>
+
+
+        <!-- photonui-javascript -->
+        <script src="../photonui/../lib/classy.js"></script>
+        <script src="../photonui/photonui.js"></script>
+        <script src="../photonui/helpers.js"></script>
+        <script src="../photonui/widget.js"></script>
+        <script src="../photonui/input/checkbox/checkbox.js"></script>
+        <script src="../photonui/visual/label.js"></script>
+        <script src="../photonui/input/field/field.js"></script>
+        <script src="../photonui/container/container.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
+        <script src="../photonui/visual/separator.js"></script>
+        <script src="../photonui/visual/progressbar.js"></script>
+        <script src="../photonui/container/layout/layout.js"></script>
+        <script src="../photonui/visual/faicon.js"></script>
+        <script src="../photonui/input/field/textfield.js"></script>
+        <script src="../photonui/input/field/numericfield.js"></script>
+        <script src="../photonui/container/viewport/viewport.js"></script>
+        <script src="../photonui/input/checkbox/switch.js"></script>
+        <script src="../photonui/container/window/basewindow.js"></script>
+        <script src="../photonui/input/field/textareafield.js"></script>
+        <script src="../photonui/container/window/window.js"></script>
+        <script src="../photonui/container/layout/gridlayout.js"></script>
+        <script src="../photonui/container/window/popupwindow.js"></script>
+        <script src="../photonui/container/layout/boxlayout.js"></script>
+        <script src="../photonui/input/button/button.js"></script>
+        <script src="../photonui/container/menu/menu.js"></script>
+        <script src="../photonui/container/menu/menuitem.js"></script>
+        <script src="../photonui/container/menu/submenuitem.js"></script>
+        <script src="../photonui/composite/popupmenu.js"></script>
+        <!-- /photonui-javascript -->
+
+
+        <!-- Demo Script -->
+        <div id="widget-area"></div>
+        <script id="photonui-demo">
+            var grid = new photonui.GridLayout();
+
+            // CheckBox
+            var checkbox = new photonui.CheckBox({value: true});
+            var label1 = new photonui.Label({
+                text: "CheckBox:",
+                forInput: checkbox
+            });
+            grid.addChild(label1, {gridX: 0, gridY: 0});
+            grid.addChild(checkbox, {gridX: 1, gridY: 0});
+
+            // Switch
+            var sw = new photonui.Switch();
+            var label2 = new photonui.Label({
+                text: "Switch:",
+                forInput: sw
+            });
+            grid.addChild(label2, {gridX: 0, gridY: 1});
+            grid.addChild(sw, {gridX: 1, gridY: 1});
+
+            photonui.domInsert(grid, document.getElementById("widget-area"));
+        </script>
+        <!-- /Demo Script -->
+
+
+        <!-- Display the demo script on the page -->
+        <pre id="code" tabindex="0"></pre>
+        <script>
+            var code = document.getElementById("photonui-demo").text;
+            code = code.replace(/^ {12}/gm, "");  // Remove HTML indentation
+            document.getElementById("code").appendChild(document.createTextNode(code));
+        </script>
+    </body>
+
+</html>
+
