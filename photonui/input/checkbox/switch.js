@@ -47,10 +47,12 @@ var photonui = photonui || {};
  * @constructor
  * @extends photonui.CheckBox
  */
-photonui.Switch = function(params) {
-    photonui.CheckBox.call(this, params);
-    this.removeClass("photonui-checkbox");
-    this.addClass("photonui-switch");
-}
+photonui.Switch = photonui.CheckBox.$extend({
 
-photonui.Switch.prototype = new photonui.CheckBox;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this.removeClass("photonui-checkbox");
+        this.addClass("photonui-switch");
+    }
+});

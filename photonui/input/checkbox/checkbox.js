@@ -52,126 +52,114 @@ var photonui = photonui || {};
  * @class CheckBox
  * @constructor
  * @extends photonui.Widget
- * @param {Boolean} params.value The field value (optional, dafault=`false`).
  */
-photonui.CheckBox = function(params) {
-    photonui.Widget.call(this, params);
+photonui.CheckBox = photonui.Widget.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.inputId = this.name + "-input";
-    this.value = (params.value != undefined) ? params.value : false;
-
-    this._e = {};  // HTML Elements
-
-    this._registerWidgetEvents(["value-changed", "click"]);
-    this._buildHtml();
-    this._updateAttributes();
-    this._bindEvents();
-}
-
-photonui.CheckBox.prototype = new photonui.Widget;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this.inputId = this.name + "-input";
+        this._registerWEvents(["value-changed", "click"]);
+        this._bindEvent("value-changed", this.__html.checkbox, "change", this.__onChange.bind(this));
+        this._bindEvent("span-click", this.__html.span, "click", this.__onSpanClick.bind(this));
+        this._bindEvent("checkbox-click", this.__html.checkbox, "click", this.__onCheckboxClick.bind(this));
+        this._bindEvent("span-keypress", this.__html.span, "keypress", this.__onSpanKeypress.bind(this));
+        this.__html.checkbox.name = this.name;
+        this.__html.checkbox.id = this.inputId;
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the field value.
- *
- * @method getValue
- * @return {String} The value
- */
-photonui.CheckBox.prototype.getValue = function() {
-    return this._e.checkbox.checked;
-}
-
-/**
- * Set the field value.
- *
- * @method setValue
- * @param {String} value The value
- */
-photonui.CheckBox.prototype.setValue = function(value) {
-    this.value = value;
-    this._e.checkbox.checked = value;
-    this._callCallbacks("value-changed", [this.getValue()]);
-}
-
-/**
- * Get the HTML of the button.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.CheckBox.prototype.getHtml = function() {
-    return this._e.outer;
-}
+    // ====== Public properties ======
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    /**
+     * The input value.
+     *
+     * @property value
+     * @type Boolean
+     * @default false
+     */
+    getValue: function() {
+        return this.__html.checkbox.checked;
+    },
+
+    setValue: function(value) {
+        this.__html.checkbox.checked = value;
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
 
 
-/**
- * Build the HTML of the check.
- *
- * @method _buildHtml
- * @private
- */
-photonui.CheckBox.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("div");
-    this._e.outer.className = "photonui-widget photonui-checkbox";
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
-    this._e.checkbox = document.createElement("input");
-    this._e.checkbox.type = "checkbox";
-    this._e.checkbox.name = this.name;
-    this._e.checkbox.id = this.inputId;
-    this._e.outer.appendChild(this._e.checkbox);
 
-    this._e.span = document.createElement("span");
-    this._e.span.tabIndex = "0";
-    this._e.outer.appendChild(this._e.span);
-}
+    // ====== Private methods ======
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.CheckBox.prototype._updateAttributes = function() {
-    photonui.Widget.prototype._updateAttributes.call(this);
-    this.setValue(this.value);
-}
 
-/**
- * Bind events.
- *
- * @method _bindEvents
- * @private
- */
-photonui.CheckBox.prototype._bindEvents = function() {
-    this._bindEvent("value-changed", this._e.checkbox, "change", function(event) {
-        this.setValue(this.getValue());
-        // Focus the span ff the real checkbox is hidden (happen when a label is clicked).
-        if (window.getComputedStyle(this._e.checkbox).display == "none") {
-            this._e.span.focus();
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outer = document.createElement("div");
+        this.__html.outer.className = "photonui-widget photonui-checkbox";
+
+        this.__html.checkbox = document.createElement("input");
+        this.__html.checkbox.type = "checkbox";
+        this.__html.outer.appendChild(this.__html.checkbox);
+
+        this.__html.span = document.createElement("span");
+        this.__html.span.tabIndex = "0";
+        this.__html.outer.appendChild(this.__html.span);
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    __onChange: function(event) {
+        this._callCallbacks("value-changed", [this.value]);
+        // Focus the span if the real checkbox is hidden (happen when a label is clicked).
+        if (window.getComputedStyle(this.__html.checkbox).display == "none") {
+            this.__html.span.focus();
         }
-    }.bind(this));
+    },
 
-    this._bindEvent("span-click", this._e.span, "click", function(event) {
-        this.setValue(!this.getValue());
+    __onSpanClick: function(event) {
+        this.value = !this.value;
+        this._callCallbacks("value-changed", [this.value]);
         this._callCallbacks("click", [event]);
-    }.bind(this));
+    },
 
-    this._bindEvent("span-kbd", this._e.span, "keypress", function(event) {
+    __onCheckboxClick: function(event) {
+        this._callCallbacks("click", [event]);
+    },
+
+    __onSpanKeypress: function(event) {
         if (event.charCode == 32 || event.keyCode == 13) {
-            this.setValue(!this.getValue());
+            this.value = !this.value;
+            this._callCallbacks("value-changed", [this.value]);
         }
-    }.bind(this));
-}
+    }
+});
