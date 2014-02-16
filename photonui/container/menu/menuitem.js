@@ -46,177 +46,171 @@ var photonui = photonui || {};
  * @class MenuItem
  * @constructor
  * @extends photonui.Container
- * @param {String} text The item text (optional, default="Menu Item").
- * @param icon The item icon (optional, default="").
- * @param {Boolean} active Highlight the menu item if true (optional, default=`false`).
  */
-photonui.MenuItem = function(params) {
-    photonui.Container.call(this, params);
+photonui.MenuItem = photonui.Container.$extend({
 
-    var params = params || {};
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._registerWEvents(["click"]);
+        this._updateProperties(["text", "icon", "active"]);
 
-    // Attrs
-    this.text = params.text || "Menu Item";  // FIXME i18n
-    this.icon = params.icon || "";
-    this.active = (params.active != undefined) ? params.active : false;
-
-    this._e = {};  // HTML Elements
-    this._icon = null;
-
-    this._registerWidgetEvents(["click"]);
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-    this._bindEvent("click", this._e.outer, "click", function(event) {
-        this._callCallbacks("click", [event]);
-    }.bind(this));
-}
-
-photonui.MenuItem.prototype = new photonui.Container;
+        this._bindEvent("click", this.__html.outer, "click", function(event) {
+            this._callCallbacks("click", [event]);
+        }.bind(this));
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the item text.
- *
- * @method getText
- * @return {String}
- */
-photonui.MenuItem.prototype.getText = function() {
-    return this.text;
-}
+    // ====== Public properties ======
 
-/**
- * Set the item text.
- *
- * @method setText
- * @param {string} text
- */
-photonui.MenuItem.prototype.setText = function(text) {
-    this.text = text;
-    this._e.text.innerHTML = photonui.Helpers.escapeHtml(text);
-}
 
-/**
- * Get the item icon.
- *
- * @method getIcon
- */
-photonui.MenuItem.prototype.getIcon = function() {
-    return this.icon;
-}
+    /**
+     * The item text.
+     *
+     * @property text
+     * @type String
+     * @default "Menu Item"
+     */
+    _text: "Menu Item",
 
-/**
- * Set the item icon.
- *
- * @method setIcon
- * @param icon
- */
-photonui.MenuItem.prototype.setIcon = function(icon) {
-    this.icon = icon;
-    if (this.icon) {
-        this._icon = photonui.iconFactory(icon);
-        if (this._icon) {
-            photonui.Helpers.cleanNode(this._e.icon);
-            this._e.icon.appendChild(this._icon.getHtml());
+    getText: function() {
+        return this._text;
+    },
+
+    setText: function(text) {
+        this._text = text;
+        this.__html.text.innerHTML = photonui.Helpers.escapeHtml(text);
+    },
+
+    /**
+     * Right icon widget name.
+     *
+     * @property iconName
+     * @type String
+     * @default: null
+     */
+    _iconName: null,
+
+    getIconName: function() {
+        return this._iconName;
+    },
+
+    setIconName: function(iconName) {
+        this._iconName = iconName;
+        photonui.Helpers.cleanNode(this.__html.icon);
+        if (this._iconName) {
+            this.__html.icon.appendChild(this.icon.html);
+        }
+    },
+
+    /**
+     * Right icon widget.
+     *
+     * @property icon
+     * @type photonui.BaseIcon
+     * @default: null
+     */
+    getIcon: function() {
+        return photonui.getWidget(this._iconName);
+    },
+
+    setIcon: function(icon) {
+        if (icon instanceof photonui.BaseIcon) {
+            this.iconName = icon.name;
+            return;
+        }
+        this.iconName = null;
+    },
+
+    /**
+     * Determine if the item is active (highlighted).
+     *
+     * @property active
+     * @type Boolean
+     * @default false
+     */
+    _active: false,
+
+    getActive: function() {
+        return this._active;
+    },
+
+    setActive: function(active) {
+        this._active = active;
+
+        if (active) {
+            this.addClass("photonui-menuitem-active");
         }
         else {
-            this.icon = null;
+            this.removeClass("photonui-menuitem-active");
         }
-    }
-}
+    },
 
-/**
- * Get the active state of the item (highlight).
- *
- * @method isActive
- * @return {Boolean}
- */
-photonui.MenuItem.prototype.isActive = function() {
-    return this.active;
-}
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
 
-/**
- * Set the active state of the item (highlight).
- *
- * @method setActive
- * @param {Boolean} active
- */
-photonui.MenuItem.prototype.setActive = function(active) {
-    this.active = active;
-
-    if (active) {
-        this.addClass("photonui-menuitem-active");
-    }
-    else {
-        this.removeClass("photonui-menuitem-active");
-    }
-}
-
-/**
- * Get the HTML of the item.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.MenuItem.prototype.getHtml = function() {
-    return this._e.outer;
-}
-
-/**
- * Get the container DOM Element.
- *
- * @method getContainerNode
- * @return {HTMLElement}
- */
-photonui.MenuItem.prototype.getContainerNode = function() {
-    return this._e.widget;
-}
+    /**
+     * HTML Element that contain the child widget HTML.
+     *
+     * @property containerNode
+     * @type HTMLElement
+     * @readOnly
+     */
+    getContainerNode: function() {
+        return this.__html.widget;
+    },
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
 
-/**
- * Build the HTML of the item.
- *
- * @method _buildHtml
- * @private
- */
-photonui.MenuItem.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("div");
-    this._e.outer.className = "photonui-widget photonui-menuitem";
+    // ====== Private methods ======
 
-    this._e.icon = document.createElement("span");
-    this._e.icon.className = "photonui-menuitem-icon";
-    this._e.outer.appendChild(this._e.icon);
 
-    this._e.text = document.createElement("span");
-    this._e.text.className = "photonui-menuitem-text";
-    this._e.outer.appendChild(this._e.text);
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outer = document.createElement("div");
+        this.__html.outer.className = "photonui-widget photonui-menuitem";
 
-    this._e.widget = document.createElement("span");
-    this._e.widget.className = "photonui-menuitem-widget";
-    this._e.outer.appendChild(this._e.widget);
-}
+        this.__html.icon = document.createElement("span");
+        this.__html.icon.className = "photonui-menuitem-icon";
+        this.__html.outer.appendChild(this.__html.icon);
 
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.MenuItem.prototype._updateAttributes = function() {
-    photonui.Container.prototype._updateAttributes.call(this);
+        this.__html.text = document.createElement("span");
+        this.__html.text.className = "photonui-menuitem-text";
+        this.__html.outer.appendChild(this.__html.text);
 
-    this.setText(this.text);
-    this.setIcon(this.icon);
-    this.setActive(this.active);
-}
+        this.__html.widget = document.createElement("span");
+        this.__html.widget.className = "photonui-menuitem-widget";
+        this.__html.outer.appendChild(this.__html.widget);
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    // TODO Internal events callback here
+});

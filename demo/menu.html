@@ -46,6 +46,8 @@
         </style>
     </head>
     <body>
+        <script src="../lib/classy.js"></script>
+
         <script src="../photonui/photonui.js"></script>
         <script src="../photonui/helpers.js"></script>
 
@@ -55,6 +57,8 @@
         <script src="../photonui/container/window/window.js"></script>
         <script src="../photonui/container/window/popupwindow.js"></script>
         <script src="../photonui/container/layout/layout.js"></script>
+        <script src="../photonui/visual/baseicon.js"></script>
+        <script src="../photonui/visual/faicon.js"></script>
         <script src="../photonui/container/menu/menuitem.js"></script>
         <script src="../photonui/container/menu/submenuitem.js"></script>
         <script src="../photonui/container/menu/menu.js"></script>
@@ -63,10 +67,7 @@
         <script src="../photonui/input/checkbox/checkbox.js"></script>
         <script src="../photonui/input/checkbox/switch.js"></script>
         <script src="../photonui/visual/separator.js"></script>
-        <script src="../photonui/visual/baseicon-helpers.js"></script>
-        <script src="../photonui/visual/baseicon.js"></script>
-        <script src="../photonui/visual/faicon.js"></script>
-        <script src="../photonui/composite/popupmenu.js"></script>
+        <!--<script src="../photonui/composite/popupmenu.js"></script>-->
 
         <script>
             var win = new photonui.Window({
@@ -80,12 +81,12 @@
             win.setChild(menu);
 
             var item1 = new photonui.MenuItem({
-                    icon: "fa-cog",
+                    icon: new photonui.FAIcon("fa-cog"),
                     text: "Show Icons"
             });
             var icoSwitch = new photonui.Switch({value: true});
             icoSwitch.registerCallback("toggle-icons", "value-changed", function(widget) {
-                    menu.setHideIcons(!widget.getValue());
+                    menu.iconVisible = widget.value;
             });
             icoSwitch.registerCallback("toggle-icons", "click", function(widget, event) {
                     event.stopPropagation();
@@ -94,22 +95,23 @@
             item1.registerCallback("click", "click", function(widget, event) {
                     var c = widget.getChild();
                     c.setValue(!c.getValue());
+                    menu.iconVisible = c.value;
             });
             menu.addChild(item1);
 
             menu.addChild(new photonui.MenuItem({
-                    icon: "fa-users",
+                    icon: new photonui.FAIcon("fa-users"),
                     text: "Item 2"
             }));
 
             menu.addChild(new photonui.MenuItem({
-                    icon: "fa-plane",
+                    icon: new photonui.FAIcon("fa-plane"),
                     text: "Item 3",
                     active: false
             }));
 
             menu.addChild(new photonui.MenuItem({
-                    icon: "fa-cloud",
+                    icon: new photonui.FAIcon("fa-cloud"),
                     text: "Item 4"
             }));
 
@@ -122,13 +124,13 @@
             // -- submenu
 
             var submenu = new photonui.Menu({visible: false, name: "submenu1"});
-            var submenuitem = new photonui.SubMenuItem({text: "Submenu", subMenuName: "submenu1"});
+            var submenuitem = new photonui.SubMenuItem({text: "Submenu", menuName: "submenu1"});
 
             menu.addChild(submenuitem);
             menu.addChild(submenu);
 
-            submenu.addChild(new photonui.MenuItem({icon: "fa-cloud-download", text: "Subitem 1"}));
-            submenu.addChild(new photonui.MenuItem({icon: "fa-eye",text: "Subitem 2"}));
+            submenu.addChild(new photonui.MenuItem({icon: new photonui.FAIcon("fa-cloud-download"), text: "Subitem 1"}));
+            submenu.addChild(new photonui.MenuItem({icon: new photonui.FAIcon("fa-eye"), text: "Subitem 2"}));
             submenu.addChild(new photonui.MenuItem({text: "Subitem 3"}));
 
             // -- /submenu
@@ -140,6 +142,7 @@
 
             // ====== Popup Menu ======
 
+/*
             var win2 = new photonui.Window({
                     title: "Popup Menu",
                     x: 350, y: 50,
@@ -178,6 +181,7 @@
                     var c = widget.getChild();
                     c.setValue(!c.getValue());
             });
+*/
         </script>
     </body>
 </html>

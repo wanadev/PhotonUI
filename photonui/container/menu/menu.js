@@ -46,112 +46,99 @@ var photonui = photonui || {};
  * @class Menu
  * @constructor
  * @extends photonui.Layout
- * @param {Boolean} hideIcon Hide the icons of the menu items (optional, default=`false`).
  */
-photonui.Menu = function(params) {
-    photonui.Layout.call(this, params);
+photonui.Menu = photonui.Layout.$extend({
 
-    var params = params || {};
-
-    // Args
-    this.hideIcons = (params.hideIcons != undefined) ? params.hideIcons : false;
-
-    this._e = {};  // HTML elements
-
-    // Build and bind
-    this._buildHtml();
-    this._updateAttributes();
-}
-
-photonui.Menu.prototype = new photonui.Layout;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._updateProperties(["iconVisible"]);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * 
- * @method getHideIcons
- * @return {Boolean}
- */
-photonui.Menu.prototype.getHideIcons = function() {
-    return this.hideIcons;
-}
+    // ====== Public properties ======
 
-/**
- * Hide or display menu item icons.
- *
- * @method setHideIcons
- * @param {Boolean} hide
- */
-photonui.Menu.prototype.setHideIcons = function(hide) {
-    this.hideIcons = hide;
 
-    if (hide) {
-        this.addClass("photonui-menu-noicon");
+    /**
+     * Define if icon on menu items are visible.
+     *
+     * @property iconVisible
+     * @type Boolean
+     * @default: true
+     */
+    _iconVisible: true,
+
+    getIconVisible: function() {
+        return this._iconVisible;
+    },
+
+    setIconVisible: function(iconVisible) {
+        this._iconVisible = iconVisible;
+        if (iconVisible) {
+            this.removeClass("photonui-menu-noicon");
+        }
+        else {
+            this.addClass("photonui-menu-noicon");
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outer = document.createElement("div");
+        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-default";
+    },
+
+    /**
+     * Update the layout.
+     *
+     * @method _updateLayout
+     * @private
+     */
+    _updateLayout: function() {
+        // Detache the outer element from the document tree
+        //TODO
+
+        // Clean
+        photonui.Helpers.cleanNode(this.__html.outer);
+
+        // Append children
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            this.__html.outer.appendChild(children[i].html);
+        }
+
+        // Attache the outer element into the document tree
+        // TODO
     }
-    else {
-        this.removeClass("photonui-menu-noicon");
-    }
-}
-
-/**
- * Get the HTML of the menu.
- *
- * @method getHtml
- * @return {HTMLElement}
- */
-photonui.Menu.prototype.getHtml = function() {
-    return this._e.outer;
-}
-
-
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
-
-
-/**
- * Build the HTML of the menu.
- *
- * @method _buildHtml
- * @private
- */
-photonui.Menu.prototype._buildHtml = function() {
-    this._e.outer = document.createElement("div");
-    this._e.outer.className = "photonui-widget photonui-menu photonui-menu-style-default";
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.Menu.prototype._updateAttributes = function() {
-    photonui.Layout.prototype._updateAttributes.call(this);
-}
-
-/**
- * Update the layout.
- *
- * @method _updateLayout
- * @private
- */
-photonui.Menu.prototype._updateLayout = function() {
-    // Detache the outer element from the document tree
-    //TODO
-
-    // Clean
-    photonui.Helpers.cleanNode(this._e.outer);
-
-    // Append children
-    for (var i=0 ; i<this.childrenWidgets.length ; i++) {
-        this._e.outer.appendChild(this.childrenWidgets[i].getHtml());
-    }
-
-    // Attache the outer element into the document tree
-    // TODO
-}
+});

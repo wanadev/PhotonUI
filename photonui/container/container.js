@@ -104,6 +104,7 @@ photonui.Container = photonui.Widget.$extend({
      *
      * @property containerNode
      * @type HTMLElement
+     * @readOnly
      */
     getContainerNode: function() {
         console.warn("getContainerNode() method not implemented for this widget.");

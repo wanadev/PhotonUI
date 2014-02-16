@@ -148,6 +148,7 @@ photonui.Window = photonui.BaseWindow.$extend({
      *
      * @property containerNode
      * @type HTMLElement
+     * @readOnly
      */
     getContainerNode: function() {
         return this.__html.windowContent;

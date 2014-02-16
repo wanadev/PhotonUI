@@ -41,113 +41,95 @@ var photonui = photonui || {};
 
 
 /**
- * Submenu Menu item.
+ * Submenu Menu item (fold/unfold a submenu).
  *
  * @class SubMenuItem
  * @constructor
  * @extends photonui.MenuItem
- * @param {String} subMenuName The name of the menu (optional, default=null).
  */
-photonui.SubMenuItem = function(params) {
-    photonui.MenuItem.call(this, params);
+photonui.SubMenuItem = photonui.MenuItem.$extend({
 
-    var params = params || {};
-
-    // Attrs
-    this.subMenuName = params.subMenuName || null;
-
-    this.addClass("photonui-submenuitem");
-
-    this.registerCallback("toggle-folding", "click", this._onItemClicked, this);
-    this._updateAttributes();
-}
-
-photonui.SubMenuItem.prototype = new photonui.MenuItem;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this.addClass("photonui-submenuitem");
+        this.registerCallback("toggle-folding", "click", this.__onItemClicked, this);
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the submenu.
- *
- * @method getSubMenu
- * @return {photonui.Menu}
- */
-photonui.SubMenuItem.prototype.getSubMenu = function() {
-    if (this.subMenuName) {
-        return photonui.getWidget(this.subMenuName);
+    // ====== Public properties ======
+
+
+    /**
+     * The submenu widget name.
+     *
+     * @property menuName
+     * @type String
+     * @default null
+     */
+    _menuName: null,
+
+    getMenuName: function() {
+        return this._menuName;
+    },
+
+    setMenuName: function(menuName) {
+        if (this.menuName) {
+            this.menu.removeCallback("fold");
+            this.menu.removeCallback("unfold");
+        }
+        this._menuName = menuName;
+        if (this.menuName) {
+            this.menu.registerCallback("fold", "hide", this.__onToggleFold, this);
+            this.menu.registerCallback("unfold", "show", this.__onToggleFold, this);
+            this.active = this.menu.visible;
+        }
+    },
+
+    /**
+     * The submenu widget.
+     *
+     * @property menu
+     * @type photonui.Menu
+     * @default null
+     */
+    getMenu: function() {
+        return photonui.getWidget(this.menuName);
+    },
+
+    setMenu: function(menu) {
+        if (menu instanceof photonui.Menu) {
+            this.menuName = menu.name;
+        }
+        else {
+            this.menuName = null;
+        }
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * @method __onToggleFold
+     * @private
+     */
+    __onToggleFold: function(widget) {
+        this.active = widget.visible;
+    },
+
+    /**
+     * @method __onItemClicked
+     * @private
+     */
+    __onItemClicked: function(widget) {
+        this.menu.visible = !this.menu.visible;
     }
-    return null;
-}
-
-/**
- * Set the submenu
- *
- * @method setSubMenu
- * @param {photonui.Menu} menu The submenu
- * @param {String} menu The menu name.
- */
-photonui.SubMenuItem.prototype.setSubMenu = function(menu) {
-    if (this.subMenuName) {
-        this.getSubMenu().removeCallback("fold");
-        this.getSubMenu().removeCallback("unfold");
-    }
-    this.subMenuName = null;
-    if (menu instanceof photonui.Menu) {
-        this.subMenuName = menu.name;
-    }
-    else if (typeof(menu) == "string") {
-        this.subMenuName = menu;
-    }
-    if (this.subMenuName) {
-        var submenu = this.getSubMenu();
-        submenu.registerCallback("fold", "hide", this._onToggleFold, this);
-        submenu.registerCallback("unfold", "show", this._onToggleFold, this);
-        this.setActive(submenu.isVisible());
-    }
-}
-
-
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
-
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.SubMenuItem.prototype._updateAttributes = function() {
-    photonui.MenuItem.prototype._updateAttributes.call(this);
-    this.setSubMenu(this.subMenuName);
-}
-
-
-//////////////////////////////////////////
-// Internal Events Callbacks            //
-//////////////////////////////////////////
-
-
-/**
- *
- * @method _onToggleFold
- * @private
- */
-photonui.SubMenuItem.prototype._onToggleFold = function(widget) {
-    this.setActive(widget.isVisible());
-}
-
-/**
- *
- * @method _onItemClicked
- * @private
- */
-photonui.SubMenuItem.prototype._onItemClicked = function(widget) {
-    var submenu = this.getSubMenu();
-    submenu.setVisible(!submenu.isVisible());
-}
+});

@@ -242,6 +242,7 @@ photonui.NumericField = photonui.Field.$extend({
 
     /**
      * @method __onKeypress
+     * @private
      * @param event
      */
     __onKeypress: function(event) {
@@ -280,6 +281,7 @@ photonui.NumericField = photonui.Field.$extend({
 
     /**
      * @method __onKeyup
+     * @private
      * @param event
      */
     __onKeyup: function(event) {
@@ -292,6 +294,7 @@ photonui.NumericField = photonui.Field.$extend({
 
     /**
      * @method __onChange
+     * @private
      * @param event
      */
     __onChange: function(event) {
@@ -301,6 +304,7 @@ photonui.NumericField = photonui.Field.$extend({
 
     /**
      * @method __onMouseWheel
+     * @private
      * @param event
      */
     __onMouseWheel: function(event) {
