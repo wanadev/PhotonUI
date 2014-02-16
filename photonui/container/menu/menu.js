@@ -73,7 +73,7 @@ photonui.Menu = photonui.Layout.$extend({
      */
     _iconVisible: true,
 
-    getIconVisible: function() {
+    isIconVisible: function() {
         return this._iconVisible;
     },
 

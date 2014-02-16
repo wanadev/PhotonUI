@@ -314,7 +314,7 @@ photonui.Button = photonui.Widget.$extend({
     /**
      * Called when the button is clicked.
      *
-     * @mpethod __onButtonClicked
+     * @method __onButtonClicked
      * @private
      * @param event
      */

@@ -46,77 +46,56 @@ var photonui = photonui || {};
  * @class PopupMenu
  * @constructor
  * @extends photonui.PopupWindow
+ * @uses photonui.Layout
+ * @uses photonui.Menu
  */
-photonui.PopupMenu = function(params) {
-    photonui.PopupWindow.call(this, params);
-    photonui.Layout.call(this, params);
+photonui.PopupMenu = photonui.PopupWindow.$extend({
 
-    // Build and bind
-    //this._updateAttributes();
-}
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._childrenNames = [];  // new instance
+    },
 
-photonui.PopupMenu.prototype = new photonui.PopupWindow;
-
-
-//////////////////////////////////////////
-// "Multiple inheritance"...            //
-//////////////////////////////////////////
-
-
-// Cannot change the child of the popup window
-photonui.PopupMenu.prototype.setChild = function(){};
-
-/**
- * Add a widget to the menu.
- *
- * @method addChild
- * @param {photonui.Widget} widget The widget to add.
- * @param {Object} layoutOption Specific option for the layout (optional).
- */
-photonui.PopupMenu.prototype.addChild = photonui.Menu.prototype.addChild;
-
-/**
- * Remove a widget from the menu.
- *
- * @method removeChild
- * @param {photonui.Widget} widget The widget to remove.
- */
-photonui.PopupMenu.prototype.removeChild = photonui.Menu.prototype.removeChild;
-
-/**
- *
- * @method getHideIcons
- * @return {Boolean}
- */
-photonui.PopupMenu.prototype.getHideIcons = photonui.Menu.prototype.getHideIcons;
-
-/**
- * Hide or display menu item icons.
- *
- * @method setHideIcons
- * @param {Boolean} hide
- */
-photonui.PopupMenu.prototype.setHideIcons = photonui.Menu.prototype.setHideIcons;
-
-/**
- * Update the layout.
- *
- * @method _updateLayout
- * @private
- */
-photonui.PopupMenu.prototype._updateLayout = photonui.Menu.prototype._updateLayout;
+    // Mixin
+    __include__: [{
+        getChildrenNames: photonui.Menu.prototype.getChildrenNames,
+        setChildrenNames: photonui.Menu.prototype.setChildldrenNames,
+        getChildren:      photonui.Menu.prototype.getChildren,
+        setChildren:      photonui.Menu.prototype.setChildldren,
+        getChildName:     photonui.Menu.prototype.getChildName,
+        setChildName:     photonui.Menu.prototype.setChildName,
+        getChild:         photonui.Menu.prototype.getChild,
+        setChild:         photonui.Menu.prototype.setChild,
+        isIconVisible:    photonui.Menu.prototype.isIconVisible,
+        setIconVisible:   photonui.Menu.prototype.setIconVisible,
+        addChild:         photonui.Menu.prototype.addChild,
+        removeChild:      photonui.Menu.prototype.removeChild,
+        destroy:          photonui.Menu.prototype.destroy,
+        _updateLayout:    photonui.Menu.prototype._updateLayout
+    }],
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
 
-photonui.PopupMenu.prototype._buildHtml = function() {
-    photonui.PopupWindow.prototype._buildHtml.call(this);
-    photonui.Menu.prototype._buildHtml.call(this);
+    // ====== Private methods ======
 
-    this._e["window"].appendChild(this._e.outer);
-    this._e["window"].className += " phontui-popupmenu";
-    this._e.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
-}
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        photonui.Menu.prototype._buildHtml.call(this);
+
+        this.__html["window"].appendChild(this.__html.outer);
+        this.__html["window"].className += " phontui-popupmenu";
+        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
+    }
+});

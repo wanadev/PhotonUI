@@ -67,7 +67,7 @@
         <script src="../photonui/input/checkbox/checkbox.js"></script>
         <script src="../photonui/input/checkbox/switch.js"></script>
         <script src="../photonui/visual/separator.js"></script>
-        <!--<script src="../photonui/composite/popupmenu.js"></script>-->
+        <script src="../photonui/composite/popupmenu.js"></script>
 
         <script>
             var win = new photonui.Window({
@@ -142,7 +142,6 @@
 
             // ====== Popup Menu ======
 
-/*
             var win2 = new photonui.Window({
                     title: "Popup Menu",
                     x: 350, y: 50,
@@ -151,20 +150,20 @@
             });
 
             var btn = new photonui.Button({
-                    rightIcon: "fa-caret-down",
+                    rightIcon: new photonui.FAIcon("fa-caret-down"),
                     text: "Click to pop the menu!"
             });
             win2.setChild(btn);
 
-            var popupMenu = new photonui.PopupMenu({width: btn.getWidth()});
-            popupMenu.addChild(new photonui.MenuItem({name: "popicon", icon: "fa-eye", text: "Show icons"}));
+            var popupMenu = new photonui.PopupMenu({width: btn.offsetWidth});
+            popupMenu.addChild(new photonui.MenuItem({name: "popicon", icon: new photonui.FAIcon("fa-eye"), text: "Show icons"}));
             popupMenu.addChild(new photonui.Separator());
-            popupMenu.addChild(new photonui.MenuItem({icon: "fa-copy",text: "Copy"}));
-            popupMenu.addChild(new photonui.MenuItem({icon: "fa-cut",text: "Cut"}));
-            popupMenu.addChild(new photonui.MenuItem({icon: "fa-paste",text: "Paste"}));
+            popupMenu.addChild(new photonui.MenuItem({icon: new photonui.FAIcon("fa-copy"), text: "Copy"}));
+            popupMenu.addChild(new photonui.MenuItem({icon: new photonui.FAIcon("fa-cut"), text: "Cut"}));
+            popupMenu.addChild(new photonui.MenuItem({icon: new photonui.FAIcon("fa-paste"), text: "Paste"}));
             popupMenu.addChild(new photonui.Separator());
-            popupMenu.addChild(new photonui.MenuItem({icon: "fa-pencil",text: "Edit"}));
-            popupMenu.addChild(new photonui.MenuItem({icon: "fa-trash-o",text: "Delete"}));
+            popupMenu.addChild(new photonui.MenuItem({icon: new photonui.FAIcon("fa-pencil"), text: "Edit"}));
+            popupMenu.addChild(new photonui.MenuItem({icon: new photonui.FAIcon("fa-trash-o"), text: "Delete"}));
 
             btn.registerCallback("pop", "click", popupMenu.popupWidget, popupMenu);
 
@@ -172,7 +171,7 @@
             photonui.getWidget("popicon").setChild(popiconcb);
 
             popiconcb.registerCallback("toggle-icons", "value-changed", function(widget) {
-                    popupMenu.setHideIcons(!widget.getValue());
+                    popupMenu.iconVisible = widget.value;
             });
             popiconcb.registerCallback("toggle-icons-stop", "click", function(widget, event) {
                     widget.setValue(!widget.getValue());
@@ -180,8 +179,8 @@
             photonui.getWidget("popicon").registerCallback("click", "click", function(widget, event) {
                     var c = widget.getChild();
                     c.setValue(!c.getValue());
+                    popupMenu.iconVisible = c.value;
             });
-*/
         </script>
     </body>
 </html>
