@@ -46,316 +46,294 @@ var photonui = photonui || {};
  * @class NumericField
  * @constructor
  * @extends photonui.Field
- * @param {Number} params.min The minimum value of the field (optional, default=`null` (no minimum)).
- * @param {Number} params.max The maximum value of the field (optional, default=`null` (no maximum)).
- * @param {Number} params.step The incrementation step when user scroll over the field (optional, default=1).
- * @param {Number} params.decimalDigits The number of digit after the decimal dot (optional, `null` = no limit, default=0 (integer))
- * @param {String} params.decimalSymbol The decimal symbol: dot (`"."`) or comma (`","`) (optional, default=".")
  */
-photonui.NumericField = function(params) {
-    photonui.Field.call(this, params);
+photonui.NumericField = photonui.Field.$extend({
 
-    var params = params || {};
-
-    // Args
-    this.min = (params.min !== undefined) ? params.min : null;
-    this.max = (params.max !== undefined) ? params.max : null;
-    this.step = params.step || 1;
-    this.decimalDigits = (params.decimalDigits !== undefined) ? params.decimalDigits : 0;
-    this.decimalSymbol = params.decimalSymbol || ".";  // "." or ","
-
-    // Build
-    this._buildHtml();
-    this._updateAttributes();
-    this._bindEvents();
-
-    this._bindEvent("keypress", this._e.field, "keypress", this._onKeypress.bind(this));
-    this._bindEvent("keyup", this._e.field, "keyup", this._onKeyup.bind(this));
-    this._bindEvent("change", this._e.field, "change", this._onChange.bind(this));
-    this._bindEvent("mousewheel", this._e.field, "mousewheel", this._onMouseWheel.bind(this));
-    this._bindEvent("mousewheel-firefox", this._e.field, "DOMMouseScroll", this._onMouseWheel.bind(this));
-}
-
-photonui.NumericField.prototype = new photonui.Field;
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._updateProperties(["value"]);
+        this._bindFieldEvents();
+        this._bindEvent("keypress", this.__html.field, "keypress", this.__onKeypress.bind(this));
+        this._bindEvent("keyup", this.__html.field, "keyup", this.__onKeyup.bind(this));
+        this._bindEvent("change", this.__html.field, "change", this.__onChange.bind(this));
+        this._bindEvent("mousewheel", this.__html.field, "mousewheel", this.__onMouseWheel.bind(this));
+        this._bindEvent("mousewheel-firefox", this.__html.field, "DOMMouseScroll", this.__onMouseWheel.bind(this));
+    },
 
 
-//////////////////////////////////////////
-// Getters / Setters                    //
-//////////////////////////////////////////
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
 
 
-/**
- * Get the minimum value of the field.
- *
- * @method getMin
- * @return {Number} The minumum value or `null` (no minimum).
- */
-photonui.NumericField.prototype.getMin = function() {
-    return this.min;
-}
-
-/**
- * Set the minimum value of the field.
- *
- * @method setMin
- * @param {Number} min The minumum value or `null` (no minimum).
- */
-photonui.NumericField.prototype.setMin = function(min) {
-    this.min = min;
-}
-
-/**
- * Get the maximum value of the field.
- *
- * @method getMax
- * @return {Number} The maximum value or `null` (no maximum).
- */
-photonui.NumericField.prototype.getMax = function() {
-    return this.max;
-}
-
-/**
- * Set the maximum value of the field.
- *
- * @method setMax
- * @param {Number} max The minumum value or `null` (no maximum).
- */
-photonui.NumericField.prototype.setMax = function(max) {
-    this.max = max;
-}
-
-/**
- * Get the incrementation step of the field.
- *
- * @method getStep
- * @return {Number} The step.
- */
-photonui.NumericField.prototype.getStep = function() {
-    return this.step;
-}
-
-/**
- * Set the incrementation step of the field.
- *
- * @method setStep
- * @param {Number} step The step.
- */
-photonui.NumericField.prototype.setStep = function(step) {
-    this.step = Math.abs(step);
-}
-
-/**
- * Get the number of digit after the decimal dot.
- *
- * @method getDecimalDigits
- * @return {Number} The number of digit after the decimal dot or `null` (no limite).
- */
-photonui.NumericField.prototype.getDecimalDigits = function() {
-    return this.decimalDigits;
-}
-
-/**
- * Set the number of digit after the decimal dot.
- *
- * @method setDecimalDigits
- * @param {Number} decimalDigits The number of digit after the decimal dot or `null` (no limit).
- */
-photonui.NumericField.prototype.setDecimalDigits = function(decimalDigits) {
-    this.decimalDigits = decimalDigits;
-}
-
-/**
- * Get the decimal symbol.
- *
- * @method getDecimalSymbol
- * @return {String} The decimal symbol: dot (`"."`) or comma (`","`).
- */
-photonui.NumericField.prototype.getDecimalSymbol = function() {
-    return this.DecimalSymbol;
-}
-
-/**
- * Set the decimal symbol.
- *
- * @method setDecimalSymbol
- * @param {String} decimalSymbol The decimal symbol: dot (`"."`) or comma (`","`).
- */
-photonui.NumericField.prototype.setDecimalSymbol = function(decimalSymbol) {
-    this.decimalSymbol = decimalSymbol;
-}
-
-/**
- * Get the field value.
- *
- * @method getValue
- * @return {String} The value
- */
-photonui.NumericField.prototype.getValue = function() {
-    return parseFloat(this.value);
-}
-
-/**
- * Set the field value.
- *
- * @method setValue
- * @param {String} value The value
- */
-photonui.NumericField.prototype.setValue = function(value) {
-    this._updateValue(value);
-    this._updateFieldValue();
-    this._callCallbacks("value-changed", [this.getValue()]);
-}
+    // ====== Public properties ======
 
 
-//////////////////////////////////////////
-// Private Methods                      //
-//////////////////////////////////////////
+    /**
+     * The minimum value of the field.
+     *
+     * @property min
+     * @type Number
+     * default null (no minimum);
+     */
+    _min: null,
+
+    getMin: function() {
+        return this._min;
+    },
+
+    setMin: function(min) {
+        this._min = min;
+    },
+
+    /**
+     * The maximum value of the field.
+     *
+     * @property max
+     * @type Number
+     * default null (no maximum);
+     */
+    _max: null,
+
+    getMax: function() {
+        return this._max;
+    },
+
+    setMax: function(max) {
+        this._max = max;
+    },
+
+    /**
+     * The incrementation step of the field.
+     *
+     * @property step
+     * @type Number
+     * default 1
+     */
+    _step: 1,
+
+    getStep: function() {
+        return this._step;
+    },
+
+    setStep: function(step) {
+        this._step = Math.abs(step);
+    },
+
+    /**
+     * The number of digit after the decimal dot.
+     *
+     * @property decimalDigits
+     * @type Number
+     * @default null (no limite)
+     */
+    _decimalDigits: null,
+
+    getDecimalDigits: function() {
+        return this._decimalDigits;
+    },
+
+    setDecimalDigits: function(decimalDigits) {
+        this._decimalDigits = decimalDigits;
+    },
+
+    /**
+     * The decimal symbol ("." or ",").
+     *
+     * @property decimalSymbol
+     * @type String
+     * @default: "."
+     */
+    _decimalSymbol: ".",
+
+    getDecimalSymbol: function() {
+        return this._decimalSymbol;
+    },
+
+    setDecimalSymbol: function(decimalSymbol) {
+        this._decimalSymbol = decimalSymbol;
+    },
+
+    /**
+     * The field value.
+     *
+     * @property value
+     * @type Number
+     * @default 0
+     */
+    _value: 0,
+
+    getValue: function() {
+        return parseFloat(this._value);
+    },
+
+    setValue: function(value) {
+        this._updateValue(value);
+        this._updateFieldValue();
+    },
 
 
-/**
- * Build the HTML of the text field.
- *
- * @method _buildHtml
- * @private
- */
-photonui.NumericField.prototype._buildHtml = function() {
-    this._e.field = document.createElement("input");
-    this._e.field.className = "photonui-widget photonui-field photonui-field-numeric";
-    this._e.field.type = "text";
-    this._e.field.name = this.name;
-}
-
-/**
- * Update attributes.
- *
- * @method _updateAttributes
- * @private
- */
-photonui.NumericField.prototype._updateAttributes = function() {
-    photonui.Field.prototype._updateAttributes.call(this);
-}
-
-/**
- * Update the value (in the widget).
- *
- * @method _updateValue
- * @private
- * @param {String|Number} value The raw value.
- */
-photonui.NumericField.prototype._updateValue = function(value) {
-    value = ("" + value).replace(",", "."); // ","
-    value = value.replace(/ /g, "");  // remove spaces
-    value = parseFloat(value);
-    if (isNaN(value)) {
-        value = 0;
-    }
-
-    if (this.min != null) {
-        value = Math.max(this.min, value);
-    }
-
-    if (this.max != null) {
-        value = Math.min(this.max, value);
-    }
-
-    if (this.decimalDigits != null) {
-        value = value.toFixed(this.decimalDigits);
-    }
-
-    this.value = value;
-}
-
-/**
- * Update the value in the html field.
- *
- * @method _updateFieldValue
- * @private
- */
-photonui.NumericField.prototype._updateFieldValue = function() {
-    this._e.field.value = ("" + this.value).replace(".", this.decimalSymbol);
-}
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
 
 
-//////////////////////////////////////////
-// Internal Events Callbacks            //
-//////////////////////////////////////////
+    // ====== Private methods ======
 
 
-photonui.NumericField.prototype._onKeypress = function(event) {
-    if (event.ctrlKey) {
-        return;
-    }
-    if (event.charCode == 45) {  // Minus
-        if (this._e.field.selectionStart > 0 || (this.min != null && this.min >= 0)) {
-            event.preventDefault();
+    /**
+     * Update the value (in the widget).
+     *
+     * @method _updateValue
+     * @private
+     * @param {String|Number} value The raw value.
+     */
+    _updateValue: function(value) {
+        value = ("" + value).replace(",", "."); // ","
+        value = value.replace(/ /g, "");  // remove spaces
+        value = parseFloat(value);
+        if (isNaN(value)) {
+            value = 0;
         }
-        else if (this.getValue() < 0 && this._e.field.selectionStart - this._e.field.selectionEnd == 0) {
-            event.preventDefault();
+
+        if (this.min != null) {
+            value = Math.max(this.min, value);
         }
-    }
-    else if ((event.charCode == 46 || event.charCode == 44) && (this.decimalDigits > 0 || this.decimalDigits == null)) {  // Dot & Comma
-        var value = this._e.field.value;
-        if (value.indexOf(".") >= 0 || value.indexOf(",") >= 0) {
-            if (this._e.field.selectionStart == this._e.field.selectionEnd) {
+
+        if (this.max != null) {
+            value = Math.min(this.max, value);
+        }
+
+        if (this.decimalDigits != null) {
+            value = value.toFixed(this.decimalDigits);
+        }
+
+        this._value = value;
+    },
+
+    /**
+     * Update the value in the html field.
+     *
+     * @method _updateFieldValue
+     * @private
+     */
+    _updateFieldValue: function() {
+        this.__html.field.value = ("" + this._value).replace(".", this.decimalSymbol);
+    },
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.field = document.createElement("input");
+        this.__html.field.className = "photonui-widget photonui-field photonui-field-numeric";
+        this.__html.field.type = "text";
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * @method __onKeypress
+     * @param event
+     */
+    __onKeypress: function(event) {
+        if (event.ctrlKey) {
+            return;
+        }
+        if (event.charCode == 45) {  // Minus
+            if (this.__html.field.selectionStart > 0 || (this.min != null && this.min >= 0)) {
                 event.preventDefault();
             }
-            else {
-                var selected = value.substring(this._e.field.selectionStart, this._e.field.selectionEnd);
-                if (selected.indexOf(".") < 0 && selected.indexOf(",") < 0) {
+            else if (this.getValue() < 0 && this.__html.field.selectionStart - this.__html.field.selectionEnd == 0) {
+                event.preventDefault();
+            }
+        }
+        else if ((event.charCode == 46 || event.charCode == 44) && (this.decimalDigits > 0 || this.decimalDigits == null)) {  // Dot & Comma
+            var value = this.__html.field.value;
+            if (value.indexOf(".") >= 0 || value.indexOf(",") >= 0) {
+                if (this.__html.field.selectionStart == this.__html.field.selectionEnd) {
                     event.preventDefault();
+                }
+                else {
+                    var selected = value.substring(this.__html.field.selectionStart, this.__html.field.selectionEnd);
+                    if (selected.indexOf(".") < 0 && selected.indexOf(",") < 0) {
+                        event.preventDefault();
+                    }
                 }
             }
         }
-    }
-    else if (event.keyCode == 13) {  // Enter
+        else if (event.keyCode == 13) {  // Enter
+            this._updateFieldValue();
+        }
+        else if ((event.charCode < 48 || event.charCode > 57) && event.charCode != 32 && event.charCode != 0) {  // Not (digit, space or special key)
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * @method __onKeyup
+     * @param event
+     */
+    __onKeyup: function(event) {
+        var value = this.__html.field.value.replace(/[^0-9.,-]*/g, "");
+        if (value != this.__html.field.value) {
+            this.__html.field.value = value;
+        }
+        this._updateValue(this.__html.field.value);
+    },
+
+    /**
+     * @method __onChange
+     * @param event
+     */
+    __onChange: function(event) {
         this._updateFieldValue();
-    }
-    else if ((event.charCode < 48 || event.charCode > 57) && event.charCode != 32 && event.charCode != 0) {  // Not (digit, space or special key)
-        event.preventDefault();
-    }
-}
+        this._callCallbacks("value-changed", [this.value]);
+    },
 
-photonui.NumericField.prototype._onKeyup = function(event) {
-    var value = this._e.field.value.replace(/[^0-9.,-]*/g, "");
-    if (value != this._e.field.value) {
-        this._e.field.value = value;
-    }
-    this._updateValue(this._e.field.value);
-}
-
-photonui.NumericField.prototype._onChange = function(event) {
-    this._updateFieldValue();
-}
-
-photonui.NumericField.prototype._onMouseWheel = function(event) {
-    if (document.activeElement != this._e.field) {
-        return;
-    }
-
-    var wheelDelta = null;
-
-    // Webkit
-    if (event.wheelDeltaY != undefined) {
-        wheelDelta = event.wheelDeltaY;
-    }
-    // MSIE
-    if (event.wheelDelta != undefined) {
-        wheelDelta = event.wheelDelta;
-    }
-    // Firefox
-    if (event.axis != undefined && event.detail != undefined) {
-        if (event.axis == 2) { // Y
-            wheelDelta = - event.detail;
+    /**
+     * @method __onMouseWheel
+     * @param event
+     */
+    __onMouseWheel: function(event) {
+        if (document.activeElement != this.__html.field) {
+            return;
         }
-    }
 
-    if (wheelDelta != null) {
-        if (wheelDelta >= 0) {
-            this.setValue(this.getValue() + this.step);
+        var wheelDelta = null;
+
+        // Webkit
+        if (event.wheelDeltaY != undefined) {
+            wheelDelta = event.wheelDeltaY;
         }
-        else {
-            this.setValue(this.getValue() - this.step);
+        // MSIE
+        if (event.wheelDelta != undefined) {
+            wheelDelta = event.wheelDelta;
         }
-        event.preventDefault();
+        // Firefox
+        if (event.axis != undefined && event.detail != undefined) {
+            if (event.axis == 2) { // Y
+                wheelDelta = - event.detail;
+            }
+        }
+
+        if (wheelDelta != null) {
+            if (wheelDelta >= 0) {
+                this.setValue(this.getValue() + this.step);
+            }
+            else {
+                this.setValue(this.getValue() - this.step);
+            }
+            event.preventDefault();
+        }
+        this._callCallbacks("value-changed", [this.value]);
     }
-}
+});
