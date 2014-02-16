@@ -36,6 +36,7 @@ default theme).
 """
 
 
+import re
 import os
 import sys
 import json
@@ -139,6 +140,11 @@ if __name__ == "__main__":
             const=True,
             help="show all the available modules (including abstract ones) and exit",
     )
+    parser.add_argument("-u", "--update-demo",
+            action="store_const",
+            const=True,
+            help="update the css and js included in demo html files",
+    )
     parser.add_argument("-o", "--output",
             default="./photonui.out/",
             help="the output directory ('./photonui.out/' by default)",
@@ -158,6 +164,36 @@ if __name__ == "__main__":
     # List all modules
     if args.list_all:
         print(", ".join(sorted(photonui_modules.keys())))
+        sys.exit(0)
+
+    # Update demo
+    if args.update_demo:
+        builder = PhotonUiBuilder(photonui_modules)
+        builder.add_modules(photonui_modules.keys())
+
+        # css
+        css = "<!-- photonui-css -->\n"
+        for file_ in builder.get_css():
+            css += '        <link type="text/css" rel="stylesheet" href="../photonui/%s" />\n' % file_
+        for file_ in builder.get_theme_css():
+            css += '        <link type="text/css" rel="stylesheet" href="../photonui/%s" />\n' % file_
+        css += "        <!-- /photonui-css -->"
+
+        # js
+        javascript = "<!-- photonui-javascript -->\n"
+        for file_ in builder.get_javascript():
+            javascript += '        <script src="../photonui/%s"></script>\n' % file_
+        javascript += "        <!-- /photonui-javascript -->"
+
+        # update
+        print("Updating demo HTML files:\n")
+        for file_ in [os.path.join("demo", filename) for filename in os.listdir("demo") if filename.endswith(".html")]:
+            print("  * %s" % file_)
+            content = open(file_, "r").read()
+            content = re.sub("<!-- photonui-css -->(.*)<!-- /photonui-css -->", css, content, flags=re.DOTALL)
+            content = re.sub("<!-- photonui-javascript -->(.*)<!-- /photonui-javascript -->", javascript, content, flags=re.DOTALL)
+            open(file_, "w").write(content)
+
         sys.exit(0)
 
     # Check arg modules
