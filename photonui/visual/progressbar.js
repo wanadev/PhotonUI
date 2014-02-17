@@ -52,7 +52,7 @@ photonui.ProgressBar = photonui.Widget.$extend({
     // Constructor
     __init__: function(params) {
         this.$super(params);
-        this._updateProperties(["orientation", "value"]);
+        this._updateProperties(["orientation", "value", "pulsate"]);
     },
 
 

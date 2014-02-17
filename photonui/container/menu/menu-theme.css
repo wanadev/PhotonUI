@@ -76,7 +76,7 @@
 
 /** Submenu item **/
 
-.photonui-menu.photonui-menu-style-default .photonui-submenuitem:after {
+.photonui-menu.photonui-menu-style-default .photonui-submenuitem .photonui-menuitem-widget:after {
     content: "";
     display: block;
     float: right;
@@ -100,8 +100,8 @@
     text-shadow: -1px -1px 0 #0C474C;
 }
 
-.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-submenuitem.photonui-menuitem-active:after {
-    margin-top: calc(25% - 4px);
+.photonui-menu.photonui-menu-style-default > .photonui-menuitem.photonui-submenuitem.photonui-menuitem-active .photonui-menuitem-widget:after {
+    margin-top: calc(25% - 6px);
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
     border-right-color: #fff;

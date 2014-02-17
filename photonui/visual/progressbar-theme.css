@@ -39,6 +39,7 @@
 .photonui-progressbar-bar {
     border-radius: 2px;
     background: #25a9b5;
+    transition: all linear .2s;
 }
 
 .photonui-progressbar-text {

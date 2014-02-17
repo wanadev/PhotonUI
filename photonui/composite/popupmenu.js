@@ -60,9 +60,9 @@ photonui.PopupMenu = photonui.PopupWindow.$extend({
     // Mixin
     __include__: [{
         getChildrenNames: photonui.Menu.prototype.getChildrenNames,
-        setChildrenNames: photonui.Menu.prototype.setChildldrenNames,
+        setChildrenNames: photonui.Menu.prototype.setChildrenNames,
         getChildren:      photonui.Menu.prototype.getChildren,
-        setChildren:      photonui.Menu.prototype.setChildldren,
+        setChildren:      photonui.Menu.prototype.setChildren,
         getChildName:     photonui.Menu.prototype.getChildName,
         setChildName:     photonui.Menu.prototype.setChildName,
         getChild:         photonui.Menu.prototype.getChild,
@@ -94,8 +94,8 @@ photonui.PopupMenu = photonui.PopupWindow.$extend({
         this.$super();
         photonui.Menu.prototype._buildHtml.call(this);
 
-        this.__html["window"].appendChild(this.__html.outer);
-        this.__html["window"].className += " phontui-popupmenu";
+        this.__html.inner.appendChild(this.__html.outer);
+        this.__html["window"].className += " photonui-popupmenu";
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
     }
 });

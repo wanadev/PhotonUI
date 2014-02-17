@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>NumericField - PhotonUI Demo</title>
+        <title>Menu - PhotonUI Demo</title>
 
 
         <!-- photonui-css -->
@@ -116,7 +116,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / NumericField</h1>
+            <h1>PhotonUI Demo / Menu</h1>
         </header>
 
 
@@ -153,47 +153,53 @@
 
 
         <!-- Demo Script -->
-        <div id="widget-area"></div>
+        <div id="widget-area" style="width: 250px; padding: 0;"></div>
         <script id="photonui-demo">
-            var grid = new photonui.GridLayout();
+            var menu = new photonui.Menu();
 
-            // Simple Numeric Field
-            var field1 = new photonui.NumericField();
-            var label1 = new photonui.Label({
-                text: "Free Number:",
-                forInput: field1
-            });
-            grid.addChild(label1, {gridX: 0, gridY: 0});
-            grid.addChild(field1, {gridX: 1, gridY: 0});
+            menu.children = [
+                new photonui.MenuItem({
+                    "text": "Item 1",
+                    icon: new photonui.FAIcon("fa-gears")
+                }),
+                new photonui.MenuItem({
+                    "text": "Item 2",
+                    icon: new photonui.FAIcon("fa-cloud")
+                }),
+                new photonui.MenuItem({
+                    "text": "Item 3",
+                    icon: new photonui.FAIcon("fa-group")
+                }),
+                new photonui.SubMenuItem({
+                    "text": "Item 4",
+                    menu: new photonui.Menu({
+                        name: "submenu1",
+                        visible: false
+                    })
+                }),
+                photonui.getWidget("submenu1"),
+                new photonui.MenuItem({"text": "Item 5"}),
+                new photonui.MenuItem({"text": "Item 6"})
+            ];
 
-            // Integer [0-100]
-            var field2 = new photonui.NumericField({
-                min: 0,
-                max: 100,
-                decimalDigits: 0
-            });
-            var label2 = new photonui.Label({
-                text: "Integer [0-100]:",
-                forInput: field2
-            });
-            grid.addChild(label2, {gridX: 0, gridY: 1});
-            grid.addChild(field2, {gridX: 1, gridY: 1});
+            var submenu = photonui.getWidget("submenu1");
 
-            // Float
-            var field3 = new photonui.NumericField({
-                decimalDigits: 2,
-                step: 0.1,
-                value: 43,
-                decimalSymbol: ","
-            });
-            var label3 = new photonui.Label({
-                text: "Float:",
-                forInput: field3
-            });
-            grid.addChild(label3, {gridX: 0, gridY: 2});
-            grid.addChild(field3, {gridX: 1, gridY: 2});
+            submenu.children = [
+                new photonui.MenuItem({
+                    "text": "SubItem 1",
+                    icon: new photonui.FAIcon("fa-eye")
+                }),
+                new photonui.MenuItem({
+                    "text": "SubItem 2",
+                    icon: new photonui.FAIcon("fa-globe")
+                }),
+                new photonui.MenuItem({
+                    "text": "SubItem 3",
+                    icon: new photonui.FAIcon("fa-leaf")
+                }),
+            ];
 
-            photonui.domInsert(grid, document.getElementById("widget-area"));
+            photonui.domInsert(menu, document.getElementById("widget-area"));
         </script>
         <!-- /Demo Script -->
 

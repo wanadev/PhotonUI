@@ -195,7 +195,7 @@
     "PopupMenu": {
         "abstract": false,
         "javascript": ["composite/popupmenu.js"],
-        "css": [],
+        "css": ["composite/popupmenu.css"],
         "themeCss": ["composite/popupmenu-theme.css"],
         "assets": [],
         "dependencies": ["PopupWindow", "Menu"]

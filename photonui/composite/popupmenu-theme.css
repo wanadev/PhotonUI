@@ -37,6 +37,7 @@
 .photonui-menu.photonui-menu-style-popupmenu > .photonui-menuitem {
     cursor: pointer;
     color: #3c3c3c;
+    width: calc(100% - 2px);
 }
 
 .photonui-menu.photonui-menu-style-popupmenu .photonui-separator  hr {

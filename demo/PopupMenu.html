@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>NumericField - PhotonUI Demo</title>
+        <title>PopupMenu - PhotonUI Demo</title>
 
 
         <!-- photonui-css -->
@@ -116,7 +116,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / NumericField</h1>
+            <h1>PhotonUI Demo / PopupMenu</h1>
         </header>
 
 
@@ -155,45 +155,46 @@
         <!-- Demo Script -->
         <div id="widget-area"></div>
         <script id="photonui-demo">
-            var grid = new photonui.GridLayout();
+            var menu = new photonui.PopupMenu();
 
-            // Simple Numeric Field
-            var field1 = new photonui.NumericField();
-            var label1 = new photonui.Label({
-                text: "Free Number:",
-                forInput: field1
-            });
-            grid.addChild(label1, {gridX: 0, gridY: 0});
-            grid.addChild(field1, {gridX: 1, gridY: 0});
+            menu.children = [
+                new photonui.MenuItem({
+                    "text": "Copy",
+                    icon: new photonui.FAIcon("fa-copy")
+                }),
+                new photonui.MenuItem({
+                    "text": "Cut",
+                    icon: new photonui.FAIcon("fa-cut")
+                }),
+                new photonui.MenuItem({
+                    "text": "Paste",
+                    icon: new photonui.FAIcon("fa-paste")
+                }),
+                new photonui.Separator(),
+                new photonui.MenuItem({
+                    "text": "Edit",
+                    icon: new photonui.FAIcon("fa-pencil")
+                }),
+                new photonui.MenuItem({
+                    "text": "Delete",
+                    icon: new photonui.FAIcon("fa-trash-o")
+                }),
+            ];
 
-            // Integer [0-100]
-            var field2 = new photonui.NumericField({
-                min: 0,
-                max: 100,
-                decimalDigits: 0
-            });
-            var label2 = new photonui.Label({
-                text: "Integer [0-100]:",
-                forInput: field2
-            });
-            grid.addChild(label2, {gridX: 0, gridY: 1});
-            grid.addChild(field2, {gridX: 1, gridY: 1});
+            // Button
+            var btn = new photonui.Button({
+                text: "Click Me",
+                rightIcon: new photonui.FAIcon("fa-caret-down")
+            })
+            btn.registerCallback("click", "click", menu.popupWidget, menu)
 
-            // Float
-            var field3 = new photonui.NumericField({
-                decimalDigits: 2,
-                step: 0.1,
-                value: 43,
-                decimalSymbol: ","
-            });
-            var label3 = new photonui.Label({
-                text: "Float:",
-                forInput: field3
-            });
-            grid.addChild(label3, {gridX: 0, gridY: 2});
-            grid.addChild(field3, {gridX: 1, gridY: 2});
+            // Attache the menu to the document too
+            document.addEventListener("contextmenu", function(event) {
+                menu.popupXY(event.pageX, event.pageY);
+                event.preventDefault();
+            }, false);
 
-            photonui.domInsert(grid, document.getElementById("widget-area"));
+            photonui.domInsert(btn, document.getElementById("widget-area"));
         </script>
         <!-- /Demo Script -->
 

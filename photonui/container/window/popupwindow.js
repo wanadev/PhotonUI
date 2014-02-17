@@ -60,6 +60,18 @@ photonui.PopupWindow = photonui.BaseWindow.$extend({
     },
 
 
+    /**
+     * HTML Element that contain the child widget HTML.
+     *
+     * @property containerNode
+     * @type HTMLElement
+     * @readOnly
+     */
+    getContainerNode: function() {
+        return this.__html.inner;
+    },
+
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -157,5 +169,8 @@ photonui.PopupWindow = photonui.BaseWindow.$extend({
     _buildHtml: function() {
         this.$super();
         this.__html["window"].className += " photonui-popupwindow";
+
+        this.__html.inner = document.createElement("div");
+        this.__html["window"].appendChild(this.__html.inner);
     }
 });
