@@ -33,11 +33,17 @@
  * Menu PopupMenu theme                                                     *
  ****************************************************************************/
 
+.photonui-popupmenu {
+    border: none;
+    padding-top: 1px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .2), inset 1px 1px 0 #aaa, inset -1px -1px 0 #aaa;
+    overflow: hidden;
+    border-radius: 1px;
+}
 
 .photonui-menu.photonui-menu-style-popupmenu > .photonui-menuitem {
     cursor: pointer;
     color: #3c3c3c;
-    width: calc(100% - 2px);
 }
 
 .photonui-menu.photonui-menu-style-popupmenu .photonui-separator  hr {
