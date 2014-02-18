@@ -199,7 +199,7 @@ photonui.Widget = Class.$extend({
             return;
         }
         if (this.visible) {
-            this.html.style.display = "block";  // FIXME
+            this.html.style.display = "";
             this._callCallbacks("show");
         }
         else {

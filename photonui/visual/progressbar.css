@@ -41,6 +41,7 @@
     user-select: none;
     overflow: hidden;
     height: 26px; /* FIXME */
+    width: 100%;
 }
 
 .photonui-progressbar-bar {

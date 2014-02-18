@@ -138,7 +138,7 @@
     "Label": {
         "abstract": false,
         "javascript": ["visual/label.js"],
-        "css": [],
+        "css": ["visual/label.css"],
         "themeCss": ["visual/label-theme.css"],
         "assets": [],
         "dependencies": ["Core"]

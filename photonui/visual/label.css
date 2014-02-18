@@ -28,38 +28,6 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
-.photonui-menuitem {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    display: table;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    border-collapse: separate;
-    width: 100%;
-}
-
-.photonui-menuitem-icon {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.photonui-menuitem-text {
-    display: table-cell;
-    overflow: hidden;
+.photonui-label {
     white-space: nowrap;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    text-align: left;
-}
-
-.photonui-menuitem-widget {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: right;
-    width: 0.1%;
 }
