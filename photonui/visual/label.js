@@ -146,7 +146,7 @@ photonui.Label = photonui.Widget.$extend({
     },
 
     setForInput: function(forInput) {
-        this._forInputName = forInput.name;
+        this.forInputName = forInput.name;
     },
 
     /**

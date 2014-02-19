@@ -273,6 +273,7 @@ photonui.NumericField = photonui.Field.$extend({
         }
         else if (event.keyCode == 13) {  // Enter
             this._updateFieldValue();
+            this._callCallbacks("value-changed", [this.value]);
         }
         else if ((event.charCode < 48 || event.charCode > 57) && event.charCode != 32 && event.charCode != 0) {  // Not (digit, space or special key)
             event.preventDefault();
