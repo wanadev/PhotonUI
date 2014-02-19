@@ -269,18 +269,18 @@ photonui.GridLayout = photonui.Layout.$extend({
         }
 
         // Hack for Gecko and Trident
-        var cells = document.querySelectorAll("#" + this.name + " td");
-        var heights = [];
-        var padding = 0;
-        for (var i=0 ; i<cells.length ; i++) {
-            if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
-                padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
-                padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
-            }
-            heights[i] = (cells[i].offsetHeight - padding) + "px";
-        }
-        for (var i=0 ; i<cells.length ; i++) {
-            cells[i].style.height = heights[i];
-        }
+        //var cells = document.querySelectorAll("#" + this.name + " td");
+        //var heights = [];
+        //var padding = 0;
+        //for (var i=0 ; i<cells.length ; i++) {
+            //if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
+                //padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
+                //padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
+            //}
+            //heights[i] = (cells[i].offsetHeight - padding) + "px";
+        //}
+        //for (var i=0 ; i<cells.length ; i++) {
+            //cells[i].style.height = heights[i];
+        //}
     }
 });
