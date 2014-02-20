@@ -56,6 +56,7 @@ photonui.NumericField = photonui.Field.$extend({
         this._bindFieldEvents();
         this._bindEvent("keypress", this.__html.field, "keypress", this.__onKeypress.bind(this));
         this._bindEvent("keyup", this.__html.field, "keyup", this.__onKeyup.bind(this));
+        this._bindEvent("keydown", this.__html.field, "keydown", this.__onKeydown.bind(this));
         this._bindEvent("change", this.__html.field, "change", this.__onChange.bind(this));
         this._bindEvent("mousewheel", this.__html.field, "mousewheel", this.__onMouseWheel.bind(this));
         this._bindEvent("mousewheel-firefox", this.__html.field, "DOMMouseScroll", this.__onMouseWheel.bind(this));
@@ -223,6 +224,29 @@ photonui.NumericField = photonui.Field.$extend({
     },
 
     /**
+     * Validate the user inputs.
+     *
+     * @method _validateInput
+     * @private
+     * @param {String} value
+     * @return {Boolean}
+     */
+    _validateInput: function(value) {
+        var value = "" + value;
+        value = value.replace(/ /g, "");  // remove spaces
+        if (/^-?[0-9]*(\.|,)?[0-9]*$/.test(value)) {
+            if (this.decimalDigits == 0 && !/^-?[0-9]*$/.test(value)) {
+                return false;
+            }
+            if (this.min !== null && this.min >= 0 && value[0] == "-") {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    },
+
+    /**
      * Build the widget HTML.
      *
      * @method _buildHtml
@@ -249,34 +273,18 @@ photonui.NumericField = photonui.Field.$extend({
         if (event.ctrlKey) {
             return;
         }
-        if (event.charCode == 45) {  // Minus
-            if (this.__html.field.selectionStart > 0 || (this.min != null && this.min >= 0)) {
-                event.preventDefault();
-            }
-            else if (this.getValue() < 0 && this.__html.field.selectionStart - this.__html.field.selectionEnd == 0) {
-                event.preventDefault();
-            }
-        }
-        else if ((event.charCode == 46 || event.charCode == 44) && (this.decimalDigits > 0 || this.decimalDigits == null)) {  // Dot & Comma
-            var value = this.__html.field.value;
-            if (value.indexOf(".") >= 0 || value.indexOf(",") >= 0) {
-                if (this.__html.field.selectionStart == this.__html.field.selectionEnd) {
-                    event.preventDefault();
-                }
-                else {
-                    var selected = value.substring(this.__html.field.selectionStart, this.__html.field.selectionEnd);
-                    if (selected.indexOf(".") < 0 && selected.indexOf(",") < 0) {
-                        event.preventDefault();
-                    }
-                }
-            }
-        }
         else if (event.keyCode == 13) {  // Enter
             this._updateFieldValue();
             this._callCallbacks("value-changed", [this.value]);
         }
-        else if ((event.charCode < 48 || event.charCode > 57) && event.charCode != 32 && event.charCode != 0) {  // Not (digit, space or special key)
-            event.preventDefault();
+        else {
+            var field = this.__html.field;
+            var value = field.value.slice(0, field.selectionStart)
+                        + String.fromCharCode(event.charCode)
+                        + field.value.slice(field.selectionEnd);
+            if (!this._validateInput(value)) {
+                event.preventDefault();
+            }
         }
     },
 
@@ -340,5 +348,21 @@ photonui.NumericField = photonui.Field.$extend({
             event.preventDefault();
         }
         this._callCallbacks("value-changed", [this.value]);
+    },
+
+    /**
+     * @method __onKeydown
+     * @private
+     * @param event
+     */
+    __onKeydown: function(event) {
+        if (event.keyCode == 38) {
+            this.setValue(this.getValue() + this.step);
+            event.preventDefault();
+        }
+        else if (event.keyCode == 40) {
+            this.setValue(this.getValue() - this.step);
+            event.preventDefault();
+        }
     }
 });

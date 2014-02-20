@@ -30,6 +30,10 @@
 
 
 .photonui-colorbutton span {
+    min-height: 30px;
+}
+
+.photonui-colorbutton span {
     display: block !important;
     min-width: 50px;
     min-height: 18px;
