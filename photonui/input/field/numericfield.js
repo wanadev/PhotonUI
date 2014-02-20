@@ -359,10 +359,12 @@ photonui.NumericField = photonui.Field.$extend({
         if (event.keyCode == 38) {
             this.setValue(this.getValue() + this.step);
             event.preventDefault();
+            this._callCallbacks("value-changed", [this.value]);
         }
         else if (event.keyCode == 40) {
             this.setValue(this.getValue() - this.step);
             event.preventDefault();
+            this._callCallbacks("value-changed", [this.value]);
         }
     }
 });
