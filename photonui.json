@@ -87,6 +87,14 @@
         "assets": [],
         "dependencies": ["Core", "BaseIcon"]
     },
+    "ColorButton": {
+        "abstract": false,
+        "javascript": ["input/button/colorbutton.js"],
+        "css": ["input/button/colorbutton.css"],
+        "themeCss": ["input/button/colorbutton-theme.css"],
+        "assets": [],
+        "dependencies": ["Button", "PopupWindow", "ColorPalette"]
+    },
     "Field": {
         "abstract": true,
         "javascript": ["input/field/field.js"],
@@ -199,5 +207,13 @@
         "themeCss": ["composite/popupmenu-theme.css"],
         "assets": [],
         "dependencies": ["PopupWindow", "Menu"]
+    },
+    "ColorPalette": {
+        "abstract": false,
+        "javascript": ["input/color/colorpalette.js"],
+        "css": [],
+        "themeCss": ["input/color/colorpalette-theme.css"],
+        "assets": [],
+        "dependencies": ["Core"]
     }
 }

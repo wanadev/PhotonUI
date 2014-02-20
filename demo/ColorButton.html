@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Button - PhotonUI Demo</title>
+        <title>PhotonUI Demo</title>
 
 
         <!-- photonui-css -->
@@ -120,7 +120,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / Button</h1>
+            <h1>PhotonUI Demo</h1>
         </header>
 
 
@@ -159,32 +159,26 @@
 
 
         <!-- Demo Script -->
-        <div id="widget-area"></div>
+        <div id="widget-area" style="top: 240px; left: 52px"></div>
+        <div id="smiley" style="position: absolute; top: 100px; left: 40px; width: 100px; height: 100px; border: red solid 5px; border-radius: 55px">
+            <div style="border-bottom: inherit; margin: 10px; height: 70px; border-radius: 40px;">
+                <div style="float: left; border: inherit; -webkit-transform: rotate(180deg); transform: rotate(180deg); width: 25px; height: 25px; border-radius: 20px; margin: 17px 5px;"></div>
+                <div style="float: right; border: inherit; -webkit-transform: rotate(180deg); transform: rotate(180deg); width: 25px; height: 25px; border-radius: 20px; margin: 17px 5px;"></div>
+            </div>
+        </div>
         <script id="photonui-demo">
-            var grid = new photonui.GridLayout();
+            var btn = new photonui.ColorButton();
 
-            // Button with an icon
-            var btn1 = new photonui.Button({
-                text: "Options",
-                leftIcon: new photonui.FAIcon("fa-cog")
-            });
-            grid.addChild(btn1, {gridX: 0, gridY: 0});
+            btn.registerCallback(
+                "smiley-color",
+                "value-changed",
+                function(widget, color) {
+                    var smiley = document.getElementById("smiley");
+                    smiley.style.borderColor = color;
+                }
+            );
 
-            // Button with only an icon (no text)
-            var btn2 = new photonui.Button({
-                textVisible: false,
-                leftIcon: new photonui.FAIcon("fa-cog")
-            });
-            grid.addChild(btn2, {gridX: 1, gridY: 0});
-
-            // Button with an icon at right
-            var btn3 = new photonui.Button({
-                text: "Next",
-                rightIcon: new photonui.FAIcon("fa-arrow-right")
-            });
-            grid.addChild(btn3, {gridX: 0, gridY: 1, gridWidth: 2});
-
-            photonui.domInsert(grid, document.getElementById("widget-area"));
+            photonui.domInsert(btn, document.getElementById("widget-area"));
         </script>
         <!-- /Demo Script -->
 
