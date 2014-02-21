@@ -83,10 +83,12 @@
 
 .photonui-progressbar.photonui-progressbar-horizontal .photonui-progressbar-bar {
     height: 100%;
+    min-height: 22px; /** FIXME **/
 }
 
 .photonui-progressbar.photonui-progressbar-horizontal .photonui-progressbar-text {
     text-shadow: 1px 1px 0 rgba(255, 255, 255, .3);
+    min-height: 22px; /** FIXME **/
 }
 
 /** Vertical **/
