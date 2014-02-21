@@ -6,6 +6,8 @@
         <title>CheckBox &amp; Switch - PhotonUI Demo</title>
 
 
+        <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
+
         <!-- photonui-css -->
         <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/visual/label.css" />
@@ -124,6 +126,8 @@
         </header>
 
 
+        <script src="./highlightjs/highlight.pack.js"></script>
+
         <!-- photonui-javascript -->
         <script src="../photonui/../lib/classy.js"></script>
         <script src="../photonui/photonui.js"></script>
@@ -191,7 +195,10 @@
         <script>
             var code = document.getElementById("photonui-demo").text;
             code = code.replace(/^ {12}/gm, "");  // Remove HTML indentation
-            document.getElementById("code").appendChild(document.createTextNode(code));
+            var e_code = document.getElementById("code");
+            e_code.appendChild(document.createTextNode(code));
+            hljs.highlightBlock(e_code);
+            e_code.className = "";
         </script>
     </body>
 
