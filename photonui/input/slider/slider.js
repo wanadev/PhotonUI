@@ -63,6 +63,7 @@ photonui.Slider = photonui.NumericField.$extend({
         this._bindEvent("slider-keydown", this.__html.slider, "keydown", this.__onSliderKeyDown.bind(this));
         this._bindEvent("slider-mousewheel", this.__html.slider, "mousewheel", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("slider-mousewheel-firefox", this.__html.slider, "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
+        this._bindEvent("field-contextmenu", this.__html.field, "contextmenu", this.__onFieldContextMenu.bind(this));
     },
 
 
@@ -271,5 +272,29 @@ photonui.Slider = photonui.NumericField.$extend({
             event.stopPropagation();
         }
         this._callCallbacks("value-changed", [this.value]);
+    },
+
+    /**
+     * Called when the context menu should be displayed.
+     *
+     * @method __onContextMenu
+     * @private
+     * @param event
+     */
+    __onContextMenu: function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.contextMenuName) {
+            this.contextMenu.popupXY(event.pageX, event.pageY);
+        }
+    },
+
+    /**
+     * @method __onFieldContextMenu
+     * @private
+     * @param event
+     */
+    __onFieldContextMenu: function(event) {
+        event.stopPropagation();
     }
 });
