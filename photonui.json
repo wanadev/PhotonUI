@@ -223,5 +223,13 @@
         "themeCss": ["input/slider/slider-theme.css"],
         "assets": [],
         "dependencies": ["NumericField"]
+    },
+    "Canvas": {
+        "abstract": false,
+        "javascript": ["visual/canvas.js"],
+        "css": ["visual/canvas.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
     }
 }

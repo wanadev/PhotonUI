@@ -139,7 +139,7 @@ photonui.CheckBox = photonui.Widget.$extend({
 
 
     /**
-     * method __onChange
+     * @method __onChange
      * @private
      * @param event
      */
@@ -152,7 +152,7 @@ photonui.CheckBox = photonui.Widget.$extend({
     },
 
     /**
-     * method __onSpanClick
+     * @method __onSpanClick
      * @private
      * @param event
      */
@@ -163,7 +163,7 @@ photonui.CheckBox = photonui.Widget.$extend({
     },
 
     /**
-     * method __onCheckboxClick
+     * @method __onCheckboxClick
      * @private
      * @param event
      */
@@ -172,7 +172,7 @@ photonui.CheckBox = photonui.Widget.$extend({
     },
 
     /**
-     * method __onSpanKeyPress
+     * @method __onSpanKeyPress
      * @private
      * @param event
      */
