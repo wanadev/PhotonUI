@@ -60,6 +60,7 @@
     -ms-box-sizing: border-box;
     box-sizing: border-box;
 
+    position: relative;
     display: block;
     width: 15px;
     height: 100%;

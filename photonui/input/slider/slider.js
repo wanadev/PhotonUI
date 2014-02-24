@@ -54,6 +54,9 @@ photonui.Slider = photonui.NumericField.$extend({
     __init__: function(params) {
         this.$super(params);
 
+        this.inputId = this.name + "-field";
+        this.__html.field.id = this.inputId;
+
         this._updateProperties(["fieldVisible"]);
 
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
@@ -127,8 +130,8 @@ photonui.Slider = photonui.NumericField.$extend({
         var v = value - this.min;
         var m = this.max - this.min;
         var p = Math.min(Math.max(v/m, 0), 1);
-        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth - 3;
-        this.__html.grip.style.marginLeft = Math.floor(p*w) + "px";
+        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth - 4;
+        this.__html.grip.style.left = Math.floor(p*w) + 2 + "px";
     },
 
 

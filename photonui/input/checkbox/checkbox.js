@@ -138,6 +138,11 @@ photonui.CheckBox = photonui.Widget.$extend({
     //////////////////////////////////////////
 
 
+    /**
+     * method __onChange
+     * @private
+     * @param event
+     */
     __onChange: function(event) {
         this._callCallbacks("value-changed", [this.value]);
         // Focus the span if the real checkbox is hidden (happen when a label is clicked).
@@ -146,16 +151,31 @@ photonui.CheckBox = photonui.Widget.$extend({
         }
     },
 
+    /**
+     * method __onSpanClick
+     * @private
+     * @param event
+     */
     __onSpanClick: function(event) {
         this.value = !this.value;
         this._callCallbacks("value-changed", [this.value]);
         this._callCallbacks("click", [event]);
     },
 
+    /**
+     * method __onCheckboxClick
+     * @private
+     * @param event
+     */
     __onCheckboxClick: function(event) {
         this._callCallbacks("click", [event]);
     },
 
+    /**
+     * method __onSpanKeyPress
+     * @private
+     * @param event
+     */
     __onSpanKeypress: function(event) {
         if (event.charCode == 32 || event.keyCode == 13) {
             this.value = !this.value;
