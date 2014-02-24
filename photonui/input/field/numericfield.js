@@ -339,11 +339,11 @@ photonui.NumericField = photonui.Field.$extend({
         }
 
         if (wheelDelta != null) {
-            if (wheelDelta >= 0) {
-                this.setValue(this.getValue() + this.step);
+           if (wheelDelta >= 0) {
+                this.value += this.step;
             }
             else {
-                this.setValue(this.getValue() - this.step);
+                this.value -= this.step;
             }
             event.preventDefault();
         }

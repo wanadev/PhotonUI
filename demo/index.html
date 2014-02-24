@@ -5,6 +5,10 @@
         <meta charset="UTF-8" />
         <title>PhotonUI</title>
 
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/button/button-theme.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/visual/faicon-fontawesome.css" />
+
         <style>
             html, body {
                 margin: 0;
@@ -18,10 +22,6 @@
                 background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px
                 color: #000;
                 font-family: sans-serif;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
            }
 
            body {
@@ -107,6 +107,10 @@
             a:hover {
                 text-decoration: underline;
             }
+
+            article {
+                margin: 30px 20px -20px 20px;
+            }
         </style>
     </head>
 
@@ -115,6 +119,13 @@
             <h1>PhotonUI</h1>
         </header>
 
+        <article>
+            <p>PhotonUI - Javascript Web User Interface.</p>
+            <p>
+                <a href="https://github.com/wanadev/PhotonUI" class="photonui-button"><i class="fa fa-github"></i> GitHub</a>
+                <a href="https://github.com/wanadev/PhotonUI/archive/master.zip" class="photonui-button"><i class="fa fa-cloud-download"></i> Download</a>
+            </p>
+        </article>
 
         <h2>Container</h2>
 
@@ -263,6 +274,17 @@
             <ul>
                 <li><a href="./NumericField.html">Demo</a></li>
                 <li><a href="../doc/classes/photonui.NumericField.html">Documentation</a></li>
+            </ul>
+        </div>
+
+        <div class="widget">
+            <h3>Slider</h3>
+            <div class="preview">
+                <img src="./images/Slider.png" alt="" />
+            </div>
+            <ul>
+                <li><a href="./Slider.html">Demo</a></li>
+                <li><a href="../doc/classes/photonui.Slider.html">Documentation</a></li>
             </ul>
         </div>
 

@@ -215,5 +215,13 @@
         "themeCss": ["input/color/colorpalette-theme.css"],
         "assets": [],
         "dependencies": ["Core"]
+    },
+    "Slider": {
+        "abstract": false,
+        "javascript": ["input/slider/slider.js"],
+        "css": ["input/slider/slider.css"],
+        "themeCss": ["input/slider/slider-theme.css"],
+        "assets": [],
+        "dependencies": ["NumericField"]
     }
 }

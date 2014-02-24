@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>ColorButton - PhotonUI Demo</title>
+        <title>Silder - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
@@ -120,11 +120,67 @@
                 box-shadow: 0 0 10px rgba(0, 0, 0, .3);
             }
         </style>
+
+        <style>
+            .smiley {
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                border: #07656D solid 5px;
+                border-radius: 55px;
+                -webkit-transition: border-color 1s;
+                transition: border-color 1s;
+            }
+
+            .smiley > div {
+                border-bottom: inherit;
+                margin: 10px;
+                height: 70px;
+                border-radius: 40px;
+            }
+
+            .smiley > div > div {
+                float: left;
+                border: inherit;
+                -webkit-transform: rotate(180deg);
+                transform: rotate(180deg);
+                width: 25px;
+                height: 25px;
+                border-radius: 20px;
+                margin: 17px 5px;
+            }
+
+            .smiley > div > div + div {
+                float: right;
+            }
+
+            .smiley.sic {
+                border-color: #CE0E45;
+            }
+
+            .smiley.sic > div {
+                -webkit-transform: rotate(180deg);
+                transform: rotate(180deg);
+                margin-top: 50px;
+            }
+
+            .smiley.sic > div > div {
+                margin-top: 70px;
+                border-radius: 0;
+                -webkit-transform: rotate(15deg);
+                transform: rotate(15deg);
+            }
+
+            .smiley.sic > div > div + div {
+                -webkit-transform: rotate(-15deg);
+                transform: rotate(-15deg);
+            }
+        </style>
     </head>
 
     <body>
         <header>
-            <h1>PhotonUI Demo / ColorButton</h1>
+            <h1>PhotonUI Demo / Slider</h1>
         </header>
 
 
@@ -166,26 +222,39 @@
 
 
         <!-- Demo Script -->
-        <div id="widget-area" style="top: 240px; left: 52px"></div>
-        <div id="smiley" style="position: absolute; top: 100px; left: 40px; width: 100px; height: 100px; border: red solid 5px; border-radius: 55px">
-            <div style="border-bottom: inherit; margin: 10px; height: 70px; border-radius: 40px;">
-                <div style="float: left; border: inherit; -webkit-transform: rotate(180deg); transform: rotate(180deg); width: 25px; height: 25px; border-radius: 20px; margin: 17px 5px;"></div>
-                <div style="float: right; border: inherit; -webkit-transform: rotate(180deg); transform: rotate(180deg); width: 25px; height: 25px; border-radius: 20px; margin: 17px 5px;"></div>
+        <div id="widget-area"></div>
+        <div id="smiley" class="smiley" style="top: 180px; left: 40px;">
+            <div style="">
+                <div></div>
+                <div></div>
             </div>
         </div>
-        <script id="photonui-demo">
-            var btn = new photonui.ColorButton();
 
-            btn.registerCallback(
-                "smiley-color",
+        <script id="photonui-demo">
+            var slider = new photonui.Slider({
+                min: -360,
+                max: 360,
+                step: 20,
+                decimalDigits: 0
+            });
+
+            slider.registerCallback(
+                "rotate",
                 "value-changed",
-                function(widget, color) {
+                function (widget) {
                     var smiley = document.getElementById("smiley");
-                    smiley.style.borderColor = color;
+                    smiley.style.webkitTransform = "rotate(" + widget.value + "deg)";
+                    smiley.style.transform = "rotate(" + widget.value + "deg)";
+                    if (Math.abs(widget.value) > 90 && Math.abs(widget.value) < 270) {
+                        smiley.className = "smiley sic";
+                    }
+                    else {
+                        smiley.className = "smiley";
+                    }
                 }
             );
 
-            photonui.domInsert(btn, document.getElementById("widget-area"));
+            photonui.domInsert(slider, document.getElementById("widget-area"));
         </script>
         <!-- /Demo Script -->
 
