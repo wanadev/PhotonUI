@@ -81,6 +81,14 @@ var photonui = photonui || {};
  *      - description: Mouse move on the element.
  *      - callback:    function(manager, mstate)
  *
+ *   * scroll-up:
+ *      - description: Scroll up.
+ *      - callback:    function(manager, mstate)
+ *
+ *   * scroll-down:
+ *      - description: Scroll down.
+ *      - callback:    function(manager, mstate)
+ *
  *
  * mstate:
  *
@@ -115,7 +123,8 @@ photonui.MouseManager = photonui.Base.$extend({
         this.element = element;
         this._registerWEvents([
             "mouse-event", "mouse-down", "mouse-up", "click", "double-click",
-            "drag-start", "dragging", "drag-end", "mouse-move"
+            "drag-start", "dragging", "drag-end", "mouse-move", "scroll-up",
+            "scroll-down"
         ]);
     },
 
@@ -155,6 +164,24 @@ photonui.MouseManager = photonui.Base.$extend({
             this._element = null;
         }
         this._updateEvents();
+    },
+
+    /**
+     * Minimum distance for triggering a drag-start, and maximum distance
+     * to consider a mouse down/up as a click.
+     *
+     * @property threshold
+     * @type Number
+     * @default 5
+     */
+    _threshold: 5,
+
+    getThreshold: function() {
+        return this._threshold;
+    },
+
+    setThreshold: function(threshold) {
+        this._threshold = threshold;
     },
 
     /**
@@ -322,6 +349,15 @@ photonui.MouseManager = photonui.Base.$extend({
     __prevState: {},
 
     /**
+     * Js event on mouse down.
+     *
+     * @property __mouseDownEvent
+     * @private
+     * @type Object
+     */
+    __mouseDownEvent: {},
+
+    /**
      * Last event object.
      *
      * @property __event
@@ -357,6 +393,8 @@ photonui.MouseManager = photonui.Base.$extend({
         this._bindEvent("mouse-up", this.element, "mouseup", this.__onMouseUp.bind(this));
         this._bindEvent("double-click", this.element, "dblclick", this.__onDoubleClick.bind(this));
         this._bindEvent("mouse-move", this.element, "mousemove", this.__onMouseMove.bind(this));
+        this._bindEvent("mousewheel", this.element, "mousewheel", this.__onMouseWheel.bind(this));
+        this._bindEvent("mousewheel-firefox", this.element, "DOMMouseScroll", this.__onMouseWheel.bind(this));
 
         this._bindEvent("document-mouse-up", document, "mouseup", this.__onDocumentMouseUp.bind(this));
         this._bindEvent("document-mouse-move", document, "mousemove", this.__onDocumentMouseMove.bind(this));
@@ -410,6 +448,8 @@ photonui.MouseManager = photonui.Base.$extend({
 
         // Mouse Down / Mouse Up
         if (action == "mouse-down") {
+            this.__mouseDownEvent = event;
+
             if (event.button === 0) this._btnLeft = true;
             if (event.button === 1) this._btnMiddle = true;
             if (event.button === 2) this._btnRight = true;
@@ -432,7 +472,8 @@ photonui.MouseManager = photonui.Base.$extend({
         }
 
         // Click
-        if (action == "mouse-up" && this.__prevState.action == "mouse-down") {
+        if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold
+        || Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
             this._action = "click";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks("click", [this._dump()]);
@@ -452,21 +493,27 @@ photonui.MouseManager = photonui.Base.$extend({
         }
 
         // Drag Start
-        if (action == "mouse-move" && this.__prevState.action == "mouse-down" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
-            // Drag Start
-            this._action = "drag-start";
-            this.__event = this.__prevState.event;
-            this._callCallbacks("mouse-event", [this._dump()]);
-            this._callCallbacks(this.action, [this._dump()]);
-            // Dragging
-            this._action = "dragging";
-            this.__event = event;
-            this._callCallbacks("mouse-event", [this._dump()]);
-            this._callCallbacks(this.action, [this._dump()]);
+        if (action == "mouse-move" && this.__prevState.action != "drag-start"
+        && this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
+            if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold
+            || Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
+                // Drag Start
+                this._action = "drag-start";
+                this.__event = this.__mouseDownEvent;
+                this._callCallbacks("mouse-event", [this._dump()]);
+                this._callCallbacks(this.action, [this._dump()]);
+                // Dragging
+                this._action = "dragging";
+                this.__prevState.event = this.__mouseDownEvent;
+                this.__event = event;
+                this._callCallbacks("mouse-event", [this._dump()]);
+                this._callCallbacks(this.action, [this._dump()]);
+            }
         }
 
         // Dragging
-        else if (action == "dragging" || (action == "mouse-move" && (this.btnLeft || this.btnMiddle || this.btnRight))) {
+        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start"
+        || this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "dragging";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
@@ -476,6 +523,12 @@ photonui.MouseManager = photonui.Base.$extend({
         else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging"
         || this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
+            this._callCallbacks("mouse-event", [this._dump()]);
+            this._callCallbacks(this.action, [this._dump()]);
+        }
+
+        // Scroll Up / Scroll Down
+        if (action == "scroll-up" || action == "scroll-down") {
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         }
@@ -546,6 +599,39 @@ photonui.MouseManager = photonui.Base.$extend({
     __onDocumentMouseMove: function(event) {
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("dragging", event);
+        }
+    },
+
+    /**
+     * @method __onMouseWheel
+     * @private
+     * @param event
+     */
+    __onMouseWheel: function(event) {
+        var wheelDelta = null;
+
+        // Webkit
+        if (event.wheelDeltaY != undefined) {
+            wheelDelta = event.wheelDeltaY;
+        }
+        // MSIE
+        if (event.wheelDelta != undefined) {
+            wheelDelta = event.wheelDelta;
+        }
+        // Firefox
+        if (event.axis != undefined && event.detail != undefined) {
+            if (event.axis == 2) { // Y
+                wheelDelta = - event.detail;
+            }
+        }
+
+        if (wheelDelta != null) {
+            if (wheelDelta >= 0) {
+                this._stateMachine("scroll-up", event);
+            }
+            else {
+                this._stateMachine("scroll-down", event);
+            }
         }
     }
 });
