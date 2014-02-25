@@ -15,6 +15,14 @@
         "assets": [],
         "dependencies": ["lib"]
     },
+    "MouseManager": {
+        "abstract": false,
+        "javascript": ["event/mousemanager.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
+    },
     "Container": {
         "abstract": true,
         "javascript": ["container/container.js"],

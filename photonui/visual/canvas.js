@@ -233,6 +233,17 @@ photonui.Canvas = photonui.Widget.$extend({
         return this.__html.outer;
     },
 
+    /**
+     * The interactive HTML element (for event managers).
+     *
+     * @property interactiveNode
+     * @type HTMLElement
+     * @readOnly
+     */
+    getInteractiveNode: function() {
+        return this.__html.canvas;
+    },
+
 
     //////////////////////////////////////////
     // Methods                              //

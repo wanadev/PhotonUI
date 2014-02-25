@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>PopupMenu - PhotonUI Demo</title>
+        <title>MouseManager - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
@@ -125,7 +125,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / PopupMenu</h1>
+            <h1>PhotonUI Demo / MouseManager</h1>
         </header>
 
 
@@ -172,46 +172,91 @@
         <!-- Demo Script -->
         <div id="widget-area"></div>
         <script id="photonui-demo">
-            var menu = new photonui.PopupMenu();
+            // --- UI ---
 
-            menu.children = [
-                new photonui.MenuItem({
-                    "text": "Copy",
-                    icon: new photonui.FAIcon("fa-copy")
-                }),
-                new photonui.MenuItem({
-                    "text": "Cut",
-                    icon: new photonui.FAIcon("fa-cut")
-                }),
-                new photonui.MenuItem({
-                    "text": "Paste",
-                    icon: new photonui.FAIcon("fa-paste")
-                }),
-                new photonui.Separator(),
-                new photonui.MenuItem({
-                    "text": "Edit",
-                    icon: new photonui.FAIcon("fa-pencil")
-                }),
-                new photonui.MenuItem({
-                    "text": "Delete",
-                    icon: new photonui.FAIcon("fa-trash-o")
-                }),
-            ];
+            var grid = new photonui.GridLayout();
+            var eventLabel = new photonui.Label({text: "Event: -"});
+            var positionLabel = new photonui.Label({text: "Position: (0, 0)", textAlign: "right"});
+            var canvas = new photonui.Canvas({width: 400, height: 300});
 
-            // Button
-            var btn = new photonui.Button({
-                text: "Click Me",
-                rightIcon: new photonui.FAIcon("fa-caret-down")
-            })
-            btn.registerCallback("click", "click", menu.popupWidget, menu)
+            grid.addChild(eventLabel, {gridX: 0, gridY: 0});
+            grid.addChild(positionLabel, {gridX: 1, gridY: 0});
+            grid.addChild(canvas, {gridX: 0, gridY: 1, gridWidth: 2});
 
-            // Attache the menu to the document too
-            document.addEventListener("contextmenu", function(event) {
-                menu.popupXY(event.pageX, event.pageY);
-                event.preventDefault();
-            }, false);
+            photonui.domInsert(grid, document.getElementById("widget-area"));
 
-            photonui.domInsert(btn, document.getElementById("widget-area"));
+
+            // --- Mouse Manager ---
+
+            var mouse = new photonui.MouseManager(canvas);
+            var x = 0;
+            var y = 0;
+
+            // Update the event name and mouse position for each event
+            mouse.registerCallback("any-event", "mouse-event", function(manager, mstate) {
+                mstate.action == "mouse-move" || (eventLabel.text = "Event: " + mstate.action);
+                positionLabel.text = "Position: (" + mstate.x + ", " + mstate.y + ")";
+
+                // Uncomment to display the complete log on the console
+                // mstate.action == "mouse-move" || console.log(mstate.action);
+            });
+
+            // Click
+            mouse.registerCallback("click", "click", function(manager, mstate) {
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#07656D";
+
+                ctx.beginPath();
+                ctx.arc(mstate.x, mstate.y, 10, 0, 2*Math.PI);
+                ctx.stroke();
+            });
+
+            // Double Click
+            mouse.registerCallback("double-click", "double-click", function(manager, mstate) {
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#6D072C";
+
+                ctx.beginPath();
+                ctx.arc(mstate.x, mstate.y, 10, 0, 2*Math.PI);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(mstate.x, mstate.y, 15, 0, 2*Math.PI);
+                ctx.stroke();
+            });
+
+            // Drag Start
+            mouse.registerCallback("drag-start", "drag-start", function(manager, mstate) {
+                x = mstate.x;
+                y = mstate.y;
+            });
+
+            // Dragging
+            mouse.registerCallback("dragging", "dragging", function(manager, mstate) {
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#07656D";
+
+                ctx.strokeRect(x, y, mstate.x-x, mstate.y-y);
+            });
+
+            // Drag End
+            mouse.registerCallback("drag-end", "drag-end", function(manager, mstate) {
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#07656D";
+                ctx.fillStyle = "rgba(7, 101, 109, 0.2)";
+
+                ctx.fillRect(x, y, mstate.x-x, mstate.y-y);
+                ctx.strokeRect(x, y, mstate.x-x, mstate.y-y);
+            });
+
         </script>
         <!-- /Demo Script -->
 
