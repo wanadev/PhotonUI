@@ -38,21 +38,23 @@
 
 
 var photonui = photonui || {};
+var _windowList = [];
 
 
 /**
- * Base class for layout.
+ * Dialog Window.
  *
- * @class Layout
+ * @class Dialog
  * @constructor
- * @extends photonui.Container
+ * @extends photonui.Window
  */
-photonui.Layout = photonui.Container.$extend({
+photonui.Dialog = photonui.Window.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._childrenNames = [];  // new instance
+        this._buttonsNames = [];
         this.$super(params);
+        // TODO
     },
 
 
@@ -65,66 +67,46 @@ photonui.Layout = photonui.Container.$extend({
 
 
     /**
-     * Layout children widgets name.
+     * Dialog button widgets name.
      *
-     * @property childrenNames
+     * @property buttonsNames
      * @type Array
      * @default []
      */
-    _childrenNames: [],
+    _buttonsNames: [],
 
-    getChildrenNames: function() {
-        return this._childrenNames;
+    getButtonsNames: function() {
+        return this._buttonsNames;
     },
 
-    setChildrenNames: function(childrenNames) {
-        this._childrenNames = childrenNames;
-        this._updateLayout();
+    setButtonsNames: function(buttonsNames) {
+        this._buttonsNames = buttonsNames;
+        this._updateButtons();
     },
 
     /**
-     * Layout children widgets.
+     * Dialog buttons widgets.
      *
-     * @property children
+     * @property buttons
      * @type Array
      * @default []
      */
-    getChildren: function() {
-        var children = [];
-        for (var i=0 ; i<this._childrenNames.length ; i++) {
-            children.push(photonui.getWidget(this._childrenNames[i]));
+    getButtons: function() {
+        var buttons = [];
+        for (var i=0 ; i<this._buttonsNames.length ; i++) {
+            buttons.push(photonui.getWidget(this._buttonsNames[i]));
         }
-        return children;
+        return buttons;
     },
 
-    setChildren: function(children) {
-        var childrenNames = [];
-        for (var i=0 ; i<children.length ; i++) {
-            if (children[i] instanceof photonui.Widget) {
-                childrenNames.push(children[i].name);
+    setButtons: function(buttons) {
+        var buttonsNames = [];
+        for (var i=0 ; i<buttons.length ; i++) {
+            if (buttons[i] instanceof photonui.Widget) {
+                buttonsNames.push(buttons[i].name);
             }
         }
-        this.childrenNames = childrenNames;
-    },
-
-    // Override getChildName / setChildName / getChild / setChild
-
-    getChildName: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
-        return null;
-    },
-
-    setChildName: function(childName) {
-        this.childrenNames = [childName];
-    },
-
-    getChild: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
-        return null;
-    },
-
-    setChild: function(child) {
-        this.children = [child];
+        this.buttonsNames = buttonsNames;
     },
 
 
@@ -137,45 +119,28 @@ photonui.Layout = photonui.Container.$extend({
 
 
     /**
-     * Add a widget to the layout.
+     * Add a button to the dialog.
      *
-     * @method addChild
-     * @param {photonui.Widget} widget The widget to add.
-     * @param {Object} layoutOption Specific option for the layout (optional).
+     * @method addButton
+     * @param {photonui.Widget} widget The button to add.
      */
-    addChild: function(widget, layoutOptions) {
-        if (layoutOptions) {
-            widget.layoutOptions = layoutOptions;
-        }
+    addButton: function(widget) {
         this._childrenNames.push(widget.name);
-        this._updateLayout();
+        this._updateButtons();
     },
 
     /**
-     * Remove a widget from the layout.
+     * Remove a button from the dialog.
      *
-     * @method removeChild
-     * @param {photonui.Widget} widget The widget to remove.
+     * @method removeButton
+     * @param {photonui.Widget} widget The button to remove.
      */
-    removeChild: function(widget) {
-        var index = this._childrenNames.indexOf(widget.name);
+    removeButton: function(widget) {
+        var index = this._buttonsNames.indexOf(widget.name);
         if (index >= 0) {
-            this._childrenNames.splice(widget.name, 1);
+            this._buttonsNames.splice(widget.name, 1);
         }
-        this._updateLayout();
-    },
-
-    /**
-     * Destroy the widget.
-     *
-     * @method destroy
-     */
-    destroy: function() {
-        var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
-            children[i].destroy();
-        }
-        this.$super();
+        this._updateButtons();
     },
 
 
@@ -183,12 +148,31 @@ photonui.Layout = photonui.Container.$extend({
 
 
     /**
-     * Update the layout.
+     * Update dialog buttons.
      *
-     * @method _updateLayout
+     * @method _updateButtons
      * @private
      */
-    _updateLayout: function() {
-        throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+    _updateButtons: function() {
+        photonui.Helpers.cleanNode(this.__html.buttons);
+        var buttons = this.buttons;
+        for (var i=buttons.length-1 ; i>=0 ; i--) {
+            this.__html.buttons.appendChild(buttons[i].html);
+        }
+    },
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.addClass("photonui-dialog");
+
+        this.__html.buttons = document.createElement("div");
+        this.__html.buttons.className = "photonui-dialog-buttons";
+        this.__html["window"].appendChild(this.__html.buttons);
     }
 });

@@ -47,6 +47,14 @@
         "assets": [],
         "dependencies": ["BaseWindow"]
     },
+    "Dialog": {
+        "abstract": false,
+        "javascript": ["container/window/dialog.js"],
+        "css": ["container/window/dialog.css"],
+        "themeCss": ["container/window/dialog-theme.css"],
+        "assets": [],
+        "dependencies": ["Window"]
+    },
     "PopupWindow": {
         "abstract": false,
         "javascript": ["container/window/popupwindow.js"],

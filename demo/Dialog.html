@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>TextField &amp; TextAreaField - PhotonUI Demo</title>
+        <title>Window - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
@@ -127,7 +127,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / TextField &amp; TextAreaField</h1>
+            <h1>PhotonUI Demo / Window</h1>
         </header>
 
 
@@ -173,49 +173,44 @@
 
 
         <!-- Demo Script -->
-        <div id="widget-area"></div>
         <script id="photonui-demo">
-            var grid = new photonui.GridLayout();
+            // Create the Dialog
+            var dlg = new photonui.Dialog({
+                title: "My Dialog",
+                x: 50, y: 100,
+                visible: true,
+                padding: 20,
+                child: new photonui.Label({
+                    name: "label",
+                    text: "Hello, I'm a dialog window!"
+                }),
+                buttons: [
+                    new photonui.Button({name: "btn-ok", text: "Ok"}),
+                    new photonui.Button({name: "btn-notok", text: "You lie!"})
+                ]
+            });
 
-            // Text Field
-            var textField = new photonui.TextField({
-                placeholder: "Some text here..."
-            });
-            var label1 = new photonui.Label({
-                text: "Text Field:",
-                forInput: textField
-            });
-            grid.addChild(label1, {gridX: 0, gridY: 0});
-            grid.addChild(textField, {gridX: 1, gridY: 0});
-
-            // Password Field
-            var passwordField = new photonui.TextField({
-                type: "password",
-                value: "passw0rd"
-            });
-            var label2 = new photonui.Label({
-                text: "Password:",
-                forInput: passwordField
-            });
-            grid.addChild(label2, {gridX: 0, gridY: 1});
-            grid.addChild(passwordField, {gridX: 1, gridY: 1});
-
-            // Separator
-            grid.addChild(
-                new photonui.Separator(),
-                {gridX: 0, gridY: 2, gridWidth: 2}
+            // Buttons events
+            photonui.getWidget("btn-ok").registerCallback(
+                "click",           // Event id
+                "click",           // wEvent
+                function(widget) { // Callback
+                    var label = photonui.getWidget("label");
+                    label.text = "Cool :)";
+                }
             );
 
-            // Text Area
-            var textArea = new photonui.TextAreaField();
-            var label3 = new photonui.Label({
-                text: "Text Area:",
-                forInput: textArea
-            });
-            grid.addChild(label3, {gridX: 0, gridY: 3});
-            grid.addChild(textArea, {gridX: 1, gridY: 3});
+            photonui.getWidget("btn-notok").registerCallback(
+                "click",           // Event id
+                "click",           // wEvent
+                function(widget) { // Callback
+                    var label = photonui.getWidget("label");
+                    label.text = "Hello, I'm a dialog window, TRUST ME!";
+                }
+            );
 
-            photonui.domInsert(grid, document.getElementById("widget-area"));
+            // Close the dialog
+            dlg.registerCallback("close", "close-button-clicked", dlg.destroy, dlg);
         </script>
         <!-- /Demo Script -->
 
