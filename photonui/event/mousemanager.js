@@ -240,7 +240,7 @@ photonui.MouseManager = photonui.Base.$extend({
      * @type Number
      */
     getDeltaX: function() {
-        return this.pageX - (this.__prevState.pageX !== undefined) ? this.__prevState.pageX : this.pageX;
+        return this.pageX - ((this.__prevState.pageX !== undefined) ? this.__prevState.pageX : this.pageX);
     },
 
     /**
@@ -251,7 +251,7 @@ photonui.MouseManager = photonui.Base.$extend({
      * @type Number
      */
     getDeltaY: function() {
-        return this.pageY - (this.__prevState.pageY !== undefined) ? this.__prevState.pageY : this.pageY;
+        return this.pageY - ((this.__prevState.pageY !== undefined) ? this.__prevState.pageY : this.pageY);
     },
 
     /**
