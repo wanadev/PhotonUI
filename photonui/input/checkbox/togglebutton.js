@@ -41,7 +41,7 @@ var photonui = photonui || {};
 
 
 /**
- * Switch.
+ * Toogle Button.
  *
  * @class ToggleButton
  * @constructor

@@ -152,7 +152,7 @@ photonui.SpriteSheet = photonui.Base.$extend({
      *
      *     {
      *          "iconName": [x, y],
-     *          "icon2: [x2, y2],
+     *          "icon2": [x2, y2],
      *          ...
      *     }
      *
@@ -234,6 +234,11 @@ photonui.SpriteSheet = photonui.Base.$extend({
 
 /**
  * Sprite sheet based icons.
+ *
+ * Special contructor params:
+ *
+ *      new photonui.SpriteIcon( {optional params...} )
+ *      new photonui.SpriteIcon( "spriteSheetName/iconName", {optional params...} )
  *
  * @class SpriteIcon
  * @constructor
