@@ -29,6 +29,15 @@
  */
 
 
+.photonui-togglebutton {
+    display: inline-block;
+}
+
 .photonui-togglebutton input {
     display: none;
+}
+
+.photonui-togglebutton button {
+    width: 100%;
+    height: 100%;
 }
