@@ -173,6 +173,29 @@ photonui.Widget = photonui.Base.$extend({
     },
 
     /**
+     * Tooltip.
+     *
+     * @property tooltip.
+     * @type String
+     * @default null
+     */
+    _tooltip: null,
+
+    getTooltip: function() {
+        return this._tooltip;
+    },
+
+    setTooltip: function(tooltip) {
+        this._tooltip = tooltip;
+        if (tooltip) {
+            this.html.title = tooltip;
+        }
+        else {
+            delete this.html.removeAttribute("title");
+        }
+    },
+
+    /**
      * The name of the managed contextual menu (`photonui.PopupWindow().name`).
      *
      * @property contextMenuName

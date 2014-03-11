@@ -156,7 +156,7 @@ photonui.SpriteSheet = photonui.Base.$extend({
      *          ...
      *     }
      *
-     * @propertie icons
+     * @property icons
      * @type Object
      * @default: {}
      */
