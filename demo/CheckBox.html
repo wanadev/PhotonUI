@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>CheckBox &amp; Switch - PhotonUI Demo</title>
+        <title>CheckBox, Switch &amp; ToggleButton - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
@@ -31,6 +31,7 @@
         <link type="text/css" rel="stylesheet" href="../photonui/input/button/button.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menu.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/container/menu/menuitem.css" />
+        <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/togglebutton.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/composite/popupmenu.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/input/button/colorbutton.css" />
         <link type="text/css" rel="stylesheet" href="../photonui/input/checkbox/checkbox-theme.css" />
@@ -128,7 +129,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / CheckBox &amp; Switch</h1>
+            <h1>PhotonUI Demo / CheckBox, Switch &amp; ToggleButton</h1>
         </header>
 
 
@@ -169,6 +170,7 @@
         <script src="../photonui/container/menu/menu.js"></script>
         <script src="../photonui/container/menu/menuitem.js"></script>
         <script src="../photonui/container/menu/submenuitem.js"></script>
+        <script src="../photonui/input/checkbox/togglebutton.js"></script>
         <script src="../photonui/composite/popupmenu.js"></script>
         <script src="../photonui/input/button/colorbutton.js"></script>
         <!-- /photonui-javascript -->
@@ -196,6 +198,18 @@
             });
             grid.addChild(label2, {gridX: 0, gridY: 1});
             grid.addChild(sw, {gridX: 1, gridY: 1});
+
+            // ToggleButton
+            var toggle = new photonui.ToggleButton({
+                text: "Toggle",
+                value: true
+            });
+            var label3 = new photonui.Label({
+                text: "ToggleButton:",
+                forInput: toggle
+            });
+            grid.addChild(label3, {gridX: 0, gridY: 2});
+            grid.addChild(toggle, {gridX: 1, gridY: 2});
 
             photonui.domInsert(grid, document.getElementById("widget-area"));
         </script>

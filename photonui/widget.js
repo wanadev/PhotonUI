@@ -175,7 +175,7 @@ photonui.Widget = photonui.Base.$extend({
     /**
      * Tooltip.
      *
-     * @property tooltip.
+     * @property tooltip
      * @type String
      * @default null
      */

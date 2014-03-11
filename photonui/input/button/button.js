@@ -322,3 +322,36 @@ photonui.Button = photonui.Widget.$extend({
         this._callCallbacks("click", [event]);
     }
 });
+
+
+// Button mixin for ToggleButton
+var _buttonMixin = {
+    // Properties
+    _text:               photonui.Button.prototype._text,
+    getText:             photonui.Button.prototype.getText,
+    setText:             photonui.Button.prototype.setText,
+    _textVisible:        photonui.Button.prototype._textVisible,
+    isTextVisible:       photonui.Button.prototype.isTextVisible,
+    setTextVisible:      photonui.Button.prototype.setTextVisible,
+    _leftIconName:       photonui.Button.prototype._leftIconName,
+    getLeftIconName:     photonui.Button.prototype.getLeftIconName,
+    setLeftIconName:     photonui.Button.prototype.setLeftIconName,
+    getLeftIcon:         photonui.Button.prototype.getLeftIcon,
+    setLeftIcon:         photonui.Button.prototype.setLeftIcon,
+    _leftIconVisible:    photonui.Button.prototype._leftIconVisible,
+    isLeftIconVisible:   photonui.Button.prototype.isLeftIconVisible,
+    setLeftIconVisible:  photonui.Button.prototype.setLeftIconVisible,
+    _rightIconName:      photonui.Button.prototype._rightIconName,
+    getRightIconName:    photonui.Button.prototype.getRightIconName,
+    setRightIconName:    photonui.Button.prototype.setRightIconName,
+    getRightIcon:        photonui.Button.prototype.getRightIcon,
+    setRightIcon:        photonui.Button.prototype.setRightIcon,
+    _rightIconVisible:   photonui.Button.prototype._rightIconVisible,
+    isRightIconVisible:  photonui.Button.prototype.isRightIconVisible,
+    setRightIconVisible: photonui.Button.prototype.setRightIconVisible,
+    // Private methods
+    _update:             photonui.Button.prototype._update,
+    _buildButtonHtml:    photonui.Button.prototype._buildHtml,
+    // Internal Events Callbacks
+    __onButtonClicked:   photonui.Button.prototype.__onButtonClicked
+};

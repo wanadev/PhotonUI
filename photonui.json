@@ -159,6 +159,14 @@
         "assets": [],
         "dependencies": ["CheckBox"]
     },
+    "ToggleButton": {
+        "abstract": false,
+        "javascript": ["input/checkbox/togglebutton.js"],
+        "css": ["input/checkbox/togglebutton.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["CheckBox", "Button"]
+    },
     "Label": {
         "abstract": false,
         "javascript": ["visual/label.js"],
