@@ -204,6 +204,14 @@
         ],
         "dependencies": ["BaseIcon"]
     },
+    "SpriteIcon": {
+        "abstract": false,
+        "javascript": ["visual/spriteicon.js"],
+        "css": ["visual/spriteicon.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["BaseIcon"]
+    },
     "Menu": {
         "abstract": false,
         "javascript": [

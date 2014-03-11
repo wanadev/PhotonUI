@@ -29,18 +29,16 @@
  */
 
 
-.photonui-button {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    text-align: center;
+.photonui-spriteicon {
 }
 
-.photonui-button > span {
-    display: inline !important;
-}
+.photonui-spriteicon > span {
+    font-size: 1px;
+    line-height: inherit;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
 
-.photonui-button span + span {
-    margin-left: 5px;
+    background: gray;
 }

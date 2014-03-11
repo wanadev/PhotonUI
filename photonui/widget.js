@@ -52,7 +52,7 @@ photonui.getWidget = function(name) {
     if (_widgets[name] !== undefined) {
         return _widgets[name];
     }
-    return null
+    return null;
 }
 
 

@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Silder - PhotonUI Demo</title>
+        <title>SpriteIcon - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
@@ -124,67 +124,11 @@
                 box-shadow: 0 0 10px rgba(0, 0, 0, .3);
             }
         </style>
-
-        <style>
-            .smiley {
-                position: absolute;
-                width: 100px;
-                height: 100px;
-                border: #07656D solid 5px;
-                border-radius: 55px;
-                -webkit-transition: border-color 1s;
-                transition: border-color 1s;
-            }
-
-            .smiley > div {
-                border-bottom: inherit;
-                margin: 10px;
-                height: 70px;
-                border-radius: 40px;
-            }
-
-            .smiley > div > div {
-                float: left;
-                border: inherit;
-                -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
-                width: 25px;
-                height: 25px;
-                border-radius: 20px;
-                margin: 17px 5px;
-            }
-
-            .smiley > div > div + div {
-                float: right;
-            }
-
-            .smiley.sic {
-                border-color: #CE0E45;
-            }
-
-            .smiley.sic > div {
-                -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
-                margin-top: 50px;
-            }
-
-            .smiley.sic > div > div {
-                margin-top: 70px;
-                border-radius: 0;
-                -webkit-transform: rotate(15deg);
-                transform: rotate(15deg);
-            }
-
-            .smiley.sic > div > div + div {
-                -webkit-transform: rotate(-15deg);
-                transform: rotate(-15deg);
-            }
-        </style>
     </head>
 
     <body>
         <header>
-            <h1>PhotonUI Demo / Slider</h1>
+            <h1>PhotonUI Demo / SpriteIcon</h1>
         </header>
 
 
@@ -232,39 +176,50 @@
 
         <!-- Demo Script -->
         <div id="widget-area"></div>
-        <div id="smiley" class="smiley" style="top: 180px; left: 40px;">
-            <div style="">
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-
         <script id="photonui-demo">
-            var slider = new photonui.Slider({
-                min: -360,
-                max: 360,
-                step: 20,
-                decimalDigits: 0
+            // Create the sprite sheet
+            var spriteSheet = new photonui.SpriteSheet({
+                name: "default",
+                imageUrl: "./images/sprites.png",
+                size: 16,
+                icons: {
+                    "remove":    [ 0,  0],
+                    "add":       [16,  0],
+                    "grayHeart": [32,  0],
+                    "redHeart":  [48,  0],
+                    "battery1":  [ 0, 16],
+                    "battery2":  [16, 16],
+                    "battery3":  [32, 16],
+                    "battery4":  [48, 16]
+                }
             });
 
-            slider.registerCallback(
-                "rotate",
-                "value-changed",
-                function (widget) {
-                    var smiley = document.getElementById("smiley");
-                    smiley.style.webkitTransform = "rotate(" + widget.value + "deg)";
-                    smiley.style.transform = "rotate(" + widget.value + "deg)";
-                    if (Math.abs(widget.value) > 90 && Math.abs(widget.value) < 270) {
-                        smiley.className = "smiley sic";
-                    }
-                    else {
-                        smiley.className = "smiley";
-                    }
-                }
-            );
+            // Use a SpriteIcon in a Button
+            var btn = new photonui.Button({
+                text: "Sprite Icon",
+                leftIcon: new photonui.SpriteIcon("default/add")
+            });
 
-            photonui.domInsert(slider, document.getElementById("widget-area"));
+            btn.registerCallback("change-icon", "click", function(widget) {
+                switchIcon();
+            });
+
+            // Switch icon
+            var index = 1;
+
+            function switchIcon() {
+                btn.leftIcon.iconName = "battery" + index;
+                index += 1;
+                if (index > 4) index = 1;
+                setTimeout(switchIcon, 1000);
+            }
+
+            photonui.domInsert(btn, document.getElementById("widget-area"));
         </script>
+        <p style="position: absolute; left: 40px; top: 150px; color: gray;">
+            Sprite Sheet:<br />
+            <img src="./images/sprites.png" alt="Sprite Sheet" />
+        </p>
         <!-- /Demo Script -->
 
 
