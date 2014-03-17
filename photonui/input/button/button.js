@@ -232,6 +232,33 @@ photonui.Button = photonui.Widget.$extend({
     },
 
     /**
+     * Define the button appearance.
+     *
+     *   * `normal`
+     *   * `flat`
+     *
+     * @property appearance
+     * @type String
+     * @default "normal"
+     */
+    _appearance: "normal",
+
+    getAppearance: function() {
+        return this._appearance;
+    },
+
+    setAppearance: function(appearance) {
+        this._appearance = appearance;
+
+        if (appearance == "flat") {
+            this.addClass("photonui-button-appearance-flat");
+        }
+        else {
+            this.removeClass("photonui-button-appearance-flat");
+        }
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -349,6 +376,9 @@ var _buttonMixin = {
     _rightIconVisible:   photonui.Button.prototype._rightIconVisible,
     isRightIconVisible:  photonui.Button.prototype.isRightIconVisible,
     setRightIconVisible: photonui.Button.prototype.setRightIconVisible,
+    _appearance:         photonui.Button.prototype._appearance,
+    getAppearance:       photonui.Button.prototype.getAppearance,
+    setAppearance:       photonui.Button.prototype.setAppearance,
     // Private methods
     _update:             photonui.Button.prototype._update,
     _buildButtonHtml:    photonui.Button.prototype._buildHtml,

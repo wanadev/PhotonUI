@@ -82,3 +82,68 @@ input:checked + .photonui-button {
 .photonui-button:focus:active {
     box-shadow: inset 2px 1px 7px rgba(0, 0, 0, .1);
 }
+
+
+/**
+ * Flat button
+ */
+
+.photonui-button.photonui-button-appearance-flat,
+.photonui-button-appearance-flat .photonui-button {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    transition: border-color 0, box-shadow .1s;
+}
+
+.photonui-button.photonui-button-appearance-flat:focus,
+.photonui-button-appearance-flat .photonui-button:focus {
+    outline: #ccc dashed 1px;
+}
+
+.photonui-button.photonui-button-appearance-flat:hover,
+.photonui-button-appearance-flat .photonui-button:hover {
+    outline: none;
+    border-color: #a5a5a5;
+
+    padding: 0 10px;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 2px;
+    text-decoration: none !important;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    outline: none;
+    vertical-align: middle;
+    line-height: 2em;
+    transition: border-color .1s, box-shadow .1s;
+
+    /** color **/
+    background: #eeeeee; /* Old browsers */
+    background: -moz-linear-gradient(top, #eeeeee 0%, #cccccc 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#cccccc)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #eeeeee 0%,#cccccc 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #eeeeee 0%,#cccccc 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #eeeeee 0%,#cccccc 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #eeeeee 0%,#cccccc 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
+}
+
+.photonui-button.photonui-button-appearance-flat:active,
+.photonui-button-appearance-flat .photonui-button:active,
+input:checked + .photonui-button,
+.photonui-button-appearance-flat input:checked + .photonui-button {
+    outline: none;
+    border-color: #a5a5a5;
+
+    background: #cccccc; /* Old browsers */
+    background: -moz-linear-gradient(top, #cccccc 0%, #eeeeee 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cccccc), color-stop(100%,#eeeeee)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #cccccc 0%,#eeeeee 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #cccccc 0%,#eeeeee 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #cccccc 0%,#eeeeee 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #cccccc 0%,#eeeeee 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
+}
