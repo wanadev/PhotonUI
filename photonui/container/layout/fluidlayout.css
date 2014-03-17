@@ -28,17 +28,11 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-.photonui-separator hr {
-    width: 0;
-    height: 0;
-    margin: auto;
+
+.photonui-fluidlayout {
 }
 
-.photonui-separator.photonui-separator-horizontal hr {
-    width: 100%;
-}
-
-.photonui-separator.photonui-separator-vertical hr {
-    height: 100%;
-    min-height: 20px;
+.photonui-fluidlayout > .photonui-container {
+    display: inline-block;
+    vertical-align: middle;
 }

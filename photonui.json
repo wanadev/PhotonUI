@@ -71,6 +71,14 @@
         "assets": [],
         "dependencies": ["Container"]
     },
+    "FluidLayout": {
+        "abstract": false,
+        "javascript": ["container/layout/fluidlayout.js"],
+        "css": ["container/layout/fluidlayout.css"],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Layout"]
+    },
     "GridLayout": {
         "abstract": false,
         "javascript": ["container/layout/gridlayout.js"],

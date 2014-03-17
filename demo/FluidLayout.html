@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>PhotonUI Demo</title>
+        <title>FluidLayout - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
@@ -130,7 +130,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo</h1>
+            <h1>PhotonUI Demo / FluidLayout</h1>
         </header>
 
 
@@ -181,7 +181,39 @@
         <!-- Demo Script -->
         <div id="widget-area"></div>
         <script id="photonui-demo">
-            // Demo script goes here
+            var fl = new photonui.FluidLayout({
+                children: [
+                    new photonui.Button({
+                        appearance: "flat",
+                        leftIcon: new photonui.FAIcon("fa-folder-open-o"),
+                        textVisible: false
+                    }),
+                    new photonui.Button({
+                        appearance: "flat",
+                        leftIcon: new photonui.FAIcon("fa-save"),
+                        textVisible: false
+                    }),
+                    new photonui.Separator({orientation: "vertical"}),
+                    new photonui.ToggleButton({
+                        appearance: "flat",
+                        leftIcon: new photonui.FAIcon("fa-bold"),
+                        textVisible: false,
+                        value: true
+                    }),
+                    new photonui.ToggleButton({
+                        appearance: "flat",
+                        leftIcon: new photonui.FAIcon("fa-italic"),
+                        textVisible: false
+                    }),
+                    new photonui.ToggleButton({
+                        appearance: "flat",
+                        leftIcon: new photonui.FAIcon("fa-underline"),
+                        textVisible: false
+                    }),
+                ]
+            });
+
+            photonui.domInsert(fl, document.getElementById("widget-area"));
         </script>
         <!-- /Demo Script -->
 

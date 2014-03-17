@@ -30,7 +30,8 @@
 
 
 .photonui-button {
-    padding: 0 10px;
+    padding: 0 8px;
+    min-width: 32px;
     display: inline-block;
     cursor: pointer;
     border-radius: 2px;
@@ -106,7 +107,7 @@ input:checked + .photonui-button {
     outline: none;
     border-color: #a5a5a5;
 
-    padding: 0 10px;
+    padding: 0 8px;
     display: inline-block;
     cursor: pointer;
     border-radius: 2px;
