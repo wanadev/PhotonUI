@@ -246,7 +246,7 @@ photonui.Base = Class.$extend({
     /**
      * Register available wEvent.
      *
-     * @method _registerWidgetEvents
+     * @method _registerWEvents
      * @private
      * @param {Array} wEvents
      */

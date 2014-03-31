@@ -23,6 +23,14 @@
         "assets": [],
         "dependencies": ["Core"]
     },
+    "FileManager": {
+        "abstract": false,
+        "javascript": ["misc/filemanager.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
+    },
     "Container": {
         "abstract": true,
         "javascript": ["container/container.js"],
