@@ -53,8 +53,8 @@ photonui.PopupMenu = photonui.PopupWindow.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super(params);
         this._childrenNames = [];  // new instance
+        this.$super(params);
     },
 
     // Mixin
