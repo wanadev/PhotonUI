@@ -61,6 +61,12 @@ photonui.FileManager = photonui.Base.$extend({
         this.__fileField = document.createElement("input");
         this.__fileField.type = "file";
         this.__fileField.addEventListener("change", this.__onFileSelected.bind(this), false);
+        this.__fileField.style.position = "fixed";
+        this.__fileField.style.top = 0;
+        this.__fileField.style.left = 0;
+        this.__fileField.style.opacity = 0;
+        this.__fileField.style.display = "none";
+        document.getElementsByTagName("body")[0].appendChild(this.__fileField);
         this._acceptedMimes = [],
         this._acceptedExts = [],
         this.$super(params);
@@ -201,7 +207,20 @@ photonui.FileManager = photonui.Base.$extend({
      * @method open
      */
     open: function() {
+        this.__fileField.style.display = "inline-block";
+        this.__fileField.focus();
         this.__fileField.click();
+        this.__fileField.style.display = "none";
+    },
+
+    /**
+     * Destroy the class.
+     *
+     * @method destroy
+     */
+    destroy: function() {
+        document.getElementsByTagName("body")[0].removeChild(this.__fileField);
+        this.$super();
     },
 
 
