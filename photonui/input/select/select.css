@@ -29,12 +29,6 @@
  */
 
 
-.photonui-popupmenu {
-    min-width: 0;
-    max-width: -webkit-min-content;
-    overflow-y: auto !important;
-}
-
-.photonui-popupmenu > div > .photonui-menu {
-    min-width: 150px;
+.photonui-select {
+    min-width: 120px !important;
 }

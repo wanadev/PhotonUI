@@ -159,6 +159,14 @@
         "assets": [],
         "dependencies": ["Field"]
     },
+    "Select": {
+        "abstract": false,
+        "javascript": ["input/select/select.js"],
+        "css": ["input/select/select.css"],
+        "themeCss": ["input/select/select-theme.css"],
+        "assets": [],
+        "dependencies": ["PopupMenu"]
+    },
     "CheckBox": {
         "abstract": false,
         "javascript": ["input/checkbox/checkbox.js"],

@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>FAIcon - PhotonUI Demo</title>
+        <title>Select - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
@@ -132,7 +132,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / FAIcon</h1>
+            <h1>PhotonUI Demo / Select</h1>
         </header>
 
 
@@ -185,19 +185,19 @@
         <!-- Demo Script -->
         <div id="widget-area"></div>
         <script id="photonui-demo">
-            var vbox = new photonui.BoxLayout();
+            var sel = new photonui.Select({
+                children: [
+                    new photonui.MenuItem({value: "item1", text: "Item 1"}),
+                    new photonui.MenuItem({value: "item2", text: "Item 2"}),
+                    new photonui.MenuItem({value: "item3", text: "Item 3"}),
+                ]
+            });
 
-            vbox.addChild(new photonui.FAIcon("fa-camera-retro"));
-            vbox.addChild(new photonui.FAIcon("fa-camera-retro", {"size": "fa-lg"}));
-            vbox.addChild(new photonui.FAIcon("fa-camera-retro", {"size": "fa-2x"}));
-            vbox.addChild(new photonui.FAIcon("fa-camera-retro", {"size": "fa-3x"}));
-            vbox.addChild(new photonui.FAIcon("fa-camera-retro", {"size": "fa-4x"}));
-            vbox.addChild(new photonui.FAIcon("fa-camera-retro", {
-                "size": "fa-5x",
-                color: "#07656D"
-            }));
+            sel.registerCallback("change", "value-changed", function(widget, value) {
+                alert("Value changed: " + value);
+            });
 
-            photonui.domInsert(vbox, document.getElementById("widget-area"));
+            photonui.domInsert(sel, document.getElementById("widget-area"));
         </script>
         <!-- /Demo Script -->
 

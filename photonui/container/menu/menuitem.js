@@ -70,6 +70,23 @@ photonui.MenuItem = photonui.Container.$extend({
 
 
     /**
+     * An optional value for the item (can be used in select).
+     *
+     * @property value
+     * @type String (maybe)
+     * @default ""
+     */
+    _value: "",
+
+    getValue: function() {
+        return this._value;
+    },
+
+    setValue: function(value) {
+        this._value = value;
+    },
+
+    /**
      * The item text.
      *
      * @property text
