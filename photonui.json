@@ -167,6 +167,14 @@
         "assets": [],
         "dependencies": ["PopupMenu"]
     },
+    "FontSelect": {
+        "abstract": false,
+        "javascript": ["input/select/fontselect.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Select"]
+    },
     "CheckBox": {
         "abstract": false,
         "javascript": ["input/checkbox/checkbox.js"],

@@ -3,10 +3,12 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>FileManager - PhotonUI Demo</title>
+        <title>FontSelect - PhotonUI Demo</title>
 
 
         <link type="text/css" rel="stylesheet" href="./highlightjs/github.css">
+        <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 
         <!-- photonui-css -->
         <link type="text/css" rel="stylesheet" href="../photonui/photonui.css" />
@@ -132,7 +134,7 @@
 
     <body>
         <header>
-            <h1>PhotonUI Demo / FileManager</h1>
+            <h1>PhotonUI Demo / FontSelect</h1>
         </header>
 
 
@@ -186,25 +188,24 @@
         <!-- Demo Script -->
         <div id="widget-area"></div>
         <script id="photonui-demo">
-            var fm = new photonui.FileManager({
-                acceptedMimes: ["image/png", "image/jpeg"],
-                acceptedExts: ["bmp", "svg"],
-                dropZone: document,
-                multiselect: true
+            var fsel = new photonui.FontSelect({
+                fonts: [
+                    "Arial",
+                    "Arial Black",
+                    "Courier New",
+                    "Georgia",
+                    "Impact",
+                    "Times New Roman",
+                    "Lobster",
+                    "Indie Flower"
+                ]
             });
 
-            var btn = new photonui.Button({
-                leftIcon: new photonui.FAIcon("fa-folder-open-o"),
-                text: "Select a file or drop it on the page"
+            fsel.registerCallback("change", "value-changed", function(widget, value) {
+                alert("Value changed: " + value);
             });
 
-            btn.registerCallback("open", "click", fm.open, fm);
-
-            fm.registerCallback("open", "file-open", function(widget, file, x, y) {
-                alert("file-open: " + file.name);
-            });
-
-            photonui.domInsert(btn, document.getElementById("widget-area"));
+            photonui.domInsert(fsel, document.getElementById("widget-area"));
         </script>
         <!-- /Demo Script -->
 
