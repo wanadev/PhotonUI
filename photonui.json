@@ -1,23 +1,23 @@
 {
-    "lib": {
+    "Core": {
         "abstract": true,
-        "javascript": ["../lib/classy.js"],
-        "css": [],
+        "javascript": ["../lib/classy.js", "photonui.js", "helpers.js", "base.js", "widget.js"],
+        "css": ["photonui.css"],
         "themeCss": [],
         "assets": [],
         "dependencies": []
     },
-    "Core": {
-        "abstract": true,
-        "javascript": ["photonui.js", "helpers.js", "base.js", "widget.js"],
-        "css": ["photonui.css"],
-        "themeCss": [],
-        "assets": [],
-        "dependencies": ["lib"]
-    },
     "MouseManager": {
         "abstract": false,
         "javascript": ["event/mousemanager.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
+    },
+    "AccelManager": {
+        "abstract": false,
+        "javascript": ["../lib/keyboard.js", "event/accelmanager.js"],
         "css": [],
         "themeCss": [],
         "assets": [],
