@@ -107,11 +107,13 @@ photonui.AccelManager = photonui.Base.$extend({
      * @param {Boolean} safe If true, the accelerator is disable if a field/textArea is focused (optional, default=true)
      */
     addAccel: function(id, keys, callback, safe) {
+        var keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
         this.removeAccel(id);
         this.__kbd[id] = {
+            keys: keys,
             safe: ((safe === undefined) ? true : safe),
             callback: callback,
-            binding: KeyboardJS.on(keys, this.__onAccell.bind(this, id))
+            binding: KeyboardJS.on(keys, this.__onAccell.bind(this))
         };
     },
 
@@ -143,23 +145,24 @@ photonui.AccelManager = photonui.Base.$extend({
     /**
      * @method __onAccell
      * @private
-     * @param id
      * @param event
      * @param keys
      * @param combo
      */
-    __onAccell: function(id, event, keys, combo) {
-        if (!this.__kbd[id]) return;
+    __onAccell: function(event, keys, combo) {
+        for (var id in this.__kbd) {
+            if (this.__kbd[id].keys != combo) continue;
 
-        if (this.__kbd[id].safe) {
-            if (document.activeElement instanceof HTMLInputElement
-            ||  document.activeElement instanceof HTMLSelectElement
-            ||  document.activeElement instanceof HTMLTextAreaElement) {
-                return;
+            if (this.__kbd[id].safe) {
+                if (document.activeElement instanceof HTMLInputElement
+                ||  document.activeElement instanceof HTMLSelectElement
+                ||  document.activeElement instanceof HTMLTextAreaElement) {
+                    continue;
+                }
             }
-        }
 
-        this.__kbd[id].callback();
+            this.__kbd[id].callback();
+        }
 
         event.stopPropagation();
         event.preventDefault();
