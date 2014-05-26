@@ -113,11 +113,14 @@ photonui.Field = photonui.Widget.$extend({
      * @type String
      * @default ""
      */
+    _placeholder: "",
+
     getPlaceholder: function() {
-        return this.__html.field.placeholder;
+        return this._placeholder;
     },
 
     setPlaceholder: function(placeholder) {
+        this._placeholder = placeholder;
         this.__html.field.placeholder = placeholder;
     },
 

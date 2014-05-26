@@ -122,7 +122,7 @@ photonui.Select = photonui.Widget.$extend({
      * @type String
      * @default "Select..."
      */
-    _placeholder: "Select...",
+    _placeholder: (window.Stone) ? window.Stone.lazyGettext("Select...") : "Select...",
 
     getPlaceholder: function() {
         return this._placeholder;

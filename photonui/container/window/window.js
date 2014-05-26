@@ -239,7 +239,7 @@ photonui.Window = photonui.BaseWindow.$extend({
 
         this.__html.windowTitleCloseButton = document.createElement("button");
         this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button";
-        this.__html.windowTitleCloseButton.title = _("Close");
+        this.__html.windowTitleCloseButton.title = (window.Stone) ? window.Stone.lazyGettext("Close") : "Close";
         this.__html.windowTitle.appendChild(this.__html.windowTitleCloseButton);
 
         this.__html.windowTitleText = document.createElement("span");
@@ -344,10 +344,7 @@ photonui.Window = photonui.BaseWindow.$extend({
      * @private
      */
     __onLocaleChanged: function() {
-        if (!window.Stone) {
-            return;
-        }
         this.$super();
-        this.__html.windowTitleCloseButton.title = _("Close");
+        this.__html.windowTitleCloseButton.title = (window.Stone) ? window.Stone.lazyGettext("Close") : "Close";
     }
 });

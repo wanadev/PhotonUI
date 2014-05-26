@@ -103,7 +103,7 @@ photonui.FontSelect = photonui.Select.$extend({
      * @type String
      * @default "Select a font..."
      */
-    _placeholder: "Select a font...",
+    _placeholder: (window.Stone) ? window.Stone.lazyGettext("Select a font...") : "Select a font...",
 
 
     //////////////////////////////////////////
