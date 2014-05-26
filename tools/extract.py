@@ -56,9 +56,10 @@ def js_string_extractor(path):
                     else:
                         buff += token[1:-1].replace('\\"', '"')
                 elif name == "punct" and token in (")", ","):
-                    if not buff in STRINGS:
-                        STRINGS[buff] = []
-                    STRINGS[buff].append([path, stline])
+                    if buff:
+                        if not buff in STRINGS:
+                            STRINGS[buff] = []
+                        STRINGS[buff].append([path, stline])
                     buff = ""
                     fname = False
                     infn = False
@@ -89,7 +90,7 @@ if __name__ == "__main__":
             print("  * %s" % path)
             js_string_extractor(path)
         elif os.path.isdir(path):
-            for file_ in ls_file(args.source, "js"):
+            for file_ in ls_file(path, "js"):
                 print("  * %s" % file_)
                 js_string_extractor(file_)
         else:
@@ -100,6 +101,7 @@ if __name__ == "__main__":
     catalog = polib.POFile()
     catalog.metadata = {
         "Project-Id-Version": "1.0",
+        "Language": "Unknown",
         "Report-Msgid-Bugs-To": "you@example.com",
         "POT-Creation-Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M%z"),
         "PO-Revision-Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M%z"),
