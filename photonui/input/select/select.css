@@ -31,4 +31,9 @@
 
 .photonui-select {
     min-width: 120px !important;
+    box-sizing: border-box;
+}
+
+.photonui-boxlayout-cell > .photonui-select {
+    line-height: 1.3em;
 }
