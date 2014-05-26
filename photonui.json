@@ -295,5 +295,13 @@
         "themeCss": [],
         "assets": [],
         "dependencies": ["Core"]
+    },
+    "Translation": {
+        "abstract": false,
+        "javascript": ["../lib/stone.js", "misc/translation.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
     }
 }
