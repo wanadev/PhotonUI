@@ -101,7 +101,8 @@ photonui.MenuItem = photonui.Container.$extend({
 
     setText: function(text) {
         this._text = text;
-        this.__html.text.innerHTML = photonui.Helpers.escapeHtml(text);
+        photonui.Helpers.cleanNode(this.__html.text);
+        this.__html.text.appendChild(document.createTextNode(text));
     },
 
     /**

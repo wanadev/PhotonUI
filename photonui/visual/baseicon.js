@@ -48,4 +48,21 @@ var photonui = photonui || {};
  * @constructor
  * @extends photonui.Widget
  */
-photonui.BaseIcon = photonui.Widget.$extend({});
+photonui.BaseIcon = photonui.Widget.$extend({
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
+    }
+
+});

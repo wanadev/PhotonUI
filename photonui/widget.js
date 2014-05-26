@@ -108,6 +108,7 @@ photonui.Widget = photonui.Base.$extend({
         if (this.html) {
             this._bindEvent("pop-contextmenu", this.html, "contextmenu", this.__onContextMenu.bind(this));
         }
+        this._bindEvent("locale-changed", document, "stonejs-locale-changed", this.__onLocaleChanged.bind(this));
 
         // Register the widget
         _widgets[this.name] = this;
@@ -428,6 +429,24 @@ photonui.Widget = photonui.Base.$extend({
         event.preventDefault();
         if (this.contextMenuName) {
             this.contextMenu.popupXY(event.pageX, event.pageY);
+        }
+    },
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        if (!window.Stone) {
+            return;
+        }
+        // Update lazy strings...
+        for (var prop in this) {
+            if (this[prop] instanceof Stone.LazyString) {
+                this[prop] = this[prop];
+            }
         }
     }
 });

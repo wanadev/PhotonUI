@@ -97,7 +97,8 @@ photonui.Window = photonui.BaseWindow.$extend({
 
     setTitle: function(title) {
         this._title = title;
-        this.__html.windowTitleText.innerHTML = photonui.Helpers.escapeHtml(title);
+        photonui.Helpers.cleanNode(this.__html.windowTitleText);
+        this.__html.windowTitleText.appendChild(document.createTextNode(title));
     },
 
     /**
@@ -226,6 +227,9 @@ photonui.Window = photonui.BaseWindow.$extend({
      * @private
      */
     _buildHtml: function() {
+        if (window.Stone) {
+            var _ = window.Stone.lazyGettext;
+        }
         this.$super();
         this.__html["window"].className += " photonui-window";
 
@@ -235,7 +239,7 @@ photonui.Window = photonui.BaseWindow.$extend({
 
         this.__html.windowTitleCloseButton = document.createElement("button");
         this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button";
-        this.__html.windowTitleCloseButton.title = "Close";  // FIXME i18n
+        this.__html.windowTitleCloseButton.title = _("Close");
         this.__html.windowTitle.appendChild(this.__html.windowTitleCloseButton);
 
         this.__html.windowTitleText = document.createElement("span");
@@ -331,5 +335,19 @@ photonui.Window = photonui.BaseWindow.$extend({
      */
     __closeButtonClicked: function(event) {
         this._callCallbacks("close-button-clicked");
+    },
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        if (!window.Stone) {
+            return;
+        }
+        this.$super();
+        this.__html.windowTitleCloseButton.title = _("Close");
     }
 });

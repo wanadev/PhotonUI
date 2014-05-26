@@ -84,7 +84,8 @@ photonui.Label = photonui.Widget.$extend({
 
     setText: function(text) {
         this._text = text;
-        this.__html.label.innerHTML = photonui.Helpers.escapeHtml(text);
+        photonui.Helpers.cleanNode(this.__html.label);
+        this.__html.label.appendChild(document.createTextNode(text));
     },
 
     /**

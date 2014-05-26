@@ -120,5 +120,21 @@ photonui.Separator = photonui.Widget.$extend({
         this.__html.outer.className = "photonui-widget photonui-separator";
         this.__html.hr = document.createElement("hr");
         this.__html.outer.appendChild(this.__html.hr);
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
     }
 });

@@ -190,5 +190,21 @@ photonui.Layout = photonui.Container.$extend({
      */
     _updateLayout: function() {
         throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
     }
 });

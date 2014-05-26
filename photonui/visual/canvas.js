@@ -265,5 +265,21 @@ photonui.Canvas = photonui.Widget.$extend({
 
         this.__html.canvas = document.createElement("canvas");
         this.__html.outer.appendChild(this.__html.canvas);
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
     }
 });

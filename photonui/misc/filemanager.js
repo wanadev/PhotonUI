@@ -313,5 +313,15 @@ photonui.FileManager = photonui.Base.$extend({
                 this._openFile(file);
             }
         }
+    },
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
     }
 });

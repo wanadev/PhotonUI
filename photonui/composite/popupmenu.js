@@ -97,5 +97,21 @@ photonui.PopupMenu = photonui.PopupWindow.$extend({
         this.__html.inner.appendChild(this.__html.outer);
         this.__html["window"].className += " photonui-popupmenu";
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
     }
 });

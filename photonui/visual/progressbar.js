@@ -206,5 +206,21 @@ photonui.ProgressBar = photonui.Widget.$extend({
         this.__html.bar = document.createElement("div");
         this.__html.bar.className = "photonui-progressbar-bar";
         this.__html.outer.appendChild(this.__html.bar);
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
     }
 });

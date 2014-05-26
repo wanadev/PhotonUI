@@ -185,4 +185,20 @@ photonui.Viewport = photonui.Container.$extend({
         this.__html.viewport = document.createElement("div");
         this.__html.viewport.className = "photonui-widget photonui-viewport photonui-container";
     },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        // pass
+    }
 });
