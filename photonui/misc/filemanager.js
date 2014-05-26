@@ -69,8 +69,8 @@ photonui.FileManager = photonui.Base.$extend({
         document.getElementsByTagName("body")[0].appendChild(this.__fileField);
         this._acceptedMimes = [],
         this._acceptedExts = [],
-        this.$super(params);
         this._registerWEvents(["file-open"]);
+        this.$super(params);
     },
 
 

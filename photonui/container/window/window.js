@@ -58,10 +58,8 @@ photonui.Window = photonui.BaseWindow.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super(params);
-
-        // wEvents
         this._registerWEvents(["close-button-clicked"]);
+        this.$super(params);
 
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));

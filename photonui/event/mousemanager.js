@@ -119,13 +119,13 @@ photonui.MouseManager = photonui.Base.$extend({
 
     // Constructor
     __init__: function(element) {
-        this.$super();
-        this.element = element;
         this._registerWEvents([
             "mouse-event", "mouse-down", "mouse-up", "click", "double-click",
             "drag-start", "dragging", "drag-end", "mouse-move", "scroll-up",
             "scroll-down"
         ]);
+        this.$super();
+        this.element = element;
     },
 
 

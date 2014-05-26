@@ -73,11 +73,11 @@ photonui.Field = photonui.Widget.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super(params);
         this._registerWEvents([
             "value-changed", "keydown", "keyup", "keypress",
             "selection-changed"
         ]);
+        this.$super(params);
         this._updateProperties(["value", "placeholder"]);
         this.__html.field.name = this.name;
     },

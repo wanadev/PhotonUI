@@ -57,8 +57,8 @@ photonui.ColorButton = photonui.Button.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super(params);
         this._registerWEvents(["value-changed"]);
+        this.$super(params);
         this.popup = new photonui.PopupWindow();
         this.palette = new photonui.ColorPalette();
         this.palette.registerCallback("value-changed", "value-changed", this.__onPaletteValueChanged, this);

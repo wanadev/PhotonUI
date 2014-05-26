@@ -60,9 +60,9 @@ photonui.Translation = photonui.Base.$extend({
 
     // Constructor
     __init__: function(params) {
+        this._registerWEvents(["locale-changed"]);
         this.$super(params);
         this._bindEvent("locale-changed", document, "stonejs-locale-changed", this.__onStonejsLocaleChanged.bind(this));
-        this._registerWEvents(["locale-changed"]);
         window._ = this.lazyGettext;
     },
 

@@ -62,12 +62,6 @@ photonui.AccelManager = photonui.Base.$extend({
     //////////////////////////////////////////
 
 
-    // ====== Public properties ======
-
-
-    //
-
-
     // ====== Private properties ======
 
 
@@ -167,6 +161,5 @@ photonui.AccelManager = photonui.Base.$extend({
         event.stopPropagation();
         event.preventDefault();
     }
-
 
 });

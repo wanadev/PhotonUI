@@ -49,12 +49,6 @@ var photonui = photonui || {};
  */
 photonui.FluidLayout = photonui.Layout.$extend({
 
-    // Constructor
-    __init__: function(params) {
-        this.$super(params);
-    },
-
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////

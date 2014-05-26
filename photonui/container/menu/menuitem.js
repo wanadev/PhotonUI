@@ -51,8 +51,8 @@ photonui.MenuItem = photonui.Container.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super(params);
         this._registerWEvents(["click"]);
+        this.$super(params);
         this._updateProperties(["text", "icon", "active"]);
 
         this._bindEvent("click", this.__html.outer, "click", function(event) {

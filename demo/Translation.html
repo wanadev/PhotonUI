@@ -231,13 +231,21 @@
 
             photonui.domInsert(layout, document.getElementById("widget-area"));
 
-            new photonui.Window({
+            var win = new photonui.Window({
                 visible: true,
                 title: _("Hello World"),
                 x: 300, y: 100,
                 width: 130,
                 padding: 20,
-                child: new photonui.Button({text: _("Close")}),
+                child: new photonui.Button({
+                    text: _("Close"),
+                    callbacks: {
+                        "click": function() { win.hide(); }
+                    }
+                }),
+                callbacks: {
+                    "close-button-clicked": function(widget) { widget.hide(); }
+                }
             });
         </script>
         <!-- /Demo Script -->

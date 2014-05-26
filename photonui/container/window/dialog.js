@@ -54,7 +54,6 @@ photonui.Dialog = photonui.Window.$extend({
     __init__: function(params) {
         this._buttonsNames = [];
         this.$super(params);
-        // TODO
     },
 
 

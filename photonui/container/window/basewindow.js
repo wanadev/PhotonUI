@@ -57,6 +57,7 @@ photonui.BaseWindow = photonui.Container.$extend({
 
     // Constructor
     __init__: function(params) {
+        this._registerWEvents(["position-changed"]);
         this.$super(params);
 
         // Windows are hidden by default
@@ -64,9 +65,6 @@ photonui.BaseWindow = photonui.Container.$extend({
         if (params.visible === undefined) {
             this.visible = false;
         }
-
-        // wEvents
-        this._registerWEvents(["position-changed"]);
 
         // Insert the window in the DOM tree
         photonui.domInsert(this);

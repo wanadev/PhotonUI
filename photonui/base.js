@@ -58,7 +58,6 @@ photonui.Base = Class.$extend({
     __init__: function(params) {
         // New instances for object properties
         this.__events = {};
-        this.__callbacks = {};
 
         // wEvents
         this._registerWEvents(["destroy"]);
@@ -98,6 +97,29 @@ photonui.Base = Class.$extend({
                 this[param] = params[param];
             }
         }
+
+        // Register callbacks
+        var ev = null;
+        var i = 0;
+        var evId = "";
+        if (params.callbacks) {
+            for (var wEvent in params.callbacks) {
+                ev = params.callbacks[wEvent];
+                if (typeof(ev) == "function") {
+                    this.registerCallback(photonui.Helpers.uuid4(), wEvent, ev);
+                }
+                else if (ev instanceof Array) {
+                    for (i=0 ; i<ev.length ; i++) {
+                        this.registerCallback(photonui.Helpers.uuid4(), wEvent, ev[i]);
+                    }
+                }
+                else {
+                    for (evId in ev) {
+                        this.registerCallback(evId, wEvent, ev[evId]);
+                    }
+                }
+            }
+        }
     },
 
 
@@ -117,7 +139,7 @@ photonui.Base = Class.$extend({
      * @type Object
      * @private
      */
-    __events: {},    // Javascript internal event
+    __events: null,    // Javascript internal event
 
     /**
      * Object containing references to registered callbacks.
@@ -126,7 +148,7 @@ photonui.Base = Class.$extend({
      * @type Object
      * @private
      */
-    __callbacks: {},  // Registered callback
+    __callbacks: null,  // Registered callback
 
 
     //////////////////////////////////////////
@@ -251,6 +273,9 @@ photonui.Base = Class.$extend({
      * @param {Array} wEvents
      */
     _registerWEvents: function(wEvents) {
+        if (this.__callbacks == null) {
+            this.__callbacks = {};
+        }
         for (var i in wEvents) {
             this.__callbacks[wEvents[i]] = {};
         }

@@ -69,8 +69,8 @@ photonui.ColorPalette = photonui.Widget.$extend({
 
     // Constructor
     __init__: function(params) {
-        this.$super(params);
         this._registerWEvents(["value-changed"]);
+        this.$super(params);
         this._updateProperties(["palette", "value"]);
     },
 

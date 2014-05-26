@@ -57,9 +57,9 @@ photonui.CheckBox = photonui.Widget.$extend({
 
     // Constructor
     __init__: function(params) {
+        this._registerWEvents(["value-changed", "click"]);
         this.$super(params);
         this.inputId = this.name + "-input";
-        this._registerWEvents(["value-changed", "click"]);
         this._bindEvent("value-changed", this.__html.checkbox, "change", this.__onChange.bind(this));
         this._bindEvent("span-click", this.__html.span, "click", this.__onSpanClick.bind(this));
         this._bindEvent("checkbox-click", this.__html.checkbox, "click", this.__onCheckboxClick.bind(this));
