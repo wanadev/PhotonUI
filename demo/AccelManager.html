@@ -199,13 +199,18 @@
                 field.value = "Ctrl + A";
             });
 
+            // Demo for Mac users (Command + A)
+            am.addAccel("accel2", "command + a", function() {
+                field.value = "Command + A";
+            });
+
             // This accelerator works even if the field is focused
-            am.addAccel("accel2", "ctrl + r", function() {
+            am.addAccel("accel3", "ctrl + r", function() {
                 field.value = "Ctrl + R";
             }, false);
 
             // More complexe sequence
-            am.addAccel("accel3", "ctrl + x > c", function() {
+            am.addAccel("accel4", "ctrl + x > c", function() {
                 field.value = "Ctrl + X > C";
             });
 
