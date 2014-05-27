@@ -193,41 +193,46 @@
             var tr = new photonui.Translation();
 
             tr.addCatalogs({
-                "en": {
-                    "Hello World": "",
-                    "Close": ""
-                },
                 "fr": {
                     "Hello World": "Bonjour le monde",
+                    'Browser language is "{lang}".': "La langue du navigateur est « {lang} ».",
                     "Close": "Fermer"
                 },
                 "it": {
                     "Hello World": "Buongiorno il mondo",
+                    'Browser language is "{lang}".': 'La lingua del browser è "{lang}".',
                     "Close": "Chiudere"
                 }
             });
 
+            tr.locale = tr.guessUserLanguage();
+
             var layout = new photonui.BoxLayout({
                 orientation: "vertical",
                 children: [
-                    new photonui.Label({text: _("Hello World")}),
+                    new photonui.Label({
+                        text: _('Browser language is "{lang}".', {
+                            lang: tr.guessUserLanguage()
+                        })
+                    }),
                     new photonui.Select({
                         name: "lang",
                         placeholder: "Choose a language...",
+                        value: tr.locale,
                         children: [
                             new photonui.MenuItem({value: "en", text: "English"}),
                             new photonui.MenuItem({value: "fr", text: "Français"}),
                             new photonui.MenuItem({value: "it", text: "Italiano"}),
-                        ]
+                        ],
+                        callbacks: {
+                            "value-changed": function(widget, value) {
+                                tr.locale = value;
+                            }
+                        }
                     })
                 ]
             });
 
-            photonui.getWidget("lang").registerCallback("change", "value-changed",
-                function(widget, value) {
-                    tr.locale = value;
-                }
-            );
 
             photonui.domInsert(layout, document.getElementById("widget-area"));
 

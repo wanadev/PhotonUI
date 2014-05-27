@@ -103,6 +103,14 @@ photonui.Translation = photonui.Base.$extend({
     addCatalogs: Stone.addCatalogs,
 
     /**
+     * Guess the user language.
+     *
+     * @method guessUserLanguage
+     * @return {String} The language code (e.g. "en", "fr", "it",...)
+     */
+    guessUserLanguage: Stone.guessUserLanguage,
+
+    /**
      * Make a string translatable.
      *
      * @method gettext
