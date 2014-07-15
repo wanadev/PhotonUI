@@ -143,6 +143,33 @@ photonui.Window = photonui.BaseWindow.$extend({
     },
 
     /**
+     * Modal window?
+     *
+     * @property modal
+     * @type Boolean
+     * @default false
+     */
+    _modal: false,
+
+    isModal: function() {
+        return this._modal;
+    },
+
+    setModal: function(modal) {
+        this._modal = modal;
+        if (modal) {
+            this.__html.modalBox = document.createElement("div");
+            this.__html.modalBox.className = "photonui-window-modalbox";
+            photonui.e_parent.appendChild(this.__html.modalBox);
+            this.visible = this.visible; // Force update
+        }
+        else if (this.__html.modalBox) {
+            this.__html.modalBox.parentNode.removeChild(this.__html.modalBox);
+            delete this.__html.modalBox;
+        }
+    },
+
+    /**
      * HTML Element that contain the child widget HTML.
      *
      * @property containerNode
@@ -153,14 +180,19 @@ photonui.Window = photonui.BaseWindow.$extend({
         return this.__html.windowContent;
     },
 
-
     setVisible: function(visible) {
         this.$super(visible);
         if (this.visible) {
             this.moveToFront();
+            if (this.modal) {
+                this.__html.modalBox.style.display = "block";
+            }
         }
         else {
             this.moveToBack();
+            if (this.modal) {
+                this.__html.modalBox.style.display = "none";
+            }
         }
     },
 
@@ -207,6 +239,7 @@ photonui.Window = photonui.BaseWindow.$extend({
      * @method destroy
      */
     destroy: function() {
+        this.modal = false;
         var index = _windowList.indexOf(this);
         if (index >= 0) {
             _windowList.splice(index, 1);
@@ -258,12 +291,15 @@ photonui.Window = photonui.BaseWindow.$extend({
     _updateWindowList: function() {
         for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {
             if (i == 0) {
-                _windowList[i].getHtml().style.zIndex = 2001;
+                _windowList[i].html.style.zIndex = 2001;
                 _windowList[i].addClass("photonui-active");
             }
             else {
-                _windowList[i].getHtml().style.zIndex = 1000+z;
+                _windowList[i].html.style.zIndex = 1000+z;
                 _windowList[i].removeClass("photonui-active");
+            }
+            if (_windowList[i].modal) {
+                _windowList[i].html.style.zIndex = 3001;
             }
         }
     },

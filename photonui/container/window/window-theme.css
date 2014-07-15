@@ -132,3 +132,7 @@
 
 .photonui-window-content {
 }
+
+.photonui-window-modalbox {
+    background: rgba(255, 255, 255, .7);
+}
