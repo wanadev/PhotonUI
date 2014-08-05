@@ -156,10 +156,9 @@ photonui.AccelManager = photonui.Base.$extend({
             }
 
             this.__kbd[id].callback();
+            event.stopPropagation();
+            event.preventDefault();
         }
-
-        event.stopPropagation();
-        event.preventDefault();
     }
 
 });
