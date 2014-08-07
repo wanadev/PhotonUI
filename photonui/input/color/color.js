@@ -86,7 +86,6 @@ photonui.Color = photonui.Base.$extend({
 
     // ====== Public properties ======
 
-
     /**
      * The color in HTML RGB hexadecimal format (e.g. "#FF0000").
      *
@@ -100,20 +99,20 @@ photonui.Color = photonui.Base.$extend({
         if (g.length == 1) g = "0" + g;
         var b = this.blue.toString(16).toUpperCase();
         if (b.length == 1) b = "0" + b;
-        return "#" + r + g + b;  // FIXME
+        return "#" + r + g + b;
     },
 
     setHexString: function(value) {
         var value = value.replace(" ", "");
         // #FF0000
-        if (value.match(/^#[0-9a-f]{6}$/)) {
+        if (value.match(/^#[0-9a-f]{6}$/i)) {
             this._red = parseInt(value[1]+value[2], 16);
             this._green = parseInt(value[3]+value[4], 16);
             this._blue = parseInt(value[5]+value[6], 16);
             this._updateHSB();
         }
         // #F00
-        else if (value.match(/^#[0-9a-f]{3}$/)) {
+        else if (value.match(/^#[0-9a-f]{3}$/i)) {
             this._red = parseInt(value[1]+value[1], 16);
             this._green = parseInt(value[2]+value[2], 16);
             this._blue = parseInt(value[3]+value[3], 16);
@@ -293,6 +292,8 @@ photonui.Color = photonui.Base.$extend({
     //////////////////////////////////////////
 
 
+    // ====== Public methods ======
+
     /**
      * Set RGB(A) color (alias for setRGBA).
      *
@@ -376,6 +377,8 @@ photonui.Color = photonui.Base.$extend({
     toString: function() {
         return this.hexString;
     },
+
+    // ====== Private methods ======
 
     /**
      * Update HSB from RGB.

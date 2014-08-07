@@ -57,6 +57,7 @@ photonui.ColorButton = photonui.Button.$extend({
 
     // Constructor
     __init__: function(params) {
+        this._color = new photonui.Color();
         this._registerWEvents(["value-changed"]);
         this.$super(params);
         this.popup = new photonui.PopupWindow();
@@ -74,23 +75,37 @@ photonui.ColorButton = photonui.Button.$extend({
 
     // ====== Public properties ======
 
-
     /**
-     * The value (color).
+     * The value (color in rgb hexadecimal format (e.g. "#ff0000")).
      *
      * @property value
      * @type String
-     * @default: "#FF0000"
      */
-    _value: "#FF0000",
-
     getValue: function() {
-        return this._value;
+        return this.color.hexString;
     },
 
     setValue: function(value) {
-        this._value = value;
-        this.__html.color.style.backgroundColor = this._value;
+        this.color.hexString = value;
+        this.__html.color.style.backgroundColor = this.color.hexString;
+    },
+
+    /**
+     * The color.
+     *
+     * @property color
+     * @type kzd.Color
+     */
+    _color: null,
+
+    getColor: function() {
+        return this._color;
+    },
+
+    setColor: function(color) {
+        if (color instanceof photonui.Color) {
+            this._color = color;
+        }
     },
 
 
@@ -100,7 +115,6 @@ photonui.ColorButton = photonui.Button.$extend({
 
 
     // ====== Private methods ======
-
 
     /**
      * Update the button content
