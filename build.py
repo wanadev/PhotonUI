@@ -42,6 +42,7 @@ import sys
 import json
 import shutil
 import argparse
+from codecs import open
 
 
 PHOTONUI_PATH = "./photonui/"
@@ -189,10 +190,10 @@ if __name__ == "__main__":
         print("Updating demo HTML files:\n")
         for file_ in [os.path.join("demo", filename) for filename in os.listdir("demo") if filename.endswith(".html")]:
             print("  * %s" % file_)
-            content = open(file_, "r").read()
+            content = open(file_, "r", encoding="utf-8").read()
             content = re.sub("<!-- photonui-css -->(.*)<!-- /photonui-css -->", css, content, flags=re.DOTALL)
             content = re.sub("<!-- photonui-javascript -->(.*)<!-- /photonui-javascript -->", javascript, content, flags=re.DOTALL)
-            open(file_, "w").write(content)
+            open(file_, "w", encoding="utf-8").write(content)
 
         sys.exit(0)
 
