@@ -272,13 +272,21 @@
         "assets": [],
         "dependencies": ["PopupWindow", "Menu"]
     },
+    "Color": {
+        "abstract": true,
+        "javascript": ["input/color/color.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
+    },
     "ColorPalette": {
         "abstract": false,
         "javascript": ["input/color/colorpalette.js"],
         "css": [],
         "themeCss": ["input/color/colorpalette-theme.css"],
         "assets": [],
-        "dependencies": ["Core"]
+        "dependencies": ["Color"]
     },
     "Slider": {
         "abstract": false,
