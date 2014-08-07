@@ -288,6 +288,14 @@
         "assets": [],
         "dependencies": ["Color"]
     },
+    "ColorPicker": {
+        "abstract": false,
+        "javascript": ["input/color/colorpicker.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Color"]
+    },
     "Slider": {
         "abstract": false,
         "javascript": ["input/slider/slider.js"],

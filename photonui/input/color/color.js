@@ -442,8 +442,6 @@ photonui.Color = photonui.Base.$extend({
         var m = b * (1 - f * s);
         var n = b * (1 - (1 - f) * s);
 
-        console.log(ti);
-
         switch (ti) {
             case 0:
                 this._red = (b * 255)|0;
