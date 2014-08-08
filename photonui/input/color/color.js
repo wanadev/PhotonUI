@@ -164,7 +164,7 @@ photonui.Color = photonui.Base.$extend({
      * @readOnly
      */
     getRgbaString: function() {
-        return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + (this._alpha) + ")";
+        return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + (this._alpha / 255) + ")";
     },
 
     /**
@@ -219,19 +219,19 @@ photonui.Color = photonui.Base.$extend({
     },
 
     /**
-     * Alpha channel (0.0 - 1.0)
+     * Alpha channel (0-255)
      *
      * @property alpha
      * @type Number
      */
-    _alpha: 1,
+    _alpha: 255,
 
     getAlpha: function() {
         return this._alpha;
     },
 
     setAlpha: function(alpha) {
-        this._alpha = Math.max(0, Math.min(1, alpha));
+        this._alpha = Math.max(0, Math.min(255, alpha|0));
         this._callCallbacks("value-changed");
     },
 
@@ -317,7 +317,7 @@ photonui.Color = photonui.Base.$extend({
      * @param {Number} red (0-255)
      * @param {Number} green (0-255)
      * @param {Number} blue (0-255)
-     * @param {Number} alpha (optional, 0.0 - 1.0)
+     * @param {Number} alpha (optional, 0-255)
      */
     setRGBA: function() {
         var args = arguments;
@@ -327,7 +327,7 @@ photonui.Color = photonui.Base.$extend({
         this._red = Math.max(0, Math.min(255, args[0]|0));
         this._green = Math.max(0, Math.min(255, args[1]|0));
         this._blue = Math.max(0, Math.min(255, args[2]|0));
-        if (args[3] != undefined) this._alpha = Math.max(0, Math.min(1, args[3]));
+        if (args[3] != undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
 
         this._updateHSB();
     },
@@ -346,7 +346,7 @@ photonui.Color = photonui.Base.$extend({
      * Get RGBA.
      *
      * @method getRGBA
-     * @return {Array} [red(0-255), green(0-255), blue(0-255), alpha(0.0 - 1.0)]
+     * @return {Array} [red(0-255), green(0-255), blue(0-255), alpha(0-255)]
      */
     getRGBA: function() {
         return [this._red, this._green, this._blue, this._alpha];
