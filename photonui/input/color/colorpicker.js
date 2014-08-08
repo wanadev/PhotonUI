@@ -196,7 +196,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
             color.hue = 360 - i;
             ctx.beginPath();
             ctx.fillStyle = color.hexString;
-            ctx.arc(100, 100, 96, Math.PI*i/180, Math.PI*((i+2)%360)/180, false);
+            ctx.arc(100, 100, 90, Math.PI*i/180, Math.PI*((i+2)%360)/180, false);
             ctx.lineTo(100, 100);
             ctx.fill();
         }
@@ -247,10 +247,31 @@ photonui.ColorPicker = photonui.Widget.$extend({
         var canvas = this.__html.canvas;
         var ctx = canvas.getContext("2d");
 
+        ctx.save();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.drawImage(this.__buffH, 0, 0);
         ctx.drawImage(this.__buffSB, 50, 50);
+
+        ctx.strokeStyle = "#fff";
+        ctx.shadowColor = "rgba(0, 0, 0, .7)";
+        ctx.shadowBlur = 3;
+        ctx.lineWidth = 2;
+
+        // Square cursor
+        ctx.beginPath();
+        ctx.arc(this.color.saturation + 50, 100 - this.color.brightness + 50, 6, 2*Math.PI, false);
+        ctx.stroke();
+
+        // Square cursor
+        ctx.translate(100, 100);
+        ctx.rotate(-this.color.hue*Math.PI/180);
+        ctx.beginPath();
+        ctx.arc(81, 0, 6, 2*Math.PI, false);
+        ctx.stroke();
+        //ctx.strokeRect(75, -3, 13, 6);
+
+        ctx.restore();
     }
 
 
