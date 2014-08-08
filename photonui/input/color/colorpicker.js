@@ -60,7 +60,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
 
     // Constructor
     __init__: function(params) {
-        //this._registerWEvents(["value-changed"]);   // TODO
+        this._registerWEvents(["value-changed"]);
         this._color = new photonui.Color();
         this.__buffH = document.createElement("canvas");
         this.__buffH.width = 200;
@@ -287,6 +287,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
      * Update the canvas
      *
      * @method _updateCanvas
+     * @private
      */
     _updateCanvas: function() {
         var canvas = this.__html.canvas;
@@ -401,9 +402,11 @@ photonui.ColorPicker = photonui.Widget.$extend({
             this.color.saturation = mstate.x - 50;
             this.color.brightness = 150 - mstate.y;
             this.__disableSBUpdate = false;
+            this._callCallbacks("value-changed", this.value);
         }
         else if (this._pointerOnCircle(mstate)) {
             this.color.hue = this._pointerAngle(mstate);
+            this._callCallbacks("value-changed", this.value);
         }
     },
 
@@ -434,6 +437,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
     __onDraggingSquare: function(manager, mstate) {
         this.color.saturation = mstate.x - 50;
         this.color.brightness = 150 - mstate.y;
+        this._callCallbacks("value-changed", this.value);
     },
 
     /**
@@ -444,6 +448,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
      */
     __onDraggingCircle: function(manager, mstate) {
         this.color.hue = this._pointerAngle(mstate);
+        this._callCallbacks("value-changed", this.value);
     },
 
     /**

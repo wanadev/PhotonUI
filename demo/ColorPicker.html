@@ -192,9 +192,26 @@
 
 
         <!-- Demo Script -->
+        <div id="infos" style="position: absolute; top: 380px; left: 40px; font-family: monospace"></div>
         <div id="widget-area"></div>
         <script id="photonui-demo">
+            function onValueChanged() {
+                var e = document.getElementById("infos");
+                e.innerHTML = "Color name: " + cp.color.hexString + "<br />";
+                e.innerHTML += "<br />";
+                e.innerHTML += "Red: " + cp.color.red + "<br />";
+                e.innerHTML += "Green: " + cp.color.green + "<br />";
+                e.innerHTML += "Blue: " + cp.color.blue + "<br />";
+                e.innerHTML += "Alpha: " + cp.color.alpha + "<br />";
+                e.innerHTML += "<br />";
+                e.innerHTML += "Hue: " + cp.color.hue + "<br />";
+                e.innerHTML += "Saturation: " + cp.color.saturation + "<br />";
+                e.innerHTML += "Brightness: " + cp.color.brightness + "<br />";
+            }
+
             var cp = new photonui.ColorPicker();
+            cp.registerCallback("change", "value-changed", onValueChanged);
+            onValueChanged();
 
             photonui.domInsert(cp, document.getElementById("widget-area"));
         </script>
