@@ -73,6 +73,12 @@ photonui.ColorPicker = photonui.Widget.$extend({
         this._updateSB();
         this._updateCanvas();
         this._updateProperties(["color"]);
+
+        this.__mouseManager = new photonui.MouseManager(this.__html.canvas);
+
+        this.__mouseManager.registerCallback("click", "mouse-move", this.__onMouseMove.bind(this));
+        this.__mouseManager.registerCallback("mouse-down", "mouse-down", this.__onMouseDown.bind(this));
+        this.__mouseManager.registerCallback("drag-start", "drag-start", this.__onDragStart.bind(this));
     },
 
 
@@ -158,11 +164,35 @@ photonui.ColorPicker = photonui.Widget.$extend({
      */
     __buffSB: null,
 
+    /**
+     * Mouse manager.
+     *
+     * @property __mouseManager
+     * @private
+     * @type photonui.MouseManager
+     */
+    __mouseManager: null,
+
+    /**
+     * FLAG: Disable SB square update.
+     *
+     * @property __disableSBUpdate
+     * @private
+     * @type Boolean
+     * @default false
+     */
+    __disableSBUpdate: false,
+
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
+
+    destroy: function() {
+        this.__mouseManager.destroy();
+        this.$super();
+    },
 
     /**
      * Build the widget HTML.
@@ -215,10 +245,16 @@ photonui.ColorPicker = photonui.Widget.$extend({
      * @private
      */
     _updateSB: function() {
+        if (this.__disableSBUpdate) return;
+
         var canvas = this.__buffSB;
         var ctx = canvas.getContext("2d");
         var pix = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        var color = new photonui.Color(this.color.hexString);
+        var color = new photonui.Color({
+            hue: this.color.hue,
+            saturation: this.color.saturation,
+            brightness: this.color.brightness
+        });
 
         var i = 0;
         var b = 0;
@@ -269,10 +305,56 @@ photonui.ColorPicker = photonui.Widget.$extend({
         ctx.beginPath();
         ctx.arc(81, 0, 6, 2*Math.PI, false);
         ctx.stroke();
-        //ctx.strokeRect(75, -3, 13, 6);
 
         ctx.restore();
-    }
+    },
+
+    /**
+     * Is the pointer on the SB Square?
+     *
+     * @method _pointerOnSquare
+     * @private
+     * @param mstate
+     * @return {Boolean}
+     */
+    _pointerOnSquare: function(mstate) {
+        return (mstate.x >= 50 && mstate.x <= 150 && mstate.y >= 50 && mstate.y <= 150);
+    },
+
+    /**
+     * Is the pointer on the hue circle?
+     *
+     * @method _pointerOnCircle
+     * @private
+     * @param mstate
+     * @return {Boolean}
+     */
+    _pointerOnCircle: function(mstate) {
+        var dx = Math.abs(100 - mstate.x);
+        var dy = Math.abs(100 - mstate.y);
+        var h = Math.sqrt(dx*dx + dy*dy);
+        return (h >= 74 && h <= 90);
+    },
+
+    /**
+     * the angle of the pointer with the horizontal line that pass by the center of the hue circle.
+     *
+     * @method _pointerAngle
+     * @private
+     * @param mstate
+     * @return {Number} the angle in degree.
+     */
+    _pointerAngle: function(mstate) {
+        var dx = Math.abs(100 - mstate.x);
+        var dy = Math.abs(100 - mstate.y);
+        var angle = Math.atan(dy/dx)*180/Math.PI;
+
+        if (mstate.x < 100 && mstate.y < 100) angle = 180 - angle;
+        else if (mstate.x < 100 && mstate.y >= 100) angle += 180;
+        else if (mstate.x >= 100 && mstate.y > 100) angle = 360 - angle;
+
+        return angle|0;
+    },
 
 
     //////////////////////////////////////////
@@ -280,5 +362,87 @@ photonui.ColorPicker = photonui.Widget.$extend({
     //////////////////////////////////////////
 
 
-    // TODO
+    /**
+     * @method __onMouseMove
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onMouseMove: function(manager, mstate) {
+        if (this._pointerOnSquare(mstate) || this._pointerOnCircle(mstate)) {
+            this.__html.canvas.style.cursor = "crosshair";
+        }
+        else {
+            this.__html.canvas.style.cursor = "default";
+        }
+    },
+
+    /**
+     * @method __onMouseDown
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onMouseDown: function(manager, mstate) {
+        if (this._pointerOnSquare(mstate)) {
+            this.__disableSBUpdate = true;
+            this.color.saturation = mstate.x - 50;
+            this.color.brightness = 150 - mstate.y;
+            this.__disableSBUpdate = false;
+        }
+        else if (this._pointerOnCircle(mstate)) {
+            this.color.hue = this._pointerAngle(mstate);
+        }
+    },
+
+    /**
+     * @method __onDragStart
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDragStart: function(manager, mstate) {
+        if (this._pointerOnSquare(mstate)) {
+            this.__disableSBUpdate = true;
+            this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingSquare.bind(this));
+            this.__mouseManager.registerCallback("drag-end", "drag-end", this.__onDragEnd.bind(this));
+        }
+        else if (this._pointerOnCircle(mstate)) {
+            this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingCircle.bind(this));
+            this.__mouseManager.registerCallback("drag-end", "drag-end", this.__onDragEnd.bind(this));
+        }
+    },
+
+    /**
+     * @method __onDraggingSquare
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDraggingSquare: function(manager, mstate) {
+        this.color.saturation = mstate.x - 50;
+        this.color.brightness = 150 - mstate.y;
+    },
+
+    /**
+     * @method __onDraggingCircle
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDraggingCircle: function(manager, mstate) {
+        this.color.hue = this._pointerAngle(mstate);
+    },
+
+    /**
+     * @method __onDragEnd
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDragEnd: function(manager, mstate) {
+        this.__mouseManager.removeCallback("dragging");
+        this.__mouseManager.removeCallback("drag-end");
+        this.__disableSBUpdate = false;
+    }
 });

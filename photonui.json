@@ -294,7 +294,7 @@
         "css": [],
         "themeCss": [],
         "assets": [],
-        "dependencies": ["Color"]
+        "dependencies": ["Color", "MouseManager"]
     },
     "Slider": {
         "abstract": false,
