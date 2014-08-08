@@ -207,6 +207,15 @@ photonui.ColorPicker = photonui.Widget.$extend({
         this.__html.canvas.width = 200;
         this.__html.canvas.height = 200;
         this.__html.outer.appendChild(this.__html.canvas);
+
+
+        this.__html.previewOuter = document.createElement("span");
+        this.__html.previewOuter.className = "photonui-colorpicker-previewouter";
+        this.__html.outer.appendChild(this.__html.previewOuter);
+
+        this.__html.preview = document.createElement("span");
+        this.__html.preview.className = "photonui-colorpicker-preview";
+        this.__html.previewOuter.appendChild(this.__html.preview);
     },
 
     /**
@@ -307,6 +316,9 @@ photonui.ColorPicker = photonui.Widget.$extend({
         ctx.stroke();
 
         ctx.restore();
+
+        // Color preview
+        this.__html.preview.style.backgroundColor = this.color.rgbaString;
     },
 
     /**

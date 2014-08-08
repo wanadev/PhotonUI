@@ -291,8 +291,8 @@
     "ColorPicker": {
         "abstract": false,
         "javascript": ["input/color/colorpicker.js"],
-        "css": [],
-        "themeCss": [],
+        "css": ["input/color/colorpicker.css"],
+        "themeCss": ["input/color/colorpicker-theme.css"],
         "assets": [],
         "dependencies": ["Color", "MouseManager"]
     },
