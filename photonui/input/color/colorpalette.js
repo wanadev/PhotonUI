@@ -41,13 +41,16 @@ var photonui = photonui || {};
 
 
 // The default palette
+
 photonui.palette = [
-    ["#000000", "#400000", "#404000", "#004000", "#004040", "#000040", "#400040"],
-    ["#303030", "#800000", "#808000", "#008000", "#008080", "#000080", "#800080"],
-    ["#606060", "#C00000", "#C0C000", "#00C000", "#00C0C0", "#0000C0", "#C000C0"],
-    ["#909090", "#FF0000", "#FFFF00", "#00FF00", "#00FFFF", "#0000FF", "#FF00FF"],
-    ["#C0C0C0", "#FF8080", "#FFFF80", "#80FF80", "#80FFFF", "#8080FF", "#FF80FF"],
-    ["#FFFFFF", "#FFC0C0", "#FFFFC0", "#C0FFC0", "#C0FFFF", "#C0C0FF", "#FFC0FF"]
+    ["#E52131", "#ED7130", "#F0902C", "#F0B922", "#EDE118", "#7DA638", "#000000"],
+    ["#EA4852", "#F08D52", "#F3A752", "#F9D246", "#F0EC51", "#A7CF41", "#424242"],
+    ["#F19096", "#F5BC93", "#F9CB94", "#F9E48A", "#F2F08E", "#C6DE84", "#676767"],
+    ["#F8D1D6", "#F9E2D2", "#F9E8D3", "#FDF8D2", "#F9F9CF", "#E7F1CD", "#989898"],
+    ["#1E9E85", "#2A7DB5", "#2751A1", "#6C3E98", "#A33E97", "#DF3795", "#C5C5C5"],
+    ["#2FB8A3", "#40A1D7", "#4072B5", "#8963AB", "#B462A7", "#E262A5", "#E3E3E3"],
+    ["#88CEC3", "#8CC9E9", "#87A8D3", "#D2A0C9", "#D2A0C9", "#EDA0C6", "#F1F1F1"],
+    ["#CEEAE7", "#CDE9F8", "#CFDEEF", "#EED9E9", "#EED9E9", "#F8D7E7", "#FFFFFF"]
 ];
 
 
@@ -69,7 +72,7 @@ photonui.ColorPalette = photonui.Widget.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._color = new photonui.Color();
+        this._color = new photonui.Color(photonui.palette[0][0]);
         this._registerWEvents(["value-changed"]);
         this.$super(params);
         this._updateProperties(["palette", "value"]);
