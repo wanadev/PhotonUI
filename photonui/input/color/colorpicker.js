@@ -127,7 +127,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
                 this._color.removeCallback("photonui.colorpicker.value-changed");
             }
             this._color = color;
-            this._color.registerCallback("photonui.colorpicker.value-changed", "value-changed", function() {
+            this._color.registerCallback("photonui.colorpicker.value-changed::" + this.name, "value-changed", function() {
                 this._updateSB();
                 this._updateCanvas();
             }.bind(this));
@@ -195,6 +195,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
 
     destroy: function() {
         this.__mouseManager.destroy();
+        this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
         this.$super();
     },
 
