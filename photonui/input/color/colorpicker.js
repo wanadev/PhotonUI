@@ -68,9 +68,13 @@ photonui.ColorPicker = photonui.Widget.$extend({
         this.__buffSB = document.createElement("canvas");
         this.__buffSB.width = 100;
         this.__buffSB.height = 100;
+        this.__buffSBmask = document.createElement("canvas");
+        this.__buffSBmask.width = 100;
+        this.__buffSBmask.height = 100;
         this.$super(params);
         this._updateH();
         this._updateSB();
+        this._updateSBmask();
         this._updateCanvas();
         this._updateProperties(["color"]);
 
@@ -248,6 +252,40 @@ photonui.ColorPicker = photonui.Widget.$extend({
     },
 
     /**
+     * Update saturation/brightness square mask
+     *
+     * @method _updateSBmask
+     * @private
+     */
+    _updateSBmask: function() {
+       var canvas = this.__buffSBmask;
+        var ctx = canvas.getContext("2d");
+        var pix = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        var i = 0;
+        var saturation = 0; 
+        var b = 0;
+        var s = 0;
+        for (b=0 ; b<100 ; b++) {
+            for (s=0 ; s<100 ; s++) {
+                i = 400 * b + 4 * s;
+
+                // some magic here 
+                saturation = (  (  0.5 * (  1-s/100  ) +0.5) * (1-b/100) *255)<<0;
+
+                pix.data[i+0] = saturation;
+                pix.data[i+1] = saturation;
+                pix.data[i+2] = saturation;
+
+                // more magic
+                pix.data[i+3] = ( ( 1- (  ((s/100)) * (1-(b/100))  ) ) *255)<<0;
+            }
+        }
+
+        ctx.putImageData(pix, 0, 0);
+    },
+
+    /**
      * Update saturation/brightness square
      *
      * @method _updateSB
@@ -258,29 +296,26 @@ photonui.ColorPicker = photonui.Widget.$extend({
 
         var canvas = this.__buffSB;
         var ctx = canvas.getContext("2d");
-        var pix = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        
         var color = new photonui.Color({
             hue: this.color.hue,
-            saturation: this.color.saturation,
-            brightness: this.color.brightness
+            saturation: 100,
+            brightness: 100
         });
 
-        var i = 0;
-        var b = 0;
-        var s = 0;
-        for (b=0 ; b<100 ; b++) {
-            color.brightness = 100-b;
-            for (s=0 ; s<100 ; s++) {
-                color.saturation = s;
-                i = 400 * b + 4 * s;
-                pix.data[i+0] = color.red;
-                pix.data[i+1] = color.green;
-                pix.data[i+2] = color.blue;
-                pix.data[i+3] = 255;
-            }
-        }
+        ctx.save();
 
-        ctx.putImageData(pix, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // fill the whole canvas with the current color
+        ctx.fillStyle = color.hexString;
+        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.fill();
+
+        // draw a mask on it, it will do the trick
+        ctx.drawImage(this.__buffSBmask, 0, 0);
+
+        ctx.restore();
     },
 
     /**
