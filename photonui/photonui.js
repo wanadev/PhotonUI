@@ -54,3 +54,17 @@ photonui.domInsert = function(widget, element) {
     var element = element || photonui.e_parent;
     element.appendChild(widget.html);
 }
+
+
+// Emulate Stone.gettext if the Translation module is not available
+if (window._ == undefined) {
+    window._ = function(string, replacements) {
+        var result = string;
+        if (replacements) {
+            for (var r in replacements) {
+                result = result.replace(new RegExp("\{" + r + "\}", "g"), replacements[r]);
+            }
+        }
+        return result;
+    }
+}
