@@ -132,6 +132,7 @@ photonui.Button = photonui.Widget.$extend({
         photonui.Helpers.cleanNode(this.__html.leftIcon);
         if (this._leftIconName) {
             this.__html.leftIcon.appendChild(this.leftIcon.html);
+            this.leftIconVisible = true;
         }
     },
 
@@ -190,6 +191,7 @@ photonui.Button = photonui.Widget.$extend({
         photonui.Helpers.cleanNode(this.__html.rightIcon);
         if (this._rightIconName) {
             this.__html.rightIcon.appendChild(this.rightIcon.html);
+            this.rightIconVisible = true;
         }
     },
 
