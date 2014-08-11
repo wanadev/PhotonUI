@@ -2,7 +2,7 @@ html, body {
     margin: 0;
     padding: 0;
     background-color: #fff;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAACdElEQVR4Xu2b3U0rUQwG2RKShiiNUBoNJSUs+YFIq8DDdzyJLJ3h9crW1cxne8OG5Xg8rm/+tCGwXITs9/uF+h+dTqeP3W73ab+cwMWFQnJumwoygAopyriUK6QIkQSokKIMGiDdz5XVTLBCFJIT6LzzXVm5z4eKzoJdWc0EK0QhOYHOK8Ybkvv0hsyUaCfECckJOCE5s98Kn7LG2d0ryQAqRCE5ATKB9BGm+90nZFmWQ47q34r387982S8nsK7rwVe4ObdNBTnB3pCijKetLL91Mm7GCRlnd60kAdL9XFlFuQppBlAhCskJdN7RdKLpft6QPG8PFWQAFaKQnACZQHrF0P2ckDwfriwnpJiamQC6sophoQHS/bwhzQQrRCE5gZlukhOS5+M1j72+Uy+Zwb5D4Dv1kodbMblSXVkKyQmQCaQTTfdzQvJ8vOao+62TcTPkBDsh4x7ulQopQiQBekOKMmiAdD9XVjPBClFITqDzzndl5T6f+rlBIQrJCcy0YpyQPB+uLCdkPDU+9o6z81cnALtri84T7IQAlknB/p06IOTcwnfqFY5koukV6MqqmP2pJQUrRCE5ATKB9Iqh+zkheT6e+slfIQrJCbiycmabipkAekOKYaEB0v28Ic0EK0QhOYGZbpITkufDzyFOSDE1MwH0KasYFhog3c8b0kywQhSSE5jpJvlOPc/HXxW+U69w7Dxx3pCKWd+pA/TOLZyQIsfOAP0cUpRLA6T7eUOaCVaIQnIC3pCc2aZiJoDekGJYaIB0P29IM8EKUUhOYKab5ITk+XioIAOjEIXkBMgE0k9FdD8nJM+HK2vKCQGCYguIwDdk0fNhkg6ROQAAAABJRU5ErkJggg==);
+    background-image: url(images/bg.png);
     height: 100%;
     overflow: hidden;
     font-family: sans-serif;
