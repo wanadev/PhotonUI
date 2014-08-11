@@ -124,7 +124,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
     setColor: function(color) {
         if (color instanceof photonui.Color) {
             if (this._color) {
-                this._color.removeCallback("photonui.colorpicker.value-changed");
+                this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
             }
             this._color = color;
             this._color.registerCallback("photonui.colorpicker.value-changed::" + this.name, "value-changed", function() {

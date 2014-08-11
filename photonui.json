@@ -296,6 +296,14 @@
         "assets": [],
         "dependencies": ["Color", "MouseManager"]
     },
+    "ColorPickerDialog": {
+        "abstract": false,
+        "javascript": ["composite/colorpickerdialog.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Dialog", "BoxLayout", "GridLayout", "ColorPicker", "ColorPalette", "Slider", "Label", "Button", "Separator"]
+    },
     "Slider": {
         "abstract": false,
         "javascript": ["input/slider/slider.js"],
