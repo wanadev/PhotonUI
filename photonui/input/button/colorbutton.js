@@ -57,14 +57,12 @@ photonui.ColorButton = photonui.Button.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._color = new photonui.Color(photonui.palette[0][0]);
+        this.__widgets = {};
+        this._color = new photonui.Color();
         this._registerWEvents(["value-changed"]);
         this.$super(params);
-        this.popup = new photonui.PopupWindow();
-        this.palette = new photonui.ColorPalette();
-        this.palette.registerCallback("value-changed", "value-changed", this.__onPaletteValueChanged, this);
-        this.popup.child = this.palette;
-        this._updateProperties(["value"]);
+        this._buildUi();
+        this._updateProperties(["color"]);
     },
 
 
@@ -87,7 +85,6 @@ photonui.ColorButton = photonui.Button.$extend({
 
     setValue: function(value) {
         this.color.hexString = value;
-        this.__html.color.style.backgroundColor = this.color.hexString;
     },
 
     /**
@@ -104,8 +101,34 @@ photonui.ColorButton = photonui.Button.$extend({
 
     setColor: function(color) {
         if (color instanceof photonui.Color) {
+            if (this._color) {
+                this._color.removeCallback("photonui.colorbutton.value-changed::" + this.name);
+            }
+            this._color = color;
+            this._color.registerCallback("photonui.colorbutton.value-changed::" + this.name, "value-changed", this.__onColorChanged, this);
+        }
+        this.__onColorChanged();
+        if (color instanceof photonui.Color) {
             this._color = color;
         }
+    },
+
+
+    /**
+     * Display only the color picker dialog instead of showing the palette first.
+     *
+     * @property dialogOnly
+     * @type Boolean
+     * @default false
+     */
+    _dialogOnly: false,
+
+    isDialogOnly: function() {
+        return this._dialogOnly;
+    },
+
+    setDialogOnly: function(dialogOnly) {
+        this._dialogOnly = !!dialogOnly;
     },
 
 
@@ -114,7 +137,17 @@ photonui.ColorButton = photonui.Button.$extend({
     //////////////////////////////////////////
 
 
+    // ====== Public methods ======
+
+
+    destroy: function() {
+        this._color.removeCallback("photonui.colorbutton.value-changed::" + this.name);
+        this.$super();
+    },
+
+
     // ====== Private methods ======
+
 
     /**
      * Update the button content
@@ -143,6 +176,36 @@ photonui.ColorButton = photonui.Button.$extend({
         this.__html.button.appendChild(this.__html.color);
     },
 
+    /**
+     * Make the UI.
+     *
+     * @method _buildUi
+     * @private
+     */
+    _buildUi: function() {
+        this.__widgets.popup = new photonui.PopupWindow();
+        this.__widgets.vbox = new photonui.BoxLayout({verticalSpacing: 0, horizontalSpacing: 0});
+        this.__widgets.popup.child = this.__widgets.vbox;
+
+        this.__widgets.palette = new photonui.ColorPalette();
+        this.__widgets.vbox.addChild(this.__widgets.palette);
+
+        this.__widgets.custom = new photonui.Button({text: _("Custom color..."), appearance: "flat"});
+        this.__widgets.custom.addClass("photonui-colorbutton-custombutton");
+        this.__widgets.vbox.addChild(this.__widgets.custom);
+
+        this.__widgets.colorPickerDialog = new photonui.ColorPickerDialog();
+
+        // Callbacks
+        this.__widgets.palette.registerCallback("value-changed", "value-changed", this.__onValueChanged, this);
+        this.__widgets.colorPickerDialog.registerCallback("value-changed", "value-changed", this.__onValueChanged, this);
+        this.__widgets.custom.registerCallback("click", "click", this.__onCustomButtonClicked, this);
+
+        // Color
+        this.__widgets.palette.color = this.color;
+        this.__widgets.colorPickerDialog.color = this.color;
+    },
+
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -158,7 +221,13 @@ photonui.ColorButton = photonui.Button.$extend({
      */
     __onButtonClicked: function(event) {
         this._callCallbacks("click", [event]);
-        this.popup.popupWidget(this);
+        if (this.dialogOnly) {
+            this.__widgets.colorPickerDialog.show();
+            this.__widgets.colorPickerDialog.center();
+        }
+        else {
+            this.__widgets.popup.popupWidget(this);
+        }
     },
 
     /**
@@ -169,8 +238,25 @@ photonui.ColorButton = photonui.Button.$extend({
      * @param {photonui.Widget} widget
      * @param {String} color
      */
-    __onPaletteValueChanged: function(widget, color) {
-        this.value = color;
-        this._callCallbacks("value-changed", [color]);
+    __onValueChanged: function(widget, color) {
+        this._callCallbacks("value-changed", [this.color]);
+    },
+
+    /**
+     *
+     * @method __onColorChanged
+     * @private
+     */
+    __onColorChanged: function() {
+        this.__html.color.style.backgroundColor = this.color.hexString;
+    },
+
+    /**
+     * @method __onCustomButtonClicked
+     * @private
+     */
+    __onCustomButtonClicked: function() {
+        this.__widgets.colorPickerDialog.show();
+        this.__widgets.colorPickerDialog.center();
     }
 });

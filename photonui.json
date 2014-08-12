@@ -125,7 +125,7 @@
         "css": ["input/button/colorbutton.css"],
         "themeCss": ["input/button/colorbutton-theme.css"],
         "assets": [],
-        "dependencies": ["Button", "PopupWindow", "ColorPalette"]
+        "dependencies": ["Button", "PopupWindow", "ColorPickerDialog"]
     },
     "Field": {
         "abstract": true,
