@@ -103,6 +103,13 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.__onColorChanged();
     },
 
+    //
+
+    setVisible: function(visible) {
+        this.$super(visible);
+        if (this._color && visible && this.__widgets.labelRed) this._updateUi();
+    },
+
 
     //////////////////////////////////////////
     // Methods                              //
@@ -254,14 +261,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         // == Bindings ==
         this.__widgets.colorPalette.color = this.__widgets.colorPicker.color;
 
-        this.__widgets.colorPicker.color.registerCallback("colorpickerdialog.colorPicker.value-changed", "value-changed", function(color) {
-            this.__widgets.fieldRed.value = color.red;
-            this.__widgets.fieldGreen.value = color.green;
-            this.__widgets.fieldBlue.value = color.blue;
-            this.__widgets.fieldHue.value = color.hue;
-            this.__widgets.fieldSaturation.value = color.saturation;
-            this.__widgets.fieldBrightness.value = color.brightness;
-        }, this);
+        this.__widgets.colorPicker.color.registerCallback("colorpickerdialog.colorPicker.value-changed", "value-changed", this._updateUi, this);
 
         this.__widgets.fieldRed.registerCallback("colorpickerdialog.fieldRed.value-changed", "value-changed", function(widget, value) {
             this.__widgets.colorPicker.color.red = value;
@@ -292,6 +292,21 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.registerCallback("colorpickerdialog.close", "close-button-clicked", this.__onCancel, this);
     },
 
+    /**
+     * Update the fields of the UI.
+     *
+     * @method _updateUi
+     * @private
+     */
+    _updateUi: function(color) {
+        var color = color || this.color;
+        this.__widgets.fieldRed.value = color.red;
+        this.__widgets.fieldGreen.value = color.green;
+        this.__widgets.fieldBlue.value = color.blue;
+        this.__widgets.fieldHue.value = color.hue;
+        this.__widgets.fieldSaturation.value = color.saturation;
+        this.__widgets.fieldBrightness.value = color.brightness;
+    },
 
 
     //////////////////////////////////////////
