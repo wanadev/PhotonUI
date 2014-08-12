@@ -200,6 +200,6 @@ photonui.ColorPalette = photonui.Widget.$extend({
 
     __onColorClicked: function(color, event) {
         this.value = color;
-        this._callCallbacks("value-changed", [color]);
+        this._callCallbacks("value-changed", [this.color]);
     }
 });

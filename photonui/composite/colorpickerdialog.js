@@ -43,6 +43,12 @@ var photonui = photonui || {};
 /**
  * Color Picker Dialog.
  *
+ * wEvents:
+ *
+ *   * value-changed:
+ *      - description: the selected color changed.
+ *      - callback:    function(widget, color)
+ *
  * @class ColorPickerDialog
  * @constructor
  * @extends photonui.Dialog
@@ -56,6 +62,8 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
 
         var params = params || {};
         if (params.title == undefined) params.title = _("Select a color...");
+
+        this._registerWEvents(["value-changed"]);
 
         this.$super(params);
 
@@ -101,7 +109,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
     //////////////////////////////////////////
 
 
-    // ====== Private methods ======
+    // ====== Public methods ======
 
 
     destroy: function() {
@@ -315,6 +323,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
                 this.__widgets.colorPicker.color.brightness
         );
         this.hide();
+        this._callCallbacks("value-changed", [this.color]);
     },
 
     /**
