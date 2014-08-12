@@ -43,4 +43,13 @@
 .photonui-colorpicker .photonui-colorpicker-preview {
     box-shadow: inset  0 0 0 1px rgba(255, 255, 255, .8);
     border-radius: 2px;
+    text-align: center;
+    color: rgba(255, 255, 255, .8);
+    font-size: 14px;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, .1), 1px 1px 1px rgba(0, 0, 0, .7);
+    outline: none;
+}
+
+.photonui-colorpicker .photonui-colorpicker-preview:focus {
+    color: #fff;
 }

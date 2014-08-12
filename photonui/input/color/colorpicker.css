@@ -38,4 +38,7 @@
 .photonui-colorpicker .photonui-colorpicker-preview {
     display: block;
     height: 35px;
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
 }

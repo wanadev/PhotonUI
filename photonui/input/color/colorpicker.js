@@ -83,6 +83,9 @@ photonui.ColorPicker = photonui.Widget.$extend({
         this.__mouseManager.registerCallback("click", "mouse-move", this.__onMouseMove.bind(this));
         this.__mouseManager.registerCallback("mouse-down", "mouse-down", this.__onMouseDown.bind(this));
         this.__mouseManager.registerCallback("drag-start", "drag-start", this.__onDragStart.bind(this));
+
+        // Bind js events
+        this._bindEvent("value-changed", this.__html.preview, "change", this.__onValueChanged.bind(this));
     },
 
 
@@ -218,7 +221,10 @@ photonui.ColorPicker = photonui.Widget.$extend({
         this.__html.previewOuter.className = "photonui-colorpicker-previewouter";
         this.__html.outer.appendChild(this.__html.previewOuter);
 
-        this.__html.preview = document.createElement("span");
+        this.__html.preview = document.createElement("input");
+        this.__html.preview.type = "text";
+        this.__html.preview.autocomplete = "off";
+        this.__html.preview.spellcheck = false;
         this.__html.preview.className = "photonui-colorpicker-preview";
         this.__html.previewOuter.appendChild(this.__html.preview);
     },
@@ -356,6 +362,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
 
         // Color preview
         this.__html.preview.style.backgroundColor = this.color.rgbaString;
+        this.__html.preview.value = this.color.hexString;
     },
 
     /**
@@ -438,11 +445,11 @@ photonui.ColorPicker = photonui.Widget.$extend({
             this.color.saturation = mstate.x - 50;
             this.color.brightness = 150 - mstate.y;
             this.__disableSBUpdate = false;
-            this._callCallbacks("value-changed", this.value);
+            this._callCallbacks("value-changed", this.color);
         }
         else if (this._pointerOnCircle(mstate)) {
             this.color.hue = this._pointerAngle(mstate);
-            this._callCallbacks("value-changed", this.value);
+            this._callCallbacks("value-changed", this.color);
         }
     },
 
@@ -473,7 +480,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
     __onDraggingSquare: function(manager, mstate) {
         this.color.saturation = mstate.x - 50;
         this.color.brightness = 150 - mstate.y;
-        this._callCallbacks("value-changed", this.value);
+        this._callCallbacks("value-changed", this.color);
     },
 
     /**
@@ -484,7 +491,7 @@ photonui.ColorPicker = photonui.Widget.$extend({
      */
     __onDraggingCircle: function(manager, mstate) {
         this.color.hue = this._pointerAngle(mstate);
-        this._callCallbacks("value-changed", this.value);
+        this._callCallbacks("value-changed", this.color);
     },
 
     /**
@@ -497,5 +504,15 @@ photonui.ColorPicker = photonui.Widget.$extend({
         this.__mouseManager.removeCallback("dragging");
         this.__mouseManager.removeCallback("drag-end");
         this.__disableSBUpdate = false;
-    }
+    },
+
+    /**
+     * @method __onValueChanged
+     * @private
+     */
+    __onValueChanged: function() {
+        this.color.hexString = this.__html.preview.value;
+        this.__html.preview.value = this.color.hexString;
+        this._callCallbacks("value-changed", this.color);
+    },
 });
