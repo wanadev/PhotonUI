@@ -152,7 +152,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.__widgets.fieldRed = new photonui.Slider({
             min: 0,
             max: 255,
-            decimalDigit: 0
+            decimalDigits: 0
         });
 
         this.__widgets.labelRed = new photonui.Label({
@@ -167,7 +167,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.__widgets.fieldGreen = new photonui.Slider({
             min: 0,
             max: 255,
-            decimalDigit: 0
+            decimalDigits: 0
         });
 
         this.__widgets.labelGreen = new photonui.Label({
@@ -182,7 +182,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.__widgets.fieldBlue = new photonui.Slider({
             min: 0,
             max: 255,
-            decimalDigit: 0
+            decimalDigits: 0
         });
 
         this.__widgets.labelBlue = new photonui.Label({
@@ -201,7 +201,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.__widgets.fieldHue = new photonui.Slider({
             min: 0,
             max: 360,
-            decimalDigit: 0
+            decimalDigits: 0
         });
 
         this.__widgets.labelHue = new photonui.Label({
@@ -216,7 +216,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.__widgets.fieldSaturation = new photonui.Slider({
             min: 0,
             max: 100,
-            decimalDigit: 0
+            decimalDigits: 0
         });
 
         this.__widgets.labelSaturation = new photonui.Label({
@@ -231,7 +231,7 @@ photonui.ColorPickerDialog = photonui.Dialog.$extend({
         this.__widgets.fieldBrightness = new photonui.Slider({
             min: 0,
             max: 100,
-            decimalDigit: 0
+            decimalDigits: 0
         });
 
         this.__widgets.labelBrightness = new photonui.Label({
