@@ -357,7 +357,7 @@ photonui.Widget = photonui.Base.$extend({
     destroy: function() {
         this.$super();
         delete _widgets[this.name];
-        if (this.html) {
+        if (this.html && this.html.parentNode) {
             this.html.parentNode.removeChild(this.html);
         }
     },

@@ -71,11 +71,11 @@ photonui.Container = photonui.Widget.$extend({
     },
 
     setChildName: function(childName) {
-        if (this.childName && this.containerNode) {
+        if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.removeChild(this.child.html);
         }
         this._childName = childName;
-        if (this.childName && this.containerNode) {
+        if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.appendChild(this.child.html);
         }
     },
