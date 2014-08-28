@@ -384,6 +384,7 @@ photonui.Color = photonui.Base.$extend({
      * Update HSB from RGB.
      *
      * @method _updateHSB
+     * @private
      */
     _updateHSB: function() {
         // http://fr.wikipedia.org/wiki/Teinte_Saturation_Valeur#Conversion_de_RVB_vers_TSV
@@ -428,6 +429,7 @@ photonui.Color = photonui.Base.$extend({
      * Update RGB from HSB.
      *
      * @method _updateRGB
+     * @private
      */
     _updateRGB: function() {
         // http://fr.wikipedia.org/wiki/Teinte_Saturation_Valeur#Conversion_de_TSV_vers_RVB
