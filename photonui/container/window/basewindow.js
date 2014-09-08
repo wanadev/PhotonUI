@@ -355,9 +355,11 @@ photonui.BaseWindow = photonui.Container.$extend({
      * @method center
      */
     center: function() {
+        var node = photonui.e_parent || document.getElementsByTagName("body")[0];
+        if (!node) return;
         this.setPosition(
-                Math.round((photonui.e_parent.offsetWidth - this.offsetWidth) / 2),
-                Math.round((photonui.e_parent.offsetHeight - this.offsetHeight) / 2)
+                Math.round((node.offsetWidth - this.offsetWidth) / 2),
+                Math.round((node.offsetHeight - this.offsetHeight) / 2)
         );
     },
 
