@@ -160,7 +160,8 @@ photonui.Window = photonui.BaseWindow.$extend({
         if (modal) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
-            photonui.e_parent.appendChild(this.__html.modalBox);
+            var parentNode = photonui.e_parent || document.getElementsByTagName("body")[0];
+            parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
         }
         else if (this.__html.modalBox) {
