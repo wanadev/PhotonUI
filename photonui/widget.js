@@ -85,11 +85,11 @@ photonui.Widget = photonui.Base.$extend({
         // Build the html
         this._buildHtml();
 
-        // Parent constructor
-        this.$super(params);
-
         // wEvents
         this._registerWEvents(["show", "hide"]);
+
+        // Parent constructor
+        this.$super(params);
 
         // Update properties
         this._updateProperties(["visible"]);
