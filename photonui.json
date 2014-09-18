@@ -207,6 +207,14 @@
         "assets": [],
         "dependencies": ["Core"]
     },
+    "Text": {
+        "abstract": false,
+        "javascript": ["visual/text.js"],
+        "css": [],
+        "themeCss": [],
+        "assets": [],
+        "dependencies": ["Core"]
+    },
     "Separator": {
         "abstract": false,
         "javascript": ["visual/separator.js"],
