@@ -146,6 +146,6 @@ photonui.Translation = photonui.Base.$extend({
      * @private
      */
     __onStonejsLocaleChanged: function() {
-        this._callCallbacks("click", [this.locale]);
+        this._callCallbacks("locale-changed", [this.locale]);
     }
 });
