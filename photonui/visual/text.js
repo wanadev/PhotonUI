@@ -57,6 +57,10 @@ photonui.Text = photonui.Widget.$extend({
 
     // ====== Public properties ======
 
+    // meta for i18n
+    _lastSet: "text",
+    _raw: "",
+
     /**
      * Text
      *
@@ -69,6 +73,8 @@ photonui.Text = photonui.Widget.$extend({
     },
 
     setText: function(text) {
+        this._lastSet = "text";
+        this._raw = text;
         photonui.Helpers.cleanNode(this.__html.outer);
         this.__html.outer.appendChild(document.createTextNode(text));
     },
@@ -80,12 +86,13 @@ photonui.Text = photonui.Widget.$extend({
      * @type String
      * @default ""
      */
-
     getRawHtml: function() {
         return this.__html.outer.innerHTML;
     },
 
     setRawHtml: function(html) {
+        this._lastSet = "rawHtml";
+        this._raw = html;
         this.__html.outer.innerHTML = html;
     },
 
@@ -119,6 +126,28 @@ photonui.Text = photonui.Widget.$extend({
     _buildHtml: function() {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-text";
+    },
+
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function() {
+        if (!window.Stone) {
+            return;
+        }
+        this.$super();
+        if (this._raw instanceof Stone.LazyString) {
+            this[this._lastSet] = this._raw;
+        }
     }
 });
 
