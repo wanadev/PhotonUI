@@ -473,7 +473,7 @@ photonui.MouseManager = photonui.Base.$extend({
 
         // Click
         if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold
-        || Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
+        && Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
             this._action = "click";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks("click", [this._dump()]);
