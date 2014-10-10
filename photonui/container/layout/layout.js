@@ -160,7 +160,7 @@ photonui.Layout = photonui.Container.$extend({
     removeChild: function(widget) {
         var index = this._childrenNames.indexOf(widget.name);
         if (index >= 0) {
-            this._childrenNames.splice(widget.name, 1);
+            this._childrenNames.splice(index, 1);
         }
         this._updateLayout();
     },
