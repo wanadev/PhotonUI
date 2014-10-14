@@ -104,7 +104,13 @@ photonui.Helpers.cleanNode = function(node) {
  * @return {Object} `{x: <Number>, y: <Number>}
  */
 photonui.Helpers.getAbsolutePosition = function(element) {
-    var css = getComputedStyle(element);
+    if (!element instanceof Element) return {x: 0, y: 0};
+    try {
+        var css = getComputedStyle(element);
+    }
+    catch (e) {
+        return {x: 0, y: 0};
+    }
     if (!css) return {x: 0, y: 0};
 
     var x = - parseInt(css.borderLeftWidth);
