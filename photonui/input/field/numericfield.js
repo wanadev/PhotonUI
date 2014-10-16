@@ -54,6 +54,7 @@ photonui.NumericField = photonui.Field.$extend({
         this.$super(params);
         this._updateProperties(["value"]);
         this._bindFieldEvents();
+        this._unbindEvent("value-changed");
         this._bindEvent("keypress", this.__html.field, "keypress", this.__onKeypress.bind(this));
         this._bindEvent("keyup", this.__html.field, "keyup", this.__onKeyup.bind(this));
         this._bindEvent("keydown", this.__html.field, "keydown", this.__onKeydown.bind(this));
