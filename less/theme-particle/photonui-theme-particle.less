@@ -1,0 +1,58 @@
+/** PhotonUI Particle Theme v0.1 **/
+
+// Variables
+@import "variables.less";
+
+// Composite
+@import "composite/popupmenu.less";
+
+// Container
+@import "container/dialog.less";
+@import "container/menu.less";
+@import "container/popupwindow.less";
+@import "container/window.less";
+
+// Input
+@import "input/button.less";
+@import "input/checkbox.less";
+@import "input/colorbutton.less";
+@import "input/colorpalette.less";
+@import "input/colorpicker.less";
+@import "input/field.less";
+@import "input/select.less";
+@import "input/slider.less";
+@import "input/switch.less";
+
+// Visual
+@import "visual/label.less";
+@import "visual/progressbar.less";
+@import "visual/separator.less";
+
+// Misc
+// Selection
+.photonui-widget {
+    &::selection {
+        background: @color-light-highlight;
+        color: @color-dark-highlight;
+    }
+    
+    &::-moz-selection {
+        background: @color-light-highlight;
+        color: @color-dark-highlight;
+    }
+    
+    &::-o-selection {
+        background: @color-light-highlight;
+        color: @color-dark-highlight;
+    }
+    
+    &::-ms-selection {
+        background: @color-light-highlight;
+        color: @color-dark-highlight;
+    }
+    
+    &::-webkit-selection {
+        background: @color-light-highlight;
+        color: @color-dark-highlight;
+    }
+}

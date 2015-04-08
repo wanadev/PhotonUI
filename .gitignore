@@ -1,3 +1,4 @@
-doc
-photonui.out
-photonui.git
+doc/
+demo/
+node_modules
+npm-debug.log

@@ -1,0 +1,149 @@
+/*
+* Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*   * Redistributions of source code must retain the above copyright notice, this
+*     list of conditions and the following disclaimer.
+*   * Redistributions in binary form must reproduce the above copyright notice,
+*     this list of conditions and the following disclaimer in the documentation
+*     and/or other materials provided with the distribution.
+*   * Neither the name of Wanadev nor the names of its contributors may be used
+*     to endorse or promote products derived from this software without specific
+*     prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+* Authored by: Fabien LOISON <http://flozz.fr/>
+*/
+
+
+.photonui-progressbar {
+    display: table;
+    box-sizing: border-box;
+    user-select: none;
+    overflow: hidden;
+    height: 26px; /* FIXME */
+    width: 100%;
+}
+
+.photonui-progressbar-bar {
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+.photonui-progressbar-text {
+    float: left;
+    display: table;
+    box-sizing: border-box;
+    pointer-events: none;
+    height: 100%;
+    width: 100%;
+    border-collapse: collapse;
+    
+    span {
+        pointer-events: none;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        white-space: nowrap;
+    }
+}
+
+/** Horizontal **/
+
+
+.photonui-progressbar.photonui-progressbar-horizontal {
+    min-height: 26px;
+    
+    .photonui-progressbar-bar {
+        height: 100%;
+        min-height: 22px; /** FIXME **/
+    }
+    
+    .photonui-progressbar-text {
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, .3);
+        min-height: 22px; /** FIXME **/
+    }
+}
+
+/** Vertical **/
+
+
+.photonui-progressbar.photonui-progressbar-vertical {
+    min-height: 55px;
+    min-width: 26px;
+    width: 26px;
+    transform: rotate(180deg);
+    
+    .photonui-progressbar-bar {
+    }
+    
+    .photonui-progressbar-text {
+        width: 200px;
+        margin-left: calc(~"-100px + 50%") !important;
+        transform: rotate(90deg);
+    }
+    
+}
+
+/** Pulsate **/
+
+
+.photonui-progressbar.photonui-progressbar-pulsate .photonui-progressbar-text {
+    display: none;
+}
+
+
+/** Horizontal Pulsate **/
+
+@keyframes photonui-progressbar-pulsate-horizontal {
+    0% { margin-left:  0%; }
+    50% { margin-left: 80%; }
+    100% { margin-left:  0%; }
+}
+
+@-webkit-keyframes photonui-progressbar-pulsate-horizontal {
+    0% { margin-left:  0%; }
+    50% { margin-left: 80%; }
+    100% { margin-left:  0%; }
+}
+
+.photonui-progressbar.photonui-progressbar-horizontal.photonui-progressbar-pulsate .photonui-progressbar-bar {
+    width: 20%;
+    margin-left: 0%;
+    animation: photonui-progressbar-pulsate-horizontal linear 1.5s infinite;
+}
+
+
+/** Vertical Pulsate **/
+
+@keyframes photonui-progressbar-pulsate-vertical {
+    0% { opacity: 0; transform: scale(1, .1); }
+    20% { opacity: 1; }
+    80% { opacity: 0; transform: scale(1, 1.1); }
+    100% { opacity: 0; }
+}
+
+@-webkit-keyframes photonui-progressbar-pulsate-vertical {
+    0% { opacity: 0; -webkit-transform: scale(1, .1); }
+    20% { opacity: 1; }
+    80% { opacity: 0; -webkit-transform: scale(1, 1.1); }
+    100% { opacity: 0; }
+}
+
+.photonui-progressbar.photonui-progressbar-vertical.photonui-progressbar-pulsate .photonui-progressbar-bar {
+    height: 100%;
+    animation: photonui-progressbar-pulsate-vertical ease .8s infinite;
+}

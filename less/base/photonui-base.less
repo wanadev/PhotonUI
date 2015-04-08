@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <http://flozz.fr/>
+ */
+
+
+.photonui-widget {
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+}
+
+.photonui-widget button::-moz-focus-inner,
+.photonui-widget input[type="submit"]::-moz-focus-inner,
+button.photonui-widget::-moz-focus-inner,
+input[type="submit"].photonui-widget::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+.photonui-container-expand-child > * {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.photonui-container-expand-child-horizontal > * {
+    display: block;
+    width: 100% !important;
+}
+
+.photonui-container-expand-child-vertical > * {
+    display: block;
+    height: 100% !important;
+}
+
+/** PhotonUI Base Theme (Imports) **/
+
+// Variables
+@import "variables.less";
+
+// Composite
+@import "composite/popupmenu.less";
+
+// Container
+@import "container/basewindow.less";
+@import "container/dialog.less";
+@import "container/menu.less";
+@import "container/menuitem.less";
+@import "container/popupwindow.less";
+@import "container/window.less";
+
+// Container Layout
+@import "container/boxlayout.less";
+@import "container/fluidlayout.less";
+@import "container/gridlayout.less";
+@import "container/viewport.less";
+
+// Input
+@import "input/button.less";
+@import "input/colorbutton.less";
+@import "input/colorpalette.less";
+@import "input/colorpicker.less";
+@import "input/field.less";
+@import "input/select.less";
+@import "input/slider.less";
+@import "input/switch.less";
+@import "input/textareafield.less";
+@import "input/togglebutton.less";
+
+// Visual
+@import "visual/baseicon.less";
+@import "visual/canvas.less";
+@import "visual/label.less";
+@import "visual/progressbar.less";
+@import "visual/separator.less";
+@import "visual/spriteicon.less";
+@import (inline) "visual/font-awesome.min.css";
