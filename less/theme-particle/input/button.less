@@ -1,0 +1,124 @@
+/*
+* Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*   * Redistributions of source code must retain the above copyright notice, this
+*     list of conditions and the following disclaimer.
+*   * Redistributions in binary form must reproduce the above copyright notice,
+*     this list of conditions and the following disclaimer in the documentation
+*     and/or other materials provided with the distribution.
+*   * Neither the name of Wanadev nor the names of its contributors may be used
+*     to endorse or promote products derived from this software without specific
+*     prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+* Authored by: Fabien LOISON <http://flozz.fr/>
+*/
+
+
+.photonui-button {
+    padding: 0 12px;
+    min-width: 32px;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 2px;
+    text-decoration: none !important;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    outline: none;
+    border: none;
+    vertical-align: middle;
+    line-height: 2.5em;
+    
+    color: @color-dark-default;
+    background-color: @color-light-default;
+    border-bottom: 2px solid darken(@color-light-default, 10);
+    text-shadow: 1px 1px 0 lighten(@color-light-default, 10);
+    
+    transition: color, background-color, border-bottom-color;
+    transition-duration: @transition-duration;
+    
+    /** States **/
+    &:hover {
+        background-color: @color-light-hover;
+        color: @color-dark-hover;
+        border-bottom-color: @color-dark-hover;
+    }
+    
+    &:active {
+        background-color: @color-light-active;
+        color: @color-dark-active;
+        border-bottom-color: @color-dark-active;
+    }
+    
+    &:focus {
+        border-bottom-color: @color-dark-default;
+    }
+    
+    &.disabled {
+        pointer-events: none;
+        color: @color-dark-disabled;
+        background-color: @color-light-disabled;
+    }
+}
+
+input:checked + .photonui-button {
+    background-color: @color-light-highlight;
+    color: @color-dark-active;
+    border-bottom-color: darken(@color-light-highlight, 17);
+    text-shadow: 1px 1px 0 lighten(@color-light-highlight, 17);
+    
+    &:hover {
+        background-color: lighten(@color-light-highlight, 7);
+        border-bottom-color: darken(@color-light-highlight, 17);
+    }
+    
+    &:focus {
+        border-bottom-color: darken(@color-light-highlight, 17);
+    }
+}
+
+/**
+* Flat button
+*/
+
+.photonui-button.photonui-button-appearance-flat,
+.photonui-button-appearance-flat .photonui-button {
+    background-color: transparent;
+    border: none;
+    
+    &:hover {
+        background-color: @color-light-hover;
+        color: @color-dark-hover;
+    }
+    
+    &:active {
+        background-color: @color-light-active;
+        color: @color-dark-active;
+    }
+    
+    &:focus {
+        box-shadow: 0px 0px 1px @color-dark-active;
+    }
+    
+    &.disabled {
+        pointer-events: none;
+        color: @color-dark-disabled;
+        background-color: @color-light-disabled;
+    }
+}
