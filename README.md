@@ -2,7 +2,7 @@
 
 **NOTE: This repository is currently in a state of flux and is not stable for use.**
 
-**Documentation and examples:** http://wanadev.github.io/PhotonUI/
+**Documentation and examples:** http://wanadev.github.io/PhotonUI/demo/
 
 ##Building:
   1. Install [Node.js](https://nodejs.org/) (or [io.js](https://iojs.org/)) and [npm](http://npmjs.org).
