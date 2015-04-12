@@ -163,6 +163,19 @@ var Layout = Container.$extend({
         }
         this._updateLayout();
     },
+    
+    /**
+     * Destroy all children of the layout
+     *
+     * @method empty
+     */
+    empty: function() {
+      var children = this.children;
+      for (var i=0 ; i<children.length ; i++) {
+          children[i].destroy();
+      }
+      this.children = [];
+    },
 
     /**
      * Destroy the widget.
@@ -170,10 +183,7 @@ var Layout = Container.$extend({
      * @method destroy
      */
     destroy: function() {
-        var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
-            children[i].destroy();
-        }
+        this.empty();
         this.$super();
     },
 

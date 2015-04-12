@@ -1,8 +1,8 @@
 {
     "name": "photonui",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "A work-in-progress MVC/Swing style JavaScript UI library.",
-    "homepage": "http://fourth-corner-software.github.io/PhotonUI",
+    "homepage": "http://wanadev/PhotonUI/demo/index.html",
     "author": "Wanadev (http://wanadev.fr/)",
     "license": "BSD-3-Clause",
     "maintainers": [
@@ -14,7 +14,7 @@
     ],
     "repository" : {
         "type" : "git",
-        "url" : "http://github.com/Fourth-Corner-Software/PhotonUI.git"
+        "url" : "http://github.com/wanadev/PhotonUI.git"
     },
     "devDependencies": {
         "grunt": ">=0.4.5",
