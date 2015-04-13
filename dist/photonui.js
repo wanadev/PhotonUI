@@ -3057,6 +3057,19 @@ var Layout = Container.$extend({
         }
         this._updateLayout();
     },
+    
+    /**
+     * Destroy all children of the layout
+     *
+     * @method empty
+     */
+    empty: function() {
+      var children = this.children;
+      for (var i=0 ; i<children.length ; i++) {
+          children[i].destroy();
+      }
+      this.children = [];
+    },
 
     /**
      * Destroy the widget.
@@ -3064,10 +3077,7 @@ var Layout = Container.$extend({
      * @method destroy
      */
     destroy: function() {
-        var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
-            children[i].destroy();
-        }
+        this.empty();
         this.$super();
     },
 
@@ -10220,7 +10230,7 @@ var Translation = Base.$extend({
      * Enable/disable Stone.js translating elements with the "stonejs" attribute in the DOM.
      *
      * @method enableDomScan
-     * @param {Boolean} Enable or disable DOM scanning.
+     * @param {Boolean} boolean Enable or disable DOM scanning.
      */
     enableDomScan: Stone.enableDomScan,
     
