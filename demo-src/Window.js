@@ -22,7 +22,7 @@ win2.registerCallback(
     "demo.window-moved",
     "position-changed",
     function(widget, x, y) {
-  widget.child.text = "x: " + x + ", y: " + y;
+        widget.child.text = "x: " + x + ", y: " + y;
     }
 );
 
@@ -32,4 +32,4 @@ function close(widget) {
 }
 win.registerCallback("clwin", "close-button-clicked", close);
 win2.registerCallback("clwin", "close-button-clicked", close);
-  
+

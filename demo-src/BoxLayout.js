@@ -6,7 +6,7 @@ button1.registerCallback(
     "btnclick",
     "click",
     function(widget, event) {
-  box.orientation = "vertical";
+        box.orientation = "vertical";
     }
 );
 
@@ -16,7 +16,7 @@ button2.registerCallback(
     "btnclick",
     "click",
     function(widget, event) {
-  box.orientation = "horizontal";
+        box.orientation = "horizontal";
     }
 );
 
@@ -24,4 +24,4 @@ var button3 = new photonui.Button();
 box.addChild(button3);
 
 photonui.domInsert(box, document.getElementById("widget-area"));
-  
+

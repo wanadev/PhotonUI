@@ -17,4 +17,4 @@ fm.registerCallback("open", "file-open", function(widget, file, x, y) {
 });
 
 photonui.domInsert(btn, document.getElementById("widget-area"));
-  
+

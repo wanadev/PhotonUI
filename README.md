@@ -1,14 +1,18 @@
-#PhotonUI - Javascript Web User Interface
+# PhotonUI - Javascript Web User Interface
 
-**Documentation and examples:** http://wanadev.github.io/PhotonUI/
+**Documentation and examples:** http://wanadev.github.io/PhotonUI/demo/
 
-##Building:
+
+## Building
+
   1. Install [Node.js](https://nodejs.org/) (or [io.js](https://iojs.org/)) and [npm](http://npmjs.org).
   2. Clone this repository: `git clone https://github.com/wanadev/PhotonUI.git`
   3. Run `npm install` in the project directory.
   4. You should now be able to build the project by running `grunt` or `grunt dist` in the project directory.
 
-##License:
+
+## License
+
 ```
 Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
 All rights reserved.

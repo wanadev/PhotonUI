@@ -2,12 +2,12 @@ document.getElementById("widget-area").style.width = "200px";
 
 var fsel = new photonui.FontSelect({
     fonts: [
-      "Arial",
-      "Arial Black",
-      "Courier New",
-      "Georgia",
-      "Impact",
-      "Times New Roman",
+        "Arial",
+        "Arial Black",
+        "Courier New",
+        "Georgia",
+        "Impact",
+        "Times New Roman"
     ]
 });
 
@@ -16,4 +16,4 @@ fsel.registerCallback("change", "value-changed", function(widget, value) {
 });
 
 photonui.domInsert(fsel, document.getElementById("widget-area"));
-  
+

@@ -23,4 +23,4 @@ am.addAccel("accel4", "ctrl + x > c", function() {
 });
 
 photonui.domInsert(field, document.getElementById("widget-area"));
-  
+

@@ -17,6 +17,5 @@ grid.addChild(
     {gridX: 0, gridY: 2, gridWidth: 3}
 );
 
-
 photonui.domInsert(grid, document.getElementById("widget-area"));
-  
+

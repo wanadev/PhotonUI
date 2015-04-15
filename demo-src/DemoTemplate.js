@@ -1,2 +1,0 @@
-// Demo script goes here
-  

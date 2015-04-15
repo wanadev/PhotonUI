@@ -83,4 +83,3 @@ mouse.registerCallback("drag-end", "drag-end", function(manager, mstate) {
     ctx.strokeRect(x, y, mstate.x-x, mstate.y-y);
 });
 
-  

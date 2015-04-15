@@ -3064,11 +3064,11 @@ var Layout = Container.$extend({
      * @method empty
      */
     empty: function() {
-      var children = this.children;
-      for (var i=0 ; i<children.length ; i++) {
-          children[i].destroy();
-      }
-      this.children = [];
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            children[i].destroy();
+        }
+        this.children = [];
     },
 
     /**

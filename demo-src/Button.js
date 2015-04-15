@@ -22,4 +22,4 @@ var btn3 = new photonui.Button({
 grid.addChild(btn3, {gridX: 0, gridY: 1, gridWidth: 2});
 
 photonui.domInsert(grid, document.getElementById("widget-area"));
-  
+

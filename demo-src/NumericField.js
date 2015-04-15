@@ -38,4 +38,4 @@ grid.addChild(label3, {gridX: 0, gridY: 2});
 grid.addChild(field3, {gridX: 1, gridY: 2});
 
 photonui.domInsert(grid, document.getElementById("widget-area"));
-  
+

@@ -13,4 +13,4 @@ for (var i=0 ; i<3 ; i++) {
 }
 
 photonui.domInsert(canvas, document.getElementById("widget-area"));
-  
+
