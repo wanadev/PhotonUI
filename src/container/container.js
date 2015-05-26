@@ -124,7 +124,7 @@ Container = Widget.$extend({
      * @method destroy
      */
     destroy: function() {
-        if (this.childName) {
+        if (this.childName && this.child) {
             this.child.destroy();
         }
         this.$super();

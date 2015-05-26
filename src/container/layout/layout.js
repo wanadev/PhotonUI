@@ -172,7 +172,9 @@ var Layout = Container.$extend({
     empty: function() {
         var children = this.children;
         for (var i=0 ; i<children.length ; i++) {
-            children[i].destroy();
+            if (children[i]) {
+                children[i].destroy();
+            }
         }
         this.children = [];
     },
