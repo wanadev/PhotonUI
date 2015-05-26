@@ -457,7 +457,7 @@ Widget.e_parent = null;
  *
  * method domInsert
  * @param {photonui.Widget} widget The widget to insert.
- * @param {HTMLElement} element The DOM node (optional, default=Widget.e_parent)
+ * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
  */
 Widget.domInsert = function(widget, element) {
     var element = element || Widget.e_parent || document.getElementsByTagName("body")[0];

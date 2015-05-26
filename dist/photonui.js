@@ -5891,10 +5891,11 @@ Helpers.cleanNode = function(node) {
  *
  * @method getAbsolutePosition
  * @static
- * @param {HTMLElement} element
+ * @param {HTMLElement} element The HTML element (or its id)
  * @return {Object} `{x: <Number>, y: <Number>}
  */
 Helpers.getAbsolutePosition = function(element) {
+    if (typeof(element) == "string") element = document.getElementById(element);
     if (!element instanceof Element) return {x: 0, y: 0};
     try {
         var css = getComputedStyle(element);
