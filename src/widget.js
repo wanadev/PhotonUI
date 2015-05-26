@@ -461,6 +461,9 @@ Widget.e_parent = null;
  */
 Widget.domInsert = function(widget, element) {
     var element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
+    if (typeof(element) == "string") {
+        element = document.getElementById(element);
+    }
     element.appendChild(widget.html);
 }
 
