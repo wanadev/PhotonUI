@@ -70,6 +70,7 @@ var PopupMenu = PopupWindow.$extend({
         setIconVisible:   Menu.prototype.setIconVisible,
         addChild:         Menu.prototype.addChild,
         removeChild:      Menu.prototype.removeChild,
+        empty:            Menu.prototype.empty,
         destroy:          Menu.prototype.destroy,
         _updateLayout:    Menu.prototype._updateLayout
     }],
