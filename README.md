@@ -1,6 +1,6 @@
 # PhotonUI - Javascript Web User Interface
 
-**Documentation and examples:** http://wanadev.github.io/PhotonUI/demo/
+**Documentation and examples:** http://wanadev.github.io/PhotonUI/
 
 
 ## Building
