@@ -10964,8 +10964,19 @@ var Helpers = require("../helpers.js");
 var Label = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
-        var params = params || {};
+    __init__: function(params1, params2) {
+        var params = {};
+        if (params1 && typeof(params1) == "string") {
+            params.text = params1;
+            if (params2 && typeof(params2) == "object") {
+                for (var i in params2) {
+                    params[i] = params2[i];
+                }
+            }
+        }
+        else if (params1) {
+            params = params1;
+        }
         params.layoutOptions = params.layoutOptions || {};
         if (params.layoutOptions.verticalExpansion === undefined) {
             params.layoutOptions.verticalExpansion = false;
