@@ -128,9 +128,16 @@ var Label = Widget.$extend({
     setForInputName: function(forInputName) {
         this._forInputName = forInputName;
         if (this._forInputName) {
-            this.__html.label.setAttribute("for",
-                    Helpers.escapeHtml(this.forInput.inputId || this.forInput.name)
-            );
+            if (this.forInput) {
+                this.__html.label.setAttribute("for",
+                        Helpers.escapeHtml(this.forInput.inputId || this.forInput.name)
+                );
+            }
+            else {
+                this.__html.label.setAttribute("for",
+                        Helpers.escapeHtml(forInputName)
+                );
+            }
         }
     },
 
