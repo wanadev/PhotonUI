@@ -161,7 +161,7 @@ var BoxLayout = GridLayout.$extend({
 
             // Layout Options: width
             if (children[i].layoutOptions.width != undefined) {
-                e_td.style.height = children[i].layoutOptions.width + "px";
+                e_td.style.width = children[i].layoutOptions.width + "px";
             }
             // Layout Options: height
             if (children[i].layoutOptions.height != undefined) {
