@@ -132,6 +132,32 @@ var Widget = Base.$extend({
     },
 
     /**
+     * The parent widget name.
+     *
+     * @property parentName
+     * @type String
+     * @readOnly
+     * @default null (no parent)
+     */
+    _parentName: null,
+
+    getParentName: function() {
+        return this._parentName;
+    },
+
+    /**
+     * The parent widget.
+     *
+     * @property parent
+     * @type photonui.Widget
+     * @readOnly
+     * @default null (no parent)
+     */
+    getParent: function() {
+        return Widget.getWidget(this.parentName);
+    },
+
+    /**
      * Is the widget visible or hidden.
      *
      * @property visible
@@ -337,16 +363,25 @@ var Widget = Base.$extend({
     },
 
     /**
+     * Detache the widget from its parent.
+     *
+     * @method unparent
+     */
+    unparent: function() {
+        if (this.parent) {
+            this.parent.removeChild(this);
+        }
+    },
+
+    /**
      * Destroy the widget.
      *
      * @method destroy
      */
     destroy: function() {
         this.$super();
+        this.unparent();
         delete _widgets[this.name];
-        if (this.html && this.html.parentNode) {
-            this.html.parentNode.removeChild(this.html);
-        }
     },
 
     /**

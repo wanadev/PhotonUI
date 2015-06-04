@@ -77,7 +77,24 @@ var Layout = Container.$extend({
     },
 
     setChildrenNames: function(childrenNames) {
-        this._childrenNames = childrenNames;
+        for (var i=0 ; i<this._childrenNames.length ; i++) {
+            var widget = photonui.getWidget(this._childrenNames[i]);
+            var index = this._childrenNames.indexOf(widget.name);
+            if (index >= 0) {
+                widget._parentName = null;
+            }
+        }
+        this._childrenNames = [];
+        for (var i=0 ; i<childrenNames.length ; i++) {
+            var widget = photonui.getWidget(childrenNames[i]);
+            if (widget) {
+                if (widget.parent) {
+                    widget.unparent();
+                }
+                this._childrenNames.push(widget.name);
+                widget._parentName = this.name;
+            }
+        }
         this._updateLayout();
     },
 
@@ -143,10 +160,14 @@ var Layout = Container.$extend({
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
     addChild: function(widget, layoutOptions) {
+        if (widget.parent) {
+            widget.unparent();
+        }
         if (layoutOptions) {
             widget.layoutOptions = layoutOptions;
         }
         this._childrenNames.push(widget.name);
+        widget._parentName = this.name;
         this._updateLayout();
     },
 
@@ -160,10 +181,11 @@ var Layout = Container.$extend({
         var index = this._childrenNames.indexOf(widget.name);
         if (index >= 0) {
             this._childrenNames.splice(index, 1);
+            widget._parentName = null;
         }
         this._updateLayout();
     },
-    
+
     /**
      * Destroy all children of the layout
      *
@@ -176,7 +198,6 @@ var Layout = Container.$extend({
                 children[i].destroy();
             }
         }
-        this.children = [];
     },
 
     /**

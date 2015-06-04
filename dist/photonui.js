@@ -2171,10 +2171,15 @@ Container = Widget.$extend({
     setChildName: function(childName) {
         if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.removeChild(this.child.html);
+            this.child._parentName = null;
         }
         this._childName = childName;
+        if (this.child && this.child._parentName) {
+            this.child.parent.child = null;
+        }
         if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.appendChild(this.child.html);
+            this.child._parentName = this.name;
         }
     },
 
@@ -2190,7 +2195,7 @@ Container = Widget.$extend({
     },
 
     setChild: function(child) {
-        if (!child instanceof Widget) {
+        if ((!child) || (!child instanceof Widget)) {
             this.childName = null;
             return;
         }
@@ -2217,6 +2222,17 @@ Container = Widget.$extend({
 
     // ====== Public methods ======
 
+    /**
+     * Remove the given child.
+     *
+     * @method removeChild
+     * @param {photonui.Widget} widget The widget to remove/
+     */
+    removeChild: function(widget) {
+        if (this.child == widget) {
+            this.child = null;
+        }
+    },
 
     /**
      * Destroy the widget.
@@ -2972,7 +2988,24 @@ var Layout = Container.$extend({
     },
 
     setChildrenNames: function(childrenNames) {
-        this._childrenNames = childrenNames;
+        for (var i=0 ; i<this._childrenNames.length ; i++) {
+            var widget = photonui.getWidget(this._childrenNames[i]);
+            var index = this._childrenNames.indexOf(widget.name);
+            if (index >= 0) {
+                widget._parentName = null;
+            }
+        }
+        this._childrenNames = [];
+        for (var i=0 ; i<childrenNames.length ; i++) {
+            var widget = photonui.getWidget(childrenNames[i]);
+            if (widget) {
+                if (widget.parent) {
+                    widget.unparent();
+                }
+                this._childrenNames.push(widget.name);
+                widget._parentName = this.name;
+            }
+        }
         this._updateLayout();
     },
 
@@ -3038,10 +3071,14 @@ var Layout = Container.$extend({
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
     addChild: function(widget, layoutOptions) {
+        if (widget.parent) {
+            widget.unparent();
+        }
         if (layoutOptions) {
             widget.layoutOptions = layoutOptions;
         }
         this._childrenNames.push(widget.name);
+        widget._parentName = this.name;
         this._updateLayout();
     },
 
@@ -3055,10 +3092,11 @@ var Layout = Container.$extend({
         var index = this._childrenNames.indexOf(widget.name);
         if (index >= 0) {
             this._childrenNames.splice(index, 1);
+            widget._parentName = null;
         }
         this._updateLayout();
     },
-    
+
     /**
      * Destroy all children of the layout
      *
@@ -3071,7 +3109,6 @@ var Layout = Container.$extend({
                 children[i].destroy();
             }
         }
-        this.children = [];
     },
 
     /**
@@ -12196,6 +12233,32 @@ var Widget = Base.$extend({
     },
 
     /**
+     * The parent widget name.
+     *
+     * @property parentName
+     * @type String
+     * @readOnly
+     * @default null (no parent)
+     */
+    _parentName: null,
+
+    getParentName: function() {
+        return this._parentName;
+    },
+
+    /**
+     * The parent widget.
+     *
+     * @property parent
+     * @type photonui.Widget
+     * @readOnly
+     * @default null (no parent)
+     */
+    getParent: function() {
+        return Widget.getWidget(this.parentName);
+    },
+
+    /**
      * Is the widget visible or hidden.
      *
      * @property visible
@@ -12401,16 +12464,25 @@ var Widget = Base.$extend({
     },
 
     /**
+     * Detache the widget from its parent.
+     *
+     * @method unparent
+     */
+    unparent: function() {
+        if (this.parent) {
+            this.parent.removeChild(this);
+        }
+    },
+
+    /**
      * Destroy the widget.
      *
      * @method destroy
      */
     destroy: function() {
         this.$super();
+        this.unparent();
         delete _widgets[this.name];
-        if (this.html && this.html.parentNode) {
-            this.html.parentNode.removeChild(this.html);
-        }
     },
 
     /**

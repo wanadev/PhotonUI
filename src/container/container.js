@@ -71,10 +71,15 @@ Container = Widget.$extend({
     setChildName: function(childName) {
         if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.removeChild(this.child.html);
+            this.child._parentName = null;
         }
         this._childName = childName;
+        if (this.child && this.child._parentName) {
+            this.child.parent.child = null;
+        }
         if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.appendChild(this.child.html);
+            this.child._parentName = this.name;
         }
     },
 
@@ -90,7 +95,7 @@ Container = Widget.$extend({
     },
 
     setChild: function(child) {
-        if (!child instanceof Widget) {
+        if ((!child) || (!child instanceof Widget)) {
             this.childName = null;
             return;
         }
@@ -117,6 +122,17 @@ Container = Widget.$extend({
 
     // ====== Public methods ======
 
+    /**
+     * Remove the given child.
+     *
+     * @method removeChild
+     * @param {photonui.Widget} widget The widget to remove/
+     */
+    removeChild: function(widget) {
+        if (this.child == widget) {
+            this.child = null;
+        }
+    },
 
     /**
      * Destroy the widget.
