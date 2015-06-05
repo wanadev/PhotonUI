@@ -2,3 +2,22 @@ html, body {
     font-family: Arial, sans-serif;
 }
 
+h1 {
+    color: #1C8495;
+}
+
+div.test-area {
+    box-sizing: border-box;
+    position: relative;
+    background: #f1f1f1;
+    margin: 20px 0;
+}
+
+.photonui-widget .photonui-dummywidget {
+    box-sizing: border-box;
+    padding: 15px;
+    background: #DB624F;
+    color: #fff;
+    display: inline-block;
+    border: #9F4234 solid 1px;
+}

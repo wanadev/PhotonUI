@@ -2289,30 +2289,16 @@ module.exports = Container;
  */
 
 var Helpers = require("../../helpers.js");
-var GridLayout = require("./gridlayout.js");
+var Layout = require("./layout.js");
 
 /**
  * Vertical and horizontal box layout.
  *
- * Layout Options:
- *
- *     {
- *          verticalExpansion: <Boolean, default: true>,
- *          horizontalExpansion: <Boolean, default: true>,
- *          width: <Number, default: undefined>,
- *          height: <Number, default: undefined>,
- *          minWidth: <Number, default: undefined>,
- *          minHeight: <Number, default: undefined>,
- *          maxWidth: <Number, default: undefined>,
- *          maxHeight: <Number, default: undefined>,
- *          horizontalAlign: <String (left, center, right), default: undefined>
- *     }
- *
  * @class BoxLayout
  * @constructor
- * @extends photonui.GridLayout
+ * @extends photonui.Layout
  */
-var BoxLayout = GridLayout.$extend({
+var BoxLayout = Layout.$extend({
 
     // Constructor
     __init__: function(params) {
@@ -2351,7 +2337,86 @@ var BoxLayout = GridLayout.$extend({
         this.removeClass("photonui-layout-orientation-vertical");
         this.removeClass("photonui-layout-orientation-horizontal");
         this.addClass("photonui-layout-orientation-" + this.orientation);
-        this._updateLayout();
+        this._updateProperties(["spacing"]);
+    },
+
+    /**
+     * Vertical padding (px).
+     *
+     * @property verticalPadding
+     * @type Number
+     * @default 0
+     */
+    _verticalPadding: 0,
+
+    getVerticalPadding: function() {
+        return this._verticalPadding;
+    },
+
+    setVerticalPadding: function(padding) {
+        this._verticalPadding = padding|0;
+        this.__html.outerbox.style.paddingTop = this._verticalPadding + "px";
+        this.__html.outerbox.style.paddingBottom = this._verticalPadding + "px";
+    },
+
+    /**
+     * Horizontal padding (px).
+     *
+     * @property horizontalPadding
+     * @type Number
+     * @default 0
+     */
+    _horizontalPadding: 0,
+
+    getHorizontalPadding: function() {
+        return this._horizontalPadding;
+    },
+
+    setHorizontalPadding: function(padding) {
+        this._horizontalPadding = padding|0;
+        this.__html.outerbox.style.paddingLeft = this._horizontalPadding + "px";
+        this.__html.outerbox.style.paddingRight = this._horizontalPadding + "px";
+    },
+
+    /**
+     * Spacing between children widgets.
+     *
+     * @property spacing
+     * @type Number
+     * @default 5
+     */
+    _spacing: 5,
+
+    getSpacing: function() {
+        return this._spacing;
+    },
+
+    setSpacing: function(spacing) {
+        this._spacing = spacing|0;
+
+        var nodes = this.__html.outerbox.childNodes;
+        for (var i=0 ; i<nodes.length-1 ; i++) {
+            if (this.orientation == "horizontal") {
+                nodes[i].style.marginRight = this._spacing + "px";
+                nodes[i].style.marginBottom = "0px";
+            }
+            else {
+                nodes[i].style.marginRight = "0px";
+                nodes[i].style.marginBottom = this._spacing + "px";
+            }
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outerbox;
     },
 
 
@@ -2370,7 +2435,7 @@ var BoxLayout = GridLayout.$extend({
      * @private
      */
     _buildHtml: function() {
-        this.$super();
+        this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-boxlayout";
     },
 
@@ -2381,88 +2446,28 @@ var BoxLayout = GridLayout.$extend({
      * @private
      */
     _updateLayout: function() {
-        Helpers.cleanNode(this.__html.gridBody);
+        Helpers.cleanNode(this.__html.outerbox);
 
-        var e_tr = null;
-        if (this.getOrientation() == "horizontal") {
-            e_tr = document.createElement("tr");
-            this.__html.gridBody.appendChild(e_tr);
-        }
-
+        var fragment = document.createDocumentFragment();
         var children = this.children;
 
+        var container = null;
         for (var i=0 ; i<children.length ; i++) {
-            if (this.getOrientation() == "vertical") {
-                e_tr = document.createElement("tr");
-                this.__html.gridBody.appendChild(e_tr);
-            }
-
-            var e_td = document.createElement("td");
-            e_td.className = "photonui-container photonui-boxlayout-cell";
-            e_tr.appendChild(e_td);
-
-            // Layout Options: Expansion
-            if (children[i].layoutOptions.horizontalExpansion == undefined
-            ||  children[i].layoutOptions.horizontalExpansion) {
-                e_td.className += " photonui-container-expand-child-horizontal";
-            }
-            if (children[i].layoutOptions.verticalExpansion == undefined
-            ||  children[i].layoutOptions.verticalExpansion) {
-                e_td.className += " photonui-container-expand-child-vertical";
-            }
-
-            // Layout Options: width
-            if (children[i].layoutOptions.width != undefined) {
-                e_td.style.width = children[i].layoutOptions.width + "px";
-            }
-            // Layout Options: height
-            if (children[i].layoutOptions.height != undefined) {
-                e_td.style.height = children[i].layoutOptions.height + "px";
-            }
-            // Layout Options: minWidth
-            if (children[i].layoutOptions.minWidth != undefined) {
-                e_td.style.minWidth = this.childrenWidgets[i].layoutOptions.minWidth + "px";
-            }
-            // Layout Options: minHeight
-            if (children[i].layoutOptions.minHeight != undefined) {
-                e_td.style.minHeight = this.childrenWidgets[i].layoutOptions.minHeight + "px";
-            }
-            // Layout Options: maxWidth
-            if (children[i].layoutOptions.maxWidth != undefined) {
-                e_td.style.maxWidth = this.childrenWidgets[i].layoutOptions.maxWidth + "px";
-            }
-            // Layout Options: maxHeight
-            if (children[i].layoutOptions.maxHeight != undefined) {
-                e_td.style.maxHeight = this.childrenWidgets[i].layoutOptions.maxHeight + "px";
-            }
-            // Layout Options: horizontalAlign
-            if (children[i].layoutOptions.horizontalAlign != undefined) {
-                e_td.style.textAlign = this.childrenWidgets[i].layoutOptions.horizontalAlign; console.log("hhhh");
-            }
-
-            e_td.appendChild(children[i].html);
+            container = document.createElement("div");
+            container.className = "photonui-container photonui-boxlayout-item";
+            container.appendChild(children[i].html);
+            fragment.appendChild(container);
         }
 
-        // Hack for Gecko and Trident
-        //var cells = document.querySelectorAll("#" + this.name + " td");
-        //var heights = [];
-        //var padding = 0;
-        //for (var i=0 ; i<cells.length ; i++) {
-            //if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
-                //padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
-                //padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
-            //}
-            //heights[i] = (cells[i].offsetHeight - padding) + "px";
-        //}
-        //for (var i=0 ; i<cells.length ; i++) {
-            //cells[i].style.height = heights[i];
-        //}
+        this.__html.outerbox.appendChild(fragment);
+
+        this._updateProperties(["spacing"]);
     }
 });
 
 module.exports = BoxLayout;
 
-},{"../../helpers.js":22,"./gridlayout.js":10}],9:[function(require,module,exports){
+},{"../../helpers.js":22,"./layout.js":11}],9:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.

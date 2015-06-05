@@ -1,6 +1,38 @@
+function addTitle(text) {
+    var workingArea = document.getElementById("working-area");
+    var h1 = document.createElement("h1");
+    h1.appendChild(document.createTextNode(text));
+    workingArea.appendChild(h1);
+}
+
+function addTestArea() {
+    var workingArea = document.getElementById("working-area");
+    var div = document.createElement("div");
+    div.className = "test-area";
+    workingArea.appendChild(div);
+    return div;
+}
 
 
 var DummyWidget = photonui.Widget.$extend({
+
+    __init__: function(params) {
+        this.$super(params);
+        this._updateProperties(["text"]);
+    },
+
+    _text: "Widget",
+
+    getText: function() {
+        return this._text;
+    },
+
+    setText: function(text) {
+        this._text = text;
+        photonui.Helpers.cleanNode(this.__html.div);
+        this.__html.div.appendChild(document.createTextNode(this._text));
+        this.__html.div.title = this._text;
+    },
 
     getHtml: function() {
         return this.__html.div;
