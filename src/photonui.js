@@ -51,6 +51,7 @@ photonui.MouseManager = require("./event/mousemanager.js");
 
 photonui.BaseIcon = require("./visual/baseicon.js");
 photonui.FAIcon = require("./visual/faicon.js");
+photonui.Image = require("./visual/image.js");
 photonui.SpriteSheet = require("./visual/spritesheet.js");
 photonui.SpriteIcon = require("./visual/spriteicon.js");
 photonui.Canvas = require("./visual/canvas.js");

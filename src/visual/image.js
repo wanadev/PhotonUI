@@ -80,7 +80,6 @@ var Image = Widget.$extend({
      * @type Number
      * @default null
      */
-
     _width: null,
 
     getWidth: function() {
@@ -103,7 +102,6 @@ var Image = Widget.$extend({
      * @type Number
      * @default null
      */
-
     _height: null,
 
     getHeight: function() {
@@ -132,22 +130,9 @@ var Image = Widget.$extend({
     },
 
 
-
-    // ====== Private properties ======
-
-
-    // TODO Private property here
-
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
-
-    // ====== Public methods ======
-
-
-    // TODO Public methods here
 
 
     // ====== Private methods ======
@@ -165,15 +150,8 @@ var Image = Widget.$extend({
 
         this.__html.image = document.createElement('img');
         this.__html.div.appendChild(this.__html.image);
-    },
+    }
 
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-
-    // TODO Internal events callback here
 });
 
 module.exports = Image;
