@@ -42,6 +42,20 @@ var Layout = require("./layout.js");
 /**
  * Vertical and horizontal box layout.
  *
+ * Layout Options:
+ *
+ *     {
+ *         align: <String (stretch, start|left|top, center|middle, end|right|bottom), default: stretch>,
+ *
+ *         minWidth: <Number (null=auto), default=null>,
+ *         maxWidth: <Number (null=auto), default=null>,
+ *         width: <Number (null=auto), default=null>,
+ *
+ *         minHeight: <Number (null=auto), default=null>,
+ *         maxHeight: <Number (null=auto), default=null>,
+ *         height: <Number (null=auto), default=null>
+ *     }
+ *
  * @class BoxLayout
  * @constructor
  * @extends photonui.Layout
@@ -209,6 +223,16 @@ var BoxLayout = Layout.$extend({
             // layout option: align
             container.className += " photonui-layout-align-" + options.align;
 
+            // layout options: *width
+            if (options.minWidth !== null) container.style.minWidth = options.minWidth + "px";
+            if (options.maxWidth !== null) container.style.maxWidth = options.maxWidth + "px";
+            if (options.width !== null) container.style.width = options.width + "px";
+
+            // layout options: *height
+            if (options.minHeight !== null) container.style.minHeight = options.minHeight + "px";
+            if (options.maxHeight !== null) container.style.maxHeight = options.maxHeight + "px";
+            if (options.height !== null) container.style.height = options.height + "px";
+
             container.appendChild(children[i].html);
             fragment.appendChild(container);
         }
@@ -222,10 +246,16 @@ var BoxLayout = Layout.$extend({
         var woptions = widget.layoutOptions || {};
 
         var options = {
-            align: "stretch"
+            align: "stretch",
+            minWidth: null,
+            maxWidth: null,
+            width: null,
+            minHeight: null,
+            maxHeight: null,
+            height: null
         }
 
-        // Align
+        // align
         if (["stretch", "expend"].indexOf(woptions.align) > -1) {
             options.align = "stretch";
         }
@@ -237,6 +267,32 @@ var BoxLayout = Layout.$extend({
         }
         else if (["end", "bottom", "right"].indexOf(woptions.align) > -1) {
             options.align = "end";
+        }
+
+        // *width
+        if (woptions.minWidth !== undefined && woptions.minWidth !== null) {
+            options.minWidth = woptions.minWidth|0;
+        }
+        if (woptions.maxWidth !== undefined && woptions.maxWidth !== null) {
+            options.maxWidth = woptions.maxWidth|0;
+        }
+        if (woptions.width !== undefined && woptions.width !== null) {
+            options.width = woptions.width|0;
+            options.minWidth = woptions.width|0;
+            options.maxWidth = woptions.width|0;
+        }
+
+        // *height
+        if (woptions.minHeight !== undefined && woptions.minHeight !== null) {
+            options.minHeight = woptions.minHeight|0;
+        }
+        if (woptions.maxHeight !== undefined && woptions.maxHeight !== null) {
+            options.maxHeight = woptions.maxHeight|0;
+        }
+        if (woptions.height !== undefined && woptions.height !== null) {
+            options.height = woptions.height|0;
+            options.minHeight = woptions.height|0;
+            options.maxHeight = woptions.height|0;
         }
 
         return options;

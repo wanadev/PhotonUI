@@ -230,6 +230,64 @@ describe("photonui.BoxLayout (layoutOptions, horizontal orientation)", function(
         expect(photonui.Helpers.getAbsolutePosition(w4.html).y).toEqual(areaPos.y + 100 - w4.offsetHeight);
         expect(w4.offsetHeight).toBeLessThan(100);
     });
+
+   it("can handle the 'minWidth' layout option", function() {
+        this.area.style.width = "300px";
+
+        this.w2.layoutOptions.minWidth = 150;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetWidth).toEqual(150);
+    });
+
+    it("can handle the 'maxWidth' layout option", function() {
+        this.area.style.width = "300px";
+
+        this.w2.layoutOptions.maxWidth = 80;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetWidth).toEqual(80);
+    });
+
+    it("can handle the 'width' layout option", function() {
+        this.area.style.width = "400px";
+
+        this.w2.layoutOptions.width = 200;
+        this.w3.layoutOptions.width = 80;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetWidth).toEqual(200);
+        expect(this.w3.offsetWidth).toEqual(80);
+    });
+
+    it("can handle the 'minHeight' layout option", function() {
+        this.area.style.width = "300px";
+
+        this.w2.layoutOptions.minHeight = 100;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetHeight).toEqual(100);
+    });
+
+    it("can handle the 'maxHeight' layout option", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "100px";
+
+        this.w2.layoutOptions.maxHeight = 50;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetHeight).toEqual(50);
+    });
+
+    it("can handle the 'height' layout option", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "100px";
+
+        this.w2.layoutOptions.height = 50;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetHeight).toEqual(50);
+    });
 });
 
 
@@ -327,5 +385,63 @@ describe("photonui.BoxLayout (layoutOptions, vertical orientation)", function() 
 
         expect(photonui.Helpers.getAbsolutePosition(w4.html).x).toEqual(areaPos.x + 300 - w4.offsetWidth);
         expect(w4.offsetWidth).toBeLessThan(300);
+    });
+
+    it("can handle the 'minWidth' layout option", function() {
+        this.area.style.width = "300px";
+
+        this.w2.layoutOptions.minWidth = 350;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetWidth).toEqual(350);
+    });
+
+    it("can handle the 'maxWidth' layout option", function() {
+        this.area.style.width = "300px";
+
+        this.w2.layoutOptions.maxWidth = 150;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetWidth).toEqual(150);
+    });
+
+    it("can handle the 'width' layout option", function() {
+        this.area.style.width = "300px";
+
+        this.w2.layoutOptions.width = 150;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetWidth).toEqual(150);
+    });
+
+    it("can handle the 'minHeight' layout option", function() {
+        this.area.style.width = "300px";
+
+        this.w2.layoutOptions.minHeight = 100;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetHeight).toEqual(100);
+    });
+
+    it("can handle the 'maxHeight' layout option", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w2.layoutOptions.maxHeight = 80;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetHeight).toEqual(80);
+    });
+
+    it("can handle the 'height' layout option", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w2.layoutOptions.height = 80;
+        this.w3.layoutOptions.height = 150;
+        this.box._updateLayout();
+
+        expect(this.w2.offsetHeight).toEqual(80);
+        expect(this.w3.offsetHeight).toEqual(150);
     });
 });
