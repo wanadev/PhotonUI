@@ -2453,8 +2453,14 @@ var BoxLayout = Layout.$extend({
 
         var container = null;
         for (var i=0 ; i<children.length ; i++) {
+            var options = this._computeLayoutOptions(children[i]);
+
             container = document.createElement("div");
             container.className = "photonui-container photonui-boxlayout-item";
+
+            // layout option: align
+            container.className += " photonui-layout-align-" + options.align;
+
             container.appendChild(children[i].html);
             fragment.appendChild(container);
         }
@@ -2462,6 +2468,30 @@ var BoxLayout = Layout.$extend({
         this.__html.outerbox.appendChild(fragment);
 
         this._updateProperties(["spacing"]);
+    },
+
+    _computeLayoutOptions: function(widget) {
+        var woptions = widget.layoutOptions || {};
+
+        var options = {
+            align: "stretch"
+        }
+
+        // Align
+        if (["stretch", "expend"].indexOf(woptions.align) > -1) {
+            options.align = "stretch";
+        }
+        else if (["center", "middle"].indexOf(woptions.align) > -1) {
+            options.align = "center";
+        }
+        else if (["start", "begin", "top", "left"].indexOf(woptions.align) > -1) {
+            options.align = "start";
+        }
+        else if (["end", "bottom", "right"].indexOf(woptions.align) > -1) {
+            options.align = "end";
+        }
+
+        return options;
     }
 });
 

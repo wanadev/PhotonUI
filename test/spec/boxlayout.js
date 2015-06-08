@@ -200,6 +200,36 @@ describe("photonui.BoxLayout (layoutOptions, horizontal orientation)", function(
         expect(this.w2.offsetWidth).toEqual(100);
         expect(this.w2.offsetWidth).toEqual(100);
     });
+
+    it("can handle the 'align' layout option", function() {
+        this.area.style.width = "400px";
+        this.area.style.height = "100px";
+
+        var w4 = new DummyWidget();
+        this.box.addChild(w4);
+
+        this.w1.layoutOptions.align = "stretch";
+        this.w2.layoutOptions.align = "start";
+        this.w3.layoutOptions.align = "center";
+        w4.layoutOptions.align = "end";
+
+        this.box._updateLayout();
+
+        var areaPos = photonui.Helpers.getAbsolutePosition(this.area);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w1.html).y).toEqual(areaPos.y);
+        expect(this.w1.offsetHeight).toEqual(100);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w2.html).y).toEqual(areaPos.y);
+        expect(this.w2.offsetHeight).toBeLessThan(100);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toBeGreaterThan(areaPos.y);
+        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toBeLessThan(areaPos.y + 100 - this.w3.offsetHeight);
+        expect(this.w3.offsetHeight).toBeLessThan(100);
+
+        expect(photonui.Helpers.getAbsolutePosition(w4.html).y).toEqual(areaPos.y + 100 - w4.offsetHeight);
+        expect(w4.offsetHeight).toBeLessThan(100);
+    });
 });
 
 
@@ -268,5 +298,34 @@ describe("photonui.BoxLayout (layoutOptions, vertical orientation)", function() 
         expect(this.w1.offsetHeight).toEqual(100);
         expect(this.w2.offsetHeight).toEqual(100);
         expect(this.w2.offsetHeight).toEqual(100);
+    });
+
+    it("can handle the 'align' layout option", function() {
+        this.area.style.width = "300px";
+
+        var w4 = new DummyWidget();
+        this.box.addChild(w4);
+
+        this.w1.layoutOptions.align = "stretch";
+        this.w2.layoutOptions.align = "start";
+        this.w3.layoutOptions.align = "center";
+        w4.layoutOptions.align = "end";
+
+        this.box._updateLayout();
+
+        var areaPos = photonui.Helpers.getAbsolutePosition(this.area);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w1.html).x).toEqual(areaPos.x);
+        expect(this.w1.offsetWidth).toEqual(300);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w2.html).x).toEqual(areaPos.x);
+        expect(this.w2.offsetWidth).toBeLessThan(300);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).x).toBeGreaterThan(areaPos.x);
+        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).x).toBeLessThan(areaPos.x + 300 - this.w3.offsetWidth);
+        expect(this.w3.offsetWidth).toBeLessThan(300);
+
+        expect(photonui.Helpers.getAbsolutePosition(w4.html).x).toEqual(areaPos.x + 300 - w4.offsetWidth);
+        expect(w4.offsetWidth).toBeLessThan(300);
     });
 });
