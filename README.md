@@ -1,14 +1,21 @@
-# PhotonUI - Javascript Web User Interface
+# PhotonUI - A javascript framework to create user interfaces
 
-**Documentation and examples:** http://wanadev.github.io/PhotonUI/
+* **Website:** http://wanadev.github.io/PhotonUI/
+
+* **Quick start:** http://wanadev.github.io/PhotonUI/doc/quick-start.html
 
 
 ## Building
 
   1. Install [Node.js](https://nodejs.org/) (or [io.js](https://iojs.org/)) and [npm](http://npmjs.org).
+
   2. Clone this repository: `git clone https://github.com/wanadev/PhotonUI.git`
-  3. Run `npm install` in the project directory.
-  4. You should now be able to build the project by running `grunt` or `grunt dist` in the project directory.
+
+  3. Install `grund-cli` globally (to have the `grunt` command): `npm install -g grunt-cli`
+
+  4. Run `npm install` in the project directory.
+
+  5. You should now be able to build the project by running `grunt` or `grunt dist` in the project directory.
 
 
 ## License
