@@ -180,8 +180,8 @@ describe("photonui.BoxLayout (layoutOptions, horizontal orientation)", function(
         this.area.style.height = "100px";
         this.area.style.width = "300px";
 
-        this.box.verticalPadding = 10;
-        this.box.horizontalPadding = 15;
+        this.box.verticalPadding = 15;
+        this.box.horizontalPadding = 10;
 
         expect(this.w1.offsetHeight).toEqual(80);
         expect(this.w2.offsetHeight).toEqual(80);
@@ -191,7 +191,7 @@ describe("photonui.BoxLayout (layoutOptions, horizontal orientation)", function(
         expect(this.w2.offsetWidth).toEqual(90);
     });
 
-    it("can have horizontal spacing", function() {
+    it("can have spacing", function() {
         this.area.style.width = "320px";
 
         this.box.spacing = 10;
@@ -351,8 +351,8 @@ describe("photonui.BoxLayout (layoutOptions, vertical orientation)", function() 
         this.area.style.height = "300px";
         this.area.style.width = "300px";
 
-        this.box.verticalPadding = 15;
-        this.box.horizontalPadding = 10;
+        this.box.verticalPadding = 10;
+        this.box.horizontalPadding = 15;
 
         expect(this.w1.offsetHeight).toEqual(90);
         expect(this.w2.offsetHeight).toEqual(90);
@@ -362,7 +362,7 @@ describe("photonui.BoxLayout (layoutOptions, vertical orientation)", function() 
         expect(this.w2.offsetWidth).toEqual(280);
     });
 
-    it("can have vertical spacing", function() {
+    it("can have spacing", function() {
         this.area.style.width = "300px";
         this.area.style.height = "320px";
 

@@ -2374,8 +2374,8 @@ var BoxLayout = Layout.$extend({
 
     setVerticalPadding: function(padding) {
         this._verticalPadding = padding|0;
-        this.__html.outerbox.style.paddingTop = this._verticalPadding + "px";
-        this.__html.outerbox.style.paddingBottom = this._verticalPadding + "px";
+        this.__html.outerbox.style.paddingLeft = this._verticalPadding + "px";
+        this.__html.outerbox.style.paddingRight = this._verticalPadding + "px";
     },
 
     /**
@@ -2393,8 +2393,8 @@ var BoxLayout = Layout.$extend({
 
     setHorizontalPadding: function(padding) {
         this._horizontalPadding = padding|0;
-        this.__html.outerbox.style.paddingLeft = this._horizontalPadding + "px";
-        this.__html.outerbox.style.paddingRight = this._horizontalPadding + "px";
+        this.__html.outerbox.style.paddingTop = this._horizontalPadding + "px";
+        this.__html.outerbox.style.paddingBottom = this._horizontalPadding + "px";
     },
 
     /**
