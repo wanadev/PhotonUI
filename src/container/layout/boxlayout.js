@@ -45,7 +45,7 @@ var Layout = require("./layout.js");
  * Layout Options:
  *
  *     {
- *         align: <String (stretch, start|left|top, center|middle, end|right|bottom), default=stretch>,
+ *         align: <String (stretch|expand, start|left|top, center|middle, end|right|bottom), default=stretch>,
  *
  *         order: <Number default=null (auto)>
  *
@@ -283,7 +283,7 @@ var BoxLayout = Layout.$extend({
         }
 
         // align
-        if (["stretch", "expend"].indexOf(woptions.align) > -1) {
+        if (["stretch", "expand"].indexOf(woptions.align) > -1) {
             options.align = "stretch";
         }
         else if (["center", "middle"].indexOf(woptions.align) > -1) {
