@@ -2413,16 +2413,37 @@ var BoxLayout = Layout.$extend({
     setSpacing: function(spacing) {
         this._spacing = spacing|0;
 
+        var children = this.children;
         var nodes = this.__html.outerbox.childNodes;
-        for (var i=0 ; i<nodes.length-1 ; i++) {
+        var last = 0;
+        var lastOrder, currentOrder;
+        for (var i=0 ; i<nodes.length ; i++) {
+            lastOrder = 0;
+            currentOrder = 0;
+            if (children[last] && children[last].layoutOptions && children[last].layoutOptions.order) {
+                lastOrder = children[last].layoutOptions.order|0;
+            }
+            if (children[i] && children[i].layoutOptions && children[i].layoutOptions.order) {
+                currentOrder = children[i].layoutOptions.order|0;
+            }
+
+            if (currentOrder >= lastOrder) {
+                last = i;
+            }
+
             if (this.orientation == "horizontal") {
                 nodes[i].style.marginRight = this._spacing + "px";
-                nodes[i].style.marginBottom = "0px";
+                nodes[i].style.marginBottom = "";
             }
             else {
-                nodes[i].style.marginRight = "0px";
+                nodes[i].style.marginRight = "";
                 nodes[i].style.marginBottom = this._spacing + "px";
             }
+        }
+
+        if (nodes.length > 0) {
+            nodes[last].style.marginRight = "";
+            nodes[last].style.marginBottom = "";
         }
     },
 

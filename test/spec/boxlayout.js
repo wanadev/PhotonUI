@@ -288,6 +288,21 @@ describe("photonui.BoxLayout (layoutOptions, horizontal orientation)", function(
 
         expect(this.w2.offsetHeight).toEqual(50);
     });
+
+    it("set the margins on the right items when widgets are reordered", function() {
+        this.area.style.width = "300px";
+
+        this.box.spacing = 10;
+        this.w1.text = "widget 1"
+        this.w2.text = "widget 2"
+        this.w3.text = "widget 3"
+        this.w3.layoutOptions.order = -1;
+        this.box._updateLayout();
+
+        expect(this.w3.html.parentNode.style.marginRight).toEqual("10px");
+        expect(this.w1.html.parentNode.style.marginRight).toEqual("10px");
+        expect(this.w2.html.parentNode.style.marginRight).toEqual("");
+    });
 });
 
 
@@ -443,5 +458,20 @@ describe("photonui.BoxLayout (layoutOptions, vertical orientation)", function() 
 
         expect(this.w2.offsetHeight).toEqual(80);
         expect(this.w3.offsetHeight).toEqual(150);
+    });
+
+    it("set the margins on the right items when widgets are reordered", function() {
+        this.area.style.width = "300px";
+
+        this.box.spacing = 10;
+        this.w1.text = "widget 1"
+        this.w2.text = "widget 2"
+        this.w3.text = "widget 3"
+        this.w3.layoutOptions.order = -1;
+        this.box._updateLayout();
+
+        expect(this.w3.html.parentNode.style.marginBottom).toEqual("10px");
+        expect(this.w1.html.parentNode.style.marginBottom).toEqual("10px");
+        expect(this.w2.html.parentNode.style.marginBottom).toEqual("");
     });
 });
