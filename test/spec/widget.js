@@ -28,5 +28,15 @@ describe("photonui.Widget", function() {
         expect(this.c.containerNode.childNodes.length).toEqual(0);
     });
 
+    it("can be inserted and removed from any html element", function() {
+        var div = document.createElement("div");
+
+        photonui.domInsert(this.w, div);
+        expect(div.childNodes).toContain(this.w.html);
+
+        this.w.unparent();
+        expect(div.childNodes).not.toContain(this.w.html);
+    });
+
 });
 

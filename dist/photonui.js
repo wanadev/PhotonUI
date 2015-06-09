@@ -12737,6 +12737,9 @@ var Widget = Base.$extend({
         if (this.parent) {
             this.parent.removeChild(this);
         }
+        else if (this.html && this.html.parentNode) {
+            this.html.parentNode.removeChild(this.html);
+        }
     },
 
     /**
