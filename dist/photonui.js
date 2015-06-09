@@ -2300,7 +2300,9 @@ var Layout = require("./layout.js");
  * Layout Options:
  *
  *     {
- *         align: <String (stretch, start|left|top, center|middle, end|right|bottom), default: stretch>,
+ *         align: <String (stretch, start|left|top, center|middle, end|right|bottom), default=stretch>,
+ *
+ *         order: <Number default=null (auto)>
  *
  *         minWidth: <Number (null=auto), default=null>,
  *         maxWidth: <Number (null=auto), default=null>,
@@ -2478,6 +2480,9 @@ var BoxLayout = Layout.$extend({
             // layout option: align
             container.className += " photonui-layout-align-" + options.align;
 
+            // layout options: order
+            if (options.order !== null) container.style.order = options.order;
+
             // layout options: *width
             if (options.minWidth !== null) container.style.minWidth = options.minWidth + "px";
             if (options.maxWidth !== null) container.style.maxWidth = options.maxWidth + "px";
@@ -2507,7 +2512,8 @@ var BoxLayout = Layout.$extend({
             width: null,
             minHeight: null,
             maxHeight: null,
-            height: null
+            height: null,
+            order: null
         }
 
         // align
@@ -2522,6 +2528,11 @@ var BoxLayout = Layout.$extend({
         }
         else if (["end", "bottom", "right"].indexOf(woptions.align) > -1) {
             options.align = "end";
+        }
+
+        // order
+        if (woptions.order !== undefined && woptions.order !== null) {
+            options.order = woptions.order|0;
         }
 
         // *width
@@ -11072,7 +11083,7 @@ module.exports = FAIcon;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Authored by: Fabien LOISON <http://flozz.fr/>
+ * Authored by: Clément LEVASSEUR
  */
 
 /**
