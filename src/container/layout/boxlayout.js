@@ -268,6 +268,14 @@ var BoxLayout = Layout.$extend({
         this._updateProperties(["spacing"]);
     },
 
+    /**
+     * Returns a normalized layoutOption for a given widget.
+     *
+     * @method _computeLayoutOptions
+     * @private
+     * @param {photonui.Widget} widget
+     * @return {Object} the layout options
+     */
     _computeLayoutOptions: function(widget) {
         var woptions = widget.layoutOptions || {};
 

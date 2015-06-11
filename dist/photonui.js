@@ -2523,6 +2523,14 @@ var BoxLayout = Layout.$extend({
         this._updateProperties(["spacing"]);
     },
 
+    /**
+     * Returns a normalized layoutOption for a given widget.
+     *
+     * @method _computeLayoutOptions
+     * @private
+     * @param {photonui.Widget} widget
+     * @return {Object} the layout options
+     */
     _computeLayoutOptions: function(widget) {
         var woptions = widget.layoutOptions || {};
 
@@ -2793,19 +2801,7 @@ var Layout = require("./layout.js");
  * Layout Options:
  *
  *     {
- *          verticalExpansion: <Boolean, default: true>,
- *          horizontalExpansion: <Boolean, default: true>,
- *          width: <Number, default: undefined>,
- *          height: <Number, default: undefined>,
- *          minWidth: <Number, default: undefined>,
- *          minHeight: <Number, default: undefined>,
- *          maxWidth: <Number, default: undefined>,
- *          maxHeight: <Number, default: undefined>,
- *          horizontalAlign: <String (left, center, right), default: center>,
- *          gridX: <Number, default: 0>,
- *          gridY: <Number, default: 0>,
- *          gridWidth: <Number, default: 1>,
- *          gridHeight: <Number, default: 1>,
+ *          TODO
  *     }
  *
  * @class GridLayout
@@ -2818,6 +2814,13 @@ var GridLayout = Layout.$extend({
     __init__: function(params) {
         this.$super(params);
         this._updateProperties(["verticalSpacing"]);
+
+        // XXX Sizing Hack
+        if (window.MutationObserver) {
+            this.__sizinghack_observer = new MutationObserver(this._sizingHack.bind(this));
+            this.__sizinghack_observer_params = {attributes: true, childList: true, characterData: true, subtree: true};
+            this.__sizinghack_observer.observe(this.__html.gridBody, this.__sizinghack_observer_params);
+        }
     },
 
 
@@ -2828,6 +2831,49 @@ var GridLayout = Layout.$extend({
 
     // ====== Public properties ======
 
+    /**
+     * Vertical padding (px).
+     *
+     * @property verticalPadding
+     * @type Number
+     * @default 0
+     */
+    _verticalPadding: 0,
+
+    getVerticalPadding: function() {
+        return this._verticalPadding;
+    },
+
+    setVerticalPadding: function(padding) {
+        this._verticalPadding = padding|0;
+        this._updatingLayout = true;
+        this.__html.outerbox.style.paddingLeft = this._verticalPadding + "px";
+        this.__html.outerbox.style.paddingRight = this._verticalPadding + "px";
+        this._updatingLayout = false;
+        this._sizingHack();
+    },
+
+    /**
+     * Horizontal padding (px).
+     *
+     * @property horizontalPadding
+     * @type Number
+     * @default 0
+     */
+    _horizontalPadding: 0,
+
+    getHorizontalPadding: function() {
+        return this._horizontalPadding;
+    },
+
+    setHorizontalPadding: function(padding) {
+        this._horizontalPadding = padding|0;
+        this._updatingLayout = true;
+        this.__html.outerbox.style.paddingTop = this._horizontalPadding + "px";
+        this.__html.outerbox.style.paddingBottom = this._horizontalPadding + "px";
+        this._updatingLayout = false;
+        this._sizingHack();
+    },
 
     /**
      * The vertical spacing between children widgets.
@@ -2844,7 +2890,10 @@ var GridLayout = Layout.$extend({
 
     setVerticalSpacing: function(verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
-        this.__html.grid.style.borderSpacing = this.verticalSpacing + "px " + this.horizontalSpacing + "px";
+        this._updatingLayout = true;
+        this._updateSpacing();
+        this._updatingLayout = false;
+        this._sizingHack();
     },
 
     /**
@@ -2862,7 +2911,10 @@ var GridLayout = Layout.$extend({
 
     setHorizontalSpacing: function(horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
-        this.__html.grid.style.borderSpacing = this.verticalSpacing + "px " + this.horizontalSpacing + "px";
+        this._updatingLayout = true;
+        this._updateSpacing();
+        this._updatingLayout = false;
+        this._sizingHack();
     },
 
     /**
@@ -2876,6 +2928,18 @@ var GridLayout = Layout.$extend({
     getHtml: function() {
         return this.__html.outerbox;
     },
+
+    // ====== Public properties ======
+
+    /**
+     * Flag to indicate that the layout is actually been updated.
+     *
+     * @property _updatingLayout
+     * @private
+     * @type Boolean
+     * @default false
+     */
+    _updatingLayout: false,
 
     //////////////////////////////////////////
     // Methods                              //
@@ -2909,126 +2973,280 @@ var GridLayout = Layout.$extend({
      * @private
      */
     _updateLayout: function() {
-        // Calculate geometry
-        var ox = Infinity;  // Offset X
-        var oy = Infinity;  // Offset Y
-        var nc = 0;  // Number of columns
-        var nr = 0;  // Number of rows
+        this._updatingLayout = true;
+        if (this.__sizinghack_observer) {  // XXX
+            this.__sizinghack_observer.disconnect();
+        }
+
         var children = this.children;
+
+        // Determine the grid geometry (min x, min y, max x, max y)
+        var minX = + Infinity;
+        var minY = + Infinity;
+        var maxX = - Infinity;
+        var maxY = - Infinity;
+
+        var options;
         for (var i=0 ; i<children.length ; i++) {
-            children[i].layoutOptions.gridX = (children[i].layoutOptions.gridX != undefined) ? children[i].layoutOptions.gridX : 0;
-            children[i].layoutOptions.gridY = (children[i].layoutOptions.gridY != undefined) ? children[i].layoutOptions.gridY : 0;
-            children[i].layoutOptions.gridWidth = Math.max(children[i].layoutOptions.gridWidth, 1) || 1;
-            children[i].layoutOptions.gridHeight = Math.max(children[i].layoutOptions.gridHeight, 1) || 1;
-            ox = Math.min(ox, children[i].layoutOptions.gridX);
-            oy = Math.min(oy, children[i].layoutOptions.gridY);
-            nc = Math.max(nc, children[i].layoutOptions.gridX + children[i].layoutOptions.gridWidth);
-            nr = Math.max(nr, children[i].layoutOptions.gridY + children[i].layoutOptions.gridHeight);
+            options = this._computeLayoutOptions(children[i]);
+            minX = Math.min(options.x, minX);
+            minY = Math.min(options.y, minY);
+            maxX = Math.max(options.x, maxX);
+            maxY = Math.max(options.y, maxY);
         }
-        nc -= ox;
-        nr -= oy;
 
-        // Find and fix conflicts
-        // TODO
+        var gridWidth = maxX - minX + 1;
+        var gridHeight = maxY - minY + 1;
 
-        // Build
-        Helpers.cleanNode(this.__html.gridBody);
-        var map = [];
-        for (var y=0 ; y<nr ; y++) {
-            var row = [];
-            for (var x=0 ; x<nc ; x++) {
-                row.push(false);
+        // Clean
+        this.__html.grid.removeChild(this.__html.gridBody);
+        photonui.Helpers.cleanNode(this.__html.gridBody);
+
+        // Build the layout
+        var that = this;
+        function _findWidgetAt(x, y) {
+            var options;
+            for (var i=0 ; i<children.length ; i++) {
+                options = that._computeLayoutOptions(children[i]);
+                if (options.x == x && options.y == y) {
+                    return {w: children[i], o: options};
+                }
             }
-            map.push(row);
+            return null;
         }
-        for (var y=0 ; y<nr ; y++) {
-            var e_tr = document.createElement("tr");
-            this.__html.gridBody.appendChild(e_tr);
-            for (var x=0 ; x<nc ; x++) {
+
+        var map = [];
+        for (var y=0 ; y<gridHeight ; y++) {
+            map[y] = [];
+            map[y].length = gridWidth;
+        }
+
+        var child;
+        var tr, td, div;
+        var cellX, cellY;
+        for (var y=0 ; y<gridHeight ; y++) {
+            tr = document.createElement("tr");
+            for (var x=0 ; x<gridWidth ; x++) {
                 if (map[y][x]) {
                     continue;
                 }
-                var widget = false;
-                var e_td = document.createElement("td");
-                e_td.className = "photonui-container photonui-gridlayout-cell";
-                e_tr.appendChild(e_td);
-                for (var i=0 ; i<children.length ; i++) {
-                    if (children[i].layoutOptions.gridX - ox == x && children[i].layoutOptions.gridY - oy == y) {
-                        widget = true;
-                        var cs = children[i].layoutOptions.gridWidth;
-                        var rs = children[i].layoutOptions.gridHeight;
-                        e_td.colSpan = cs;
-                        e_td.rowSpan = rs;
-                        e_td.appendChild(children[i].html);
 
-                        if (children[i].layoutOptions.horizontalExpansion == undefined
-                        ||  children[i].layoutOptions.horizontalExpansion) {
-                            e_td.className += " photonui-container-expand-child-horizontal"
-                        }
-                        if (children[i].layoutOptions.verticalExpansion == undefined
-                        ||  children[i].layoutOptions.verticalExpansion) {
-                            e_td.className += " photonui-container-expand-child-vertical"
-                        }
+                td = document.createElement("td");
+                td.className = "photonui-gridlayout-cell";
+                div = document.createElement("div");
+                div.className = "photonui-container photonui-gridlayout-wrapper";
+                td.appendChild(div);
+                tr.appendChild(td);
 
-                        // Layout Options: width
-                        if (children[i].layoutOptions.width != undefined) {
-                            e_td.style.height = children[i].layoutOptions.width + "px";
-                        }
-                        // Layout Options: height
-                        if (children[i].layoutOptions.height != undefined) {
-                            e_td.style.height = children[i].layoutOptions.height + "px";
-                        }
-                        // Layout Options: minWidth
-                        if (children[i].layoutOptions.minWidth != undefined) {
-                            e_td.style.minWidth = children[i].layoutOptions.minWidth + "px";
-                        }
-                        // Layout Options: minHeight
-                        if (children[i].layoutOptions.minHeight != undefined) {
-                            e_td.style.minHeight = children[i].layoutOptions.minHeight + "px";
-                        }
-                        // Layout Options: maxWidth
-                        if (children[i].layoutOptions.maxWidth != undefined) {
-                            e_td.style.maxWidth = children[i].layoutOptions.maxWidth + "px";
-                        }
-                        // Layout Options: maxHeight
-                        if (children[i].layoutOptions.maxHeight != undefined) {
-                            e_td.style.maxHeight = children[i].layoutOptions.maxHeight + "px";
-                        }
-                        // Layout Options: horizontalAlign
-                        if (children[i].layoutOptions.horizontalAlign != undefined) {
-                            e_td.style.textAlign = children[i].layoutOptions.horizontalAlign;
-                        }
+                child = _findWidgetAt(x + minX, y + minY);
+                if (child) {
+                    div.appendChild(child.w.html);
 
-                        if (cs > 1 || rs > 1) {
-                            for (var r=y ; r<y+rs ; r++) {
-                                for (var c=x ; c<x+cs ; c++) {
-                                    map[r][c] = true;
-                                }
+                    // vertical/horizontal Align
+                    td.className += " photonui-layout-verticalalign-" + child.o.verticalAlign;
+                    td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
+
+                    // rowspan / colspan
+                    if (child.o.cols > 1 || child.o.rows > 1) {
+                        td.colSpan = child.o.cols;
+                        td.rowSpan = child.o.rows;
+
+                        for (var cellY=y ; cellY<y+child.o.rows ; cellY++) {
+                            for (var cellX=x ; cellX<x+child.o.cols ; cellX++) {
+                                map[cellY][cellX] = true;
                             }
                         }
-                        break;
                     }
                 }
-                if (!widget) {
-                    e_td.innerHTML = "&nbsp;";
-                }
+            }
+            this.__html.gridBody.appendChild(tr);
+        }
+
+        // Attach nodes to the DOM
+        this.__html.grid.appendChild(this.__html.gridBody);
+
+        //
+        this._updateSpacing();
+        this._updatingLayout = false;
+        if (this.__sizinghack_observer) {  // XXX
+            this.__sizinghack_observer.observe(this.__html.gridBody, this.__sizinghack_observer_params);
+        }
+        this._sizingHack();
+    },
+
+    /**
+     * Returns a normalized layoutOption for a given widget.
+     *
+     * @method _computeLayoutOptions
+     * @private
+     * @param {photonui.Widget} widget
+     * @return {Object} the layout options
+     */
+    _computeLayoutOptions: function(widget) {
+        var woptions = widget.layoutOptions || {};
+
+        var options = {
+            x: 0,
+            y: 0,
+            cols: 1,
+            rows: 1,
+            verticalAlign: "stretch",
+            horizontalAlign: "stretch",
+            minWidth: null,
+            maxWidth: null,
+            width: null,
+            minHeight: null,
+            maxHeight: null,
+            height: null
+        }
+
+        // position / place
+        if (woptions.x !== undefined && woptions.x !== null) {
+            options.x = woptions.x|0;
+        }
+        if (woptions.y !== undefined && woptions.y !== null) {
+            options.y = woptions.y|0;
+        }
+        if (woptions.cols !== undefined && woptions.cols !== null) {
+            options.cols = woptions.cols|0;
+        }
+        if (woptions.rows !== undefined && woptions.rows !== null) {
+            options.rows = woptions.rows|0;
+        }
+
+        // verticalAlign
+        if (["stretch", "expand"].indexOf(woptions.verticalAlign) > -1) {
+            options.verticalAlign = "stretch";
+        }
+        else if (["center", "middle"].indexOf(woptions.verticalAlign) > -1) {
+            options.verticalAlign = "center";
+        }
+        else if (["start", "begin", "top"].indexOf(woptions.verticalAlign) > -1) {
+            options.verticalAlign = "start";
+        }
+        else if (["end", "bottom"].indexOf(woptions.verticalAlign) > -1) {
+            options.verticalAlign = "end";
+        }
+
+        // horizontalAlign
+        if (["stretch", "expand"].indexOf(woptions.horizontalAlign) > -1) {
+            options.horizontalAlign = "stretch";
+        }
+        else if (["center", "middle"].indexOf(woptions.horizontalAlign) > -1) {
+            options.horizontalAlign = "center";
+        }
+        else if (["start", "begin", "left"].indexOf(woptions.horizontalAlign) > -1) {
+            options.horizontalAlign = "start";
+        }
+        else if (["end", "right"].indexOf(woptions.horizontalAlign) > -1) {
+            options.horizontalAlign = "end";
+        }
+
+        // *width
+        if (woptions.minWidth !== undefined && woptions.minWidth !== null) {
+            options.minWidth = woptions.minWidth|0;
+        }
+        if (woptions.maxWidth !== undefined && woptions.maxWidth !== null) {
+            options.maxWidth = woptions.maxWidth|0;
+        }
+        if (woptions.width !== undefined && woptions.width !== null) {
+            options.width = woptions.width|0;
+            options.minWidth = woptions.width|0;
+            options.maxWidth = woptions.width|0;
+        }
+
+        // *height
+        if (woptions.minHeight !== undefined && woptions.minHeight !== null) {
+            options.minHeight = woptions.minHeight|0;
+        }
+        if (woptions.maxHeight !== undefined && woptions.maxHeight !== null) {
+            options.maxHeight = woptions.maxHeight|0;
+        }
+        if (woptions.height !== undefined && woptions.height !== null) {
+            options.height = woptions.height|0;
+            options.minHeight = woptions.height|0;
+            options.maxHeight = woptions.height|0;
+        }
+
+        return options;
+    },
+
+    /**
+     * Update the spacing between widgets
+     *
+     * @method _updateSpacing
+     * @private
+     */
+    _updateSpacing: function() {
+        var nodes = this.__html.outerbox.querySelectorAll("#" + this.name + " > table > tbody > tr > td");
+        for (var i=0 ; i<nodes.length ; i++) {
+            nodes[i].style.paddingRight = this._verticalSpacing + "px";
+            nodes[i].style.paddingBottom = this._horizontalSpacing + "px";
+        }
+    },
+
+    /**
+     * Hack to get thing working with Gecko and Trident.
+     *
+     * MSIE 11:
+     *
+     *   * The hack fixes all the issues,
+     *
+     * MSIE 10:
+     *
+     *   * There is issues with rowspan
+     *   * The dynamic resizing does not works
+     *
+     * Firefox:
+     *
+     *   * There is some minor issues with rowspan
+     *
+     * @method _sizingHack
+     * @private
+     */
+    _sizingHack: function() {
+        if (this._updatingLayout) {
+            return;
+        }
+
+        // Automatically disable the hack for webkit browsers
+        if (localStorage._photonui_gridlayout_sizinghack == "disabled") {
+            return;
+        }
+        else if (localStorage._photonui_gridlayout_sizinghack === undefined) {
+            var isWebkit = false;
+            if ("WebkitAppearance" in document.documentElement.style) isWebkit = true;
+            if ("WebKitCSSMatrix" in window) isWebkit = true;
+            if (isWebkit) {
+                localStorage._photonui_gridlayout_sizinghack = "disabled";
+                return;
+            }
+            else {
+                localStorage._photonui_gridlayout_sizinghack = "enabled";
             }
         }
 
-        // Hack for Gecko and Trident
-        //var cells = document.querySelectorAll("#" + this.name + " td");
-        //var heights = [];
-        //var padding = 0;
-        //for (var i=0 ; i<cells.length ; i++) {
-            //if (cells[i].childNodes.length == 1 && cells[i].childNodes[0] instanceof HTMLElement) {
-                //padding = parseInt(getComputedStyle(cells[i].childNodes[0]).paddingTop);
-                //padding += parseInt(getComputedStyle(cells[i].childNodes[0]).paddingBottom);
-            //}
-            //heights[i] = (cells[i].offsetHeight - padding) + "px";
-        //}
-        //for (var i=0 ; i<cells.length ; i++) {
-            //cells[i].style.height = heights[i];
-        //}
+        this._updatingLayout = true;
+        if (this.__sizinghack_observer) {
+            this.__sizinghack_observer.disconnect();
+        }
+
+        function _hack() {
+            var nodes = this.__html.outerbox.querySelectorAll("#" + this.name + " > table > tbody > tr > td");
+            for (var i=0 ; i<nodes.length ; i++) {
+                nodes[i].style.height = "auto";
+            }
+            for (var i=0 ; i<nodes.length ; i++) {
+                nodes[i].style.height = nodes[i].offsetHeight + "px";
+            }
+
+            this._updatingLayout = false;
+            if (this.__sizinghack_observer) {
+                this.__sizinghack_observer.observe(this.__html.gridBody, this.__sizinghack_observer_params);
+            }
+        }
+
+        setTimeout(_hack.bind(this), 1);
     }
 });
 
