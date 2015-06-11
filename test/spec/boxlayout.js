@@ -475,3 +475,50 @@ describe("photonui.BoxLayout (layoutOptions, vertical orientation)", function() 
         expect(this.w2.html.parentNode.style.marginBottom).toEqual("");
     });
 });
+
+describe("photonui.BoxLayout (bugfix)", function() {
+
+    beforeAll(function() {
+        addTitle("photonui.BoxLayout (visual, horizontal orientation)");
+    });
+
+    beforeEach(function() {
+        this.area = addTestArea();
+        this.area.className += " photonui-container-expand-child";
+    });
+
+    it("works with nested BoxLayout", function() {
+        this.area.style.width = "320px";
+        this.area.style.height = "170px";
+
+        var w1 = new DummyWidget();
+        var w2 = new DummyWidget();
+        var w3 = new DummyWidget();
+        var w4 = new DummyWidget();
+
+        var vbox = new photonui.BoxLayout({
+            orientation: "vertical",
+            spacing: 10,
+            children: [w1]
+        });
+
+        var hbox = new photonui.BoxLayout({
+            orientation: "horizontal",
+            spacing: 10,
+            children: [w2, w3, w4]
+        });
+
+        vbox.addChild(hbox);
+        photonui.domInsert(vbox, this.area);
+
+        expect(w1.offsetWidth).toEqual(320);
+        expect(w1.offsetHeight).toEqual(80);
+
+        expect(w2.offsetWidth).toEqual(100);
+        expect(w2.offsetHeight).toEqual(80);
+        expect(w3.offsetWidth).toEqual(100);
+        expect(w3.offsetHeight).toEqual(80);
+        expect(w4.offsetWidth).toEqual(100);
+        expect(w4.offsetHeight).toEqual(80);
+    });
+});
