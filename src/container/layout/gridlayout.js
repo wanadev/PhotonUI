@@ -286,9 +286,19 @@ var GridLayout = Layout.$extend({
                 if (child) {
                     div.appendChild(child.w.html);
 
-                    // vertical/horizontal Align
+                    // layout options: vertical/horizontal Align
                     td.className += " photonui-layout-verticalalign-" + child.o.verticalAlign;
                     td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
+
+                    // layout options: *width
+                    if (child.o.minWidth !== null) div.style.minWidth = child.o.minWidth + "px";
+                    if (child.o.maxWidth !== null) div.style.maxWidth = child.o.maxWidth + "px";
+                    if (child.o.width !== null) div.style.width = child.o.width + "px";
+
+                    // layout options: *height
+                    if (child.o.minHeight !== null) div.style.minHeight = child.o.minHeight + "px";
+                    if (child.o.maxHeight !== null) div.style.maxHeight = child.o.maxHeight + "px";
+                    if (child.o.height !== null) div.style.height = child.o.height + "px";
 
                     // rowspan / colspan
                     if (child.o.cols > 1 || child.o.rows > 1) {

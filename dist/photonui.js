@@ -3042,9 +3042,19 @@ var GridLayout = Layout.$extend({
                 if (child) {
                     div.appendChild(child.w.html);
 
-                    // vertical/horizontal Align
+                    // layout options: vertical/horizontal Align
                     td.className += " photonui-layout-verticalalign-" + child.o.verticalAlign;
                     td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
+
+                    // layout options: *width
+                    if (child.o.minWidth !== null) div.style.minWidth = child.o.minWidth + "px";
+                    if (child.o.maxWidth !== null) div.style.maxWidth = child.o.maxWidth + "px";
+                    if (child.o.width !== null) div.style.width = child.o.width + "px";
+
+                    // layout options: *height
+                    if (child.o.minHeight !== null) div.style.minHeight = child.o.minHeight + "px";
+                    if (child.o.maxHeight !== null) div.style.maxHeight = child.o.maxHeight + "px";
+                    if (child.o.height !== null) div.style.height = child.o.height + "px";
 
                     // rowspan / colspan
                     if (child.o.cols > 1 || child.o.rows > 1) {
@@ -3100,7 +3110,7 @@ var GridLayout = Layout.$extend({
             height: null
         }
 
-        // Compatibility with old widget
+        // [Compatibility with old GridLayout] position / place
         if (woptions.gridX !== undefined && woptions.gridX !== null) {
             options.x = woptions.gridX|0;
         }
@@ -3154,6 +3164,24 @@ var GridLayout = Layout.$extend({
         }
         else if (["end", "right"].indexOf(woptions.horizontalAlign) > -1) {
             options.horizontalAlign = "end";
+        }
+
+        // [Compatibility with old GridLayout] horizontalAlign / verticalAlign
+        if (woptions.verticalExpansion === true) {
+            options.verticalAlign = "stretch";
+        }
+        else if (woptions.verticalExpansion === false) {
+            if (woptions.verticalAlign === undefined) {
+                options.verticalAlign = "center";
+            }
+        }
+        if (woptions.horizontalExpansion === true) {
+            options.horizontalAlign = "stretch";
+        }
+        else if (woptions.horizontalExpansion === false) {
+            if (woptions.horizontalAlign === undefined) {
+                options.horizontalAlign = "center";
+            }
         }
 
         // *width

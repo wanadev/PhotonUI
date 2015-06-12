@@ -418,4 +418,120 @@ describe("photonui.GridLayout (layoutOptons)", function() {
             }.bind(this), 10);
         }.bind(this), 10);
     });
+
+    it("can handle the 'verticalAlign' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.verticalAlign = "start";
+        this.w1.text = "top";
+
+        this.w2.layoutOptions.verticalAlign = "center";
+        this.w2.text = "center";
+
+        this.w3.layoutOptions.verticalAlign = "end";
+        this.w3.text = "bottom";
+
+        this.grid._updateLayout();
+
+        var areaPos = photonui.Helpers.getAbsolutePosition(this.area);
+
+        expect(this.w1.offsetHeight + this.w4.offsetHeight + this.w7.offsetHeight).toBeLessThan(300);
+        expect(photonui.Helpers.getAbsolutePosition(this.w1.html).y).toEqual(areaPos.y);
+
+        expect(this.w2.offsetHeight + this.w5.offsetHeight + this.w8.offsetHeight).toBeLessThan(300);
+        expect(photonui.Helpers.getAbsolutePosition(this.w2.html).y).toBeGreaterThan(areaPos.y);
+        expect(photonui.Helpers.getAbsolutePosition(this.w2.html).y).toBeLessThan(areaPos.y + 300 - this.w2.offsetHeight - this.w5.offsetHeight - this.w8.offsetHeight);
+
+        expect(this.w3.offsetHeight + this.w6.offsetHeight + this.w9.offsetHeight).toBeLessThan(300);
+        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toEqual(areaPos.y + 300 - this.w3.offsetHeight - this.w6.offsetHeight - this.w9.offsetHeight);
+    });
+
+    it("can handle the 'horizontalAlign' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.horizontalAlign = "start";
+        this.w1.text = "left";
+
+        this.w4.layoutOptions.horizontalAlign = "center";
+        this.w4.text = "center";
+
+        this.w7.layoutOptions.horizontalAlign = "end";
+        this.w7.text = "right";
+
+        this.grid._updateLayout();
+
+        var areaPos = photonui.Helpers.getAbsolutePosition(this.area);
+
+        expect(this.w1.offsetWidth + this.w2.offsetWidth + this.w3.offsetWidth).toBeLessThan(300);
+        expect(photonui.Helpers.getAbsolutePosition(this.w1.html).x).toEqual(areaPos.x);
+
+        expect(this.w4.offsetHeight + this.w5.offsetWidth + this.w6.offsetWidth).toBeLessThan(300);
+        expect(photonui.Helpers.getAbsolutePosition(this.w4.html).x).toBeGreaterThan(areaPos.x);
+        expect(photonui.Helpers.getAbsolutePosition(this.w4.html).x).toBeLessThan(areaPos.x + 300 - this.w4.offsetWidth - this.w5.offsetWidth - this.w6.offsetWidth);
+
+        expect(this.w7.offsetWidth + this.w8.offsetWidth + this.w9.offsetWidth).toBeLessThan(300);
+        expect(photonui.Helpers.getAbsolutePosition(this.w7.html).x).toEqual(areaPos.x + 300 - this.w7.offsetWidth - this.w8.offsetWidth - this.w9.offsetWidth);
+    });
+
+    it("can handle the 'minWidth' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.minWidth = 120;
+        this.grid._updateLayout();
+
+        expect(this.w1.offsetWidth).toBeGreaterThan(119);
+    });
+
+    it("can handle the 'maxWidth' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.maxWidth = 80;
+        this.grid._updateLayout();
+
+        expect(this.w1.offsetWidth).toBeLessThan(81);
+    });
+
+    it("can handle the 'width' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.width = 120;
+        this.grid._updateLayout();
+
+        expect(this.w1.offsetWidth).toEqual(120);
+    });
+
+    it("can handle the 'minHeight' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.minHeight = 120;
+        this.grid._updateLayout();
+
+        expect(this.w1.offsetHeight).toBeGreaterThan(119);
+    });
+
+    it("can handle the 'maxHeight' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.maxHeight = 80;
+        this.grid._updateLayout();
+
+        expect(this.w1.offsetHeight).toBeLessThan(81);
+    });
+
+    it("can handle the 'height' layout options", function() {
+        this.area.style.width = "300px";
+        this.area.style.height = "300px";
+
+        this.w1.layoutOptions.height = 120;
+        this.grid._updateLayout();
+
+        expect(this.w1.offsetHeight).toEqual(120);
+    });
 });
