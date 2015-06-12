@@ -4752,7 +4752,24 @@ var Dialog = Window.$extend({
     },
 
     setButtonsNames: function(buttonsNames) {
-        this._buttonsNames = buttonsNames;
+        for (var i=0 ; i<this._buttonsNames.length ; i++) {
+            var widget = photonui.getWidget(this._buttonsNames[i]);
+            var index = this._buttonsNames.indexOf(widget.name);
+            if (index >= 0) {
+                widget._parentName = null;
+            }
+        }
+        this._buttonsNames = [];
+        for (var i=0 ; i<buttonsNames.length ; i++) {
+            var widget = photonui.getWidget(buttonsNames[i]);
+            if (widget) {
+                if (widget.parent) {
+                    widget.unparent();
+                }
+                this._buttonsNames.push(widget.name);
+                widget._parentName = this.name;
+            }
+        }
         this._updateButtons();
     },
 
@@ -4796,8 +4813,15 @@ var Dialog = Window.$extend({
      * @method addButton
      * @param {photonui.Widget} widget The button to add.
      */
-    addButton: function(widget) {
-        this._childrenNames.push(widget.name);
+    addButton: function(widget, layoutOptions) {
+        if (widget.parent) {
+            widget.unparent();
+        }
+        if (layoutOptions) {
+            widget.layoutOptions = layoutOptions;
+        }
+        this._buttonsNames.push(widget.name);
+        widget._parentName = this.name;
         this._updateButtons();
     },
 
@@ -4810,9 +4834,30 @@ var Dialog = Window.$extend({
     removeButton: function(widget) {
         var index = this._buttonsNames.indexOf(widget.name);
         if (index >= 0) {
-            this._buttonsNames.splice(widget.name, 1);
+            this._buttonsNames.splice(index, 1);
+            widget._parentName = null;
         }
         this._updateButtons();
+    },
+
+    // Alias needed for photonui.Widget.unparent()
+    removeChild: function() {
+        this.removeButton.apply(this, arguments);
+    },
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function() {
+        var buttons = this.buttons;
+        for (var i=0 ; i<buttons.length ; i++) {
+            if (buttons[i]) {
+                buttons[i].destroy();
+            }
+        }
+        this.$super();
     },
 
 
