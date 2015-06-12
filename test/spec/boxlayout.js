@@ -479,7 +479,7 @@ describe("photonui.BoxLayout (layoutOptions, vertical orientation)", function() 
 describe("photonui.BoxLayout (bugfix)", function() {
 
     beforeAll(function() {
-        addTitle("bugfix)");
+        addTitle("photonui.BoxLayout (bugfix)");
     });
 
     beforeEach(function() {
