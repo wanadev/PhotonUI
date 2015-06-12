@@ -29,15 +29,73 @@
 */
 
 
-.photonui-gridlayout > table {
+.photonui-gridlayout {
+    display: inline-block;
     box-sizing: border-box;
-    border-collapse: separate;
-}
 
-.photonui-gridlayout-cell {
-    padding: 0;
-    
-    > * {
-        margin: auto !important;
+    > table {
+        box-sizing: border-box;
+        border-collapse: collapse;
+        width: 100%;
+        height: 100%;
+
+        .photonui-gridlayout-cell {
+            padding: 0;
+            box-sizing: content-box;
+            box-sizing: border-box;
+
+            .photonui-gridlayout-wrapper {
+                display: inline-block;
+                vertical-align: middle;
+                text-align: left;
+
+                > * {
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+            }
+
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-verticalalign-stretch .photonui-gridlayout-wrapper {
+            height: 100%;
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-verticalalign-start {
+            vertical-align: top;
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-verticalalign-center {
+            vertical-align: middle;
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-verticalalign-end {
+            vertical-align: bottom;
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-horizontalalign-stretch .photonui-gridlayout-wrapper {
+            width: 100%;
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-horizontalalign-start {
+            text-align: left;
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-horizontalalign-center {
+            text-align: center;
+        }
+
+        .photonui-gridlayout-cell.photonui-layout-horizontalalign-end {
+            text-align: right;
+        }
+
+        tr .photonui-gridlayout-cell:last-child {
+            padding-right: 0 !important;
+        }
+
+        tr:last-child .photonui-gridlayout-cell {
+            padding-bottom: 0 !important;
+        }
+
     }
 }
