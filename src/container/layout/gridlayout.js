@@ -344,6 +344,20 @@ var GridLayout = Layout.$extend({
             height: null
         }
 
+        // [Compatibility with old GridLayout] position / place
+        if (woptions.gridX !== undefined && woptions.gridX !== null) {
+            options.x = woptions.gridX|0;
+        }
+        if (woptions.gridY !== undefined && woptions.gridY !== null) {
+            options.y = woptions.gridY|0;
+        }
+        if (woptions.gridWidth !== undefined && woptions.gridWidth !== null) {
+            options.cols = woptions.gridWidth|0;
+        }
+        if (woptions.gridHeight !== undefined && woptions.gridHeight !== null) {
+            options.rows = woptions.gridHeight|0;
+        }
+
         // position / place
         if (woptions.x !== undefined && woptions.x !== null) {
             options.x = woptions.x|0;
@@ -384,6 +398,24 @@ var GridLayout = Layout.$extend({
         }
         else if (["end", "right"].indexOf(woptions.horizontalAlign) > -1) {
             options.horizontalAlign = "end";
+        }
+
+        // [Compatibility with old GridLayout] horizontalAlign / verticalAlign
+        if (woptions.verticalExpansion === true) {
+            options.verticalAlign = "stretch";
+        }
+        else if (woptions.verticalExpansion === false) {
+            if (woptions.verticalAlign === undefined) {
+                options.verticalAlign = "center";
+            }
+        }
+        if (woptions.horizontalExpansion === true) {
+            options.horizontalAlign = "stretch";
+        }
+        else if (woptions.horizontalExpansion === false) {
+            if (woptions.horizontalAlign === undefined) {
+                options.horizontalAlign = "center";
+            }
         }
 
         // *width

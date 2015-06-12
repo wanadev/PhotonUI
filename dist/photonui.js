@@ -3100,6 +3100,20 @@ var GridLayout = Layout.$extend({
             height: null
         }
 
+        // Compatibility with old widget
+        if (woptions.gridX !== undefined && woptions.gridX !== null) {
+            options.x = woptions.gridX|0;
+        }
+        if (woptions.gridY !== undefined && woptions.gridY !== null) {
+            options.y = woptions.gridY|0;
+        }
+        if (woptions.gridWidth !== undefined && woptions.gridWidth !== null) {
+            options.cols = woptions.gridWidth|0;
+        }
+        if (woptions.gridHeight !== undefined && woptions.gridHeight !== null) {
+            options.rows = woptions.gridHeight|0;
+        }
+
         // position / place
         if (woptions.x !== undefined && woptions.x !== null) {
             options.x = woptions.x|0;
