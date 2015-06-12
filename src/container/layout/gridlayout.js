@@ -45,7 +45,21 @@ var Layout = require("./layout.js");
  * Layout Options:
  *
  *     {
- *          TODO
+ *          x: <Number, default: 0>,
+ *          y: <Number, default: 0>,
+ *          cols: <Number, default: 1>,
+ *          rows: <Number, default: 1>,
+ *
+ *          horizontalAlign: <String (stretch|expand, start|left, center, end|right), default: stretch>,
+ *          verticalAlign: <String (stretch|expand, start|top, center|middle, end|bottom), default: stretch>,
+ *
+ *          minWidth: <Number, default: null>,
+ *          maxWidth: <Number, default: null>,
+ *          width: <Number, default: null>,
+ *
+ *          minHeight: <Number, default: null>,
+ *          maxHeight: <Number, default: null>,
+ *          height: <Number, default: null>,
  *     }
  *
  * @class GridLayout
