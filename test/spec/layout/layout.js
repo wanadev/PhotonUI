@@ -16,7 +16,7 @@ describe("photonui.Layout", function() {
         this.w3.destroy();
     });
 
-    it("can have children widget", function() {
+    it("can have children widgets", function() {
         this.l1.children = [this.w1, this.w2];
         this.l1.addChild(this.w3);
 

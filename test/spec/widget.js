@@ -10,6 +10,18 @@ describe("photonui.Widget", function() {
         this.w.destroy();
     });
 
+    it("has a name", function() {
+        expect(this.w.name).not.toBeUndefined();
+    });
+
+    it("has HTML element", function() {
+        expect(this.w.html instanceof HTMLElement).toBeTruthy();
+    });
+
+    it("has the 'photonui-widget' class on its outer HTML", function() {
+        expect(this.w.html.className).toContain("photonui-widget");
+    });
+
     it("can be unparented", function() {
         this.c.child = this.w;
         this.w.unparent();

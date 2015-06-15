@@ -14,6 +14,14 @@ describe("photonui.Container", function() {
         this.w2.destroy();
     });
 
+    it("has a container HTML element", function() {
+        expect(this.c1.containerNode instanceof HTMLElement).toBeTruthy();
+    });
+
+    it("has the 'photonui-container' class on its outer HTML", function() {
+        expect(this.c1.html.className).toContain("photonui-container");
+    });
+
     it("can have a child widget", function() {
         this.c1.child = this.w1;
 

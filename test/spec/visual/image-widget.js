@@ -1,4 +1,4 @@
-describe("photonui.Image (widget logic)", function() {
+describe("photonui.Image (widget)", function() {
 
     beforeEach(function() {
         this.c = new DummyContainer();
@@ -8,6 +8,18 @@ describe("photonui.Image (widget logic)", function() {
     afterEach(function() {
         this.c.destroy();
         this.w.destroy();
+    });
+
+    it("has a name", function() {
+        expect(this.w.name).not.toBeUndefined();
+    });
+
+    it("has HTML element", function() {
+        expect(this.w.html instanceof HTMLElement).toBeTruthy();
+    });
+
+    it("has the 'photonui-widget' class on its outer HTML", function() {
+        expect(this.w.html.className).toContain("photonui-widget");
     });
 
     it("can be unparented", function() {
