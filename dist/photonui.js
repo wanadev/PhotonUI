@@ -11017,16 +11017,26 @@ module.exports = Translation;
 
 var photonui = {};
 
+// Include libraries in module.
+photonui.lib = {};
+photonui.lib.Class = require("classyjs");
+photonui.lib.KeyboardJS = require("keyboardjs");
+photonui.lib.Stone = require("../lib/stone");
+
+// Base
 photonui.Helpers = require("./helpers.js");
 photonui.Base = require("./base.js");
 photonui.Widget = require("./widget.js");
 
+// Methods
+photonui.domInsert = photonui.Widget.domInsert;
+photonui.getWidget = photonui.Widget.getWidget;
+
+// Widgets
 photonui.FileManager = require("./nonvisual/filemanager.js");
 photonui.Translation = require("./nonvisual/translation.js");
-
 photonui.AccelManager = require("./nonvisual/accelmanager.js");
 photonui.MouseManager = require("./nonvisual/mousemanager.js");
-
 photonui.BaseIcon = require("./visual/baseicon.js");
 photonui.FAIcon = require("./visual/faicon.js");
 photonui.Image = require("./visual/image.js");
@@ -11037,56 +11047,36 @@ photonui.Label = require("./visual/label.js");
 photonui.Text = require("./visual/text.js");
 photonui.ProgressBar = require("./visual/progressbar.js");
 photonui.Separator = require("./visual/separator.js");
-
 photonui.Button = require("./interactive/button.js");
 photonui.ColorButton = require("./composite/colorbutton.js");
-
 photonui.CheckBox = require("./interactive/checkbox.js");
 photonui.Switch = require("./interactive/switch.js");
 photonui.ToggleButton = require("./interactive/togglebutton.js");
-
 photonui.Color = require("./nonvisual/color.js");
 photonui.ColorPalette = require("./interactive/colorpalette.js");
 photonui.ColorPicker = require("./interactive/colorpicker.js");
-
 photonui.Field = require("./interactive/field.js");
 photonui.NumericField = require("./interactive/numericfield.js");
 photonui.TextAreaField = require("./interactive/textareafield.js");
 photonui.TextField = require("./interactive/textfield.js");
-
 photonui.Select = require("./composite/select.js");
 photonui.FontSelect = require("./composite/fontselect.js");
-
 photonui.Slider = require("./interactive/slider.js");
-
 photonui.Container = require("./container/container.js");
 photonui.Layout = require("./layout/layout.js");
 photonui.BoxLayout = require("./layout/boxlayout.js");
 photonui.FluidLayout = require("./layout/fluidlayout.js");
 photonui.GridLayout = require("./layout/gridlayout.js");
-
 photonui.Menu = require("./layout/menu.js");
 photonui.MenuItem = require("./container/menuitem.js");
 photonui.SubMenuItem = require("./container/submenuitem.js");
-
 photonui.Viewport = require("./container/viewport.js");
-
 photonui.BaseWindow = require("./container/basewindow.js");
 photonui.Window = require("./container/window.js");
 photonui.PopupWindow = require("./container/popupwindow.js");
 photonui.Dialog = require("./container/dialog.js");
-
 photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
-
-photonui.domInsert = photonui.Widget.domInsert;
-photonui.getWidget = photonui.Widget.getWidget;
-
-// Include libraries in module.
-photonui.lib = {};
-photonui.lib.Class = require("classyjs");
-photonui.lib.KeyboardJS = require("keyboardjs");
-photonui.lib.Stone = require("../lib/stone");
 
 module.exports = photonui;
 
