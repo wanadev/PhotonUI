@@ -32,48 +32,71 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Composite
+ * @submodule Layout
  * @namespace photonui
  */
 
-var PopupWindow = require("../container/popupwindow.js");
-var Menu = require("../layout/menu.js");
+var Helpers = require("../helpers.js");
+var Layout = require("./layout.js");
 
 /**
- * Popup Menu.
+ * Menu.
  *
- * @class PopupMenu
+ * @class Menu
  * @constructor
- * @extends photonui.PopupWindow
- * @uses photonui.Layout
- * @uses photonui.Menu
+ * @extends photonui.Layout
  */
-var PopupMenu = PopupWindow.$extend({
+var Menu = Layout.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._childrenNames = [];  // new instance
         this.$super(params);
+        this._updateProperties(["iconVisible"]);
     },
 
-    // Mixin
-    __include__: [{
-        getChildrenNames: Menu.prototype.getChildrenNames,
-        setChildrenNames: Menu.prototype.setChildrenNames,
-        getChildren:      Menu.prototype.getChildren,
-        setChildren:      Menu.prototype.setChildren,
-        getChildName:     Menu.prototype.getChildName,
-        setChildName:     Menu.prototype.setChildName,
-        getChild:         Menu.prototype.getChild,
-        setChild:         Menu.prototype.setChild,
-        isIconVisible:    Menu.prototype.isIconVisible,
-        setIconVisible:   Menu.prototype.setIconVisible,
-        addChild:         Menu.prototype.addChild,
-        removeChild:      Menu.prototype.removeChild,
-        empty:            Menu.prototype.empty,
-        destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
-    }],
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+
+    // ====== Public properties ======
+
+
+    /**
+     * Define if icon on menu items are visible.
+     *
+     * @property iconVisible
+     * @type Boolean
+     * @default: true
+     */
+    _iconVisible: true,
+
+    isIconVisible: function() {
+        return this._iconVisible;
+    },
+
+    setIconVisible: function(iconVisible) {
+        this._iconVisible = iconVisible;
+        if (iconVisible) {
+            this.removeClass("photonui-menu-noicon");
+        }
+        else {
+            this.addClass("photonui-menu-noicon");
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
 
 
     //////////////////////////////////////////
@@ -91,29 +114,32 @@ var PopupMenu = PopupWindow.$extend({
      * @private
      */
     _buildHtml: function() {
-        this.$super();
-        Menu.prototype._buildHtml.call(this);
-
-        this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
-        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
+        this.__html.outer = document.createElement("div");
+        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-default";
     },
 
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-
     /**
-     * Called when the locale is changed.
+     * Update the layout.
      *
-     * @method __onLocaleChanged
+     * @method _updateLayout
      * @private
      */
-    __onLocaleChanged: function() {
-        // pass
+    _updateLayout: function() {
+        // Detache the outer element from the document tree
+        //TODO
+
+        // Clean
+        Helpers.cleanNode(this.__html.outer);
+
+        // Append children
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            this.__html.outer.appendChild(children[i].html);
+        }
+
+        // Attache the outer element into the document tree
+        // TODO
     }
 });
 
-module.exports = PopupMenu;
+module.exports = Menu;

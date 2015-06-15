@@ -36,44 +36,74 @@
  * @namespace photonui
  */
 
-var PopupWindow = require("../container/popupwindow.js");
-var Menu = require("../layout/menu.js");
+var Stone = require("../../lib/stone.js");
+var Select = require("./select.js");
+var MenuItem = require("../container/menuitem.js");
 
 /**
- * Popup Menu.
+ * Font Selector.
  *
- * @class PopupMenu
+ * wEvents:
+ *
+ * @class FontSelect
  * @constructor
- * @extends photonui.PopupWindow
- * @uses photonui.Layout
- * @uses photonui.Menu
+ * @extends photonui.Select
  */
-var PopupMenu = PopupWindow.$extend({
+var FontSelect = Select.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._childrenNames = [];  // new instance
+        this._fonts = [];
         this.$super(params);
+        if (this.fonts.length == 0) this.fonts = ["sans-serif", "serif", "monospace"];
     },
 
-    // Mixin
-    __include__: [{
-        getChildrenNames: Menu.prototype.getChildrenNames,
-        setChildrenNames: Menu.prototype.setChildrenNames,
-        getChildren:      Menu.prototype.getChildren,
-        setChildren:      Menu.prototype.setChildren,
-        getChildName:     Menu.prototype.getChildName,
-        setChildName:     Menu.prototype.setChildName,
-        getChild:         Menu.prototype.getChild,
-        setChild:         Menu.prototype.setChild,
-        isIconVisible:    Menu.prototype.isIconVisible,
-        setIconVisible:   Menu.prototype.setIconVisible,
-        addChild:         Menu.prototype.addChild,
-        removeChild:      Menu.prototype.removeChild,
-        empty:            Menu.prototype.empty,
-        destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
-    }],
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+
+    // ====== Public properties ======
+
+
+    /**
+     * The font list
+     *
+     * @property fonts
+     * @type Array
+     * @default ["sans-serif", "serif", "monospace"]
+     */
+    _fonts: null,
+
+    getFonts: function() {
+        return this._fonts;
+    },
+
+    setFonts: function(fonts) {
+        this._fonts = [];
+        for (var i=0 ; i<fonts.length ; i++) {
+            this.addFont(fonts[i]);
+        }
+    },
+
+    /**
+     * The field value.
+     *
+     * @property value
+     * @type String (maybe)
+     * @default "sans-serif"
+     */
+    _value: "sans-serif",
+
+    /**
+     * The placeholder displayed if nothing is selected.
+     *
+     * @property Placeholder
+     * @type String
+     * @default "Select a font..."
+     */
+    _placeholder: Stone.lazyGettext("Select a font..."),
 
 
     //////////////////////////////////////////
@@ -81,39 +111,21 @@ var PopupMenu = PopupWindow.$extend({
     //////////////////////////////////////////
 
 
-    // ====== Private methods ======
+    // ====== Public methods ======
 
 
     /**
-     * Build the widget HTML.
+     * Add a widget to the layout.
      *
-     * @method _buildHtml
-     * @private
+     * @method addChild
+     * @param {String} fontName
      */
-    _buildHtml: function() {
-        this.$super();
-        Menu.prototype._buildHtml.call(this);
-
-        this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
-        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
-    },
-
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-
-    /**
-     * Called when the locale is changed.
-     *
-     * @method __onLocaleChanged
-     * @private
-     */
-    __onLocaleChanged: function() {
-        // pass
+    addFont: function(fontName) {
+        var item = new MenuItem({value: fontName, text: fontName});
+        item.html.style.fontFamily = fontName;
+        this.addChild(item);
+        this._fonts.push(fontName);
     }
 });
 
-module.exports = PopupMenu;
+module.exports = FontSelect;

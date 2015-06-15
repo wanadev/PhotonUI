@@ -32,71 +32,84 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Composite
+ * @submodule Container
  * @namespace photonui
  */
 
-var PopupWindow = require("../container/popupwindow.js");
+var Widget = require("../widget.js");
+var MenuItem = require("./menuitem.js");
 var Menu = require("../layout/menu.js");
 
 /**
- * Popup Menu.
+ * Submenu Menu item (fold/unfold a submenu).
  *
- * @class PopupMenu
+ * @class SubMenuItem
  * @constructor
- * @extends photonui.PopupWindow
- * @uses photonui.Layout
- * @uses photonui.Menu
+ * @extends photonui.MenuItem
  */
-var PopupMenu = PopupWindow.$extend({
+var SubMenuItem = MenuItem.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._childrenNames = [];  // new instance
         this.$super(params);
+        this.addClass("photonui-submenuitem");
+        this.registerCallback("toggle-folding", "click", this.__onItemClicked, this);
+        this._updateProperties(["menuName"]);
     },
 
-    // Mixin
-    __include__: [{
-        getChildrenNames: Menu.prototype.getChildrenNames,
-        setChildrenNames: Menu.prototype.setChildrenNames,
-        getChildren:      Menu.prototype.getChildren,
-        setChildren:      Menu.prototype.setChildren,
-        getChildName:     Menu.prototype.getChildName,
-        setChildName:     Menu.prototype.setChildName,
-        getChild:         Menu.prototype.getChild,
-        setChild:         Menu.prototype.setChild,
-        isIconVisible:    Menu.prototype.isIconVisible,
-        setIconVisible:   Menu.prototype.setIconVisible,
-        addChild:         Menu.prototype.addChild,
-        removeChild:      Menu.prototype.removeChild,
-        empty:            Menu.prototype.empty,
-        destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
-    }],
-
 
     //////////////////////////////////////////
-    // Methods                              //
+    // Properties and Accessors             //
     //////////////////////////////////////////
 
 
-    // ====== Private methods ======
+    // ====== Public properties ======
 
 
     /**
-     * Build the widget HTML.
+     * The submenu widget name.
      *
-     * @method _buildHtml
-     * @private
+     * @property menuName
+     * @type String
+     * @default null
      */
-    _buildHtml: function() {
-        this.$super();
-        Menu.prototype._buildHtml.call(this);
+    _menuName: null,
 
-        this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
-        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
+    getMenuName: function() {
+        return this._menuName;
+    },
+
+    setMenuName: function(menuName) {
+        if (this.menuName) {
+            this.menu.removeCallback("fold");
+            this.menu.removeCallback("unfold");
+        }
+        this._menuName = menuName;
+        if (this.menuName) {
+            this.menu.registerCallback("fold", "hide", this.__onToggleFold, this);
+            this.menu.registerCallback("unfold", "show", this.__onToggleFold, this);
+            this.active = this.menu.visible;
+        }
+    },
+
+    /**
+     * The submenu widget.
+     *
+     * @property menu
+     * @type photonui.Menu
+     * @default null
+     */
+    getMenu: function() {
+        return Widget.getWidget(this.menuName);
+    },
+
+    setMenu: function(menu) {
+        if (menu instanceof Menu) {
+            this.menuName = menu.name;
+        }
+        else {
+            this.menuName = null;
+        }
     },
 
 
@@ -106,14 +119,20 @@ var PopupMenu = PopupWindow.$extend({
 
 
     /**
-     * Called when the locale is changed.
-     *
-     * @method __onLocaleChanged
+     * @method __onToggleFold
      * @private
      */
-    __onLocaleChanged: function() {
-        // pass
+    __onToggleFold: function(widget) {
+        this.active = widget.visible;
+    },
+
+    /**
+     * @method __onItemClicked
+     * @private
+     */
+    __onItemClicked: function(widget) {
+        this.menu.visible = !this.menu.visible;
     }
 });
 
-module.exports = PopupMenu;
+module.exports = SubMenuItem;

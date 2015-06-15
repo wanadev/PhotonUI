@@ -37,14 +37,14 @@
  */
 
 var _ = require("../../lib/stone.js").gettext;
-var Dialog = require("../container/window/dialog.js");
-var BoxLayout = require("../container/layout/boxlayout.js");
-var GridLayout = require("../container/layout/gridlayout.js");
-var Color = require("../input/color/color.js");
-var ColorPalette = require("../input/color/colorpalette.js");
-var ColorPicker = require("../input/color/colorpicker.js");
-var Button = require("../input/button/button.js");
-var Slider = require("../input/slider/slider.js");
+var Dialog = require("../container/dialog.js");
+var BoxLayout = require("../layout/boxlayout.js");
+var GridLayout = require("../layout/gridlayout.js");
+var Color = require("../nonvisual/color.js");
+var ColorPalette = require("../interactive/colorpalette.js");
+var ColorPicker = require("../interactive/colorpicker.js");
+var Button = require("../interactive/button.js");
+var Slider = require("../interactive/slider.js");
 var Separator = require("../visual/separator.js");
 var Label = require("../visual/label.js");
 var FAIcon = require("../visual/faicon.js");

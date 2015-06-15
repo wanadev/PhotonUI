@@ -38,7 +38,7 @@
  */
 
 var BaseIcon = require("./baseicon.js");
-var SpriteSheet = require("./spritesheet.js");
+var SpriteSheet = require("../nonvisual/spritesheet.js");
 
 /**
  * Sprite sheet based icons.

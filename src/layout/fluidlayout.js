@@ -25,28 +25,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Authored by: Clément LEVASSEUR
+ * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
 /**
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Visual
+ * @submodule Layout
  * @namespace photonui
  */
-
-var Widget = require("../widget.js");
+ 
+var Helpers = require("../helpers.js");
+var Layout = require("./layout.js");
 
 /**
- * Image.
+ * Fluid Layout.
  *
- * @class Image
+ * @class FluidLayout
  * @constructor
- * @extends photonui.Widget
- * @param {Object} params An object that can contain any property of the widget (optional).
+ * @extends photonui.Layout
  */
-var Image = Widget.$extend({
+var FluidLayout = Layout.$extend({
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -55,66 +55,41 @@ var Image = Widget.$extend({
 
     // ====== Public properties ======
 
-    /**
-     * The image URL.
-     *
-     * @property url
-     * @type String
-     * @default ""
-     */
-    _url: "",
-
-    getUrl: function() {
-        return this._url;
-    },
-
-    setUrl: function(url) {
-        this._url = url;
-        this.__html.image.src = url;
-    },
 
     /**
-     * The image width (null = auto).
+     * The vertical spacing between children widgets.
      *
-     * @property width
+     * @property verticalSpacing
      * @type Number
-     * @default null
+     * @default 0
      */
-    _width: null,
+    _verticalSpacing: 0,
 
-    getWidth: function() {
-        return this._width;
+    getVerticalSpacing: function() {
+        return this._verticalSpacing;
     },
 
-    setWidth: function(width) {
-        if (width !== null) {
-            this._width = width;
-            this.__html.image.width = width;
-        } else {
-            this.__html.image.width = '';
-        }
+    setVerticalSpacing: function(verticalSpacing) {
+        this._verticalSpacing = verticalSpacing;
+        this._updateLayout();
     },
 
     /**
-     * The image height (null = auto).
+     * The horizontal spacing between children widgets.
      *
-     * @property height
+     * @property horizontalSpacing
      * @type Number
-     * @default null
+     * @default 2
      */
-    _height: null,
+    _horizontalSpacing: 2,
 
-    getHeight: function() {
-        return this._height;
+    getHorizontalSpacing: function() {
+        return this._horizontalSpacing;
     },
 
-    setHeight: function(height) {
-        if (height !== null) {
-            this._height = height;
-            this.__html.image.height = height;
-        } else {
-            this.__html.image.height = '';
-        }
+    setHorizontalSpacing: function(horizontalSpacing) {
+        this._horizontalSpacing = horizontalSpacing;
+        this._updateLayout();
     },
 
     /**
@@ -126,13 +101,17 @@ var Image = Widget.$extend({
      * @readOnly
      */
     getHtml: function() {
-        return this.__html.div;
+        return this.__html.outerbox;
     },
 
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+
+    // ====== Public methods ======
+
 
 
     // ====== Private methods ======
@@ -145,13 +124,32 @@ var Image = Widget.$extend({
      * @private
      */
     _buildHtml: function() {
-        this.__html.div = document.createElement("div");
-        this.__html.div.className = "photonui-widget photonui-image";
+        this.__html.outerbox = document.createElement("div");
+        this.__html.outerbox.className = "photonui-widget photonui-fluidlayout";
+    },
 
-        this.__html.image = document.createElement('img');
-        this.__html.div.appendChild(this.__html.image);
+    /**
+     * Update the layout.
+     *
+     * @method _updateLayout
+     * @private
+     */
+    _updateLayout: function() {
+        var children = this.children
+        var fragment = document.createDocumentFragment();
+
+        var div = null;
+        for (var i=0 ; i<children.length ; i++) {
+            div = document.createElement("div");
+            div.className = "photonui-container";
+            div.style.padding = "0 " + this.horizontalSpacing + "px " + this.verticalSpacing + "px 0";
+            div.appendChild(children[i].html);
+            fragment.appendChild(div);
+        }
+
+        Helpers.cleanNode(this.__html.outerbox);
+        this.__html.outerbox.appendChild(fragment);
     }
-
 });
 
-module.exports = Image;
+module.exports = FluidLayout;

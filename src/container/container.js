@@ -45,7 +45,7 @@ var Widget = require("../widget.js");
  * @constructor
  * @extends photonui.Widget
  */
-Container = Widget.$extend({
+var Container = Widget.$extend({
 
     //////////////////////////////////////////
     // Properties and Accessors             //

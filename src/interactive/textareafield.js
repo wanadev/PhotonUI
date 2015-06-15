@@ -32,48 +32,65 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Composite
+ * @submodule Interactive
  * @namespace photonui
  */
 
-var PopupWindow = require("../container/popupwindow.js");
-var Menu = require("../layout/menu.js");
+var Field = require("./field.js");
 
 /**
- * Popup Menu.
+ * Multiline text field.
  *
- * @class PopupMenu
+ * @class TextAreaField
  * @constructor
- * @extends photonui.PopupWindow
- * @uses photonui.Layout
- * @uses photonui.Menu
+ * @extends photonui.Field
  */
-var PopupMenu = PopupWindow.$extend({
+var TextAreaField = Field.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._childrenNames = [];  // new instance
         this.$super(params);
+        this._bindFieldEvents();
     },
 
-    // Mixin
-    __include__: [{
-        getChildrenNames: Menu.prototype.getChildrenNames,
-        setChildrenNames: Menu.prototype.setChildrenNames,
-        getChildren:      Menu.prototype.getChildren,
-        setChildren:      Menu.prototype.setChildren,
-        getChildName:     Menu.prototype.getChildName,
-        setChildName:     Menu.prototype.setChildName,
-        getChild:         Menu.prototype.getChild,
-        setChild:         Menu.prototype.setChild,
-        isIconVisible:    Menu.prototype.isIconVisible,
-        setIconVisible:   Menu.prototype.setIconVisible,
-        addChild:         Menu.prototype.addChild,
-        removeChild:      Menu.prototype.removeChild,
-        empty:            Menu.prototype.empty,
-        destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
-    }],
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+
+    // ====== Public properties ======
+
+
+    /**
+     * Number of columns.
+     *
+     * @property cols
+     * @type Number
+     * @default 20
+     */
+    getCols: function() {
+        return parseInt(this.__html.field.cols);
+    },
+
+    setCols: function(cols) {
+        this.__html.field.cols = cols;
+    },
+
+    /**
+     * Number of rows.
+     *
+     * @property rows
+     * @type Number
+     * @default 3
+     */
+    getRows: function() {
+        return parseInt(this.__html.field.rows);
+    },
+
+    setRows: function(rows) {
+        this.__html.field.rows = rows;
+    },
 
 
     //////////////////////////////////////////
@@ -91,29 +108,11 @@ var PopupMenu = PopupWindow.$extend({
      * @private
      */
     _buildHtml: function() {
-        this.$super();
-        Menu.prototype._buildHtml.call(this);
-
-        this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
-        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
-    },
-
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-
-    /**
-     * Called when the locale is changed.
-     *
-     * @method __onLocaleChanged
-     * @private
-     */
-    __onLocaleChanged: function() {
-        // pass
+        this.__html.field = document.createElement("textarea");
+        this.__html.field.className = "photonui-widget photonui-field photonui-field-textarea";
+        this.__html.field.cols = 20;
+        this.__html.field.rows = 3;
     }
 });
 
-module.exports = PopupMenu;
+module.exports = TextAreaField;

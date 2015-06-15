@@ -32,48 +32,44 @@
  * PhotonUI - Javascript Web User Interface.
  *
  * @module PhotonUI
- * @submodule Composite
+ * @submodule Interactive
  * @namespace photonui
  */
 
-var PopupWindow = require("../container/popupwindow.js");
-var Menu = require("../layout/menu.js");
+var CheckBox = require("./checkbox.js");
+var Button = require("./button.js");
 
 /**
- * Popup Menu.
+ * Toogle Button.
  *
- * @class PopupMenu
+ * @class ToggleButton
  * @constructor
- * @extends photonui.PopupWindow
- * @uses photonui.Layout
- * @uses photonui.Menu
+ * @extends photonui.CheckBox
+ * @uses photonui.Button
  */
-var PopupMenu = PopupWindow.$extend({
+var ToggleButton = CheckBox.$extend({
 
     // Constructor
     __init__: function(params) {
-        this._childrenNames = [];  // new instance
+        this._registerWEvents(["click"]);
         this.$super(params);
+        this.__buttonInit();
+        this.removeClass("photonui-checkbox");
+        this.addClass("photonui-togglebutton");
+    },
+
+    // photonui.Button constructor (without the call to $super)
+    __buttonInit: function() {
+        // Bind js events
+        this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
+
+        // Update properties
+        this._updateProperties(["text", "leftIconName", "rightIconName"]);
+        this._update();
     },
 
     // Mixin
-    __include__: [{
-        getChildrenNames: Menu.prototype.getChildrenNames,
-        setChildrenNames: Menu.prototype.setChildrenNames,
-        getChildren:      Menu.prototype.getChildren,
-        setChildren:      Menu.prototype.setChildren,
-        getChildName:     Menu.prototype.getChildName,
-        setChildName:     Menu.prototype.setChildName,
-        getChild:         Menu.prototype.getChild,
-        setChild:         Menu.prototype.setChild,
-        isIconVisible:    Menu.prototype.isIconVisible,
-        setIconVisible:   Menu.prototype.setIconVisible,
-        addChild:         Menu.prototype.addChild,
-        removeChild:      Menu.prototype.removeChild,
-        empty:            Menu.prototype.empty,
-        destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
-    }],
+    __include__: [Button._buttonMixin],
 
 
     //////////////////////////////////////////
@@ -92,28 +88,11 @@ var PopupMenu = PopupWindow.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        Menu.prototype._buildHtml.call(this);
-
-        this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
-        this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
-    },
-
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-
-    /**
-     * Called when the locale is changed.
-     *
-     * @method __onLocaleChanged
-     * @private
-     */
-    __onLocaleChanged: function() {
-        // pass
+        this._buildButtonHtml();
+        this.__html.outer.appendChild(this.__html.button);
+        this.__html.outer.removeChild(this.__html.span);
+        this.__html.span = this.__html.button;
     }
 });
 
-module.exports = PopupMenu;
+module.exports = ToggleButton;

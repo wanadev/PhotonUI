@@ -43,16 +43,16 @@ photonui.Helpers = require("./helpers.js");
 photonui.Base = require("./base.js");
 photonui.Widget = require("./widget.js");
 
-photonui.FileManager = require("./misc/filemanager.js");
-photonui.Translation = require("./misc/translation.js");
+photonui.FileManager = require("./nonvisual/filemanager.js");
+photonui.Translation = require("./nonvisual/translation.js");
 
-photonui.AccelManager = require("./event/accelmanager.js");
-photonui.MouseManager = require("./event/mousemanager.js");
+photonui.AccelManager = require("./nonvisual/accelmanager.js");
+photonui.MouseManager = require("./nonvisual/mousemanager.js");
 
 photonui.BaseIcon = require("./visual/baseicon.js");
 photonui.FAIcon = require("./visual/faicon.js");
 photonui.Image = require("./visual/image.js");
-photonui.SpriteSheet = require("./visual/spritesheet.js");
+photonui.SpriteSheet = require("./nonvisual/spritesheet.js");
 photonui.SpriteIcon = require("./visual/spriteicon.js");
 photonui.Canvas = require("./visual/canvas.js");
 photonui.Label = require("./visual/label.js");
@@ -60,43 +60,43 @@ photonui.Text = require("./visual/text.js");
 photonui.ProgressBar = require("./visual/progressbar.js");
 photonui.Separator = require("./visual/separator.js");
 
-photonui.Button = require("./input/button/button.js");
-photonui.ColorButton = require("./input/button/colorbutton.js");
+photonui.Button = require("./interactive/button.js");
+photonui.ColorButton = require("./composite/colorbutton.js");
 
-photonui.CheckBox = require("./input/checkbox/checkbox.js");
-photonui.Switch = require("./input/checkbox/switch.js");
-photonui.ToggleButton = require("./input/checkbox/togglebutton.js");
+photonui.CheckBox = require("./interactive/checkbox.js");
+photonui.Switch = require("./interactive/switch.js");
+photonui.ToggleButton = require("./interactive/togglebutton.js");
 
-photonui.Color = require("./input/color/color.js");
-photonui.ColorPalette = require("./input/color/colorpalette.js");
-photonui.ColorPicker = require("./input/color/colorpicker.js");
+photonui.Color = require("./nonvisual/color.js");
+photonui.ColorPalette = require("./interactive/colorpalette.js");
+photonui.ColorPicker = require("./interactive/colorpicker.js");
 
-photonui.Field = require("./input/field/field.js");
-photonui.NumericField = require("./input/field/numericfield.js");
-photonui.TextAreaField = require("./input/field/textareafield.js");
-photonui.TextField = require("./input/field/textfield.js");
+photonui.Field = require("./interactive/field.js");
+photonui.NumericField = require("./interactive/numericfield.js");
+photonui.TextAreaField = require("./interactive/textareafield.js");
+photonui.TextField = require("./interactive/textfield.js");
 
-photonui.Select = require("./input/select/select.js");
-photonui.FontSelect = require("./input/select/fontselect.js");
+photonui.Select = require("./composite/select.js");
+photonui.FontSelect = require("./composite/fontselect.js");
 
-photonui.Slider = require("./input/slider/slider.js");
+photonui.Slider = require("./interactive/slider.js");
 
 photonui.Container = require("./container/container.js");
-photonui.Layout = require("./container/layout/layout.js");
-photonui.BoxLayout = require("./container/layout/boxlayout.js");
-photonui.FluidLayout = require("./container/layout/fluidlayout.js");
-photonui.GridLayout = require("./container/layout/gridlayout.js");
+photonui.Layout = require("./layout/layout.js");
+photonui.BoxLayout = require("./layout/boxlayout.js");
+photonui.FluidLayout = require("./layout/fluidlayout.js");
+photonui.GridLayout = require("./layout/gridlayout.js");
 
-photonui.Menu = require("./container/menu/menu.js");
-photonui.MenuItem = require("./container/menu/menuitem.js");
-photonui.SubMenuItem = require("./container/menu/submenuitem.js");
+photonui.Menu = require("./layout/menu.js");
+photonui.MenuItem = require("./container/menuitem.js");
+photonui.SubMenuItem = require("./container/submenuitem.js");
 
-photonui.Viewport = require("./container/viewport/viewport.js");
+photonui.Viewport = require("./container/viewport.js");
 
-photonui.BaseWindow = require("./container/window/basewindow.js");
-photonui.Window = require("./container/window/window.js");
-photonui.PopupWindow = require("./container/window/popupwindow.js");
-photonui.Dialog = require("./container/window/dialog.js");
+photonui.BaseWindow = require("./container/basewindow.js");
+photonui.Window = require("./container/window.js");
+photonui.PopupWindow = require("./container/popupwindow.js");
+photonui.Dialog = require("./container/dialog.js");
 
 photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");

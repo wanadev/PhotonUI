@@ -237,7 +237,7 @@ var Widget = Base.$extend({
     },
 
     setContextMenu: function(contextMenu) {
-        var PopupWindow = require("./container/window/popupwindow.js");
+        var PopupWindow = require("./container/popupwindow.js");
         if (contextMenu instanceof PopupWindow) {
             this.contextMenuName = contextMenu.name
         }
