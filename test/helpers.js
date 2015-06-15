@@ -69,7 +69,7 @@ var DummyLayout = photonui.Layout.$extend({
     },
 
     _buildHtml: function() {
-        this.__html.ul = document.createElement("div");
+        this.__html.ul = document.createElement("ul");
         this.__html.ul.className = "photonui-widget photonui-dummylayout";
     },
 
