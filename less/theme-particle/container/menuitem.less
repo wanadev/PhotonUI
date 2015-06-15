@@ -41,7 +41,7 @@
         padding-bottom: 1px;
         transition: background, color, text-shadow;
         transition-duration: @transition-duration;
-        
+
         &:hover {
             cursor: pointer;
             background: @color-light-highlight;
@@ -49,30 +49,30 @@
             text-shadow: 1px 1px 0 darken(@color-light-highlight, 20);
         }
     }
-    
+
     /** Active item **/
     > .photonui-menuitem.photonui-menuitem-active {
         background: @color-light-highlight;
         color: @color-dark-highlight;
         text-shadow: -1px -1px 0 darken(@color-light-highlight, 20);
     }
-    
+
     /** Hide icons **/
     &.photonui-menu-noicon > .photonui-menuitem {
         .photonui-menuitem-icon {
             display: none;
         }
-        
+
         .photonui-menuitem-text {
             padding-left: 5px;
         }
     }
-    
+
     .photonui-separator  hr {
         border: none;
         height: 10px;
     }
-    
+
     /** Submenu item **/
     .photonui-submenuitem .photonui-menuitem-widget:after {
         content: "";
@@ -87,13 +87,13 @@
         transform: rotate(-45deg);
         transition: all @transition-duration;
     }
-    
+
     /** Submenu item + active **/
     > .photonui-menuitem.photonui-submenuitem.photonui-menuitem-active {
         background: @color-light-highlight;
         color: @color-dark-highlight;
         text-shadow: -1px -1px 0 darken(@color-light-highlight, 20);
-        
+
         .photonui-menuitem-widget:after {
             margin-top: calc(~"25% - 6px");
             transform: rotate(45deg);
@@ -101,10 +101,4 @@
             border-bottom-color: @color-dark-highlight;
         }
     }
-    
-    /** Submenu **/
-    > .photonui-menu.photonui-menu-style-default {
-        margin-left: 21px;
-    }
-    
 }
