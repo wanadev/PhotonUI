@@ -1,8 +1,12 @@
-describe("photonui.Container", function() {
+//
+// This file was auto-generated and may not be modified
+//
+
+describe("photonui.TabItem (container)", function() {
 
     beforeEach(function() {
-        this.c1 = new DummyContainer();
-        this.c2 = new DummyContainer();
+        this.c1 = new photonui.TabItem();
+        this.c2 = new photonui.TabItem();
         this.w1 = new DummyWidget();
         this.w2 = new DummyWidget();
     });
@@ -18,7 +22,7 @@ describe("photonui.Container", function() {
         expect(this.c1.containerNode instanceof HTMLElement).toBeTruthy();
     });
 
-    it("has the 'photonui-container' class on its container HTML node", function() {
+    it("has the 'photonui-container' class on its conainer HTML node", function() {
         expect(this.c1.containerNode.className).toContain("photonui-container");
     });
 

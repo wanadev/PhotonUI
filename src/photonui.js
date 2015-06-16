@@ -99,6 +99,8 @@ photonui.PopupWindow = require("./container/popupwindow.js");
 photonui.Dialog = require("./container/dialog.js");
 photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
+photonui.TabItem = require("./container/tabitem.js");
+photonui.TabLayout = require("./layout/tablayout.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
