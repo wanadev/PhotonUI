@@ -57,9 +57,7 @@ var TabLayout = Layout.$extend({
     __init__: function(params) {
         this._registerWEvents([]);
         this.$super(params);
-        this._updateProperties(["tabsPosition"]);
-
-        // TODO Constructor code here
+        this._updateProperties(["tabsPosition", "padding"]);
     },
 
 
@@ -146,6 +144,24 @@ var TabLayout = Layout.$extend({
     },
 
     /**
+     * Container node padding.
+     *
+     * @property padding
+     * @type Number
+     * @default 10
+     */
+    _padding: 10,
+
+    getPadding: function() {
+        return this._padding;
+    },
+
+    setPadding: function(padding) {
+        this._padding = padding;
+        this.__html.content.style.padding = padding + "px";
+    },
+
+    /**
      * Define the active tab.
      *
      * @property activeTab
@@ -172,12 +188,6 @@ var TabLayout = Layout.$extend({
             this.activeTabName = null;
         }
     },
-
-
-    // ====== Private properties ======
-
-
-    // TODO Private property here
 
 
     //////////////////////////////////////////
@@ -247,15 +257,8 @@ var TabLayout = Layout.$extend({
 
         this.__html.tabs.appendChild(tabsFragment);
         this.__html.content.appendChild(contentFragment);
-    },
+    }
 
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-
-    // TODO Internal events callback here
 });
 
 
