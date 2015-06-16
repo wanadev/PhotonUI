@@ -55,6 +55,8 @@ var TabItem = Container.$extend({
     __init__: function(params) {
         this.$super(params);
         this._updateProperties(["title"]);
+
+        this._bindEvent("tab-click", this.__html.tab, "click", this.show.bind(this));
     },
 
 
@@ -120,6 +122,41 @@ var TabItem = Container.$extend({
         return this.__html.div;
     },
 
+    /**
+     * Is the widget visible or hidden.
+     *
+     * @property visible
+     * @type Boolean
+     * @default false
+     */
+    _visible: false,
+
+    setVisible: function(visible, noParent) {
+        this.$super(visible);
+
+        if (visible) {
+            if (this.parent) {
+                var children = this.parent.children;
+                for (var i=0 ; i<children.length ; i++) {
+                    if (!(children[i] instanceof TabItem)) continue;
+                    if (children[i] === this) continue;
+                    if (children[i].visible) children[i].setVisible(false, true);
+                }
+                this.parent._activeTabName = this.name;
+            }
+
+            this.addClass("photonui-tabitem-active");
+            this.__html.tab.className = "photonui-tabitem-tab photonui-tabitem-active";
+        }
+        else {
+            if (this.parent && !noParent) {
+                this.parent.activeTab = null;
+            }
+            this.removeClass("photonui-tabitem-active");
+            this.__html.tab.className = "photonui-tabitem-tab";
+        }
+    },
+
 
     //////////////////////////////////////////
     // Methods                              //
@@ -137,7 +174,7 @@ var TabItem = Container.$extend({
      */
     _buildHtml: function() {
         this.__html.div = document.createElement("div");
-        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
+        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container photonui-container-expand-child";
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
     }

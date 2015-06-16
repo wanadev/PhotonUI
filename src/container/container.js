@@ -47,6 +47,16 @@ var Widget = require("../widget.js");
  */
 var Container = Widget.$extend({
 
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+
+        // Force to update the parent of the child
+        if (this._childName) {
+            this.child._parentName = this.name;
+        }
+    },
+
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////

@@ -3311,6 +3311,16 @@ var Widget = require("../widget.js");
  */
 var Container = Widget.$extend({
 
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+
+        // Force to update the parent of the child
+        if (this._childName) {
+            this.child._parentName = this.name;
+        }
+    },
+
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
@@ -4255,6 +4265,8 @@ var TabItem = Container.$extend({
     __init__: function(params) {
         this.$super(params);
         this._updateProperties(["title"]);
+
+        this._bindEvent("tab-click", this.__html.tab, "click", this.show.bind(this));
     },
 
 
@@ -4320,6 +4332,41 @@ var TabItem = Container.$extend({
         return this.__html.div;
     },
 
+    /**
+     * Is the widget visible or hidden.
+     *
+     * @property visible
+     * @type Boolean
+     * @default false
+     */
+    _visible: false,
+
+    setVisible: function(visible, noParent) {
+        this.$super(visible);
+
+        if (visible) {
+            if (this.parent) {
+                var children = this.parent.children;
+                for (var i=0 ; i<children.length ; i++) {
+                    if (!(children[i] instanceof TabItem)) continue;
+                    if (children[i] === this) continue;
+                    if (children[i].visible) children[i].setVisible(false, true);
+                }
+                this.parent._activeTabName = this.name;
+            }
+
+            this.addClass("photonui-tabitem-active");
+            this.__html.tab.className = "photonui-tabitem-tab photonui-tabitem-active";
+        }
+        else {
+            if (this.parent && !noParent) {
+                this.parent.activeTab = null;
+            }
+            this.removeClass("photonui-tabitem-active");
+            this.__html.tab.className = "photonui-tabitem-tab";
+        }
+    },
+
 
     //////////////////////////////////////////
     // Methods                              //
@@ -4337,7 +4384,7 @@ var TabItem = Container.$extend({
      */
     _buildHtml: function() {
         this.__html.div = document.createElement("div");
-        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
+        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container photonui-container-expand-child";
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
     }
@@ -8768,6 +8815,12 @@ var Layout = Container.$extend({
     __init__: function(params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
+
+        // Force to update the parent of the children
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            children[i]._parentName = this.name;
+        }
     },
 
 
@@ -9149,6 +9202,7 @@ module.exports = Menu;
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 var TabItem = require("../container/tabitem.js");
+var Widget = require("../widget.js");
 
 
 /**
@@ -9221,6 +9275,66 @@ var TabLayout = Layout.$extend({
         return this.__html.outer;
     },
 
+    /**
+     * Define the active tab name.
+     *
+     * @property activeTabName
+     * @type String
+     * @default null
+     */
+    _activeTabName: null,
+
+    getActiveTabName: function() {
+        return this._activeTabName;
+    },
+
+    setActiveTabName: function(tabName) {
+        var activeTab = Widget.getWidget(tabName);
+        if (activeTab instanceof TabItem) {
+            activeTab.show();
+            return;
+        }
+
+        if (!this._activeTabName) {
+            var children = this.children;
+            for (var i=0 ; i<children.length ; i++) {
+                if (!(children[i] instanceof TabItem)) {
+                    continue;
+                }
+                children[i].show();
+                break;
+            }
+        }
+    },
+
+    /**
+     * Define the active tab.
+     *
+     * @property activeTab
+     * @type photonui.Widget
+     * @default null
+     */
+    getActiveTab: function() {
+        return Widget.getWidget(this.activeTabName);
+    },
+
+    setActiveTab: function(tab) {
+        if (tab instanceof Widget) {
+            this.activeTabName = tab.name;
+        }
+        else {
+            this.activeTabName = null;
+        }
+    },
+
+    //
+    setChildrenNames: function(childrenNames) {
+        this.$super(childrenNames);
+        if (!this.activeTabName) {
+            this.activeTabName = null;
+        }
+    },
+
 
     // ====== Private properties ======
 
@@ -9236,7 +9350,12 @@ var TabLayout = Layout.$extend({
     // ====== Public methods ======
 
 
-    // TODO Public methods here
+    addChild: function(widget, layoutOptions) {
+        this.$super(widget, layoutOptions);
+        if (!this.activeTabName && widget instanceof TabItem) {
+            this.activeTabName = widget.name;
+        }
+    },
 
 
     // ====== Private methods ======
@@ -9305,7 +9424,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":16,"../helpers.js":19,"./layout.js":34}],37:[function(require,module,exports){
+},{"../container/tabitem.js":16,"../helpers.js":19,"../widget.js":53,"./layout.js":34}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.

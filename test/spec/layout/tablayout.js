@@ -10,9 +10,22 @@ describe("photonui.TabLayout", function() {
         this.area.style.width = "300px";
         this.area.style.height = "200px";
 
-        this.c1 = new photonui.TabItem();
-        this.c2 = new photonui.TabItem();
-        this.c3 = new photonui.TabItem({title: "Tab with a very long name"});
+        this.c1 = new photonui.TabItem({
+            child: new DummyWidget({
+                text: "Tab 1"
+            })
+        });
+        this.c2 = new photonui.TabItem({
+            child: new DummyWidget({
+                text: "Tab 2"
+            })
+        });
+        this.c3 = new photonui.TabItem({
+            title: "Tab with a very long name",
+            child: new DummyWidget({
+                text: "Tab 3"
+            })
+        });
 
         this.l = new photonui.TabLayout({
             children: [this.c1, this.c2, this.c3]
@@ -23,6 +36,9 @@ describe("photonui.TabLayout", function() {
 
     it("can display tab on top", function() {
         // EXPECTATIONS
+        this.c1.show();
+        this.c2.show();
+        this.c3.show();
     });
 
     it("can display tab on bottom", function() {

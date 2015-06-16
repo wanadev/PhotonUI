@@ -36,11 +36,17 @@
             border: @color-light-default solid 1px;
             line-height: 30px;
             vertical-align: middle;
-            padding: 0 5px;
+            padding: 0 10px;
             cursor: pointer;
 
             &:hover {
                 background: @color-light-lightest;
+            }
+
+            &.photonui-tabitem-active {
+                background: @color-light-lightest;
+                /*border: red solid 1px;*/
+                z-index: 10;
             }
         }
     }
@@ -63,11 +69,15 @@
                 height: 30px;
                 text-align: center;
                 margin-right: -1px;
+
+                &.photonui-tabitem-active {
+                    height: 36px;
+                    line-height: 36px;
+                }
             }
         }
 
         .photonui-tablayout-content {
-            height: 100%;
         }
     }
 
@@ -85,6 +95,10 @@
                 height: 30px;
                 text-align: left;
                 margin-top: -1px;
+
+                &.photonui-tabitem-active {
+                    width: calc(100% - 4px);
+                }
             }
         }
 
@@ -101,6 +115,10 @@
                 height: 30px;
                 align-self: flex-end;
                 border-bottom: none;
+
+                &.photonui-tabitem-active {
+                    margin-bottom: -1px;
+                }
             }
         }
     }
@@ -112,6 +130,10 @@
                 height: 30px;
                 align-self: flex-start;
                 border-top: none;
+
+                &.photonui-tabitem-active {
+                    margin-top: -1px;
+                }
             }
         }
     }
@@ -124,6 +146,10 @@
                 align-self: flex-end;
                 border-right: none;
                 text-align: right;
+
+                &.photonui-tabitem-active {
+                    margin-right: -1px;
+                }
             }
         }
     }
@@ -135,6 +161,10 @@
                 height: 30px;
                 align-self: flex-start;
                 border-left: none;
+
+                &.photonui-tabitem-active {
+                    margin-left: -1px;
+                }
             }
         }
     }

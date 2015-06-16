@@ -40,6 +40,7 @@
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 var TabItem = require("../container/tabitem.js");
+var Widget = require("../widget.js");
 
 
 /**
@@ -112,6 +113,66 @@ var TabLayout = Layout.$extend({
         return this.__html.outer;
     },
 
+    /**
+     * Define the active tab name.
+     *
+     * @property activeTabName
+     * @type String
+     * @default null
+     */
+    _activeTabName: null,
+
+    getActiveTabName: function() {
+        return this._activeTabName;
+    },
+
+    setActiveTabName: function(tabName) {
+        var activeTab = Widget.getWidget(tabName);
+        if (activeTab instanceof TabItem) {
+            activeTab.show();
+            return;
+        }
+
+        if (!this._activeTabName) {
+            var children = this.children;
+            for (var i=0 ; i<children.length ; i++) {
+                if (!(children[i] instanceof TabItem)) {
+                    continue;
+                }
+                children[i].show();
+                break;
+            }
+        }
+    },
+
+    /**
+     * Define the active tab.
+     *
+     * @property activeTab
+     * @type photonui.Widget
+     * @default null
+     */
+    getActiveTab: function() {
+        return Widget.getWidget(this.activeTabName);
+    },
+
+    setActiveTab: function(tab) {
+        if (tab instanceof Widget) {
+            this.activeTabName = tab.name;
+        }
+        else {
+            this.activeTabName = null;
+        }
+    },
+
+    //
+    setChildrenNames: function(childrenNames) {
+        this.$super(childrenNames);
+        if (!this.activeTabName) {
+            this.activeTabName = null;
+        }
+    },
+
 
     // ====== Private properties ======
 
@@ -127,7 +188,12 @@ var TabLayout = Layout.$extend({
     // ====== Public methods ======
 
 
-    // TODO Public methods here
+    addChild: function(widget, layoutOptions) {
+        this.$super(widget, layoutOptions);
+        if (!this.activeTabName && widget instanceof TabItem) {
+            this.activeTabName = widget.name;
+        }
+    },
 
 
     // ====== Private methods ======
