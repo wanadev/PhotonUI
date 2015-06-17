@@ -8504,6 +8504,10 @@ var GridLayout = Layout.$extend({
                 td.appendChild(div);
                 tr.appendChild(td);
 
+                // Spacing
+                if (x == gridWidth-1) td.className += " photonui-gridlayout-lastcol";
+                if (y == gridHeight-1) td.className += " photonui-gridlayout-lastrow";
+
                 child = _findWidgetAt(x + minX, y + minY);
                 if (child) {
                     div.appendChild(child.w.html);

@@ -89,12 +89,15 @@
             text-align: right;
         }
 
-        tr .photonui-gridlayout-cell:last-child {
-            padding-right: 0 !important;
-        }
+        tr .photonui-gridlayout-cell {
 
-        tr:last-child .photonui-gridlayout-cell {
-            padding-bottom: 0 !important;
+            &.photonui-gridlayout-lastcol {
+                padding-right: 0 !important;
+            }
+
+            &.photonui-gridlayout-lastrow {
+                padding-bottom: 0 !important;
+            }
         }
 
     }
