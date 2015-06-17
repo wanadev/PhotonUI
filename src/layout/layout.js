@@ -52,6 +52,12 @@ var Layout = Container.$extend({
     __init__: function(params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
+
+        // Force to update the parent of the children
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            children[i]._parentName = this.name;
+        }
     },
 
 
