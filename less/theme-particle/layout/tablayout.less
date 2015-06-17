@@ -36,8 +36,9 @@
             border: @color-light-default solid 1px;
             line-height: 30px;
             vertical-align: middle;
-            padding: 0 10px;
+            padding: 0 8px;
             cursor: pointer;
+            background: @color-light-active;
 
             &:hover {
                 background: @color-light-lightest;
@@ -45,7 +46,6 @@
 
             &.photonui-tabitem-active {
                 background: @color-light-lightest;
-                /*border: red solid 1px;*/
                 z-index: 10;
             }
         }
@@ -92,7 +92,7 @@
 
             .photonui-tabitem-tab {
                 width: calc(100% - 10px);
-                height: 30px;
+                height: 32px;
                 text-align: left;
                 margin-top: -1px;
 

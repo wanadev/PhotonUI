@@ -9306,7 +9306,7 @@ var TabLayout = Layout.$extend({
     },
 
     /**
-     * Window container node padding.
+     * Container node padding.
      *
      * @property padding
      * @type Number
