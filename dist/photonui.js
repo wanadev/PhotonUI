@@ -9219,7 +9219,7 @@ var TabLayout = Layout.$extend({
     __init__: function(params) {
         this._registerWEvents([]);
         this.$super(params);
-        this._updateProperties(["tabsPosition", "padding"]);
+        this._updateProperties(["activeTab", "tabsPosition", "padding"]);
     },
 
 
@@ -9293,7 +9293,7 @@ var TabLayout = Layout.$extend({
             return;
         }
 
-        if (!this._activeTabName) {
+        if (!this._activeTab) {
             var children = this.children;
             for (var i=0 ; i<children.length ; i++) {
                 if (!(children[i] instanceof TabItem)) {
@@ -9367,6 +9367,19 @@ var TabLayout = Layout.$extend({
         }
     },
 
+    /**
+     * Remove a widget from the layout.
+     *
+     * @method removeChild
+     * @param {photonui.Widget} widget The widget to remove.
+     */
+    removeChild: function(widget) {
+        this.$super(widget);
+        if (widget === this.activeTab) {
+            this.activeTabName = null;
+        }
+    },
+
 
     // ====== Private methods ======
 
@@ -9408,9 +9421,19 @@ var TabLayout = Layout.$extend({
         var tabsFragment = document.createDocumentFragment();
         var contentFragment = document.createDocumentFragment();
 
+        var options;
         for (var i=0 ; i<children.length ; i++) {
             if (!(children[i] instanceof TabItem)) {
                 continue;
+            }
+
+            options = this._computeLayoutOptions(children[i]);
+
+            if (options.order !== null) {
+                children[i].tabHtml.style.order = options.order;
+            }
+            else {
+                children[i].tabHtml.style.order = 0;
             }
 
             tabsFragment.appendChild(children[i].tabHtml);
@@ -9419,6 +9442,28 @@ var TabLayout = Layout.$extend({
 
         this.__html.tabs.appendChild(tabsFragment);
         this.__html.content.appendChild(contentFragment);
+    },
+
+    /**
+     * Returns a normalized layoutOption for a given widget.
+     *
+     * @method _computeLayoutOptions
+     * @private
+     * @param {photonui.Widget} widget
+     * @return {Object} the layout options
+     */
+    _computeLayoutOptions: function(widget) {
+        var woptions = widget.layoutOptions || {};
+
+        var options = {
+            order: null
+        }
+
+        if (woptions.order !== undefined && woptions.order !== null) {
+            options.order = woptions.order|0;
+        }
+
+        return options;
     }
 
 });
