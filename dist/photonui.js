@@ -8517,14 +8517,32 @@ var GridLayout = Layout.$extend({
                     td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
 
                     // layout options: *width
-                    if (child.o.minWidth !== null) div.style.minWidth = child.o.minWidth + "px";
-                    if (child.o.maxWidth !== null) div.style.maxWidth = child.o.maxWidth + "px";
-                    if (child.o.width !== null) div.style.width = child.o.width + "px";
+                    if (child.o.minWidth !== null) {
+                        div.style.minWidth = child.o.minWidth + "px";
+                        td.style.minWidth = child.o.minWidth + "px";
+                    }
+                    if (child.o.maxWidth !== null) {
+                        div.style.maxWidth = child.o.maxWidth + "px";
+                        td.style.maxWidth = child.o.maxWidth + "px";
+                    }
+                    if (child.o.width !== null) {
+                        div.style.width = child.o.width + "px";
+                        td.style.width = child.o.width + "px";
+                    }
 
                     // layout options: *height
-                    if (child.o.minHeight !== null) div.style.minHeight = child.o.minHeight + "px";
-                    if (child.o.maxHeight !== null) div.style.maxHeight = child.o.maxHeight + "px";
-                    if (child.o.height !== null) div.style.height = child.o.height + "px";
+                    if (child.o.minHeight !== null) {
+                        div.style.minHeight = child.o.minHeight + "px";
+                        td.style.minHeight = child.o.minHeight + "px";
+                    }
+                    if (child.o.maxHeight !== null) {
+                        div.style.maxHeight = child.o.maxHeight + "px";
+                        td.style.maxHeight = child.o.maxHeight + "px";
+                    }
+                    if (child.o.height !== null) {
+                        div.style.height = child.o.height + "px";
+                        td.style.height = child.o.height + "px";
+                    }
 
                     // rowspan / colspan
                     if (child.o.cols > 1 || child.o.rows > 1) {
