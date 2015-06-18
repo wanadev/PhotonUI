@@ -1,9 +1,120 @@
-/** Variables for the PhotonUI Particle theme. **/
+/*
+ * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <http://flozz.fr/>
+ */
 
-/** Colors **/
+
+// Generic colors
+@color-background: #f1f1f1;
+@color-background-alt: #fff;
+
+@color-text: #333;
+
+@color-highlight-background: #4ec8db;
+@color-highlight-background-disabled: #DBDBDB;
+@color-highlight-text: #fff;
+@color-highlight-text-disabled: #fff;
+
+@transition-duration: 150ms;
+
+
+// Widget
+@color-widget-face: #e1e1e1;
+@color-widget-face-hover: lighten(@color-widget-face, 10%);
+@color-widget-face-focus: @color-widget-face;
+@color-widget-face-disabled: darken(@color-widget-face, 10%);
+
+@color-widget-border: #aaa;
+@color-widget-border-hover: lighten(@color-widget-border, 10%);
+@color-widget-border-focus: @color-widget-border;
+@color-widget-border-disabled: darken(@color-widget-border, 10%);
+
+@color-widget-text: @color-text;
+@color-widget-text-hover: @color-text;
+@color-widget-text-focus: @color-text;
+@color-widget-text-disabled: darken(@color-widget-face, 30%);
+
+
+// Window
+@color-window-active-titlebar-background: #333;
+@color-window-active-titlebar-text: #fff;
+@color-window-active-titlebar-button: rgba(255, 255, 255, .3);
+@color-window-active-titlebar-button-hover: rgba(255, 255, 255, .7);
+
+@color-window-inactive-titlebar-background: #555;
+@color-window-inactive-titlebar-text: #fff;
+@color-window-inactive-titlebar-button: rgba(255, 255, 255, .3);
+@color-window-inactive-titlebar-button-hover: rgba(255, 255, 255, .7);
+
+@color-window-modalbox-background: rgba(255, 255, 255, .7);
+
+@shadow-window: 0 0 10px rgba(0, 0, 0, .3);
+
+
+// Dialog
+@color-dialog-buttonsarea-background: darken(@color-background, 5%);
+@shadow-dialog-buttonsarea: inset 0 7px 3px -7px rgba(0, 0, 0, .4);
+
+// Field
+/*@color-field-background: #fff;*/
+/*@color-field-background-hover: @color-field-background;*/
+/*@color-field-background-focus: @color-field-background;*/
+/*@color-field-background-disabled: darken(@color-field-background, 10%);*/
+
+
+
+
+
+
+
+
+/*@color-step: 5;*/
+
+/*@color-light-lightest: #f00;*/
+/*@color-light-active: #f00;*/
+/*@color-light-hover: #f00;*/
+/*@color-light-default: #f00;*/
+/*@color-light-disabled: #f00;*/
+/*@color-light-highlight: #f00;*/
+
+/*@color-dark-darkest: #f00;*/
+/*@color-dark-active: #f00;*/
+/*@color-dark-hover: #f00;*/
+/*@color-dark-default: #f00;*/
+/*@color-dark-disabled: #f00;*/
+/*@color-dark-highlight: #f00;*/
+
+
+
+
 
 @color-step: 5;
-// Light
+
 @color-light-lightest: #FFF;
 @color-light-active: darken(@color-light-lightest, @color-step*1);
 @color-light-hover: darken(@color-light-lightest, @color-step*2);
@@ -11,7 +122,6 @@
 @color-light-disabled: darken(@color-light-lightest, @color-step*4);
 @color-light-highlight: #4ec8db;
 
-// Dark
 @color-dark-darkest: #444;
 @color-dark-active: lighten(@color-dark-darkest, @color-step*1);
 @color-dark-hover: lighten(@color-dark-darkest, @color-step*2);
@@ -19,7 +129,3 @@
 @color-dark-disabled: lighten(@color-dark-darkest, @color-step*4);
 @color-dark-highlight: #FFF;
 
-
-/** Trancontentsitions **/
-
-@transition-duration: 200ms;
