@@ -558,13 +558,18 @@ var GridLayout = Layout.$extend({
             for (var i=0 ; i<nodes.length ; i++) {
                 nodes[i].style.height = "auto";
             }
+            var tdHeight;
             for (var i=0 ; i<nodes.length ; i++) {
-                if (nodes[i].classList.contains("photonui-gridlayout-lastrow")) {
-                    nodes[i].style.height = nodes[i].offsetHeight + "px";
+                if (nodes[i].style.minHeight && nodes[i].style.minHeight == nodes[i].style.maxHeight) {
+                    tdHeight = parseFloat(nodes[i].style.minHeight);
+                }
+                else if (nodes[i].classList.contains("photonui-gridlayout-lastrow")) {
+                    tdHeight = nodes[i].offsetHeight;
                 }
                 else {
-                    nodes[i].style.height = (nodes[i].offsetHeight - this.verticalSpacing) + "px";
+                    tdHeight = nodes[i].offsetHeight - this.verticalSpacing;
                 }
+                nodes[i].style.height = tdHeight + "px";
             }
 
             this._updatingLayout = false;
