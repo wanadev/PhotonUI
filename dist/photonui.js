@@ -3315,6 +3315,8 @@ var Container = Widget.$extend({
     __init__: function(params) {
         this.$super(params);
 
+        this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
+
         // Force to update the parent of the child
         if (this._childName) {
             this.child._parentName = this.name;
@@ -3328,6 +3330,54 @@ var Container = Widget.$extend({
 
     // ====== Public properties ======
 
+
+    /**
+     * Horizontaly expand the container's child widget.
+     *
+     * @property horizontalChildExpansion
+     * @type Boolean
+     * @default true
+     */
+    _horizontalChildExpansion: true,
+
+    getHorizontalChildExpansion: function() {
+        return this._horizontalChildExpansion;
+    },
+
+    setHorizontalChildExpansion: function(expansion) {
+        this._horizontalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-horizontal");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-horizontal");
+        }
+    },
+
+    /**
+     * Verticaly expand the container's child widget.
+     *
+     * @property verticalChildExpansion
+     * @type Boolean
+     * @default false
+     */
+    _verticalChildExpansion: false,
+
+    getVerticalChildExpansion: function() {
+        return this._verticalChildExpansion;
+    },
+
+    setVerticalChildExpansion: function(expansion) {
+        this._verticalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-vertical");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-vertical");
+        }
+    },
 
     /**
      * The child widget name.
@@ -3384,7 +3434,6 @@ var Container = Widget.$extend({
      * @readOnly
      */
     getContainerNode: function() {
-        console.warn("getContainerNode() method not implemented for this widget.");
         return null;
     },
 
@@ -4384,7 +4433,7 @@ var TabItem = Container.$extend({
      */
     _buildHtml: function() {
         this.__html.div = document.createElement("div");
-        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container photonui-container-expand-child";
+        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
     }
@@ -4883,7 +4932,7 @@ var Window = BaseWindow.$extend({
         this.__html.windowTitle.appendChild(this.__html.windowTitleText);
 
         this.__html.windowContent = document.createElement("div");
-        this.__html.windowContent.className = "photonui-container photonui-window-content photonui-container-expand-child";
+        this.__html.windowContent.className = "photonui-container photonui-window-content";
         this.__html["window"].appendChild(this.__html.windowContent);
     },
 
@@ -8767,7 +8816,12 @@ var GridLayout = Layout.$extend({
                 nodes[i].style.height = "auto";
             }
             for (var i=0 ; i<nodes.length ; i++) {
-                nodes[i].style.height = nodes[i].offsetHeight + "px";
+                if (nodes[i].classList.contains("photonui-gridlayout-lastrow")) {
+                    nodes[i].style.height = nodes[i].offsetHeight + "px";
+                }
+                else {
+                    nodes[i].style.height = (nodes[i].offsetHeight - this.verticalSpacing) + "px";
+                }
             }
 
             this._updatingLayout = false;
@@ -8917,7 +8971,6 @@ var Layout = Container.$extend({
     // Override getChildName / setChildName / getChild / setChild
 
     getChildName: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -8926,7 +8979,6 @@ var Layout = Container.$extend({
     },
 
     getChild: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 

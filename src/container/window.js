@@ -279,7 +279,7 @@ var Window = BaseWindow.$extend({
         this.__html.windowTitle.appendChild(this.__html.windowTitleText);
 
         this.__html.windowContent = document.createElement("div");
-        this.__html.windowContent.className = "photonui-container photonui-window-content photonui-container-expand-child";
+        this.__html.windowContent.className = "photonui-container photonui-window-content";
         this.__html["window"].appendChild(this.__html.windowContent);
     },
 

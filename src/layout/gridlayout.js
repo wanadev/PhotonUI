@@ -559,7 +559,12 @@ var GridLayout = Layout.$extend({
                 nodes[i].style.height = "auto";
             }
             for (var i=0 ; i<nodes.length ; i++) {
-                nodes[i].style.height = nodes[i].offsetHeight + "px";
+                if (nodes[i].classList.contains("photonui-gridlayout-lastrow")) {
+                    nodes[i].style.height = nodes[i].offsetHeight + "px";
+                }
+                else {
+                    nodes[i].style.height = (nodes[i].offsetHeight - this.verticalSpacing) + "px";
+                }
             }
 
             this._updatingLayout = false;
