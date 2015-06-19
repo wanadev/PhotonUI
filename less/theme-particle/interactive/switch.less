@@ -1,63 +1,124 @@
 /*
-* Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*   * Redistributions of source code must retain the above copyright notice, this
-*     list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above copyright notice,
-*     this list of conditions and the following disclaimer in the documentation
-*     and/or other materials provided with the distribution.
-*   * Neither the name of Wanadev nor the names of its contributors may be used
-*     to endorse or promote products derived from this software without specific
-*     prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Authored by: Fabien LOISON <http://flozz.fr/>
-*/
+ * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <http://flozz.fr/>
+ */
 
 
 .photonui-switch {
-    span {
-        box-sizing: border-box;
-        height: 28px;
-        width: 60px;
-        padding: 2px;
-        
+    @height: 20px;
+    @width: @height * 2 + (@btn-height - @height) / 2;
+
+    @btn-height: 30px;
+
+    padding: (@btn-height - @height) / 2;
+    padding-bottom: 0;
+
+    input + span {
+
+        width: @width;
         cursor: pointer;
-        
-        border-radius: 2px;
-        background-color: darken(@color-light-default, 10);
-        border: 2px solid darken(@color-light-default, 10);
         outline: none;
-        
-        transition: background-color, border-color;
-        transition-duration: @transition-duration;
-        
-        &:focus {
-            border-color: @color-dark-default;
-        }
-        
-        &:after {
+
+        &:before {
+            box-sizing: border-box;
+            content: "";
+            display: block;
+            height: @height;
+            width: @width;
+            border-radius: @height / 2;
+            outline: none;
+            background: @color-highlight-background-disabled;
             transition: all @transition-duration;
-            background-color: @color-light-lightest;
+        }
+
+        &:after {
+            content: "";
+            display: block;
+            margin-top: @btn-height * -1 + (@btn-height - @height) / 2;
+            margin-left: (@btn-height - @height) / -2;
+            width: @btn-height;
+            height: @btn-height;
+            background: @color-highlight-border-disabled;
+            outline: none;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+            transition: all @transition-duration;
+        }
+
+        &:focus {
+            &:after {
+                box-shadow: @shadow-widget-focus;
+                border: darken(@color-highlight-border-disabled, 10%) solid 2px;
+            }
         }
     }
-    
+
     input:checked + span {
-        background: #3BC5D2;
-        border-color: #01585F;
+        &:before {
+            background: @color-highlight-background;
+        }
+
+        &:after {
+            background: @color-highlight-border;
+            margin-left: @width / 2;
+
+        }
+
+        &:focus {
+            &:after {
+                border: darken(@color-highlight-border, 10%) solid 2px;
+            }
+        }
     }
+
+
+
+
+
+        /*background-color: darken(@color-light-default, 10);*/
+        /*border: 2px solid darken(@color-light-default, 10);*/
+        /*outline: none;*/
+
+        /*transition: background-color, border-color;*/
+        /*transition-duration: @transition-duration;*/
+
+        /*&:focus {*/
+            /*border-color: @color-dark-default;*/
+        /*}*/
+
+        /*&:after {*/
+            /*transition: all @transition-duration;*/
+            /*background-color: @color-light-lightest;*/
+        /*}*/
+    /*}*/
+
+    /*input:checked + span {*/
+        /*background: #3BC5D2;*/
+        /*border-color: #01585F;*/
+    /*}*/
 }
