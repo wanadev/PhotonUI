@@ -38,6 +38,7 @@
     @tab-vert-active-width: 120px;
 
     @tab-padding-vert: 8px;
+    @shadow: 0 0 2px rgba(0, 0, 0, .2);
 
     .photonui-tablayout-tabs {
         .photonui-tabitem-tab {
@@ -55,6 +56,7 @@
             &.photonui-tabitem-active {
                 background: @color-background-alt;
                 z-index: 10;
+                /*box-shadow: @shadow;*/
             }
         }
     }
@@ -63,6 +65,7 @@
 
         background: @color-background-alt;
         border: @color-widget-border solid 1px;
+        box-shadow: @shadow;
     }
 
     &.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox,
@@ -128,6 +131,11 @@
 
                 &.photonui-tabitem-active {
                     margin-bottom: -1px;
+                    box-shadow: -1px  0   0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 0   -1px 0 rgba(0, 0, 0, .05),
+                                -2px -2px 0 rgba(0, 0, 0, .01),
+                                 2px -2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }
@@ -142,6 +150,11 @@
 
                 &.photonui-tabitem-active {
                     margin-top: -1px;
+                    box-shadow: -1px  0   0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                -2px  2px 0 rgba(0, 0, 0, .01),
+                                 2px  2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }
@@ -158,6 +171,11 @@
                 &.photonui-tabitem-active {
                     margin-right: -1px;
                     padding-right: @tab-padding-vert + 1;
+                    box-shadow:  0   -1px 0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                -1px  0   0 rgba(0, 0, 0, .05),
+                                -2px -2px 0 rgba(0, 0, 0, .01),
+                                -2px  2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }
@@ -173,6 +191,11 @@
                 &.photonui-tabitem-active {
                     margin-left: -1px;
                     padding-left: @tab-padding-vert + 1;
+                    box-shadow:  0   -1px 0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 2px -2px 0 rgba(0, 0, 0, .01),
+                                 2px  2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }
