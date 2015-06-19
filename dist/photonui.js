@@ -7188,8 +7188,8 @@ var Slider = NumericField.$extend({
         var v = value - this.min;
         var m = this.max - this.min;
         var p = Math.min(Math.max(v/m, 0), 1);
-        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth - 4;
-        this.__html.grip.style.left = Math.floor(p*w) + 2 + "px";
+        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth;
+        this.__html.grip.style.left = Math.floor(p*w) + "px";
     },
 
 
@@ -7211,7 +7211,7 @@ var Slider = NumericField.$extend({
         this.$super();
 
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-slider";
+        this.__html.outer.className = "photonui-widget photonui-slider photonui-widget-fixed-height";
 
         this.__html.slider = document.createElement("div");
         this.__html.slider.className = "photonui-slider-slider";

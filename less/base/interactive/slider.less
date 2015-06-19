@@ -30,41 +30,25 @@
 
 
 .photonui-slider {
-    white-space: nowrap;
-    display: inline-block;
-    text-align: right;
-    
-    .photonui-field {
-        display: inline-block;
-        vertical-align: middle;
-        max-width: 50px;
-        margin-left: 5px;
+    display: flex;
+    flex-direction: row;
+    flew-wrap: nowrap;
+    align-items: center;
+
+    .photonui-slider-slider {
+        box-sizing: border-box;
+        flex-grow: 1;
+
+        .photonui-slider-grip {
+            position: relative;
+            display: block;
+            box-sizing: border-box;
+        }
     }
-}
 
-.photonui-slider-slider {
-    box-sizing: border-box;
-    
-    display: inline-block;
-    height: 20px;
-    vertical-align: middle;
-    width: calc(~"100% - 68px");
-    min-width: 100px;
-    
-    cursor: pointer;
-}
-
-.photonui-slider-nofield .photonui-slider-slider {
-    width: 100%;
-}
-
-.photonui-slider-grip {
-    box-sizing: border-box;
-    
-    position: relative;
-    display: block;
-    width: 15px;
-    height: 100%;
-    
-    cursor: move;
+    .photonui-field {
+        width: 25%;
+        min-width: 50px;
+        max-width: 75px;
+    }
 }
