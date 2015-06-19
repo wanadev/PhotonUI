@@ -196,7 +196,7 @@ var Label = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.label = document.createElement("label");
-        this.__html.label.className = "photonui-widget photonui-label";
+        this.__html.label.className = "photonui-widget photonui-label photonui-widget-fixed-height";
     }
 });
 

@@ -8649,6 +8649,15 @@ var GridLayout = Layout.$extend({
             height: null
         }
 
+        if (widget.html) {
+            if (widget.html.classList.contains("photonui-widget-fixed-height")) {
+                options.verticalAlign = "center";
+            }
+            if (widget.html.classList.contains("photonui-widget-fixed-width")) {
+                options.horizontalAlign = "center";
+            }
+        }
+
         // [Compatibility with old GridLayout] position / place
         if (woptions.gridX !== undefined && woptions.gridX !== null) {
             options.x = woptions.gridX|0;
@@ -12576,7 +12585,7 @@ var Label = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.label = document.createElement("label");
-        this.__html.label.className = "photonui-widget photonui-label";
+        this.__html.label.className = "photonui-widget photonui-label photonui-widget-fixed-height";
     }
 });
 

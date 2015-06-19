@@ -39,11 +39,11 @@
         width: 100%;
         height: 100%;
 
-        .photonui-gridlayout-cell {
+        > tbody > tr > td.photonui-gridlayout-cell {
             padding: 0;
             box-sizing: content-box;
 
-            .photonui-gridlayout-wrapper {
+            > .photonui-gridlayout-wrapper {
                 display: inline-block;
                 vertical-align: middle;
                 text-align: left;
@@ -54,41 +54,38 @@
                 }
             }
 
-        }
+            &.photonui-layout-verticalalign-stretch > .photonui-gridlayout-wrapper {
+                height: 100%;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-verticalalign-stretch .photonui-gridlayout-wrapper {
-            height: 100%;
-        }
+            &.photonui-layout-verticalalign-start {
+                vertical-align: top;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-verticalalign-start {
-            vertical-align: top;
-        }
+            &.photonui-layout-verticalalign-center {
+                vertical-align: middle;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-verticalalign-center {
-            vertical-align: middle;
-        }
+            &.photonui-layout-verticalalign-end {
+                vertical-align: bottom;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-verticalalign-end {
-            vertical-align: bottom;
-        }
+            &.photonui-layout-horizontalalign-stretch > .photonui-gridlayout-wrapper {
+                width: 100%;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-horizontalalign-stretch .photonui-gridlayout-wrapper {
-            width: 100%;
-        }
+            &.photonui-layout-horizontalalign-start {
+                text-align: left;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-horizontalalign-start {
-            text-align: left;
-        }
+            &.photonui-layout-horizontalalign-center {
+                text-align: center;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-horizontalalign-center {
-            text-align: center;
-        }
+            &.photonui-layout-horizontalalign-end {
+                text-align: right;
+            }
 
-        .photonui-gridlayout-cell.photonui-layout-horizontalalign-end {
-            text-align: right;
-        }
-
-        tr .photonui-gridlayout-cell {
 
             &.photonui-gridlayout-lastcol {
                 padding-right: 0 !important;
@@ -97,6 +94,7 @@
             &.photonui-gridlayout-lastrow {
                 padding-bottom: 0 !important;
             }
+
         }
 
     }
