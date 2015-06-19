@@ -39,6 +39,8 @@
 @color-highlight-background-disabled: #DBDBDB;
 @color-highlight-text: #fff;
 @color-highlight-text-disabled: #fff;
+@color-highlight-border: #1C84A2;
+@color-highlight-border-disabled: #A2A2A2;
 
 @transition-duration: 150ms;
 
@@ -58,6 +60,8 @@
 @color-widget-text-hover: @color-text;
 @color-widget-text-focus: @color-text;
 @color-widget-text-disabled: darken(@color-widget-face, 30%);
+
+@shadow-widget-focus: 0 0 3px rgba(0, 0, 0, .3);
 
 
 // Window
@@ -82,10 +86,20 @@
 
 
 // Field
-/*@color-field-background: #fff;*/
-/*@color-field-background-hover: @color-field-background;*/
-/*@color-field-background-focus: @color-field-background;*/
-/*@color-field-background-disabled: darken(@color-field-background, 10%);*/
+@color-field-text: @color-text;
+@color-field-text-focus: @color-field-text;
+@color-field-text-disabled: darken(@color-field-background, 35%);
+
+@color-field-placeholder: lighten(@color-field-text, 50%);
+@color-field-placeholder-disabled: @color-field-placeholder;
+
+@color-field-background: #fff;
+@color-field-background-focus: @color-field-background;
+@color-field-background-disabled: darken(@color-field-background, 5%);
+
+@color-field-border: @color-widget-border;
+@color-field-border-focus: @color-highlight-border;
+@color-field-border-disabled: @color-field-border;
 
 
 
