@@ -5439,6 +5439,38 @@ var Button = Widget.$extend({
     },
 
     /**
+     * Button's color.
+     *
+     * The available colors depends on the theme. Particle, the
+     * default PhotonUI theme provides the following colors:
+     *
+     *   * `blue`
+     *   * `red`
+     *   * `yellow`
+     *   * `green`
+     *   * null (default)
+     *
+     * @property color
+     * @type string
+     * @default null
+     */
+    _color: null,
+
+    getColor: function() {
+        return this._color;
+    },
+
+    setColor: function(color) {
+        if (this._color) {
+            this.__html.button.classList.remove("photonui-button-color-" + this._color);
+        }
+        this._color = color
+        if (color) {
+            this.__html.button.classList.add("photonui-button-color-" + this._color);
+        }
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -5559,6 +5591,9 @@ Button._buttonMixin = {
     _appearance:         Button.prototype._appearance,
     getAppearance:       Button.prototype.getAppearance,
     setAppearance:       Button.prototype.setAppearance,
+    _color:              Button.prototype._color,
+    getColor:            Button.prototype.getColor,
+    setColor:            Button.prototype.setColor,
     // Private methods
     _update:             Button.prototype._update,
     _buildButtonHtml:    Button.prototype._buildHtml,
@@ -7712,6 +7747,8 @@ var ToggleButton = CheckBox.$extend({
         this.__buttonInit();
         this.removeClass("photonui-checkbox");
         this.addClass("photonui-togglebutton");
+        this.removeClass("photonui-widget-fixed-height");
+        this.removeClass("photonui-widget-fixed-width");
     },
 
     // photonui.Button constructor (without the call to $super)
