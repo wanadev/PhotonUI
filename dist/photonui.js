@@ -5450,23 +5450,23 @@ var Button = Widget.$extend({
      *   * `green`
      *   * null (default)
      *
-     * @property color
+     * @property buttonColor
      * @type string
      * @default null
      */
-    _color: null,
+    _buttonColor: null,
 
-    getColor: function() {
-        return this._color;
+    getButtonColor: function() {
+        return this._buttonColor;
     },
 
-    setColor: function(color) {
-        if (this._color) {
-            this.__html.button.classList.remove("photonui-button-color-" + this._color);
+    setButtonColor: function(buttonColor) {
+        if (this._buttonColor) {
+            this.__html.button.classList.remove("photonui-button-color-" + this._buttonColor);
         }
-        this._color = color
-        if (color) {
-            this.__html.button.classList.add("photonui-button-color-" + this._color);
+        this._buttonColor = buttonColor
+        if (buttonColor) {
+            this.__html.button.classList.add("photonui-button-color-" + this._buttonColor);
         }
     },
 
@@ -5591,9 +5591,9 @@ Button._buttonMixin = {
     _appearance:         Button.prototype._appearance,
     getAppearance:       Button.prototype.getAppearance,
     setAppearance:       Button.prototype.setAppearance,
-    _color:              Button.prototype._color,
-    getColor:            Button.prototype.getColor,
-    setColor:            Button.prototype.setColor,
+    _buttonColor:        Button.prototype._buttonColor,
+    getButtonColor:      Button.prototype.getButtonColor,
+    setButtonColor:      Button.prototype.setButtonColor,
     // Private methods
     _update:             Button.prototype._update,
     _buildButtonHtml:    Button.prototype._buildHtml,
