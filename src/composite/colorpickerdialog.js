@@ -88,6 +88,8 @@ var ColorPickerDialog = Dialog.$extend({
 
     // ====== Public properties ======
 
+    _padding: 10,
+
 
     /**
      * The color.
@@ -147,8 +149,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
-            orientation: "horizontal",
-            verticalPadding: 5
+            orientation: "horizontal"
         });
         this.child = this.__widgets.hbox;
 
