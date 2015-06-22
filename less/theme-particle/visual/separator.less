@@ -46,7 +46,14 @@
     &.photonui-separator-vertical {
         // NOTE: we use a linear gradeient because webkit is unable to size properly the hr height...
         padding: 0 @spacing;
-        background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), @color 50%, @color calc(50% + 1px),  transparent calc(50% + 2px), transparent 100%);
+        background: linear-gradient(to right,
+            transparent 0%,
+            transparent 5px,
+            @color 5px,
+            @color 6px,
+            transparent 6px,
+            transparent 100%
+        );
         hr {
             border-right: 1px solid transparent;
         }
