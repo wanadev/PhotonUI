@@ -38,8 +38,16 @@
     color: darken(@color, 50%);
     outline: none;
 
+    .photonui-faicon {
+        color: darken(@color, 50%);
+    }
+
     .text-color (@color) when (lightness(@color) < 60%) {
         color: #fff;
+
+        .photonui-faicon {
+            color: #fff;
+        }
     }
 
     .text-color(@color);
@@ -74,6 +82,9 @@
     color: @color-button-default-text;
     border-bottom-color: @color-button-default-highlight;
     box-shadow: 0 0 5px rgba(0, 0, 0, .2);
+    .photonui-faicon {
+        color: @color-button-default-text;
+    }
 }
 
 .photonui-particle-button-alternative-colors {
@@ -150,6 +161,9 @@
     border-color: transparent;
     background: transparent;
     color: @color-widget-text;
+    .photonui-faicon {
+        color: @color-widget-text;
+    }
 
     &:focus:not(:hover) {
         @color: @color-widget-border-focus;
@@ -157,6 +171,7 @@
 
         box-shadow: inset @size @size 0 @color, inset -@size -@size 0 @color;
         border-bottom: none;
+        padding-top: 0;
         padding-bottom:  3px;
         border-radius: 0;
     }
