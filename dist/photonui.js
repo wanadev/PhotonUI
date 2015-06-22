@@ -12944,7 +12944,16 @@ var Separator = Widget.$extend({
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");
         this.removeClass("photonui-separator-horizontal");
-        this.addClass("photonui-separator-" + this.orientation);
+        this.addClass("photonui-separator-" + this._orientation);
+
+        this.removeClass("photonui-widget-fixed-height");
+        this.removeClass("photonui-widget-fixed-width");
+        if (this._orientation == "horizontal") {
+            this.addClass("photonui-widget-fixed-height");
+        }
+        else {
+            this.addClass("photonui-widget-fixed-width");
+        }
     },
 
     /**
