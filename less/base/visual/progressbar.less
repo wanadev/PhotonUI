@@ -30,75 +30,60 @@
 
 
 .photonui-progressbar {
-    display: table;
+    @size: 26px;  // if changed, update .photonui-progressbar-text -> top property too
+
+    position: relative;
     box-sizing: border-box;
-    user-select: none;
+    min-height: @size;
+    min-width: @size;
+    cursor: default;
     overflow: hidden;
-    height: 26px; /* FIXME */
-    width: 100%;
-}
 
-.photonui-progressbar-bar {
-    box-sizing: border-box;
-    pointer-events: none;
-}
+    .photonui-progressbar-bar {
+        z-index: 1;
+        box-sizing: border-box;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 
-.photonui-progressbar-text {
-    float: left;
-    display: table;
-    box-sizing: border-box;
-    pointer-events: none;
-    height: 100%;
-    width: 100%;
-    border-collapse: collapse;
-    
-    span {
-        pointer-events: none;
-        display: table-cell;
-        vertical-align: middle;
-        text-align: center;
+    .photonui-progressbar-text {
+        z-index: 2;
+        position: absolute;
+        box-sizing: border-box;
         white-space: nowrap;
+        text-align: center;
+        width: 100%;
+        height: @size;
+        line-height: @size;
+        top: ~"calc(50% - 13px)";
+        left: 0;
+    }
+
+    &.photonui-progressbar-horizontal {
+        min-width: 75px;
+        .photonui-progressbar-bar {
+            height: 100%;
+        }
+
+        .photonui-progressbar-text {
+        }
+    }
+
+    &.photonui-progressbar-vertical {
+        min-height: 75px;
+
+        .photonui-progressbar-bar {
+            width: 100%;
+        }
+
+        .photonui-progressbar-text {
+        }
     }
 }
 
-/** Horizontal **/
 
-
-.photonui-progressbar.photonui-progressbar-horizontal {
-    min-height: 26px;
-    
-    .photonui-progressbar-bar {
-        height: 100%;
-        min-height: 22px; /** FIXME **/
-    }
-    
-    .photonui-progressbar-text {
-        text-shadow: 1px 1px 0 rgba(255, 255, 255, .3);
-        min-height: 22px; /** FIXME **/
-    }
-}
-
-/** Vertical **/
-
-
-.photonui-progressbar.photonui-progressbar-vertical {
-    min-height: 55px;
-    min-width: 26px;
-    width: 26px;
-    transform: rotate(180deg);
-    
-    .photonui-progressbar-bar {
-    }
-    
-    .photonui-progressbar-text {
-        width: 200px;
-        margin-left: calc(~"-100px + 50%") !important;
-        transform: rotate(90deg);
-    }
-    
-}
-
-/** Pulsate **/
+/* Pulsate *
 
 
 .photonui-progressbar.photonui-progressbar-pulsate .photonui-progressbar-text {
@@ -106,7 +91,7 @@
 }
 
 
-/** Horizontal Pulsate **/
+* Horizontal Pulsate *
 
 @keyframes photonui-progressbar-pulsate-horizontal {
     0% { margin-left:  0%; }
@@ -127,7 +112,7 @@
 }
 
 
-/** Vertical Pulsate **/
+* Vertical Pulsate *
 
 @keyframes photonui-progressbar-pulsate-vertical {
     0% { opacity: 0; transform: scale(1, .1); }
@@ -146,4 +131,4 @@
 .photonui-progressbar.photonui-progressbar-vertical.photonui-progressbar-pulsate .photonui-progressbar-bar {
     height: 100%;
     animation: photonui-progressbar-pulsate-vertical ease .8s infinite;
-}
+}*/

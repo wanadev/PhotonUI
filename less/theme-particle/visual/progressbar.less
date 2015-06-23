@@ -30,60 +30,49 @@
 
 
 .photonui-progressbar {
-    padding: 0px;
-    background: @color-light-lightest;
-    border: 2px solid @color-light-default;
-    border-radius: 4px;
+    @radius: 0px;
+    border-radius: @radius;
+
+    box-shadow: inset 1px 1px 0 @color-widget-border,
+                inset -1px -1px 0 @color-widget-border,
+                inset -1px 1px 0 @color-widget-border,
+                inset 1px -1px 0 @color-widget-border;
+
+    background: #fff;
+
+    .photonui-progressbar-bar {
+        border-radius: @radius;
+        /*border: @color-highlight-border solid 1px;*/
+        box-shadow: inset 1px 1px 0 @color-highlight-border,
+                inset -1px -1px 0 @color-highlight-border,
+                inset -1px 1px 0 @color-highlight-border,
+                inset 1px -1px 0 @color-highlight-border;
+        background: @color-highlight-background;
+    }
+
+    .photonui-progressbar-text {
+    }
+
+
+    &.photonui-progressbar-horizontal {
+        .photonui-progressbar-bar {
+        }
+
+        .photonui-progressbar-text {
+        }
+    }
+
+
+    &.photonui-progressbar-vertical {
+
+        .photonui-progressbar-bar {
+            top: auto;
+            bottom: 0;
+        }
+
+        .photonui-progressbar-text {
+            transform: rotate(-90deg);
+        }
+    }
 }
 
-.photonui-progressbar-bar {
-    border-radius: 2px;
-    background: @color-light-highlight;
-    transition: all linear @transition-duration;
-}
-
-.photonui-progressbar-text {
-    color: @color-dark-darkest;
-}
-
-.photonui-progressbar-text span {
-    pointer-events: none;
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-}
-
-
-/** Horizontal **/
-
-
-.photonui-progressbar.photonui-progressbar-horizontal {
-    height: 30px;
-    background: @color-light-lightest;
-}
-
-.photonui-progressbar.photonui-progressbar-horizontal .photonui-progressbar-bar {
-    background: @color-light-highlight;
-}
-
-.photonui-progressbar.photonui-progressbar-horizontal .photonui-progressbar-text {
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, .3);
-}
-
-
-/** Vertical **/
-
-
-.photonui-progressbar.photonui-progressbar-vertical {
-    width: 30px;
-    background: @color-light-lightest;
-}
-
-.photonui-progressbar.photonui-progressbar-vertical .photonui-progressbar-bar {
-    background: @color-light-highlight;
-}
-
-.photonui-progressbar.photonui-progressbar-vertical .photonui-progressbar-text {
-    text-shadow: -1px 1px 0 rgba(255, 255, 255, .3);
-}
