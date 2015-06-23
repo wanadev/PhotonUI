@@ -48,8 +48,11 @@
                 vertical-align: middle;
                 text-align: left;
 
-                > * {
+                > *:not(.photonui-widget-fixed-width) {
                     width: 100% !important;
+                }
+
+                > *:not(.photonui-widget-fixed-height) {
                     height: 100% !important;
                 }
             }
