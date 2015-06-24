@@ -1970,6 +1970,8 @@ var ColorPickerDialog = Dialog.$extend({
 
     // ====== Public properties ======
 
+    _padding: 10,
+
 
     /**
      * The color.
@@ -2029,8 +2031,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
-            orientation: "horizontal",
-            verticalPadding: 5
+            orientation: "horizontal"
         });
         this.child = this.__widgets.hbox;
 
@@ -2452,6 +2453,7 @@ var PopupMenu = PopupWindow.$extend({
         setChildName:     Menu.prototype.setChildName,
         getChild:         Menu.prototype.getChild,
         setChild:         Menu.prototype.setChild,
+        _iconVisible:     Menu.prototype._iconVisible,
         isIconVisible:    Menu.prototype.isIconVisible,
         setIconVisible:   Menu.prototype.setIconVisible,
         addChild:         Menu.prototype.addChild,
@@ -2570,13 +2572,13 @@ var Select = Widget.$extend({
         this.__popupMenu = new PopupMenu({
             maxHeight: 300,
             className: "photonui-select-popup",
+            iconVisible: false
         });
-        this.__popupMenu.iconVisible = false;
 
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value"]);
+        this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
 
         this.setValue(params.value || this.value, true);
@@ -2763,7 +2765,15 @@ var Select = Widget.$extend({
      * @default: false
      */
     isIconVisible: function () { return this.__popupMenu.isIconVisible(); },
-    setIconVisible: function (p) { this.__popupMenu.setIconVisible(p); },
+    setIconVisible: function (p) {
+        if (!p) {
+            this.addClass("photonui-select-noicon");
+        }
+        else {
+            this.removeClass("photonui-select-noicon");
+        }
+        this.__popupMenu.setIconVisible(p);
+    },
 
     /**
      * Html outer element of the widget (if any).
@@ -3315,6 +3325,8 @@ var Container = Widget.$extend({
     __init__: function(params) {
         this.$super(params);
 
+        this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
+
         // Force to update the parent of the child
         if (this._childName) {
             this.child._parentName = this.name;
@@ -3328,6 +3340,54 @@ var Container = Widget.$extend({
 
     // ====== Public properties ======
 
+
+    /**
+     * Horizontaly expand the container's child widget.
+     *
+     * @property horizontalChildExpansion
+     * @type Boolean
+     * @default true
+     */
+    _horizontalChildExpansion: true,
+
+    getHorizontalChildExpansion: function() {
+        return this._horizontalChildExpansion;
+    },
+
+    setHorizontalChildExpansion: function(expansion) {
+        this._horizontalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-horizontal");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-horizontal");
+        }
+    },
+
+    /**
+     * Verticaly expand the container's child widget.
+     *
+     * @property verticalChildExpansion
+     * @type Boolean
+     * @default false
+     */
+    _verticalChildExpansion: false,
+
+    getVerticalChildExpansion: function() {
+        return this._verticalChildExpansion;
+    },
+
+    setVerticalChildExpansion: function(expansion) {
+        this._verticalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-vertical");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-vertical");
+        }
+    },
 
     /**
      * The child widget name.
@@ -3384,7 +3444,6 @@ var Container = Widget.$extend({
      * @readOnly
      */
     getContainerNode: function() {
-        console.warn("getContainerNode() method not implemented for this widget.");
         return null;
     },
 
@@ -4384,7 +4443,7 @@ var TabItem = Container.$extend({
      */
     _buildHtml: function() {
         this.__html.div = document.createElement("div");
-        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container photonui-container-expand-child";
+        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
     }
@@ -4883,7 +4942,7 @@ var Window = BaseWindow.$extend({
         this.__html.windowTitle.appendChild(this.__html.windowTitleText);
 
         this.__html.windowContent = document.createElement("div");
-        this.__html.windowContent.className = "photonui-container photonui-window-content photonui-container-expand-child";
+        this.__html.windowContent.className = "photonui-container photonui-window-content";
         this.__html["window"].appendChild(this.__html.windowContent);
     },
 
@@ -5390,6 +5449,38 @@ var Button = Widget.$extend({
     },
 
     /**
+     * Button's color.
+     *
+     * The available colors depends on the theme. Particle, the
+     * default PhotonUI theme provides the following colors:
+     *
+     *   * `blue`
+     *   * `red`
+     *   * `yellow`
+     *   * `green`
+     *   * null (default)
+     *
+     * @property buttonColor
+     * @type string
+     * @default null
+     */
+    _buttonColor: null,
+
+    getButtonColor: function() {
+        return this._buttonColor;
+    },
+
+    setButtonColor: function(buttonColor) {
+        if (this._buttonColor) {
+            this.__html.button.classList.remove("photonui-button-color-" + this._buttonColor);
+        }
+        this._buttonColor = buttonColor
+        if (buttonColor) {
+            this.__html.button.classList.add("photonui-button-color-" + this._buttonColor);
+        }
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -5510,6 +5601,9 @@ Button._buttonMixin = {
     _appearance:         Button.prototype._appearance,
     getAppearance:       Button.prototype.getAppearance,
     setAppearance:       Button.prototype.setAppearance,
+    _buttonColor:        Button.prototype._buttonColor,
+    getButtonColor:      Button.prototype.getButtonColor,
+    setButtonColor:      Button.prototype.setButtonColor,
     // Private methods
     _update:             Button.prototype._update,
     _buildButtonHtml:    Button.prototype._buildHtml,
@@ -5641,7 +5735,7 @@ var CheckBox = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-checkbox";
+        this.__html.outer.className = "photonui-widget photonui-checkbox photonui-widget-fixed-width photonui-widget-fixed-height";
 
         this.__html.checkbox = document.createElement("input");
         this.__html.checkbox.type = "checkbox";
@@ -7139,8 +7233,8 @@ var Slider = NumericField.$extend({
         var v = value - this.min;
         var m = this.max - this.min;
         var p = Math.min(Math.max(v/m, 0), 1);
-        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth - 4;
-        this.__html.grip.style.left = Math.floor(p*w) + 2 + "px";
+        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth;
+        this.__html.grip.style.left = Math.floor(p*w) + "px";
     },
 
 
@@ -7162,7 +7256,7 @@ var Slider = NumericField.$extend({
         this.$super();
 
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-slider";
+        this.__html.outer.className = "photonui-widget photonui-slider photonui-widget-fixed-height";
 
         this.__html.slider = document.createElement("div");
         this.__html.slider.className = "photonui-slider-slider";
@@ -7663,6 +7757,8 @@ var ToggleButton = CheckBox.$extend({
         this.__buttonInit();
         this.removeClass("photonui-checkbox");
         this.addClass("photonui-togglebutton");
+        this.removeClass("photonui-widget-fixed-height");
+        this.removeClass("photonui-widget-fixed-width");
     },
 
     // photonui.Button constructor (without the call to $super)
@@ -8459,6 +8555,8 @@ var GridLayout = Layout.$extend({
             minY = Math.min(options.y, minY);
             maxX = Math.max(options.x, maxX);
             maxY = Math.max(options.y, maxY);
+            maxX = Math.max(options.x + options.cols - 1, maxX);
+            maxY = Math.max(options.y + options.rows - 1, maxY);
         }
 
         var gridWidth = maxX - minX + 1;
@@ -8513,14 +8611,32 @@ var GridLayout = Layout.$extend({
                     td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
 
                     // layout options: *width
-                    if (child.o.minWidth !== null) div.style.minWidth = child.o.minWidth + "px";
-                    if (child.o.maxWidth !== null) div.style.maxWidth = child.o.maxWidth + "px";
-                    if (child.o.width !== null) div.style.width = child.o.width + "px";
+                    if (child.o.minWidth !== null) {
+                        div.style.minWidth = child.o.minWidth + "px";
+                        td.style.minWidth = child.o.minWidth + "px";
+                    }
+                    if (child.o.maxWidth !== null) {
+                        div.style.maxWidth = child.o.maxWidth + "px";
+                        td.style.maxWidth = child.o.maxWidth + "px";
+                    }
+                    if (child.o.width !== null) {
+                        div.style.width = child.o.width + "px";
+                        td.style.width = child.o.width + "px";
+                    }
 
                     // layout options: *height
-                    if (child.o.minHeight !== null) div.style.minHeight = child.o.minHeight + "px";
-                    if (child.o.maxHeight !== null) div.style.maxHeight = child.o.maxHeight + "px";
-                    if (child.o.height !== null) div.style.height = child.o.height + "px";
+                    if (child.o.minHeight !== null) {
+                        div.style.minHeight = child.o.minHeight + "px";
+                        td.style.minHeight = child.o.minHeight + "px";
+                    }
+                    if (child.o.maxHeight !== null) {
+                        div.style.maxHeight = child.o.maxHeight + "px";
+                        td.style.maxHeight = child.o.maxHeight + "px";
+                    }
+                    if (child.o.height !== null) {
+                        div.style.height = child.o.height + "px";
+                        td.style.height = child.o.height + "px";
+                    }
 
                     // rowspan / colspan
                     if (child.o.cols > 1 || child.o.rows > 1) {
@@ -8533,6 +8649,11 @@ var GridLayout = Layout.$extend({
                             }
                         }
                     }
+
+                    // Spacing
+                    if (x+child.o.cols >= gridWidth) td.className += " photonui-gridlayout-lastcol";
+                    if (y+child.o.rows >= gridHeight) td.className += " photonui-gridlayout-lastrow";
+
                 }
             }
             this.__html.gridBody.appendChild(tr);
@@ -8574,6 +8695,15 @@ var GridLayout = Layout.$extend({
             minHeight: null,
             maxHeight: null,
             height: null
+        }
+
+        if (widget.html) {
+            if (widget.html.classList.contains("photonui-widget-fixed-height")) {
+                options.verticalAlign = "center";
+            }
+            if (widget.html.classList.contains("photonui-widget-fixed-width")) {
+                options.horizontalAlign = "center";
+            }
         }
 
         // [Compatibility with old GridLayout] position / place
@@ -8744,8 +8874,18 @@ var GridLayout = Layout.$extend({
             for (var i=0 ; i<nodes.length ; i++) {
                 nodes[i].style.height = "auto";
             }
+            var tdHeight;
             for (var i=0 ; i<nodes.length ; i++) {
-                nodes[i].style.height = nodes[i].offsetHeight + "px";
+                if (nodes[i].style.minHeight && nodes[i].style.minHeight == nodes[i].style.maxHeight) {
+                    tdHeight = parseFloat(nodes[i].style.minHeight);
+                }
+                else if (nodes[i].classList.contains("photonui-gridlayout-lastrow")) {
+                    tdHeight = nodes[i].offsetHeight;
+                }
+                else {
+                    tdHeight = nodes[i].offsetHeight - this.verticalSpacing;
+                }
+                nodes[i].style.height = tdHeight + "px";
             }
 
             this._updatingLayout = false;
@@ -8895,7 +9035,6 @@ var Layout = Container.$extend({
     // Override getChildName / setChildName / getChild / setChild
 
     getChildName: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -8904,7 +9043,6 @@ var Layout = Container.$extend({
     },
 
     getChild: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -9094,10 +9232,10 @@ var Menu = Layout.$extend({
     setIconVisible: function(iconVisible) {
         this._iconVisible = iconVisible;
         if (iconVisible) {
-            this.removeClass("photonui-menu-noicon");
+            this.__html.outer.classList.remove("photonui-menu-noicon");
         }
         else {
-            this.addClass("photonui-menu-noicon");
+            this.__html.outer.classList.add("photonui-menu-noicon");
         }
     },
 
@@ -12495,7 +12633,7 @@ var Label = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.label = document.createElement("label");
-        this.__html.label.className = "photonui-widget photonui-label";
+        this.__html.label.className = "photonui-widget photonui-label photonui-widget-fixed-height";
     }
 });
 
@@ -12604,9 +12742,11 @@ var ProgressBar = Widget.$extend({
         this._value = Math.min(Math.max(value, 0), 1);
         if (this.orientation == "horizontal") {
             this.__html.bar.style.width = Math.floor(this.value * 100) + "%";
+            this.__html.bar.style.height = "";
         }
         else {
             this.__html.bar.style.height = Math.floor(this.value * 100) + "%";
+            this.__html.bar.style.width = "";
         }
         this.__html.textContent.innerHTML = Math.floor(this.value * 100) + " %";
     },
@@ -12633,6 +12773,9 @@ var ProgressBar = Widget.$extend({
         this.removeClass("photonui-progressbar-vertical");
         this.removeClass("photonui-progressbar-horizontal");
         this.addClass("photonui-progressbar-" + this.orientation);
+
+        // Refresh the value...
+        this.value = this.value;
     },
 
     /**
@@ -12697,6 +12840,14 @@ var ProgressBar = Widget.$extend({
     _buildHtml: function() {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-progressbar";
+
+        // Hack: needed to help grid layout (<table>) to size properly its cells...
+        this.__html.filldiv = document.createElement("div");
+        this.__html.filldiv.className = "photonui-progressbar-fill";
+        this.__html.filldiv.innerHTML = "xxxxxxxxxxx";
+        this.__html.filldiv.style.opacity = 0;
+        this.__html.filldiv.style.pointerEvents = "none";
+        this.__html.outer.appendChild(this.__html.filldiv);
 
         this.__html.text = document.createElement("div");
         this.__html.text.className = "photonui-progressbar-text";
@@ -12815,7 +12966,16 @@ var Separator = Widget.$extend({
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");
         this.removeClass("photonui-separator-horizontal");
-        this.addClass("photonui-separator-" + this.orientation);
+        this.addClass("photonui-separator-" + this._orientation);
+
+        this.removeClass("photonui-widget-fixed-height");
+        this.removeClass("photonui-widget-fixed-width");
+        if (this._orientation == "horizontal") {
+            this.addClass("photonui-widget-fixed-height");
+        }
+        else {
+            this.addClass("photonui-widget-fixed-width");
+        }
     },
 
     /**

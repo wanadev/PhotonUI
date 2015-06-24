@@ -1,42 +1,97 @@
 /*
-* Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*   * Redistributions of source code must retain the above copyright notice, this
-*     list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above copyright notice,
-*     this list of conditions and the following disclaimer in the documentation
-*     and/or other materials provided with the distribution.
-*   * Neither the name of Wanadev nor the names of its contributors may be used
-*     to endorse or promote products derived from this software without specific
-*     prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Authored by: Fabien LOISON <http://flozz.fr/>
-*/
+ * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <http://flozz.fr/>
+ */
 
-/****************************************************************************
-* Menu Default theme                                                        *
-****************************************************************************/
 
-.photonui-menu.photonui-menu-style-default {
+.photonui-menu {
 
-    /** Submenu **/
-    > .photonui-menu.photonui-menu-style-default {
-        margin-left: 21px;
+    > .photonui-menu {
+        @indent: 16px + 5px + 5px;
+        margin-left: @indent;
+        width: ~"calc(100% - " @indent ~")";
     }
 
+
+    // == Items ==
+
+    .photonui-menuitem {
+
+        color: @color-widget-text;
+        cursor: default;
+
+        transition: all @transition-duration;
+
+        .photonui-menuitem-text {
+        }
+
+        .photonui-menuitem-widget {
+        }
+
+        &:hover,
+        &.photonui-menuitem-active {
+            background: @color-highlight-background;
+            color: @color-highlight-text;
+        }
+    }
+
+
+    // Submenu item
+    .photonui-submenuitem  {
+        @arrow-size: 6px;
+
+        .photonui-menuitem-widget:before {
+            box-sizing: border-box;
+            content: "";
+            display: inline-block;
+            border: transparent solid @arrow-size;
+            border-top-color: @color-widget-text;
+            transform: rotate(-90deg) translate(0, @arrow-size / 2 + 1);
+            transition: transform @transition-duration;
+        }
+
+        &.photonui-menuitem-active {
+            background: @color-highlight-background-disabled;
+            color: @color-highlight-text-disabled;
+            .photonui-menuitem-widget:before {
+                transform: rotate(0deg) translate(0, @arrow-size / 2 + 1);
+            }
+        }
+
+        &:hover,
+        &.photonui-menuitem-active {
+            .photonui-menuitem-widget:before {
+                border-top-color: @color-highlight-text;
+            }
+        }
+
+        &:hover {
+            background: @color-highlight-background;
+        }
+    }
 }

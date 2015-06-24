@@ -56,6 +56,8 @@ var ToggleButton = CheckBox.$extend({
         this.__buttonInit();
         this.removeClass("photonui-checkbox");
         this.addClass("photonui-togglebutton");
+        this.removeClass("photonui-widget-fixed-height");
+        this.removeClass("photonui-widget-fixed-width");
     },
 
     // photonui.Button constructor (without the call to $super)

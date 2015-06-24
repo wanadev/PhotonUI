@@ -174,7 +174,7 @@ var TabItem = Container.$extend({
      */
     _buildHtml: function() {
         this.__html.div = document.createElement("div");
-        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container photonui-container-expand-child";
+        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
     }

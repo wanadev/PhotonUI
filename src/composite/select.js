@@ -63,13 +63,13 @@ var Select = Widget.$extend({
         this.__popupMenu = new PopupMenu({
             maxHeight: 300,
             className: "photonui-select-popup",
+            iconVisible: false
         });
-        this.__popupMenu.iconVisible = false;
 
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value"]);
+        this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
 
         this.setValue(params.value || this.value, true);
@@ -256,7 +256,15 @@ var Select = Widget.$extend({
      * @default: false
      */
     isIconVisible: function () { return this.__popupMenu.isIconVisible(); },
-    setIconVisible: function (p) { this.__popupMenu.setIconVisible(p); },
+    setIconVisible: function (p) {
+        if (!p) {
+            this.addClass("photonui-select-noicon");
+        }
+        else {
+            this.removeClass("photonui-select-noicon");
+        }
+        this.__popupMenu.setIconVisible(p);
+    },
 
     /**
      * Html outer element of the widget (if any).

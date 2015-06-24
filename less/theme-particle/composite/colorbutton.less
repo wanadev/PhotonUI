@@ -30,21 +30,25 @@
 
 
 .photonui-colorbutton {
-    padding: 0;
-}
+    padding-left: 5px;
+    padding-right: 5px;
 
-.photonui-colorbutton span {
-    margin: 4px;
-    padding: 5px 10px;
-    margin-bottom: 2px;
-    line-height: 2.5em;
-    border-radius: 2px;
-    text-shadow: none;
+    span {
+        box-sizing: border-box;
+        border-radius: 2px;
+        text-shadow: none;
+        vertical-align: middle;
+
+        height: calc(100% - 24px);
+        width: 100%;
+
+        box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .3), inset -1px -1px 0 rgba(0, 0, 0, .3);
+    }
+
 }
 
 .photonui-colorbutton-custombutton {
-    color: darken(@color-light-highlight, 20);
     margin: 0 !important;
     width: 100% !important;
-    height: 35px !important;
+    line-height: 1.4em !important;
 }

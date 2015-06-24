@@ -251,6 +251,8 @@ var GridLayout = Layout.$extend({
             minY = Math.min(options.y, minY);
             maxX = Math.max(options.x, maxX);
             maxY = Math.max(options.y, maxY);
+            maxX = Math.max(options.x + options.cols - 1, maxX);
+            maxY = Math.max(options.y + options.rows - 1, maxY);
         }
 
         var gridWidth = maxX - minX + 1;
@@ -305,14 +307,32 @@ var GridLayout = Layout.$extend({
                     td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
 
                     // layout options: *width
-                    if (child.o.minWidth !== null) div.style.minWidth = child.o.minWidth + "px";
-                    if (child.o.maxWidth !== null) div.style.maxWidth = child.o.maxWidth + "px";
-                    if (child.o.width !== null) div.style.width = child.o.width + "px";
+                    if (child.o.minWidth !== null) {
+                        div.style.minWidth = child.o.minWidth + "px";
+                        td.style.minWidth = child.o.minWidth + "px";
+                    }
+                    if (child.o.maxWidth !== null) {
+                        div.style.maxWidth = child.o.maxWidth + "px";
+                        td.style.maxWidth = child.o.maxWidth + "px";
+                    }
+                    if (child.o.width !== null) {
+                        div.style.width = child.o.width + "px";
+                        td.style.width = child.o.width + "px";
+                    }
 
                     // layout options: *height
-                    if (child.o.minHeight !== null) div.style.minHeight = child.o.minHeight + "px";
-                    if (child.o.maxHeight !== null) div.style.maxHeight = child.o.maxHeight + "px";
-                    if (child.o.height !== null) div.style.height = child.o.height + "px";
+                    if (child.o.minHeight !== null) {
+                        div.style.minHeight = child.o.minHeight + "px";
+                        td.style.minHeight = child.o.minHeight + "px";
+                    }
+                    if (child.o.maxHeight !== null) {
+                        div.style.maxHeight = child.o.maxHeight + "px";
+                        td.style.maxHeight = child.o.maxHeight + "px";
+                    }
+                    if (child.o.height !== null) {
+                        div.style.height = child.o.height + "px";
+                        td.style.height = child.o.height + "px";
+                    }
 
                     // rowspan / colspan
                     if (child.o.cols > 1 || child.o.rows > 1) {
@@ -325,6 +345,11 @@ var GridLayout = Layout.$extend({
                             }
                         }
                     }
+
+                    // Spacing
+                    if (x+child.o.cols >= gridWidth) td.className += " photonui-gridlayout-lastcol";
+                    if (y+child.o.rows >= gridHeight) td.className += " photonui-gridlayout-lastrow";
+
                 }
             }
             this.__html.gridBody.appendChild(tr);
@@ -366,6 +391,15 @@ var GridLayout = Layout.$extend({
             minHeight: null,
             maxHeight: null,
             height: null
+        }
+
+        if (widget.html) {
+            if (widget.html.classList.contains("photonui-widget-fixed-height")) {
+                options.verticalAlign = "center";
+            }
+            if (widget.html.classList.contains("photonui-widget-fixed-width")) {
+                options.horizontalAlign = "center";
+            }
         }
 
         // [Compatibility with old GridLayout] position / place
@@ -536,8 +570,18 @@ var GridLayout = Layout.$extend({
             for (var i=0 ; i<nodes.length ; i++) {
                 nodes[i].style.height = "auto";
             }
+            var tdHeight;
             for (var i=0 ; i<nodes.length ; i++) {
-                nodes[i].style.height = nodes[i].offsetHeight + "px";
+                if (nodes[i].style.minHeight && nodes[i].style.minHeight == nodes[i].style.maxHeight) {
+                    tdHeight = parseFloat(nodes[i].style.minHeight);
+                }
+                else if (nodes[i].classList.contains("photonui-gridlayout-lastrow")) {
+                    tdHeight = nodes[i].offsetHeight;
+                }
+                else {
+                    tdHeight = nodes[i].offsetHeight - this.verticalSpacing;
+                }
+                nodes[i].style.height = tdHeight + "px";
             }
 
             this._updatingLayout = false;

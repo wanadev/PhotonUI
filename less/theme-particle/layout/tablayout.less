@@ -31,48 +31,60 @@
 
 .photonui-tablayout {
 
+    @tab-horiz-height: 30px;
+    @tab-horiz-active-height: 36px;
+
+    @tab-vert-height: 32px;
+    @tab-vert-active-width: 120px;
+
+    @tab-padding-vert: 8px;
+    @shadow: 0 0 2px rgba(0, 0, 0, .2);
+
     .photonui-tablayout-tabs {
         .photonui-tabitem-tab {
-            border: @color-light-default solid 1px;
-            line-height: 30px;
+            border: @color-widget-border solid 1px;
             vertical-align: middle;
-            padding: 0 8px;
+            padding: 0 @tab-padding-vert;
             cursor: pointer;
-            background: @color-light-active;
+            background: @color-widget-face;
+            transition: all @transition-duration;
 
             &:hover {
-                background: @color-light-lightest;
+                background: @color-background-alt;
             }
 
             &.photonui-tabitem-active {
-                background: @color-light-lightest;
+                background: @color-background-alt;
                 z-index: 10;
+                /*box-shadow: @shadow;*/
             }
         }
     }
 
     .photonui-tablayout-content {
 
-        background: @color-light-lightest;
-        border: @color-light-default solid 1px;
+        background: @color-background-alt;
+        border: @color-widget-border solid 1px;
+        box-shadow: @shadow;
     }
 
     &.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox,
     &.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox {
 
         .photonui-tablayout-tabs {
-            height: 40px;
-            min-height: 40px;
-            max-height: 40px;
+            height: @tab-horiz-active-height;
+            min-height: @tab-horiz-active-height;
+            max-height: @tab-horiz-active-height;
 
             .photonui-tabitem-tab {
-                height: 30px;
+                line-height: @tab-horiz-height;
+                height: @tab-horiz-height;
                 text-align: center;
                 margin-right: -1px;
 
                 &.photonui-tabitem-active {
-                    height: 36px;
-                    line-height: 36px;
+                    height: @tab-horiz-active-height;
+                    line-height: @tab-horiz-active-height;
                 }
             }
         }
@@ -85,19 +97,21 @@
     &.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox {
 
         .photonui-tablayout-tabs {
-            width: 120px;
-            min-width: 120px;
-            max-width: 120px;
+            width: @tab-vert-active-width;
+            min-width: @tab-vert-active-width;
+            max-width: @tab-vert-active-width;
             padding-top: 1px;
 
             .photonui-tabitem-tab {
-                width: calc(100% - 10px);
-                height: 32px;
+                width: calc(100% - 6px);
+                line-height: @tab-vert-height;
+                height: @tab-vert-height;
+                text-align: @tab-vert-height;
                 text-align: left;
                 margin-top: -1px;
 
                 &.photonui-tabitem-active {
-                    width: calc(100% - 4px);
+                    width: 100%;
                 }
             }
         }
@@ -112,12 +126,16 @@
 
         .photonui-tablayout-tabs {
             .photonui-tabitem-tab {
-                height: 30px;
                 align-self: flex-end;
                 border-bottom: none;
 
                 &.photonui-tabitem-active {
                     margin-bottom: -1px;
+                    box-shadow: -1px  0   0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 0   -1px 0 rgba(0, 0, 0, .05),
+                                -2px -2px 0 rgba(0, 0, 0, .01),
+                                 2px -2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }
@@ -127,12 +145,16 @@
 
         .photonui-tablayout-tabs {
             .photonui-tabitem-tab {
-                height: 30px;
                 align-self: flex-start;
                 border-top: none;
 
                 &.photonui-tabitem-active {
                     margin-top: -1px;
+                    box-shadow: -1px  0   0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                -2px  2px 0 rgba(0, 0, 0, .01),
+                                 2px  2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }
@@ -142,13 +164,18 @@
 
         .photonui-tablayout-tabs {
             .photonui-tabitem-tab {
-                height: 30px;
                 align-self: flex-end;
                 border-right: none;
                 text-align: right;
 
                 &.photonui-tabitem-active {
                     margin-right: -1px;
+                    padding-right: @tab-padding-vert + 1;
+                    box-shadow:  0   -1px 0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                -1px  0   0 rgba(0, 0, 0, .05),
+                                -2px -2px 0 rgba(0, 0, 0, .01),
+                                -2px  2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }
@@ -158,12 +185,17 @@
 
         .photonui-tablayout-tabs {
             .photonui-tabitem-tab {
-                height: 30px;
                 align-self: flex-start;
                 border-left: none;
 
                 &.photonui-tabitem-active {
                     margin-left: -1px;
+                    padding-left: @tab-padding-vert + 1;
+                    box-shadow:  0   -1px 0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 2px -2px 0 rgba(0, 0, 0, .01),
+                                 2px  2px 0 rgba(0, 0, 0, .01);
                 }
             }
         }

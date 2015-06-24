@@ -1,104 +1,36 @@
 /*
-* Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*   * Redistributions of source code must retain the above copyright notice, this
-*     list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above copyright notice,
-*     this list of conditions and the following disclaimer in the documentation
-*     and/or other materials provided with the distribution.
-*   * Neither the name of Wanadev nor the names of its contributors may be used
-*     to endorse or promote products derived from this software without specific
-*     prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Authored by: Fabien LOISON <http://flozz.fr/>
-*/
+ * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <http://flozz.fr/>
+ */
 
-/****************************************************************************
-* Menu Default theme                                                        *
-****************************************************************************/
 
-.photonui-menu.photonui-menu-style-default {
-    .photonui-menuitem {
-        cursor: pointer;
-        background: @color-light-lightest;
-        color: @color-dark-default;
-        text-shadow: 1px 1px 0 @color-light-lightest;
-        padding-bottom: 1px;
-        transition: background, color, text-shadow;
-        transition-duration: @transition-duration;
+// As the menu item is used in many different cases, its theme depends
+// of its parent widget.
+//
+// The main theme for MenuItem is in layout/menu.less
 
-        &:hover {
-            cursor: pointer;
-            background: @color-light-highlight;
-            color: @color-dark-highlight;
-            text-shadow: 1px 1px 0 darken(@color-light-highlight, 20);
-        }
-    }
-
-    /** Active item **/
-    > .photonui-menuitem.photonui-menuitem-active {
-        background: @color-light-highlight;
-        color: @color-dark-highlight;
-        text-shadow: -1px -1px 0 darken(@color-light-highlight, 20);
-    }
-
-    /** Hide icons **/
-    &.photonui-menu-noicon > .photonui-menuitem {
-        .photonui-menuitem-icon {
-            display: none;
-        }
-
-        .photonui-menuitem-text {
-            padding-left: 5px;
-        }
-    }
-
-    .photonui-separator  hr {
-        border: none;
-        height: 10px;
-    }
-
-    /** Submenu item **/
-    .photonui-submenuitem .photonui-menuitem-widget:after {
-        content: "";
-        display: block;
-        float: right;
-        border-top: transparent solid 4px;
-        border-right: @color-dark-default solid 4px;
-        border-bottom: @color-dark-default solid 4px;
-        border-left: transparent solid 4px;
-        margin-right: 5px;
-        margin-top: calc(~"25% - 3px");
-        transform: rotate(-45deg);
-        transition: all @transition-duration;
-    }
-
-    /** Submenu item + active **/
-    > .photonui-menuitem.photonui-submenuitem.photonui-menuitem-active {
-        background: @color-light-highlight;
-        color: @color-dark-highlight;
-        text-shadow: -1px -1px 0 darken(@color-light-highlight, 20);
-
-        .photonui-menuitem-widget:after {
-            margin-top: calc(~"25% - 6px");
-            transform: rotate(45deg);
-            border-right-color: @color-dark-highlight;
-            border-bottom-color: @color-dark-highlight;
-        }
-    }
-}

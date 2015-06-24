@@ -132,7 +132,6 @@ var Layout = Container.$extend({
     // Override getChildName / setChildName / getChild / setChild
 
     getChildName: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -141,7 +140,6 @@ var Layout = Container.$extend({
     },
 
     getChild: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
