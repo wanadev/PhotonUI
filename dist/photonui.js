@@ -2578,7 +2578,7 @@ var Select = Widget.$extend({
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value", "iconVisible", "name"]);
+        this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
 
         this.setValue(params.value || this.value, true);
