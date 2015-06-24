@@ -2453,6 +2453,7 @@ var PopupMenu = PopupWindow.$extend({
         setChildName:     Menu.prototype.setChildName,
         getChild:         Menu.prototype.getChild,
         setChild:         Menu.prototype.setChild,
+        _iconVisible:     Menu.prototype._iconVisible,
         isIconVisible:    Menu.prototype.isIconVisible,
         setIconVisible:   Menu.prototype.setIconVisible,
         addChild:         Menu.prototype.addChild,
@@ -2571,13 +2572,13 @@ var Select = Widget.$extend({
         this.__popupMenu = new PopupMenu({
             maxHeight: 300,
             className: "photonui-select-popup",
+            iconVisible: false
         });
-        this.__popupMenu.iconVisible = false;
 
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value"]);
+        this._updateProperties(["value", "iconVisible", "name"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
 
         this.setValue(params.value || this.value, true);
@@ -2764,7 +2765,15 @@ var Select = Widget.$extend({
      * @default: false
      */
     isIconVisible: function () { return this.__popupMenu.isIconVisible(); },
-    setIconVisible: function (p) { this.__popupMenu.setIconVisible(p); },
+    setIconVisible: function (p) {
+        if (!p) {
+            this.addClass("photonui-select-noicon");
+        }
+        else {
+            this.removeClass("photonui-select-noicon");
+        }
+        this.__popupMenu.setIconVisible(p);
+    },
 
     /**
      * Html outer element of the widget (if any).
@@ -9223,10 +9232,10 @@ var Menu = Layout.$extend({
     setIconVisible: function(iconVisible) {
         this._iconVisible = iconVisible;
         if (iconVisible) {
-            this.removeClass("photonui-menu-noicon");
+            this.__html.outer.classList.remove("photonui-menu-noicon");
         }
         else {
-            this.addClass("photonui-menu-noicon");
+            this.__html.outer.classList.add("photonui-menu-noicon");
         }
     },
 
