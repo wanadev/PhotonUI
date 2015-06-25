@@ -8452,10 +8452,11 @@ var GridLayout = Layout.$extend({
 
     setVerticalSpacing: function(verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
-        this._updatingLayout = true;
-        this._updateSpacing();
-        this._updatingLayout = false;
-        this._sizingHack();
+        //this._updatingLayout = true;
+        //this._updateSpacing();
+        //this._updatingLayout = false;
+        //this._sizingHack();
+        this._updateLayout();
     },
 
     /**
@@ -8473,10 +8474,11 @@ var GridLayout = Layout.$extend({
 
     setHorizontalSpacing: function(horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
-        this._updatingLayout = true;
-        this._updateSpacing();
-        this._updatingLayout = false;
-        this._sizingHack();
+        //this._updatingLayout = true;
+        //this._updateSpacing();
+        //this._updatingLayout = false;
+        //this._sizingHack();
+        this._updateLayout();
     },
 
     /**
@@ -8891,7 +8893,7 @@ var GridLayout = Layout.$extend({
                     tdHeight = nodes[i].offsetHeight;
                 }
                 else {
-                    tdHeight = nodes[i].offsetHeight - this.verticalSpacing;
+                    tdHeight = nodes[i].offsetHeight;
                 }
                 nodes[i].style.height = tdHeight + "px";
             }
