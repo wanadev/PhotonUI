@@ -8606,6 +8606,18 @@ var GridLayout = Layout.$extend({
                 if (child) {
                     div.appendChild(child.w.html);
 
+                    // Spacing exceptions
+                    var horizontalSpacing = this.horizontalSpacing;
+                    var verticalSpacing = this.verticalSpacing;
+                    if (x+child.o.cols >= gridWidth) {
+                        td.className += " photonui-gridlayout-lastcol";
+                        verticalSpacing = 0;
+                    }
+                    if (y+child.o.rows >= gridHeight) {
+                        td.className += " photonui-gridlayout-lastrow";
+                        horizontalSpacing = 0;
+                    }
+
                     // layout options: vertical/horizontal Align
                     td.className += " photonui-layout-verticalalign-" + child.o.verticalAlign;
                     td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
@@ -8613,29 +8625,29 @@ var GridLayout = Layout.$extend({
                     // layout options: *width
                     if (child.o.minWidth !== null) {
                         div.style.minWidth = child.o.minWidth + "px";
-                        td.style.minWidth = child.o.minWidth + "px";
+                        td.style.minWidth = (child.o.minWidth + verticalSpacing) + "px";
                     }
                     if (child.o.maxWidth !== null) {
                         div.style.maxWidth = child.o.maxWidth + "px";
-                        td.style.maxWidth = child.o.maxWidth + "px";
+                        td.style.maxWidth = (child.o.maxWidth + verticalSpacing) + "px";
                     }
                     if (child.o.width !== null) {
                         div.style.width = child.o.width + "px";
-                        td.style.width = child.o.width + "px";
+                        td.style.width = (child.o.width + verticalSpacing) + "px";
                     }
 
                     // layout options: *height
                     if (child.o.minHeight !== null) {
                         div.style.minHeight = child.o.minHeight + "px";
-                        td.style.minHeight = child.o.minHeight + "px";
+                        td.style.minHeight = (child.o.minHeight + horizontalSpacing) + "px";
                     }
                     if (child.o.maxHeight !== null) {
                         div.style.maxHeight = child.o.maxHeight + "px";
-                        td.style.maxHeight = child.o.maxHeight + "px";
+                        td.style.maxHeight = (child.o.maxHeight + horizontalSpacing) + "px";
                     }
                     if (child.o.height !== null) {
                         div.style.height = child.o.height + "px";
-                        td.style.height = child.o.height + "px";
+                        td.style.height = (child.o.height + horizontalSpacing) + "px";
                     }
 
                     // rowspan / colspan
@@ -8649,10 +8661,6 @@ var GridLayout = Layout.$extend({
                             }
                         }
                     }
-
-                    // Spacing
-                    if (x+child.o.cols >= gridWidth) td.className += " photonui-gridlayout-lastcol";
-                    if (y+child.o.rows >= gridHeight) td.className += " photonui-gridlayout-lastrow";
 
                 }
             }
