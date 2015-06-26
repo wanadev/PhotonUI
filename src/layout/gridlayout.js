@@ -576,22 +576,37 @@ var GridLayout = Layout.$extend({
         }
 
         function _hack() {
+            function _size(node) {
+                var tdHeight;
+                if (node.style.minHeight && node.style.minHeight == node.style.maxHeight) {
+                    tdHeight = parseFloat(node.style.minHeight);
+                }
+                else if (node.classList.contains("photonui-gridlayout-lastrow")) {
+                    tdHeight = node.offsetHeight;
+                }
+                else {
+                    tdHeight = node.offsetHeight;
+                }
+                node.style.height = tdHeight + "px";
+            }
+
             var nodes = this.__html.outerbox.querySelectorAll("#" + this.name + " > table > tbody > tr > td");
+
+            // 1st pass -> height: auto
             for (var i=0 ; i<nodes.length ; i++) {
                 nodes[i].style.height = "auto";
             }
-            var tdHeight;
+
+            // 2nd pass -> fixed height for all td where rowspan = 1
             for (var i=0 ; i<nodes.length ; i++) {
-                if (nodes[i].style.minHeight && nodes[i].style.minHeight == nodes[i].style.maxHeight) {
-                    tdHeight = parseFloat(nodes[i].style.minHeight);
-                }
-                else if (nodes[i].classList.contains("photonui-gridlayout-lastrow")) {
-                    tdHeight = nodes[i].offsetHeight;
-                }
-                else {
-                    tdHeight = nodes[i].offsetHeight;
-                }
-                nodes[i].style.height = tdHeight + "px";
+                if (nodes[i].rowSpan && nodes[i].rowSpan > 1) continue;
+                _size(nodes[i]);
+            }
+
+            // 3rd pass -> fixed height for all td where rowspan > 1
+            for (var i=0 ; i<nodes.length ; i++) {
+                if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) continue;
+                _size(nodes[i]);
             }
 
             this._updatingLayout = false;

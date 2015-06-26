@@ -2,6 +2,15 @@ html, body {
     font-family: Arial, sans-serif;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.jasmine_html-reporter {
+    order: -1;
+}
+
 h1 {
     color: #1C8495;
 }
