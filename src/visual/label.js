@@ -150,6 +150,9 @@ var Label = Widget.$extend({
                 );
             }
         }
+        else {
+            this.__html.label.removeAttribute("for");
+        }
     },
 
     /**

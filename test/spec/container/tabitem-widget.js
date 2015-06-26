@@ -58,5 +58,9 @@ describe("photonui.TabItem (widget)", function() {
         expect(div.childNodes).not.toContain(this.w.html);
     });
 
+    it("have its name as id of its HTML element", function() {
+        expect(this.w.html.id).toEqual(this.w.name);
+    });
+
 });
 
