@@ -132,4 +132,38 @@ Helpers.getAbsolutePosition = function(element) {
     return {x: x, y: y};
 }
 
+/**
+ * Check and compute size to valid CSS size
+ *
+ * Valid values and transformations:
+ *     undefined  -> defaultValue
+ *     null       -> "auto" (if "auto" is alowed, "0px" else)
+ *     +Infinity  -> "100%"
+ *     Number     -> "<Number>px"
+ *
+ * @method sanitizeSize
+ * @param {Number} value
+ * @param {Number} defaultValue (opt, default=null (="auto") or "0px" if "auto" is not allowed)
+ * @param {Booldean} allowAuto (opt, default=true)
+ * @return {String} sanitized version of the size.
+ */
+Helpers.sanitizeSize = function(value, defaultValue, allowAuto) {
+    var allowAuto = (allowAuto === undefined) ? true : allowAuto;
+    var defaultValue = (defaultValue === undefined) ? null : defaultValue;
+    var value = (value === undefined) ? defaultValue : value;
+
+    if (value === Infinity) {
+        return "100%";
+    }
+    else if (!isNaN(parseFloat(value))) {
+        return Math.max(0, parseFloat(value)|0) + "px";
+    }
+    else if (value !== defaultValue) {
+        return Helpers.sanitizeSize(defaultValue, defaultValue, allowAuto);
+    }
+    else {
+        return (allowAuto) ? "auto" : "0px";
+    }
+}
+
 module.exports = Helpers;
