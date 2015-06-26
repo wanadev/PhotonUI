@@ -141,15 +141,15 @@ Helpers.getAbsolutePosition = function(element) {
  *     +Infinity  -> "100%"
  *     Number     -> "<Number>px"
  *
- * @method sanitizeSize
+ * @method numberToCssSize
  * @param {Number} value
- * @param {Number} defaultValue (opt, default=null (="auto") or "0px" if "auto" is not allowed)
- * @param {Booldean} allowAuto (opt, default=true)
+ * @param {Number} defaultValue (opt, default=nullValue)
+ * @param {String} nullValue (opt, default="auto")
  * @return {String} sanitized version of the size.
  */
-Helpers.sanitizeSize = function(value, defaultValue, allowAuto) {
-    var allowAuto = (allowAuto === undefined) ? true : allowAuto;
-    var defaultValue = (defaultValue === undefined) ? null : defaultValue;
+Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
+    var nullValue = (nullValue === undefined) ? "auto" : nullValue;
+    var defaultValue = (nullValue === undefined) ? null : defaultValue;
     var value = (value === undefined) ? defaultValue : value;
 
     if (value === Infinity) {
@@ -159,10 +159,10 @@ Helpers.sanitizeSize = function(value, defaultValue, allowAuto) {
         return Math.max(0, parseFloat(value)|0) + "px";
     }
     else if (value !== defaultValue) {
-        return Helpers.sanitizeSize(defaultValue, defaultValue, allowAuto);
+        return Helpers.numberToCssSize(defaultValue, defaultValue, nullValue);
     }
     else {
-        return (allowAuto) ? "auto" : "0px";
+        return nullValue;
     }
 }
 

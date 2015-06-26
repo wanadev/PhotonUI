@@ -28,49 +28,49 @@ describe("photonui.Helpers", function() {
         });
     });
 
-    describe("sanitizeSize", function() {
+    describe("numberToCssSize", function() {
         it ("handles a Number as value", function() {
-            expect(photonui.Helpers.sanitizeSize(10)).toEqual("10px");
+            expect(photonui.Helpers.numberToCssSize(10)).toEqual("10px");
         });
 
         it ("handles a negative Number as value", function() {
-            expect(photonui.Helpers.sanitizeSize(-10)).toEqual("0px");
+            expect(photonui.Helpers.numberToCssSize(-10)).toEqual("0px");
         });
 
         it ("handles a floating point Number as value", function() {
-            expect(photonui.Helpers.sanitizeSize(10.5)).toEqual("10px");
+            expect(photonui.Helpers.numberToCssSize(10.5)).toEqual("10px");
         });
 
         it ("handles null as value", function() {
-            expect(photonui.Helpers.sanitizeSize(null)).toEqual("auto");
+            expect(photonui.Helpers.numberToCssSize(null)).toEqual("auto");
         });
 
         it ("handles undefined as value", function() {
-            expect(photonui.Helpers.sanitizeSize(undefined)).toEqual("auto");
+            expect(photonui.Helpers.numberToCssSize(undefined)).toEqual("auto");
         });
 
         it ("handles Infinity as value", function() {
-            expect(photonui.Helpers.sanitizeSize(Infinity)).toEqual("100%");
+            expect(photonui.Helpers.numberToCssSize(Infinity)).toEqual("100%");
         });
 
         it ("can return a default value", function() {
-            expect(photonui.Helpers.sanitizeSize(undefined, 10)).toEqual("10px");
+            expect(photonui.Helpers.numberToCssSize(undefined, 10)).toEqual("10px");
         });
 
-        it ("handles allowAuto", function() {
-            expect(photonui.Helpers.sanitizeSize(null, undefined, false)).toEqual("0px");
+        it ("handles nullValue", function() {
+            expect(photonui.Helpers.numberToCssSize(null, undefined, "100%")).toEqual("100%");
         });
 
-        it ("handles allowAuto with default value", function() {
-            expect(photonui.Helpers.sanitizeSize(undefined, undefined, false)).toEqual("0px");
+        it ("handles nullValue with default value", function() {
+            expect(photonui.Helpers.numberToCssSize(undefined, null)).toEqual("auto");
         });
 
         it ("handles invalid values", function() {
-            expect(photonui.Helpers.sanitizeSize("xx", 10)).toEqual("10px");
+            expect(photonui.Helpers.numberToCssSize("xx", 10)).toEqual("10px");
         });
 
         it ("handles invalid values in default", function() {
-            expect(photonui.Helpers.sanitizeSize("xx", "xx")).toEqual("auto");
+            expect(photonui.Helpers.numberToCssSize("xx", "xx")).toEqual("auto");
         });
     });
 

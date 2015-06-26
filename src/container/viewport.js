@@ -37,6 +37,7 @@
  */
 
 var Container = require("./container.js");
+var Helpers = require("../helpers.js");
 
 /**
  * Viewport.
