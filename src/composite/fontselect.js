@@ -53,9 +53,11 @@ var FontSelect = Select.$extend({
 
     // Constructor
     __init__: function(params) {
+        var params = params || {};
         this._fonts = [];
         this.$super(params);
         if (this.fonts.length == 0) this.fonts = ["sans-serif", "serif", "monospace"];
+        this.value = (params.value !== undefined) ? params.value : "sans-serif";
     },
 
 
@@ -88,15 +90,6 @@ var FontSelect = Select.$extend({
     },
 
     /**
-     * The field value.
-     *
-     * @property value
-     * @type String (maybe)
-     * @default "sans-serif"
-     */
-    _value: "sans-serif",
-
-    /**
      * The placeholder displayed if nothing is selected.
      *
      * @property Placeholder
@@ -125,6 +118,21 @@ var FontSelect = Select.$extend({
         item.html.style.fontFamily = fontName;
         this.addChild(item);
         this._fonts.push(fontName);
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.__html.select.className += " photonui-fontselect";
     }
 });
 
