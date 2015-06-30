@@ -59,6 +59,8 @@ var Select = Widget.$extend({
 
     // Constructor
     __init__: function(params) {
+        var params = params || {};
+
         // Attach popup & special mixin
         this.__popupMenu = new PopupMenu({
             maxHeight: 300,

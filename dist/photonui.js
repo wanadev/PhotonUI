@@ -2610,6 +2610,8 @@ var Select = Widget.$extend({
 
     // Constructor
     __init__: function(params) {
+        var params = params || {};
+
         // Attach popup & special mixin
         this.__popupMenu = new PopupMenu({
             maxHeight: 300,
@@ -2748,8 +2750,9 @@ var Select = Widget.$extend({
      * @type Number
      * @default: null (no minimum)
      */
+    _minWidthDefined: false,
     getPopupMinWidth: function () { return this.__popupMenu.getMinWidth(); },
-    setPopupMinWidth: function (p) { this.__popupMenu.setMinWidth(p); },
+    setPopupMinWidth: function (p) { this._minWidthDefined = true ; this.__popupMenu.setMinWidth(p); },
 
     /**
      * Maximum height of the popup container node.
@@ -2914,14 +2917,10 @@ var Select = Widget.$extend({
      * @param event
      */
     __onClick: function(event) {
-        //var minWidth = this.popupMinWidth;
-        //if (minWidth == null) {
+        if (!this._minWidthDefined) {
             this.popupMinWidth = this.offsetWidth;
-        //}
+        }
         this.__popupMenu.popupWidget(this);
-        //if (minWidth == null) {
-            //this.popupMinWidth = null;
-        //}
     },
 
     /**
