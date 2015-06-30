@@ -35,7 +35,7 @@
  * @submodule Container
  * @namespace photonui
  */
- 
+
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var Window = require("./window.js");
@@ -170,6 +170,7 @@ var Dialog = Window.$extend({
 
     // Alias needed for photonui.Widget.unparent()
     removeChild: function() {
+        this.$super.apply(this, arguments);
         this.removeButton.apply(this, arguments);
     },
 
@@ -214,7 +215,7 @@ var Dialog = Window.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.addClass("photonui-dialog");
+        this.__html["window"].className += " photonui-dialog";
 
         this.__html.buttons = document.createElement("div");
         this.__html.buttons.className = "photonui-dialog-buttons";
