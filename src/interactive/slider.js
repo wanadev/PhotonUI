@@ -130,8 +130,7 @@ var Slider = NumericField.$extend({
         var v = value - this.min;
         var m = this.max - this.min;
         var p = Math.min(Math.max(v/m, 0), 1);
-        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth;
-        this.__html.grip.style.left = Math.floor(p*w) + "px";
+        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
     },
 
 
