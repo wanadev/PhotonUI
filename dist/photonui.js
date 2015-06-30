@@ -2421,6 +2421,21 @@ var FontSelect = Select.$extend({
         item.html.style.fontFamily = fontName;
         this.addChild(item);
         this._fonts.push(fontName);
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.__html.select.className += " photonui-fontselect";
     }
 });
 
