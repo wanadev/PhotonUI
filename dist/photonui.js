@@ -7268,12 +7268,6 @@ var Slider = NumericField.$extend({
         return this.__html.outer;
     },
 
-    // Update the slider when setting the value...
-    setValue: function(value) {
-        this.$super(value);
-
-    },
-
 
     //////////////////////////////////////////
     // Methods                              //
