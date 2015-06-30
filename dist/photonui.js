@@ -370,12 +370,12 @@
 	function constructAMD() {
 
 		//create a library instance
-		return init();
+		return init(context);
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library;
-			library = factory('amd');
+			library = factory(context, 'amd');
 			library.fork = init;
 			return library;
 		}
@@ -387,14 +387,14 @@
 	function constructCommonJS() {
 
 		//create a library instance
-		module.exports = init();
+		module.exports = init(context);
 
 		return;
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library;
-			library = factory('CommonJS');
+			library = factory(context, 'CommonJS');
 			library.fork = init;
 			return library;
 
@@ -409,16 +409,16 @@
 		var library;
 
 		//create a library instance
-		library = init();
-		library.noConflict('KeyboardJS', 'k');
+		library = init(context);
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library, namespaces = [], previousValues = {};
 
-			library = factory('global');
+			library = factory(context, 'global');
 			library.fork = init;
 			library.noConflict = noConflict;
+			library.noConflict('KeyboardJS', 'k');
 			return library;
 
 			//sets library namespaces
@@ -452,13 +452,13 @@
 		}
 	}
 
-})(this, function(env) {
+})(this, function(targetWindow, env) {
 	var KeyboardJS = {}, locales = {}, locale, map, macros, activeKeys = [], bindings = [], activeBindings = [],
 	activeMacros = [], aI, usLocale;
-
+	targetWindow = targetWindow || window;
 
 	///////////////////////
-	// DEFUALT US LOCALE //
+	// DEFAULT US LOCALE //
 	///////////////////////
 
 	//define US locale
@@ -539,7 +539,7 @@
 			"108": ["numenter"],
 			"109": ["numsubtract", "num-"],
 			"110": ["numdecimal", "num."],
-			"111": ["numdevide", "num/"],
+			"111": ["numdivide", "num/"],
 			"144": ["numlock", "num"],
 
 			//function keys
@@ -587,6 +587,28 @@
 		usLocale.map[aI] = String.fromCharCode(aI + 32);
 		usLocale.macros.push(['shift + ' + String.fromCharCode(aI + 32) + ', capslock + ' + String.fromCharCode(aI + 32), [String.fromCharCode(aI)]]);
 	}
+
+  // Support command key on Mac.
+	// This is unfortunately browser specific
+	if(/^Mac/.test(navigator.platform)){
+		// Chrome,Safari
+		if(/Chrome/.test(navigator.userAgent) ||
+			 /Safari/.test(navigator.userAgent)){
+				 usLocale.map["93"] = usLocale.map["92"];
+		}
+		// Opera
+		if(/Opera/.test(navigator.userAgent)){
+			usLocale.map["17"] = usLocale.map["91"];
+			delete usLocale.map["91"];
+		}
+		// Firefox
+		if(/Firefox/.test(navigator.userAgent)){
+			usLocale.map["224"] = usLocale.map["91"];
+			delete usLocale.map["91"];
+		}
+		delete usLocale.map["92"];
+	}
+
 	registerLocale('us', usLocale);
 	getSetLocale('us');
 
@@ -607,6 +629,8 @@
 	KeyboardJS.enable = enable;
 	KeyboardJS.disable = disable;
 	KeyboardJS.activeKeys = getActiveKeys;
+	KeyboardJS.releaseKey = removeActiveKey;
+	KeyboardJS.pressKey = addActiveKey;
 	KeyboardJS.on = createBinding;
 	KeyboardJS.clear = removeBindingByKeyCombo;
 	KeyboardJS.clear.key = removeBindingByKeyName;
@@ -632,16 +656,16 @@
 	 * Enables KeyboardJS
 	 */
 	function enable() {
-		if(window.addEventListener) {
-			document.addEventListener('keydown', keydown, false);
-			document.addEventListener('keyup', keyup, false);
-			window.addEventListener('blur', reset, false);
-			window.addEventListener('webkitfullscreenchange', reset, false);
-			window.addEventListener('mozfullscreenchange', reset, false);
-		} else if(window.attachEvent) {
-			document.attachEvent('onkeydown', keydown);
-			document.attachEvent('onkeyup', keyup);
-			window.attachEvent('onblur', reset);
+		if(targetWindow.addEventListener) {
+			targetWindow.document.addEventListener('keydown', keydown, false);
+			targetWindow.document.addEventListener('keyup', keyup, false);
+			targetWindow.addEventListener('blur', reset, false);
+			targetWindow.addEventListener('webkitfullscreenchange', reset, false);
+			targetWindow.addEventListener('mozfullscreenchange', reset, false);
+		} else if(targetWindow.attachEvent) {
+			targetWindow.document.attachEvent('onkeydown', keydown);
+			targetWindow.document.attachEvent('onkeyup', keyup);
+			targetWindow.attachEvent('onblur', reset);
 		}
 	}
 
@@ -650,16 +674,16 @@
 	 */
 	function disable() {
 		reset();
-		if(window.removeEventListener) {
-			document.removeEventListener('keydown', keydown, false);
-			document.removeEventListener('keyup', keyup, false);
-			window.removeEventListener('blur', reset, false);
-			window.removeEventListener('webkitfullscreenchange', reset, false);
-			window.removeEventListener('mozfullscreenchange', reset, false);
-		} else if(window.detachEvent) {
-			document.detachEvent('onkeydown', keydown);
-			document.detachEvent('onkeyup', keyup);
-			window.detachEvent('onblur', reset);
+		if(targetWindow.removeEventListener) {
+			targetWindow.document.removeEventListener('keydown', keydown, false);
+			targetWindow.document.removeEventListener('keyup', keyup, false);
+			targetWindow.removeEventListener('blur', reset, false);
+			targetWindow.removeEventListener('webkitfullscreenchange', reset, false);
+			targetWindow.removeEventListener('mozfullscreenchange', reset, false);
+		} else if(targetWindow.detachEvent) {
+			targetWindow.document.detachEvent('onkeydown', keydown);
+			targetWindow.document.detachEvent('onkeyup', keyup);
+			targetWindow.detachEvent('onblur', reset);
 		}
 	}
 
@@ -1248,6 +1272,22 @@
 		var keyCode = getKeyCode(keyName);
 		if(keyCode === '91' || keyCode === '92') { activeKeys = []; } //remove all key on release of super.
 		else { activeKeys.splice(activeKeys.indexOf(keyName), 1); }
+		// Mac Specific remove all keys on release of super
+		if(/^Mac/.test(navigator.platform)){
+			// Chrome,Safari
+			if(/Chrome/.test(navigator.userAgent) ||
+				 /Safari/.test(navigator.userAgent)){
+				if(keyCode === '91' || keyCode === '93') { activeKeys = []; }
+			}
+			// Opera
+			if(/Opera/.test(navigator.userAgent) && keyCode == "17"){
+				activeKeys = [];
+			}
+			// Firefox
+			if(/Firefox/.test(navigator.userAgent) && keyCode == "224"){
+				activeKeys = [];
+			}
+		}
 	}
 
 
@@ -1298,6 +1338,8 @@
 		return locale;
 	}
 });
+
+
 
 },{}],4:[function(require,module,exports){
 /*
@@ -12557,7 +12599,16 @@ var Label = Widget.$extend({
     setText: function(text) {
         this._text = text;
         photonui.Helpers.cleanNode(this.__html.label);
-        this.__html.label.appendChild(document.createTextNode(text));
+
+        var lines = text.split("\n");
+
+        for (var i=0 ; i<lines.length ; i++) {
+            this.__html.label.appendChild(document.createTextNode(lines[i]));
+            if (i<lines.length-1) {
+                this.__html.label.appendChild(document.createElement("br"));
+            }
+        }
+
     },
 
     /**
