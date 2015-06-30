@@ -2914,7 +2914,14 @@ var Select = Widget.$extend({
      * @param event
      */
     __onClick: function(event) {
+        //var minWidth = this.popupMinWidth;
+        //if (minWidth == null) {
+            this.popupMinWidth = this.offsetWidth;
+        //}
         this.__popupMenu.popupWidget(this);
+        //if (minWidth == null) {
+            //this.popupMinWidth = null;
+        //}
     },
 
     /**
