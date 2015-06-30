@@ -127,10 +127,6 @@ var Slider = NumericField.$extend({
     setValue: function(value) {
         this.$super(value);
 
-        var v = value - this.min;
-        var m = this.max - this.min;
-        var p = Math.min(Math.max(v/m, 0), 1);
-        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
     },
 
 
@@ -141,6 +137,20 @@ var Slider = NumericField.$extend({
 
     // ====== Private methods ======
 
+
+    /**
+     * Update the value in the html field.
+     *
+     * @method _updateFieldValue
+     * @private
+     */
+    _updateFieldValue: function() {
+        this.$super();
+        var v = this.value - this.min;
+        var m = this.max - this.min;
+        var p = Math.min(Math.max(v/m, 0), 1);
+        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
+    },
 
     /**
      * Build the widget HTML.
