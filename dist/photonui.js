@@ -3576,7 +3576,7 @@ module.exports = Container;
  * @submodule Container
  * @namespace photonui
  */
- 
+
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var Window = require("./window.js");
@@ -3651,8 +3651,10 @@ var Dialog = Window.$extend({
      */
     getButtons: function() {
         var buttons = [];
+        var widget;
         for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            buttons.push(Widget.getWidget(this._buttonsNames[i]));
+            widget = Widget.getWidget(this._buttonsNames[i]);
+            if (widget instanceof Widget) buttons.push(widget);
         }
         return buttons;
     },
@@ -3711,6 +3713,7 @@ var Dialog = Window.$extend({
 
     // Alias needed for photonui.Widget.unparent()
     removeChild: function() {
+        this.$super.apply(this, arguments);
         this.removeButton.apply(this, arguments);
     },
 
@@ -3755,7 +3758,7 @@ var Dialog = Window.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.addClass("photonui-dialog");
+        this.__html["window"].className += " photonui-dialog";
 
         this.__html.buttons = document.createElement("div");
         this.__html.buttons.className = "photonui-dialog-buttons";
@@ -9100,8 +9103,10 @@ var Layout = Container.$extend({
      */
     getChildren: function() {
         var children = [];
+        var widget;
         for (var i=0 ; i<this._childrenNames.length ; i++) {
-            children.push(Widget.getWidget(this._childrenNames[i]));
+            widget = Widget.getWidget(this._childrenNames[i]);
+            if (widget instanceof Widget) children.push(widget);
         }
         return children;
     },
