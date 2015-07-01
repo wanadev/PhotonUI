@@ -12628,7 +12628,7 @@ var Label = Widget.$extend({
         this._text = text;
         photonui.Helpers.cleanNode(this.__html.label);
 
-        var lines = text.split("\n");
+        var lines = (text+"").split("\n");
 
         for (var i=0 ; i<lines.length ; i++) {
             this.__html.label.appendChild(document.createTextNode(lines[i]));
