@@ -3651,8 +3651,10 @@ var Dialog = Window.$extend({
      */
     getButtons: function() {
         var buttons = [];
+        var widget;
         for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            buttons.push(Widget.getWidget(this._buttonsNames[i]));
+            widget = Widget.getWidget(this._buttonsNames[i]);
+            if (widget instanceof Widget) buttons.push(widget);
         }
         return buttons;
     },
@@ -9101,8 +9103,10 @@ var Layout = Container.$extend({
      */
     getChildren: function() {
         var children = [];
+        var widget;
         for (var i=0 ; i<this._childrenNames.length ; i++) {
-            children.push(Widget.getWidget(this._childrenNames[i]));
+            widget = Widget.getWidget(this._childrenNames[i]);
+            if (widget instanceof Widget) children.push(widget);
         }
         return children;
     },

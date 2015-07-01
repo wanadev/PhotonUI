@@ -110,8 +110,10 @@ var Dialog = Window.$extend({
      */
     getButtons: function() {
         var buttons = [];
+        var widget;
         for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            buttons.push(Widget.getWidget(this._buttonsNames[i]));
+            widget = Widget.getWidget(this._buttonsNames[i]);
+            if (widget instanceof Widget) buttons.push(widget);
         }
         return buttons;
     },
