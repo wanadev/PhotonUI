@@ -44,6 +44,21 @@ describe("photonui.Layout", function() {
         expect(this.w3.parent).toBe(this.l1);
     });
 
+    it("can update its children parents (declarative way)", function() {
+        var l1 = new DummyLayout({
+            children: [
+                new DummyWidget({name: "widget1"})
+            ]
+        });
+        var w1 = photonui.getWidget("widget1");
+
+        expect(l1.children.length).toEqual(1);
+        expect(w1.parentName).toBe(l1.name);
+        expect(w1.parent).toBe(l1);
+
+        l1.destroy();
+    });
+
     it("can have its children removed", function() {
         this.l1.children = [this.w1, this.w2];
         this.l1.children = [];

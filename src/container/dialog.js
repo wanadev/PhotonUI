@@ -55,6 +55,12 @@ var Dialog = Window.$extend({
     __init__: function(params) {
         this._buttonsNames = [];
         this.$super(params);
+
+        // Force to update the parent of the buttons
+        var buttons = this.buttons;
+        for (var i=0 ; i<buttons.length ; i++) {
+            buttons[i]._parentName = this.name;
+        }
     },
 
 
