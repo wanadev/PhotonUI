@@ -47,6 +47,27 @@
 
     function LazyString(string, replacements) {
         this.toString = gettext.bind(this, string, replacements);
+
+        var props = Object.getOwnPropertyNames(String.prototype);
+        for (var i=0 ; i<props.length ; i++) {
+            if (props[i] == "toString") continue;
+            if (typeof(String.prototype[props[i]]) == "function") {
+                this[props[i]] = function() {
+                    var translatedString = this.self.toString();
+                    return translatedString[this.prop].apply(translatedString, arguments);
+                }.bind({self: this, prop: props[i]});
+            }
+            else {
+                Object.defineProperty(this, props[i], {
+                    get: function() {
+                        var translatedString = this.self.toString();
+                        return translatedString[this.prop]
+                    }.bind({self: this, prop: props[i]}),
+                    enumerable: false,
+                    configurable: false
+                });
+            }
+        }
     }
 
     function gettext(string, replacements) {
@@ -158,7 +179,8 @@
                     }
                 }
 
-                elements[i].innerHTML = gettext(elements[i].getAttribute("stonejs-orig-string"), params);
+                __gettext = gettext;  // Avoid false detection
+                elements[i].innerHTML = __gettext(elements[i].getAttribute("stonejs-orig-string"), params);
             }
         }
     }
@@ -455,7 +477,7 @@
 })(this, function(targetWindow, env) {
 	var KeyboardJS = {}, locales = {}, locale, map, macros, activeKeys = [], bindings = [], activeBindings = [],
 	activeMacros = [], aI, usLocale;
-	targetWindow = targetWindow || window;
+	targetWindow = (targetWindow && Object.getOwnPropertyNames(targetWindow).length > 0 ) ? targetWindow : window;
 
 	///////////////////////
 	// DEFAULT US LOCALE //
