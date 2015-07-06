@@ -1,204 +1,4 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*
- * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of the author nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-(function (root, factory) {
-    // Assign to module.exports if the environment supports CommonJS.
-    // If root.Stone is already defined/truthy, use a Browser version nonetheless.
-    // ^ Useful for nw.js or atom-shell where you might want to still use the global version.
-    if (typeof module === "object" && module.exports && !root.Stone) {
-        module.exports = factory();
-    }
-    // Otherwise use a global variable.
-    else {
-        root.Stone = factory();
-    }
-
-} (this, function() {
-
-    var catalogs = {};
-    var locale = null;
-    var domScan = false;
-
-    function LazyString(string, replacements) {
-        this.toString = gettext.bind(this, string, replacements);
-
-        var props = Object.getOwnPropertyNames(String.prototype);
-        for (var i=0 ; i<props.length ; i++) {
-            if (props[i] == "toString") continue;
-            if (typeof(String.prototype[props[i]]) == "function") {
-                this[props[i]] = function() {
-                    var translatedString = this.self.toString();
-                    return translatedString[this.prop].apply(translatedString, arguments);
-                }.bind({self: this, prop: props[i]});
-            }
-            else {
-                Object.defineProperty(this, props[i], {
-                    get: function() {
-                        var translatedString = this.self.toString();
-                        return translatedString[this.prop]
-                    }.bind({self: this, prop: props[i]}),
-                    enumerable: false,
-                    configurable: false
-                });
-            }
-        }
-    }
-
-    function gettext(string, replacements) {
-        var result = string;
-
-        if (locale && catalogs[locale] && catalogs[locale][string]) {
-            result = catalogs[locale][string];
-        }
-
-        if (replacements) {
-            for (var r in replacements) {
-                result = result.replace(new RegExp("\{" + r + "\}", "g"), replacements[r]);
-            }
-        }
-
-        return result;
-    }
-
-    function lazyGettext(string, replacements) {
-        return new LazyString(string, replacements);
-    }
-
-    function addCatalogs(newCatalogs) {
-        for (var locale in newCatalogs) {
-            catalogs[locale] = newCatalogs[locale];
-        }
-    }
-
-    function getLocale() {
-        return locale;
-    }
-
-    function setLocale(l) {
-        locale = l;
-        if (domScan) {
-            updateDomTranslation();
-        }
-        _sendEvent("stonejs-locale-changed");
-    }
-
-    function guessUserLanguage() {
-        var lang = navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || null;
-
-        if (lang) {
-            lang = lang.toLowerCase();
-        }
-
-        if (lang && lang.length > 3) {
-            lang = lang.split(";")[0];
-            lang = lang.split(",")[0];
-            lang = lang.split("-")[0];
-            lang = lang.split("_")[0];
-            if (lang.length > 3) {
-                lang = null;
-            }
-        }
-
-        return lang || "en";
-    }
-
-    function _sendEvent(name, data) {
-        var data = data || {};
-        var ev = null;
-        try {
-            ev = new Event(name);
-        }
-        catch (e) {
-            // The old-fashioned way... THANK YOU MSIE!
-            ev = document.createEvent("Event");
-            ev.initEvent(name, true, false);
-        }
-        for (var i in data) {
-            ev[i] = data[i];
-        }
-        document.dispatchEvent(ev);
-    }
-
-    function _autoloadCatalogs(event) {
-        addCatalogs(event.catalog);
-    }
-
-    document.addEventListener("stonejs-autoload-catalogs", _autoloadCatalogs, true);
-
-    function enableDomScan(enable) {
-        domScan = !!enable;
-        if (domScan) {
-            updateDomTranslation();
-        }
-    }
-
-    function updateDomTranslation() {
-        var elements = document.getElementsByTagName("*");
-        var params = null;
-        var attrs = null;
-        var i = 0;
-        var j = 0;
-        for (i=0 ; i<elements.length ; i++) {
-            if (elements[i].hasAttribute("stonejs")) {
-                // First pass
-                if (!elements[i].hasAttribute("stonejs-orig-string")) {
-                    elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
-                }
-
-                params = {};
-                attrs = elements[i].attributes;
-                for (j=0 ; j<attrs.length ; j++) {
-                    if (attrs[j].name.indexOf("stonejs-param-") == 0) {
-                        params[attrs[j].name.substr(14)] = attrs[j].value;
-                    }
-                }
-
-                __gettext = gettext;  // Avoid false detection
-                elements[i].innerHTML = __gettext(elements[i].getAttribute("stonejs-orig-string"), params);
-            }
-        }
-    }
-
-    return {
-        LazyString: LazyString,
-        gettext: gettext,
-        lazyGettext: lazyGettext,
-        addCatalogs: addCatalogs,
-        getLocale: getLocale,
-        setLocale: setLocale,
-        guessUserLanguage: guessUserLanguage,
-        enableDomScan: enableDomScan,
-        updateDomTranslation: updateDomTranslation
-    }
-}));
-
-},{}],2:[function(require,module,exports){
 /**
  * Classy - classy classes for JavaScript
  *
@@ -360,7 +160,7 @@
   /* export the class */
   return Class;
 });
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * Title: KeyboardJS
  * Version: v0.4.1
@@ -1363,6 +1163,192 @@
 
 
 
+},{}],3:[function(require,module,exports){
+/*
+ * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of the author nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+var catalogs = {};
+var locale = null;
+var domScan = false;
+
+function LazyString(string, replacements) {
+    this.toString = gettext.bind(this, string, replacements);
+
+    var props = Object.getOwnPropertyNames(String.prototype);
+    for (var i=0 ; i<props.length ; i++) {
+        if (props[i] == "toString") continue;
+        if (typeof(String.prototype[props[i]]) == "function") {
+            this[props[i]] = function() {
+                var translatedString = this.self.toString();
+                return translatedString[this.prop].apply(translatedString, arguments);
+            }.bind({self: this, prop: props[i]});
+        }
+        else {
+            Object.defineProperty(this, props[i], {
+                get: function() {
+                    var translatedString = this.self.toString();
+                    return translatedString[this.prop]
+                }.bind({self: this, prop: props[i]}),
+                enumerable: false,
+                configurable: false
+            });
+        }
+    }
+}
+
+function gettext(string, replacements) {
+    var result = string;
+
+    if (locale && catalogs[locale] && catalogs[locale][string]) {
+        result = catalogs[locale][string];
+    }
+
+    if (replacements) {
+        for (var r in replacements) {
+            result = result.replace(new RegExp("\{" + r + "\}", "g"), replacements[r]);
+        }
+    }
+
+    return result;
+}
+
+function lazyGettext(string, replacements) {
+    return new LazyString(string, replacements);
+}
+
+function addCatalogs(newCatalogs) {
+    for (var locale in newCatalogs) {
+        catalogs[locale] = newCatalogs[locale];
+    }
+}
+
+function getLocale() {
+    return locale;
+}
+
+function setLocale(l) {
+    locale = l;
+    if (domScan) {
+        updateDomTranslation();
+    }
+    _sendEvent("stonejs-locale-changed");
+}
+
+function guessUserLanguage() {
+    var lang = navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || null;
+
+    if (lang) {
+        lang = lang.toLowerCase();
+    }
+
+    if (lang && lang.length > 3) {
+        lang = lang.split(";")[0];
+        lang = lang.split(",")[0];
+        lang = lang.split("-")[0];
+        lang = lang.split("_")[0];
+        if (lang.length > 3) {
+            lang = null;
+        }
+    }
+
+    return lang || "en";
+}
+
+function _sendEvent(name, data) {
+    var data = data || {};
+    var ev = null;
+    try {
+        ev = new Event(name);
+    }
+    catch (e) {
+        // The old-fashioned way... THANK YOU MSIE!
+        ev = document.createEvent("Event");
+        ev.initEvent(name, true, false);
+    }
+    for (var i in data) {
+        ev[i] = data[i];
+    }
+    document.dispatchEvent(ev);
+}
+
+function _autoloadCatalogs(event) {
+    addCatalogs(event.catalog);
+}
+
+document.addEventListener("stonejs-autoload-catalogs", _autoloadCatalogs, true);
+
+function enableDomScan(enable) {
+    domScan = !!enable;
+    if (domScan) {
+        updateDomTranslation();
+    }
+}
+
+function updateDomTranslation() {
+    var elements = document.getElementsByTagName("*");
+    var params = null;
+    var attrs = null;
+    var i = 0;
+    var j = 0;
+    for (i=0 ; i<elements.length ; i++) {
+        if (elements[i].hasAttribute("stonejs")) {
+            // First pass
+            if (!elements[i].hasAttribute("stonejs-orig-string")) {
+                elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
+            }
+
+            params = {};
+            attrs = elements[i].attributes;
+            for (j=0 ; j<attrs.length ; j++) {
+                if (attrs[j].name.indexOf("stonejs-param-") == 0) {
+                    params[attrs[j].name.substr(14)] = attrs[j].value;
+                }
+            }
+
+            __gettext = gettext;  // Avoid false detection
+            elements[i].innerHTML = __gettext(elements[i].getAttribute("stonejs-orig-string"), params);
+        }
+    }
+}
+
+module.exports = {
+    LazyString: LazyString,
+    gettext: gettext,
+    lazyGettext: lazyGettext,
+    addCatalogs: addCatalogs,
+    getLocale: getLocale,
+    setLocale: setLocale,
+    guessUserLanguage: guessUserLanguage,
+    enableDomScan: enableDomScan,
+    updateDomTranslation: updateDomTranslation
+};
+
 },{}],4:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
@@ -1672,7 +1658,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":19,"classyjs":2}],5:[function(require,module,exports){
+},{"./helpers.js":19,"classyjs":1}],5:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -1711,7 +1697,7 @@ module.exports = Base;
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Button = require("../interactive/button.js");
 var Color = require("../nonvisual/color.js");
 var ColorPalette = require("../interactive/colorpalette.js");
@@ -1943,7 +1929,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../../lib/stone.js":1,"../container/popupwindow.js":14,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../layout/boxlayout.js":31,"../nonvisual/color.js":38,"./colorpickerdialog.js":6}],6:[function(require,module,exports){
+},{"../container/popupwindow.js":14,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../layout/boxlayout.js":31,"../nonvisual/color.js":38,"./colorpickerdialog.js":6,"stonejs":3}],6:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -1982,7 +1968,7 @@ module.exports = ColorButton;
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Dialog = require("../container/dialog.js");
 var BoxLayout = require("../layout/boxlayout.js");
 var GridLayout = require("../layout/gridlayout.js");
@@ -2315,7 +2301,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../../lib/stone.js":1,"../container/dialog.js":12,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../interactive/colorpicker.js":23,"../interactive/slider.js":26,"../layout/boxlayout.js":31,"../layout/gridlayout.js":33,"../nonvisual/color.js":38,"../visual/faicon.js":46,"../visual/label.js":48,"../visual/separator.js":50}],7:[function(require,module,exports){
+},{"../container/dialog.js":12,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../interactive/colorpicker.js":23,"../interactive/slider.js":26,"../layout/boxlayout.js":31,"../layout/gridlayout.js":33,"../nonvisual/color.js":38,"../visual/faicon.js":46,"../visual/label.js":48,"../visual/separator.js":50,"stonejs":3}],7:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2354,7 +2340,7 @@ module.exports = ColorPickerDialog;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Select = require("./select.js");
 var MenuItem = require("../container/menuitem.js");
 
@@ -2456,7 +2442,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../../lib/stone.js":1,"../container/menuitem.js":13,"./select.js":9}],8:[function(require,module,exports){
+},{"../container/menuitem.js":13,"./select.js":9,"stonejs":3}],8:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2617,7 +2603,7 @@ module.exports = PopupMenu;
  * @namespace photonui
  */
 
-var Stone  = require("../../lib/stone.js");
+var Stone  = require("stonejs");
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var PopupMenu = require("./popupmenu.js");
@@ -2966,7 +2952,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../../lib/stone.js":1,"../container/menuitem.js":13,"../helpers.js":19,"../widget.js":53,"./popupmenu.js":8}],10:[function(require,module,exports){
+},{"../container/menuitem.js":13,"../helpers.js":19,"../widget.js":53,"./popupmenu.js":8,"stonejs":3}],10:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4786,7 +4772,7 @@ module.exports = Viewport;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Helpers = require("../helpers.js");
 var BaseWindow = require("./basewindow.js");
 
@@ -5136,7 +5122,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../../lib/stone.js":1,"../helpers.js":19,"./basewindow.js":10}],19:[function(require,module,exports){
+},{"../helpers.js":19,"./basewindow.js":10,"stonejs":3}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9894,7 +9880,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":4,"keyboardjs":3}],38:[function(require,module,exports){
+},{"../base.js":4,"keyboardjs":2}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11617,7 +11603,7 @@ module.exports = SpriteSheet;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("../base.js");
 
 /**
@@ -11747,7 +11733,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../../lib/stone.js":1,"../base.js":4}],43:[function(require,module,exports){
+},{"../base.js":4,"stonejs":3}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11793,7 +11779,7 @@ var photonui = {};
 photonui.lib = {};
 photonui.lib.Class = require("classyjs");
 photonui.lib.KeyboardJS = require("keyboardjs");
-photonui.lib.Stone = require("../lib/stone");
+photonui.lib.Stone = require("stonejs");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -11856,7 +11842,7 @@ photonui.TabLayout = require("./layout/tablayout.js");
 
 module.exports = photonui;
 
-},{"../lib/stone":1,"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/tabitem.js":16,"./container/viewport.js":17,"./container/window.js":18,"./helpers.js":19,"./interactive/button.js":20,"./interactive/checkbox.js":21,"./interactive/colorpalette.js":22,"./interactive/colorpicker.js":23,"./interactive/field.js":24,"./interactive/numericfield.js":25,"./interactive/slider.js":26,"./interactive/switch.js":27,"./interactive/textareafield.js":28,"./interactive/textfield.js":29,"./interactive/togglebutton.js":30,"./layout/boxlayout.js":31,"./layout/fluidlayout.js":32,"./layout/gridlayout.js":33,"./layout/layout.js":34,"./layout/menu.js":35,"./layout/tablayout.js":36,"./nonvisual/accelmanager.js":37,"./nonvisual/color.js":38,"./nonvisual/filemanager.js":39,"./nonvisual/mousemanager.js":40,"./nonvisual/spritesheet.js":41,"./nonvisual/translation.js":42,"./visual/baseicon.js":44,"./visual/canvas.js":45,"./visual/faicon.js":46,"./visual/image.js":47,"./visual/label.js":48,"./visual/progressbar.js":49,"./visual/separator.js":50,"./visual/spriteicon.js":51,"./visual/text.js":52,"./widget.js":53,"classyjs":2,"keyboardjs":3}],44:[function(require,module,exports){
+},{"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/tabitem.js":16,"./container/viewport.js":17,"./container/window.js":18,"./helpers.js":19,"./interactive/button.js":20,"./interactive/checkbox.js":21,"./interactive/colorpalette.js":22,"./interactive/colorpicker.js":23,"./interactive/field.js":24,"./interactive/numericfield.js":25,"./interactive/slider.js":26,"./interactive/switch.js":27,"./interactive/textareafield.js":28,"./interactive/textfield.js":29,"./interactive/togglebutton.js":30,"./layout/boxlayout.js":31,"./layout/fluidlayout.js":32,"./layout/gridlayout.js":33,"./layout/layout.js":34,"./layout/menu.js":35,"./layout/tablayout.js":36,"./nonvisual/accelmanager.js":37,"./nonvisual/color.js":38,"./nonvisual/filemanager.js":39,"./nonvisual/mousemanager.js":40,"./nonvisual/spritesheet.js":41,"./nonvisual/translation.js":42,"./visual/baseicon.js":44,"./visual/canvas.js":45,"./visual/faicon.js":46,"./visual/image.js":47,"./visual/label.js":48,"./visual/progressbar.js":49,"./visual/separator.js":50,"./visual/spriteicon.js":51,"./visual/text.js":52,"./widget.js":53,"classyjs":1,"keyboardjs":2,"stonejs":3}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13388,7 +13374,7 @@ module.exports = SpriteIcon;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Widget = require("../widget.js");
 var Helpers = require("../helpers.js");
 
@@ -13502,7 +13488,7 @@ var Text = Widget.$extend({
 
 module.exports = Text;
 
-},{"../../lib/stone.js":1,"../helpers.js":19,"../widget.js":53}],53:[function(require,module,exports){
+},{"../helpers.js":19,"../widget.js":53,"stonejs":3}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13540,7 +13526,7 @@ module.exports = Text;
  * @namespace photonui
  */
 
-var Stone = require("../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
 
@@ -14012,5 +13998,5 @@ Widget.domInsert = function(widget, element) {
 
 module.exports = Widget;
 
-},{"../lib/stone.js":1,"./base.js":4,"./container/popupwindow.js":14,"./helpers.js":19,"./photonui.js":43}]},{},[43])(43)
+},{"./base.js":4,"./container/popupwindow.js":14,"./helpers.js":19,"./photonui.js":43,"stonejs":3}]},{},[43])(43)
 });

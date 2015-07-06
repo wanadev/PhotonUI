@@ -36,7 +36,7 @@
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Dialog = require("../container/dialog.js");
 var BoxLayout = require("../layout/boxlayout.js");
 var GridLayout = require("../layout/gridlayout.js");

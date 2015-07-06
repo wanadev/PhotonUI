@@ -36,7 +36,7 @@
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Button = require("../interactive/button.js");
 var Color = require("../nonvisual/color.js");
 var ColorPalette = require("../interactive/colorpalette.js");
