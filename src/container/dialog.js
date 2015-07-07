@@ -228,7 +228,24 @@ var Dialog = Window.$extend({
         this.__html.buttons = document.createElement("div");
         this.__html.buttons.className = "photonui-dialog-buttons";
         this.__html["window"].appendChild(this.__html.buttons);
-    }
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        var buttons = this.buttons;
+        for (var i=0 ; i<buttons.length ; i++) {
+            if (!this.child instanceof Widget) continue;
+            buttons[i]._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
+    },
 });
 
 module.exports = Dialog;

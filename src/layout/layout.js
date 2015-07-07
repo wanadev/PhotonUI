@@ -230,6 +230,23 @@ var Layout = Container.$extend({
         throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
     },
 
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            if (!this.child instanceof Widget) continue;
+            children[i]._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
+    },
+
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
