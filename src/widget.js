@@ -47,11 +47,11 @@ var _widgets = {};
  *
  * wEvents:
  *
- *   * shown:
+ *   * show:
  *      - description: called when the widget is displayed (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
- *   * hidden:
+ *   * hide:
  *      - description: called when the widget is hidden (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
@@ -72,7 +72,7 @@ var Widget = Base.$extend({
         this._buildHtml();
 
         // wEvents
-        this._registerWEvents(["shown", "hide"]);
+        this._registerWEvents(["show", "hide"]);
 
         // Parent constructor
         this.$super(params);
@@ -445,7 +445,7 @@ var Widget = Base.$extend({
     _visibilityChanged: function(visibility) {
         var visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility) {
-            this._callCallbacks("shown");
+            this._callCallbacks("show");
         }
         else {
             this._callCallbacks("hide");
