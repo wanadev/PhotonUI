@@ -80,15 +80,25 @@ var SubMenuItem = MenuItem.$extend({
     },
 
     setMenuName: function(menuName) {
-        if (this.menuName) {
+        if (this.menuName && this.menu) {
             this.menu.removeCallback("fold");
             this.menu.removeCallback("unfold");
         }
         this._menuName = menuName;
         if (this.menuName) {
-            this.menu.registerCallback("fold", "hide", this.__onToggleFold, this);
-            this.menu.registerCallback("unfold", "show", this.__onToggleFold, this);
-            this.active = this.menu.visible;
+            that = this;
+            function _init() {
+                if (!that.menu) return;
+                that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
+                that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
+                that.active = that.menu.visible;
+            }
+            if (this.menu) {
+                _init();
+            }
+            else {
+                setTimeout(_init, 10);
+            }
         }
     },
 

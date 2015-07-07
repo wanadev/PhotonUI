@@ -955,21 +955,21 @@ var win2 = new photonui.Window({
             new photonui.SubMenuItem({
                 text: "Item 4",
                 icon: new photonui.FAIcon("fa-wrench"),
-                menu: new photonui.Menu({
-                    name: "menu-2",
-                    children: [
-                        new photonui.MenuItem({
-                            text: "Sub Menu Item 1",
-                            icon: new photonui.FAIcon("fa-paw")
-                        }),
-                        new photonui.MenuItem({
-                            text: "Sub Menu Item 2",
-                            icon: new photonui.FAIcon("fa-gears")
-                        }),
-                    ]
-                })
+                menuName: "menu-2",
             }),
-            photonui.getWidget("menu-2"),
+            new photonui.Menu({
+                name: "menu-2",
+                children: [
+                    new photonui.MenuItem({
+                        text: "Sub Menu Item 1",
+                        icon: new photonui.FAIcon("fa-paw")
+                    }),
+                    new photonui.MenuItem({
+                        text: "Sub Menu Item 2",
+                        icon: new photonui.FAIcon("fa-gears")
+                    }),
+                ]
+            }),
             new photonui.MenuItem({
                 text: "Item 5",
                 icon: new photonui.FAIcon("fa-paper-plane-o")
