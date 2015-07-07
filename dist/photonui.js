@@ -1590,6 +1590,7 @@ var Base = Class.$extend({
      * @param {Function} callback The function that will be called when the event occured.
      */
     _bindEvent: function(id, element, evName, callback) {
+        this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
             element: element,
@@ -1610,6 +1611,7 @@ var Base = Class.$extend({
      * @param {String} id The id of the event.
      */
     _unbindEvent: function(id) {
+        if (!this.__events[id]) return;
         this.__events[id].element.removeEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,
