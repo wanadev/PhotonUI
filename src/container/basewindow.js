@@ -357,8 +357,8 @@ var BaseWindow = Container.$extend({
         var node = Widget.e_parent || document.getElementsByTagName("body")[0];
         if (!node) return;
         this.setPosition(
-                Math.round((node.offsetWidth - this.offsetWidth) / 2),
-                Math.round((node.offsetHeight - this.offsetHeight) / 2)
+                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0)|0,
+                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0)|0
         );
     },
 

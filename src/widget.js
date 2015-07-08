@@ -35,7 +35,7 @@
  * @namespace photonui
  */
 
-var Stone = require("../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
 
@@ -48,11 +48,11 @@ var _widgets = {};
  * wEvents:
  *
  *   * show:
- *      - description: called when the widget is displayed.
+ *      - description: called when the widget is displayed (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
- *   * hidden:
- *      - description: called when the widget is hidden.
+ *   * hide:
+ *      - description: called when the widget is hidden (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
  * @class Widget
@@ -171,18 +171,17 @@ var Widget = Base.$extend({
     },
 
     setVisible: function(visible) {
-        this._visible = visible;
+        this._visible = !!visible;
         if (!this.html) {
             return;
         }
-        if (this.visible) {
+        if (visible) {
             this.html.style.display = "";
-            this._callCallbacks("show");
         }
         else {
             this.html.style.display = "none";
-            this._callCallbacks("hide");
         }
+        this._visibilityChanged();
     },
 
     /**
@@ -434,6 +433,23 @@ var Widget = Base.$extend({
      */
     _buildHtml: function() {
         console.warn("_buildHtml() method not implemented for this widget.");
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility) {
+            this._callCallbacks("show");
+        }
+        else {
+            this._callCallbacks("hide");
+        }
     },
 
 

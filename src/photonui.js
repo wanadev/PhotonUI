@@ -43,7 +43,7 @@ var photonui = {};
 photonui.lib = {};
 photonui.lib.Class = require("classyjs");
 photonui.lib.KeyboardJS = require("keyboardjs");
-photonui.lib.Stone = require("../lib/stone");
+photonui.lib.Stone = require("stonejs");
 
 // Base
 photonui.Helpers = require("./helpers.js");

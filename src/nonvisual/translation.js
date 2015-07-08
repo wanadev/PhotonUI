@@ -36,7 +36,7 @@
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("../base.js");
 
 /**

@@ -1,182 +1,4 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*
- * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of the author nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-(function (root, factory) {
-    // Assign to module.exports if the environment supports CommonJS.
-    // If root.Stone is already defined/truthy, use a Browser version nonetheless.
-    // ^ Useful for nw.js or atom-shell where you might want to still use the global version.
-    if (typeof module === "object" && module.exports && !root.Stone) {
-        module.exports = factory();
-    }
-    // Otherwise use a global variable.
-    else {
-        root.Stone = factory();
-    }
-
-} (this, function() {
-
-    var catalogs = {};
-    var locale = null;
-    var domScan = false;
-
-    function LazyString(string, replacements) {
-        this.toString = gettext.bind(this, string, replacements);
-    }
-
-    function gettext(string, replacements) {
-        var result = string;
-
-        if (locale && catalogs[locale] && catalogs[locale][string]) {
-            result = catalogs[locale][string];
-        }
-
-        if (replacements) {
-            for (var r in replacements) {
-                result = result.replace(new RegExp("\{" + r + "\}", "g"), replacements[r]);
-            }
-        }
-
-        return result;
-    }
-
-    function lazyGettext(string, replacements) {
-        return new LazyString(string, replacements);
-    }
-
-    function addCatalogs(newCatalogs) {
-        for (var locale in newCatalogs) {
-            catalogs[locale] = newCatalogs[locale];
-        }
-    }
-
-    function getLocale() {
-        return locale;
-    }
-
-    function setLocale(l) {
-        locale = l;
-        if (domScan) {
-            updateDomTranslation();
-        }
-        _sendEvent("stonejs-locale-changed");
-    }
-
-    function guessUserLanguage() {
-        var lang = navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || null;
-
-        if (lang) {
-            lang = lang.toLowerCase();
-        }
-
-        if (lang && lang.length > 3) {
-            lang = lang.split(";")[0];
-            lang = lang.split(",")[0];
-            lang = lang.split("-")[0];
-            lang = lang.split("_")[0];
-            if (lang.length > 3) {
-                lang = null;
-            }
-        }
-
-        return lang || "en";
-    }
-
-    function _sendEvent(name, data) {
-        var data = data || {};
-        var ev = null;
-        try {
-            ev = new Event(name);
-        }
-        catch (e) {
-            // The old-fashioned way... THANK YOU MSIE!
-            ev = document.createEvent("Event");
-            ev.initEvent(name, true, false);
-        }
-        for (var i in data) {
-            ev[i] = data[i];
-        }
-        document.dispatchEvent(ev);
-    }
-
-    function _autoloadCatalogs(event) {
-        addCatalogs(event.catalog);
-    }
-
-    document.addEventListener("stonejs-autoload-catalogs", _autoloadCatalogs, true);
-
-    function enableDomScan(enable) {
-        domScan = !!enable;
-        if (domScan) {
-            updateDomTranslation();
-        }
-    }
-
-    function updateDomTranslation() {
-        var elements = document.getElementsByTagName("*");
-        var params = null;
-        var attrs = null;
-        var i = 0;
-        var j = 0;
-        for (i=0 ; i<elements.length ; i++) {
-            if (elements[i].hasAttribute("stonejs")) {
-                // First pass
-                if (!elements[i].hasAttribute("stonejs-orig-string")) {
-                    elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
-                }
-
-                params = {};
-                attrs = elements[i].attributes;
-                for (j=0 ; j<attrs.length ; j++) {
-                    if (attrs[j].name.indexOf("stonejs-param-") == 0) {
-                        params[attrs[j].name.substr(14)] = attrs[j].value;
-                    }
-                }
-
-                elements[i].innerHTML = gettext(elements[i].getAttribute("stonejs-orig-string"), params);
-            }
-        }
-    }
-
-    return {
-        LazyString: LazyString,
-        gettext: gettext,
-        lazyGettext: lazyGettext,
-        addCatalogs: addCatalogs,
-        getLocale: getLocale,
-        setLocale: setLocale,
-        guessUserLanguage: guessUserLanguage,
-        enableDomScan: enableDomScan,
-        updateDomTranslation: updateDomTranslation
-    }
-}));
-
-},{}],2:[function(require,module,exports){
 /**
  * Classy - classy classes for JavaScript
  *
@@ -338,7 +160,7 @@
   /* export the class */
   return Class;
 });
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * Title: KeyboardJS
  * Version: v0.4.1
@@ -370,12 +192,12 @@
 	function constructAMD() {
 
 		//create a library instance
-		return init();
+		return init(context);
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library;
-			library = factory('amd');
+			library = factory(context, 'amd');
 			library.fork = init;
 			return library;
 		}
@@ -387,14 +209,14 @@
 	function constructCommonJS() {
 
 		//create a library instance
-		module.exports = init();
+		module.exports = init(context);
 
 		return;
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library;
-			library = factory('CommonJS');
+			library = factory(context, 'CommonJS');
 			library.fork = init;
 			return library;
 
@@ -409,16 +231,16 @@
 		var library;
 
 		//create a library instance
-		library = init();
-		library.noConflict('KeyboardJS', 'k');
+		library = init(context);
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library, namespaces = [], previousValues = {};
 
-			library = factory('global');
+			library = factory(context, 'global');
 			library.fork = init;
 			library.noConflict = noConflict;
+			library.noConflict('KeyboardJS', 'k');
 			return library;
 
 			//sets library namespaces
@@ -452,13 +274,13 @@
 		}
 	}
 
-})(this, function(env) {
+})(this, function(targetWindow, env) {
 	var KeyboardJS = {}, locales = {}, locale, map, macros, activeKeys = [], bindings = [], activeBindings = [],
 	activeMacros = [], aI, usLocale;
-
+	targetWindow = (targetWindow && Object.getOwnPropertyNames(targetWindow).length > 0 ) ? targetWindow : window;
 
 	///////////////////////
-	// DEFUALT US LOCALE //
+	// DEFAULT US LOCALE //
 	///////////////////////
 
 	//define US locale
@@ -539,7 +361,7 @@
 			"108": ["numenter"],
 			"109": ["numsubtract", "num-"],
 			"110": ["numdecimal", "num."],
-			"111": ["numdevide", "num/"],
+			"111": ["numdivide", "num/"],
 			"144": ["numlock", "num"],
 
 			//function keys
@@ -587,6 +409,28 @@
 		usLocale.map[aI] = String.fromCharCode(aI + 32);
 		usLocale.macros.push(['shift + ' + String.fromCharCode(aI + 32) + ', capslock + ' + String.fromCharCode(aI + 32), [String.fromCharCode(aI)]]);
 	}
+
+  // Support command key on Mac.
+	// This is unfortunately browser specific
+	if(/^Mac/.test(navigator.platform)){
+		// Chrome,Safari
+		if(/Chrome/.test(navigator.userAgent) ||
+			 /Safari/.test(navigator.userAgent)){
+				 usLocale.map["93"] = usLocale.map["92"];
+		}
+		// Opera
+		if(/Opera/.test(navigator.userAgent)){
+			usLocale.map["17"] = usLocale.map["91"];
+			delete usLocale.map["91"];
+		}
+		// Firefox
+		if(/Firefox/.test(navigator.userAgent)){
+			usLocale.map["224"] = usLocale.map["91"];
+			delete usLocale.map["91"];
+		}
+		delete usLocale.map["92"];
+	}
+
 	registerLocale('us', usLocale);
 	getSetLocale('us');
 
@@ -607,6 +451,8 @@
 	KeyboardJS.enable = enable;
 	KeyboardJS.disable = disable;
 	KeyboardJS.activeKeys = getActiveKeys;
+	KeyboardJS.releaseKey = removeActiveKey;
+	KeyboardJS.pressKey = addActiveKey;
 	KeyboardJS.on = createBinding;
 	KeyboardJS.clear = removeBindingByKeyCombo;
 	KeyboardJS.clear.key = removeBindingByKeyName;
@@ -632,16 +478,16 @@
 	 * Enables KeyboardJS
 	 */
 	function enable() {
-		if(window.addEventListener) {
-			document.addEventListener('keydown', keydown, false);
-			document.addEventListener('keyup', keyup, false);
-			window.addEventListener('blur', reset, false);
-			window.addEventListener('webkitfullscreenchange', reset, false);
-			window.addEventListener('mozfullscreenchange', reset, false);
-		} else if(window.attachEvent) {
-			document.attachEvent('onkeydown', keydown);
-			document.attachEvent('onkeyup', keyup);
-			window.attachEvent('onblur', reset);
+		if(targetWindow.addEventListener) {
+			targetWindow.document.addEventListener('keydown', keydown, false);
+			targetWindow.document.addEventListener('keyup', keyup, false);
+			targetWindow.addEventListener('blur', reset, false);
+			targetWindow.addEventListener('webkitfullscreenchange', reset, false);
+			targetWindow.addEventListener('mozfullscreenchange', reset, false);
+		} else if(targetWindow.attachEvent) {
+			targetWindow.document.attachEvent('onkeydown', keydown);
+			targetWindow.document.attachEvent('onkeyup', keyup);
+			targetWindow.attachEvent('onblur', reset);
 		}
 	}
 
@@ -650,16 +496,16 @@
 	 */
 	function disable() {
 		reset();
-		if(window.removeEventListener) {
-			document.removeEventListener('keydown', keydown, false);
-			document.removeEventListener('keyup', keyup, false);
-			window.removeEventListener('blur', reset, false);
-			window.removeEventListener('webkitfullscreenchange', reset, false);
-			window.removeEventListener('mozfullscreenchange', reset, false);
-		} else if(window.detachEvent) {
-			document.detachEvent('onkeydown', keydown);
-			document.detachEvent('onkeyup', keyup);
-			window.detachEvent('onblur', reset);
+		if(targetWindow.removeEventListener) {
+			targetWindow.document.removeEventListener('keydown', keydown, false);
+			targetWindow.document.removeEventListener('keyup', keyup, false);
+			targetWindow.removeEventListener('blur', reset, false);
+			targetWindow.removeEventListener('webkitfullscreenchange', reset, false);
+			targetWindow.removeEventListener('mozfullscreenchange', reset, false);
+		} else if(targetWindow.detachEvent) {
+			targetWindow.document.detachEvent('onkeydown', keydown);
+			targetWindow.document.detachEvent('onkeyup', keyup);
+			targetWindow.detachEvent('onblur', reset);
 		}
 	}
 
@@ -1248,6 +1094,22 @@
 		var keyCode = getKeyCode(keyName);
 		if(keyCode === '91' || keyCode === '92') { activeKeys = []; } //remove all key on release of super.
 		else { activeKeys.splice(activeKeys.indexOf(keyName), 1); }
+		// Mac Specific remove all keys on release of super
+		if(/^Mac/.test(navigator.platform)){
+			// Chrome,Safari
+			if(/Chrome/.test(navigator.userAgent) ||
+				 /Safari/.test(navigator.userAgent)){
+				if(keyCode === '91' || keyCode === '93') { activeKeys = []; }
+			}
+			// Opera
+			if(/Opera/.test(navigator.userAgent) && keyCode == "17"){
+				activeKeys = [];
+			}
+			// Firefox
+			if(/Firefox/.test(navigator.userAgent) && keyCode == "224"){
+				activeKeys = [];
+			}
+		}
 	}
 
 
@@ -1298,6 +1160,194 @@
 		return locale;
 	}
 });
+
+
+
+},{}],3:[function(require,module,exports){
+/*
+ * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of the author nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+var catalogs = {};
+var locale = null;
+var domScan = false;
+
+function LazyString(string, replacements) {
+    this.toString = gettext.bind(this, string, replacements);
+
+    var props = Object.getOwnPropertyNames(String.prototype);
+    for (var i=0 ; i<props.length ; i++) {
+        if (props[i] == "toString") continue;
+        if (typeof(String.prototype[props[i]]) == "function") {
+            this[props[i]] = function() {
+                var translatedString = this.self.toString();
+                return translatedString[this.prop].apply(translatedString, arguments);
+            }.bind({self: this, prop: props[i]});
+        }
+        else {
+            Object.defineProperty(this, props[i], {
+                get: function() {
+                    var translatedString = this.self.toString();
+                    return translatedString[this.prop]
+                }.bind({self: this, prop: props[i]}),
+                enumerable: false,
+                configurable: false
+            });
+        }
+    }
+}
+
+function gettext(string, replacements) {
+    var result = string;
+
+    if (locale && catalogs[locale] && catalogs[locale][string]) {
+        result = catalogs[locale][string];
+    }
+
+    if (replacements) {
+        for (var r in replacements) {
+            result = result.replace(new RegExp("\{" + r + "\}", "g"), replacements[r]);
+        }
+    }
+
+    return result;
+}
+
+function lazyGettext(string, replacements) {
+    return new LazyString(string, replacements);
+}
+
+function addCatalogs(newCatalogs) {
+    for (var locale in newCatalogs) {
+        catalogs[locale] = newCatalogs[locale];
+    }
+}
+
+function getLocale() {
+    return locale;
+}
+
+function setLocale(l) {
+    locale = l;
+    if (domScan) {
+        updateDomTranslation();
+    }
+    _sendEvent("stonejs-locale-changed");
+}
+
+function guessUserLanguage() {
+    var lang = navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || null;
+
+    if (lang) {
+        lang = lang.toLowerCase();
+    }
+
+    if (lang && lang.length > 3) {
+        lang = lang.split(";")[0];
+        lang = lang.split(",")[0];
+        lang = lang.split("-")[0];
+        lang = lang.split("_")[0];
+        if (lang.length > 3) {
+            lang = null;
+        }
+    }
+
+    return lang || "en";
+}
+
+function _sendEvent(name, data) {
+    var data = data || {};
+    var ev = null;
+    try {
+        ev = new Event(name);
+    }
+    catch (e) {
+        // The old-fashioned way... THANK YOU MSIE!
+        ev = document.createEvent("Event");
+        ev.initEvent(name, true, false);
+    }
+    for (var i in data) {
+        ev[i] = data[i];
+    }
+    document.dispatchEvent(ev);
+}
+
+function _autoloadCatalogs(event) {
+    addCatalogs(event.catalog);
+}
+
+document.addEventListener("stonejs-autoload-catalogs", _autoloadCatalogs, true);
+
+function enableDomScan(enable) {
+    domScan = !!enable;
+    if (domScan) {
+        updateDomTranslation();
+    }
+}
+
+function updateDomTranslation() {
+    var elements = document.getElementsByTagName("*");
+    var params = null;
+    var attrs = null;
+    var i = 0;
+    var j = 0;
+    for (i=0 ; i<elements.length ; i++) {
+        if (elements[i].hasAttribute("stonejs")) {
+            // First pass
+            if (!elements[i].hasAttribute("stonejs-orig-string")) {
+                elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
+            }
+
+            params = {};
+            attrs = elements[i].attributes;
+            for (j=0 ; j<attrs.length ; j++) {
+                if (attrs[j].name.indexOf("stonejs-param-") == 0) {
+                    params[attrs[j].name.substr(14)] = attrs[j].value;
+                }
+            }
+
+            __gettext = gettext;  // Avoid false detection
+            elements[i].innerHTML = __gettext(elements[i].getAttribute("stonejs-orig-string"), params);
+        }
+    }
+}
+
+module.exports = {
+    LazyString: LazyString,
+    gettext: gettext,
+    lazyGettext: lazyGettext,
+    addCatalogs: addCatalogs,
+    getLocale: getLocale,
+    setLocale: setLocale,
+    guessUserLanguage: guessUserLanguage,
+    enableDomScan: enableDomScan,
+    updateDomTranslation: updateDomTranslation
+};
 
 },{}],4:[function(require,module,exports){
 /*
@@ -1540,6 +1590,7 @@ var Base = Class.$extend({
      * @param {Function} callback The function that will be called when the event occured.
      */
     _bindEvent: function(id, element, evName, callback) {
+        this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
             element: element,
@@ -1560,6 +1611,7 @@ var Base = Class.$extend({
      * @param {String} id The id of the event.
      */
     _unbindEvent: function(id) {
+        if (!this.__events[id]) return;
         this.__events[id].element.removeEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,
@@ -1608,7 +1660,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":19,"classyjs":2}],5:[function(require,module,exports){
+},{"./helpers.js":19,"classyjs":1}],5:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -1647,7 +1699,7 @@ module.exports = Base;
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Button = require("../interactive/button.js");
 var Color = require("../nonvisual/color.js");
 var ColorPalette = require("../interactive/colorpalette.js");
@@ -1879,7 +1931,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../../lib/stone.js":1,"../container/popupwindow.js":14,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../layout/boxlayout.js":31,"../nonvisual/color.js":38,"./colorpickerdialog.js":6}],6:[function(require,module,exports){
+},{"../container/popupwindow.js":14,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../layout/boxlayout.js":31,"../nonvisual/color.js":38,"./colorpickerdialog.js":6,"stonejs":3}],6:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -1918,7 +1970,7 @@ module.exports = ColorButton;
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Dialog = require("../container/dialog.js");
 var BoxLayout = require("../layout/boxlayout.js");
 var GridLayout = require("../layout/gridlayout.js");
@@ -2251,7 +2303,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../../lib/stone.js":1,"../container/dialog.js":12,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../interactive/colorpicker.js":23,"../interactive/slider.js":26,"../layout/boxlayout.js":31,"../layout/gridlayout.js":33,"../nonvisual/color.js":38,"../visual/faicon.js":46,"../visual/label.js":48,"../visual/separator.js":50}],7:[function(require,module,exports){
+},{"../container/dialog.js":12,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../interactive/colorpicker.js":23,"../interactive/slider.js":26,"../layout/boxlayout.js":31,"../layout/gridlayout.js":33,"../nonvisual/color.js":38,"../visual/faicon.js":46,"../visual/label.js":48,"../visual/separator.js":50,"stonejs":3}],7:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2290,7 +2342,7 @@ module.exports = ColorPickerDialog;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Select = require("./select.js");
 var MenuItem = require("../container/menuitem.js");
 
@@ -2307,9 +2359,11 @@ var FontSelect = Select.$extend({
 
     // Constructor
     __init__: function(params) {
+        var params = params || {};
         this._fonts = [];
         this.$super(params);
         if (this.fonts.length == 0) this.fonts = ["sans-serif", "serif", "monospace"];
+        this.value = (params.value !== undefined) ? params.value : "sans-serif";
     },
 
 
@@ -2342,15 +2396,6 @@ var FontSelect = Select.$extend({
     },
 
     /**
-     * The field value.
-     *
-     * @property value
-     * @type String (maybe)
-     * @default "sans-serif"
-     */
-    _value: "sans-serif",
-
-    /**
      * The placeholder displayed if nothing is selected.
      *
      * @property Placeholder
@@ -2379,12 +2424,27 @@ var FontSelect = Select.$extend({
         item.html.style.fontFamily = fontName;
         this.addChild(item);
         this._fonts.push(fontName);
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.__html.select.className += " photonui-fontselect";
     }
 });
 
 module.exports = FontSelect;
 
-},{"../../lib/stone.js":1,"../container/menuitem.js":13,"./select.js":9}],8:[function(require,module,exports){
+},{"../container/menuitem.js":13,"./select.js":9,"stonejs":3}],8:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2545,7 +2605,7 @@ module.exports = PopupMenu;
  * @namespace photonui
  */
 
-var Stone  = require("../../lib/stone.js");
+var Stone  = require("stonejs");
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var PopupMenu = require("./popupmenu.js");
@@ -2568,6 +2628,8 @@ var Select = Widget.$extend({
 
     // Constructor
     __init__: function(params) {
+        var params = params || {};
+
         // Attach popup & special mixin
         this.__popupMenu = new PopupMenu({
             maxHeight: 300,
@@ -2706,8 +2768,9 @@ var Select = Widget.$extend({
      * @type Number
      * @default: null (no minimum)
      */
+    _minWidthDefined: false,
     getPopupMinWidth: function () { return this.__popupMenu.getMinWidth(); },
-    setPopupMinWidth: function (p) { this.__popupMenu.setMinWidth(p); },
+    setPopupMinWidth: function (p) { this._minWidthDefined = true ; this.__popupMenu.setMinWidth(p); },
 
     /**
      * Maximum height of the popup container node.
@@ -2872,6 +2935,9 @@ var Select = Widget.$extend({
      * @param event
      */
     __onClick: function(event) {
+        if (!this._minWidthDefined) {
+            this.popupMinWidth = this.offsetWidth;
+        }
         this.__popupMenu.popupWidget(this);
     },
 
@@ -2888,7 +2954,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../../lib/stone.js":1,"../container/menuitem.js":13,"../helpers.js":19,"../widget.js":53,"./popupmenu.js":8}],10:[function(require,module,exports){
+},{"../container/menuitem.js":13,"../helpers.js":19,"../widget.js":53,"./popupmenu.js":8,"stonejs":3}],10:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3248,8 +3314,8 @@ var BaseWindow = Container.$extend({
         var node = Widget.e_parent || document.getElementsByTagName("body")[0];
         if (!node) return;
         this.setPosition(
-                Math.round((node.offsetWidth - this.offsetWidth) / 2),
-                Math.round((node.offsetHeight - this.offsetHeight) / 2)
+                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0)|0,
+                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0)|0
         );
     },
 
@@ -3447,6 +3513,21 @@ var Container = Widget.$extend({
         return null;
     },
 
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (this.child instanceof Widget) {
+            this.child._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
+    },
+
 
     //////////////////////////////////////////
     // Methods                              //
@@ -3520,7 +3601,7 @@ module.exports = Container;
  * @submodule Container
  * @namespace photonui
  */
- 
+
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var Window = require("./window.js");
@@ -3540,6 +3621,12 @@ var Dialog = Window.$extend({
     __init__: function(params) {
         this._buttonsNames = [];
         this.$super(params);
+
+        // Force to update the parent of the buttons
+        var buttons = this.buttons;
+        for (var i=0 ; i<buttons.length ; i++) {
+            buttons[i]._parentName = this.name;
+        }
     },
 
 
@@ -3595,8 +3682,10 @@ var Dialog = Window.$extend({
      */
     getButtons: function() {
         var buttons = [];
+        var widget;
         for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            buttons.push(Widget.getWidget(this._buttonsNames[i]));
+            widget = Widget.getWidget(this._buttonsNames[i]);
+            if (widget instanceof Widget) buttons.push(widget);
         }
         return buttons;
     },
@@ -3655,6 +3744,7 @@ var Dialog = Window.$extend({
 
     // Alias needed for photonui.Widget.unparent()
     removeChild: function() {
+        this.$super.apply(this, arguments);
         this.removeButton.apply(this, arguments);
     },
 
@@ -3699,12 +3789,29 @@ var Dialog = Window.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.addClass("photonui-dialog");
+        this.__html["window"].className += " photonui-dialog";
 
         this.__html.buttons = document.createElement("div");
         this.__html.buttons.className = "photonui-dialog-buttons";
         this.__html["window"].appendChild(this.__html.buttons);
-    }
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        var buttons = this.buttons;
+        for (var i=0 ; i<buttons.length ; i++) {
+            if (!this.child instanceof Widget) continue;
+            buttons[i]._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
+    },
 });
 
 module.exports = Dialog;
@@ -4209,15 +4316,25 @@ var SubMenuItem = MenuItem.$extend({
     },
 
     setMenuName: function(menuName) {
-        if (this.menuName) {
+        if (this.menuName && this.menu) {
             this.menu.removeCallback("fold");
             this.menu.removeCallback("unfold");
         }
         this._menuName = menuName;
         if (this.menuName) {
-            this.menu.registerCallback("fold", "hide", this.__onToggleFold, this);
-            this.menu.registerCallback("unfold", "show", this.__onToggleFold, this);
-            this.active = this.menu.visible;
+            that = this;
+            function _init() {
+                if (!that.menu) return;
+                that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
+                that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
+                that.active = that.menu.visible;
+            }
+            if (this.menu) {
+                _init();
+            }
+            else {
+                setTimeout(_init, 10);
+            }
         }
     },
 
@@ -4700,7 +4817,7 @@ module.exports = Viewport;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Helpers = require("../helpers.js");
 var BaseWindow = require("./basewindow.js");
 
@@ -5050,7 +5167,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../../lib/stone.js":1,"../helpers.js":19,"./basewindow.js":10}],19:[function(require,module,exports){
+},{"../helpers.js":19,"./basewindow.js":10,"stonejs":3}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7261,17 +7378,6 @@ var Slider = NumericField.$extend({
         return this.__html.outer;
     },
 
-    // Update the slider when setting the value...
-    setValue: function(value) {
-        this.$super(value);
-
-        var v = value - this.min;
-        var m = this.max - this.min;
-        var p = Math.min(Math.max(v/m, 0), 1);
-        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth;
-        this.__html.grip.style.left = Math.floor(p*w) + "px";
-    },
-
 
     //////////////////////////////////////////
     // Methods                              //
@@ -7280,6 +7386,20 @@ var Slider = NumericField.$extend({
 
     // ====== Private methods ======
 
+
+    /**
+     * Update the value in the html field.
+     *
+     * @method _updateFieldValue
+     * @private
+     */
+    _updateFieldValue: function() {
+        this.$super();
+        var v = this.value - this.min;
+        var m = this.max - this.min;
+        var p = Math.min(Math.max(v/m, 0), 1);
+        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
+    },
 
     /**
      * Build the widget HTML.
@@ -8549,6 +8669,21 @@ var GridLayout = Layout.$extend({
 
 
     /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility) {
+            this._sizingHack();
+        }
+        this.$super(visibility);
+    },
+
+    /**
      * Build the widget HTML.
      *
      * @method _buildHtml
@@ -9076,8 +9211,10 @@ var Layout = Container.$extend({
      */
     getChildren: function() {
         var children = [];
+        var widget;
         for (var i=0 ; i<this._childrenNames.length ; i++) {
-            children.push(Widget.getWidget(this._childrenNames[i]));
+            widget = Widget.getWidget(this._childrenNames[i]);
+            if (widget instanceof Widget) children.push(widget);
         }
         return children;
     },
@@ -9189,6 +9326,23 @@ var Layout = Container.$extend({
      */
     _updateLayout: function() {
         throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            if (!this.child instanceof Widget) continue;
+            children[i]._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
     },
 
 
@@ -9837,7 +9991,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":4,"keyboardjs":3}],38:[function(require,module,exports){
+},{"../base.js":4,"keyboardjs":2}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11560,7 +11714,7 @@ module.exports = SpriteSheet;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("../base.js");
 
 /**
@@ -11690,7 +11844,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../../lib/stone.js":1,"../base.js":4}],43:[function(require,module,exports){
+},{"../base.js":4,"stonejs":3}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11736,7 +11890,7 @@ var photonui = {};
 photonui.lib = {};
 photonui.lib.Class = require("classyjs");
 photonui.lib.KeyboardJS = require("keyboardjs");
-photonui.lib.Stone = require("../lib/stone");
+photonui.lib.Stone = require("stonejs");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -11799,7 +11953,7 @@ photonui.TabLayout = require("./layout/tablayout.js");
 
 module.exports = photonui;
 
-},{"../lib/stone":1,"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/tabitem.js":16,"./container/viewport.js":17,"./container/window.js":18,"./helpers.js":19,"./interactive/button.js":20,"./interactive/checkbox.js":21,"./interactive/colorpalette.js":22,"./interactive/colorpicker.js":23,"./interactive/field.js":24,"./interactive/numericfield.js":25,"./interactive/slider.js":26,"./interactive/switch.js":27,"./interactive/textareafield.js":28,"./interactive/textfield.js":29,"./interactive/togglebutton.js":30,"./layout/boxlayout.js":31,"./layout/fluidlayout.js":32,"./layout/gridlayout.js":33,"./layout/layout.js":34,"./layout/menu.js":35,"./layout/tablayout.js":36,"./nonvisual/accelmanager.js":37,"./nonvisual/color.js":38,"./nonvisual/filemanager.js":39,"./nonvisual/mousemanager.js":40,"./nonvisual/spritesheet.js":41,"./nonvisual/translation.js":42,"./visual/baseicon.js":44,"./visual/canvas.js":45,"./visual/faicon.js":46,"./visual/image.js":47,"./visual/label.js":48,"./visual/progressbar.js":49,"./visual/separator.js":50,"./visual/spriteicon.js":51,"./visual/text.js":52,"./widget.js":53,"classyjs":2,"keyboardjs":3}],44:[function(require,module,exports){
+},{"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/tabitem.js":16,"./container/viewport.js":17,"./container/window.js":18,"./helpers.js":19,"./interactive/button.js":20,"./interactive/checkbox.js":21,"./interactive/colorpalette.js":22,"./interactive/colorpicker.js":23,"./interactive/field.js":24,"./interactive/numericfield.js":25,"./interactive/slider.js":26,"./interactive/switch.js":27,"./interactive/textareafield.js":28,"./interactive/textfield.js":29,"./interactive/togglebutton.js":30,"./layout/boxlayout.js":31,"./layout/fluidlayout.js":32,"./layout/gridlayout.js":33,"./layout/layout.js":34,"./layout/menu.js":35,"./layout/tablayout.js":36,"./nonvisual/accelmanager.js":37,"./nonvisual/color.js":38,"./nonvisual/filemanager.js":39,"./nonvisual/mousemanager.js":40,"./nonvisual/spritesheet.js":41,"./nonvisual/translation.js":42,"./visual/baseicon.js":44,"./visual/canvas.js":45,"./visual/faicon.js":46,"./visual/image.js":47,"./visual/label.js":48,"./visual/progressbar.js":49,"./visual/separator.js":50,"./visual/spriteicon.js":51,"./visual/text.js":52,"./widget.js":53,"classyjs":1,"keyboardjs":2,"stonejs":3}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12592,7 +12746,16 @@ var Label = Widget.$extend({
     setText: function(text) {
         this._text = text;
         photonui.Helpers.cleanNode(this.__html.label);
-        this.__html.label.appendChild(document.createTextNode(text));
+
+        var lines = (text+"").split("\n");
+
+        for (var i=0 ; i<lines.length ; i++) {
+            this.__html.label.appendChild(document.createTextNode(lines[i]));
+            if (i<lines.length-1) {
+                this.__html.label.appendChild(document.createElement("br"));
+            }
+        }
+
     },
 
     /**
@@ -13322,7 +13485,7 @@ module.exports = SpriteIcon;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Widget = require("../widget.js");
 var Helpers = require("../helpers.js");
 
@@ -13436,7 +13599,7 @@ var Text = Widget.$extend({
 
 module.exports = Text;
 
-},{"../../lib/stone.js":1,"../helpers.js":19,"../widget.js":53}],53:[function(require,module,exports){
+},{"../helpers.js":19,"../widget.js":53,"stonejs":3}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13474,7 +13637,7 @@ module.exports = Text;
  * @namespace photonui
  */
 
-var Stone = require("../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
 
@@ -13487,11 +13650,11 @@ var _widgets = {};
  * wEvents:
  *
  *   * show:
- *      - description: called when the widget is displayed.
+ *      - description: called when the widget is displayed (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
- *   * hidden:
- *      - description: called when the widget is hidden.
+ *   * hide:
+ *      - description: called when the widget is hidden (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
  * @class Widget
@@ -13610,18 +13773,17 @@ var Widget = Base.$extend({
     },
 
     setVisible: function(visible) {
-        this._visible = visible;
+        this._visible = !!visible;
         if (!this.html) {
             return;
         }
-        if (this.visible) {
+        if (visible) {
             this.html.style.display = "";
-            this._callCallbacks("show");
         }
         else {
             this.html.style.display = "none";
-            this._callCallbacks("hide");
         }
+        this._visibilityChanged();
     },
 
     /**
@@ -13875,6 +14037,23 @@ var Widget = Base.$extend({
         console.warn("_buildHtml() method not implemented for this widget.");
     },
 
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility) {
+            this._callCallbacks("show");
+        }
+        else {
+            this._callCallbacks("hide");
+        }
+    },
+
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -13946,5 +14125,5 @@ Widget.domInsert = function(widget, element) {
 
 module.exports = Widget;
 
-},{"../lib/stone.js":1,"./base.js":4,"./container/popupwindow.js":14,"./helpers.js":19,"./photonui.js":43}]},{},[43])(43)
+},{"./base.js":4,"./container/popupwindow.js":14,"./helpers.js":19,"./photonui.js":43,"stonejs":3}]},{},[43])(43)
 });

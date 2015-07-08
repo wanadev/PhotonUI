@@ -95,7 +95,16 @@ var Label = Widget.$extend({
     setText: function(text) {
         this._text = text;
         photonui.Helpers.cleanNode(this.__html.label);
-        this.__html.label.appendChild(document.createTextNode(text));
+
+        var lines = (text+"").split("\n");
+
+        for (var i=0 ; i<lines.length ; i++) {
+            this.__html.label.appendChild(document.createTextNode(lines[i]));
+            if (i<lines.length-1) {
+                this.__html.label.appendChild(document.createElement("br"));
+            }
+        }
+
     },
 
     /**
