@@ -8,6 +8,7 @@ describe("photonui.Image", function() {
         this.area = addTestArea();
         this.area.className += " photonui-container-expand-child";
         this.img = new photonui.Image();
+        this.imgURL = (window._STANDALONE_TEST) ? "./dummyimage.png" : "test/dummyimage.png";
 
         photonui.domInsert(this.img, this.area);
     });
@@ -22,7 +23,7 @@ describe("photonui.Image", function() {
             done();
         }
 
-        this.img.url = "./dummyimage.png";
+        this.img.url = this.imgURL;
     });
 
     it("can have a defined width", function(done) {
@@ -37,7 +38,7 @@ describe("photonui.Image", function() {
         }
 
         this.img.width = 200;
-        this.img.url = "./dummyimage.png";
+        this.img.url = this.imgURL;
     });
 
     it("can have a defined height", function(done) {
@@ -52,7 +53,7 @@ describe("photonui.Image", function() {
         }
 
         this.img.height = 200;
-        this.img.url = "./dummyimage.png";
+        this.img.url = this.imgURL;
     });
 
     it("can have both height and width defined", function(done) {
@@ -68,7 +69,7 @@ describe("photonui.Image", function() {
 
         this.img.width = 50;
         this.img.height = 200;
-        this.img.url = "./dummyimage.png";
+        this.img.url = this.imgURL;
     });
 
 });

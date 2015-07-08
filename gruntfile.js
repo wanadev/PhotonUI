@@ -43,6 +43,17 @@ module.exports = function(grunt) {
             }
         },
 
+        jasmine: {
+            pivotal: {
+                src: ['dist/photonui.js', 'test/helpers.js'],
+                options: {
+                    specs: ['test/spec/*.js', 'test/spec/**/*.js'],
+                    styles: ['dist/photonui-base.css', 'dist/photonui-theme-particle.css', 'test/style.css'],
+                    helpers: []
+                }
+            }
+        },
+
         less: {
             less_base: {
                 options: {
@@ -79,12 +90,6 @@ module.exports = function(grunt) {
                 cwd: 'src/assets/',
                 src: '**',
                 dest: 'dist/assets/'
-            },
-            demoResources: {
-                expand: true,
-                cwd: 'demo-src/Resources/',
-                src: '**',
-                dest: 'demo/'
             }
         },
 
@@ -102,11 +107,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-jasmine');
 
     // Register runnable tasks.
     grunt.registerTask('gen-js', ['browserify', 'uglify']);
     grunt.registerTask('gen-css', ['less:less_base', 'less:less_themes', 'clean:assets', 'copy:assets']);
-    grunt.registerTask('gen-docs', ['clean:docs', 'copy:demoResources', 'yuidoc']);
+    grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
     grunt.registerTask('dist', ['default']);
+    grunt.registerTask('test', ['jasmine']);
 };

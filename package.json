@@ -1,39 +1,40 @@
 {
-    "name": "photonui",
-    "version": "0.1.1",
-    "description": "A work-in-progress MVC/Swing style JavaScript UI library.",
-    "homepage": "http://wanadev.github.io/PhotonUI/",
-    "author": "Wanadev (http://wanadev.fr/)",
-    "license": "BSD-3-Clause",
-    "maintainers": [
-        {
-            "name": "Tribex",
-            "email": "",
-            "web": "http://github.com/Tribex"
-        },
-        {
-            "name": "Wanadev",
-            "email": "",
-            "web": "http://wanadev.fr/"
-        }
-    ],
-    "repository" : {
-        "type" : "git",
-        "url" : "http://github.com/wanadev/PhotonUI.git"
+  "name": "photonui",
+  "version": "0.1.1",
+  "description": "A work-in-progress MVC/Swing style JavaScript UI library.",
+  "homepage": "http://wanadev.github.io/PhotonUI/",
+  "author": "Wanadev (http://wanadev.fr/)",
+  "license": "BSD-3-Clause",
+  "maintainers": [
+    {
+      "name": "Tribex",
+      "email": "",
+      "web": "http://github.com/Tribex"
     },
-    "devDependencies": {
-        "grunt": ">=0.4.5",
-        "grunt-browserify": ">=3.5.0",
-        "grunt-contrib-concat": ">=0.5.0",
-        "grunt-contrib-copy": ">=0.7.0",
-        "grunt-contrib-clean": ">=0.6.0",
-        "grunt-contrib-less": ">=1.0.0",
-        "grunt-contrib-uglify": ">=0.8.0",
-        "grunt-contrib-yuidoc": ">=0.7.0",
-        "less-plugin-autoprefix": ">=1.4.1",
-        "less-plugin-clean-css": ">=1.5.0",
-        "classyjs": ">=0.9.0",
-        "stonejs": ">=1.0.0",
-        "keyboardjs": "flozz/KeyboardJS"
+    {
+      "name": "Wanadev",
+      "email": "",
+      "web": "http://wanadev.fr/"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/wanadev/PhotonUI.git"
+  },
+  "devDependencies": {
+    "classyjs": ">=0.9.0",
+    "grunt": ">=0.4.5",
+    "grunt-browserify": ">=3.5.0",
+    "grunt-contrib-clean": ">=0.6.0",
+    "grunt-contrib-concat": ">=0.5.0",
+    "grunt-contrib-copy": ">=0.7.0",
+    "grunt-contrib-jasmine": "^0.8.2",
+    "grunt-contrib-less": ">=1.0.0",
+    "grunt-contrib-uglify": ">=0.8.0",
+    "grunt-contrib-yuidoc": ">=0.7.0",
+    "keyboardjs": "flozz/KeyboardJS",
+    "less-plugin-autoprefix": ">=1.4.1",
+    "less-plugin-clean-css": ">=1.5.0",
+    "stonejs": ">=1.0.0"
+  }
 }
