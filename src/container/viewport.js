@@ -151,6 +151,7 @@ var Viewport = Container.$extend({
      * @readOnly
      */
     getHtml: function() {
+        setTimeout(this._sizingHack.bind(this), 10);
         return this.__html.viewport;
     },
 
@@ -162,7 +163,7 @@ var Viewport = Container.$extend({
      * @readOnly
      */
     getContainerNode: function() {
-        return this.html;
+        return this.__html.viewport;
     },
 
 
@@ -183,6 +184,50 @@ var Viewport = Container.$extend({
     _buildHtml: function() {
         this.__html.viewport = document.createElement("div");
         this.__html.viewport.className = "photonui-widget photonui-viewport photonui-container";
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility) this._sizingHack();
+        this.$super(visibility);
+    },
+
+    /**
+     * HACK: set the right height.
+     *
+     * @method _sizingHack
+     * @private
+     */
+    _sizingHack: function() {
+        if (this.visible && this.__html.viewport.parentNode) {
+            var node = this.__html.viewport;
+            var height = 0;
+
+            this.__html.viewport.style.display = "none";
+
+            while (node = node.parentNode) {
+                if (!node) break;
+                if (node.offsetHeight > 0) {
+                    height = node.offsetHeight;
+                    var style = getComputedStyle(node);
+                    height -= parseFloat(style.paddingTop);
+                    height -= parseFloat(style.paddingBottom);
+                    height -= parseFloat(style.borderTopWidth);
+                    height -= parseFloat(style.borderBottomWidth);
+                    break;
+                }
+            }
+
+            this.__html.viewport.style.height = height + "px";
+            this.__html.viewport.style.display = "";
+        }
     },
 
 
