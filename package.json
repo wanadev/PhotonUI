@@ -17,6 +17,9 @@
       "web": "http://wanadev.fr/"
     }
   ],
+  "scripts": {
+    "test": "grunt test"
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/wanadev/PhotonUI.git"
