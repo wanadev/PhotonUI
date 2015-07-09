@@ -37,7 +37,7 @@
  */
 
 var Container = require("./container.js");
-var Helpers = require("../helpers.js");
+var numberToCssSize = require("../helpers.js").numberToCssSize;
 
 /**
  * Viewport.
@@ -143,6 +143,138 @@ var Viewport = Container.$extend({
     },
 
     /**
+     * Minimum width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: no minimum width
+     *
+     * @property minWidth
+     * @type Number
+     * @default null
+     */
+    _minWidth: null,
+
+    getMinWidth: function() {
+        return this._minWidth;
+    },
+
+    setMinWidth: function(minWidth) {
+        this._minWidth = minWidth;
+        this.__html.style.minWidth = numberToCssSize(minWidth, null, 0);
+    },
+
+    /**
+     * Maximum width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: no maximum width
+     *
+     * @property maxWidth
+     * @type Number
+     * @default null
+     */
+    _maxWidth: null,
+
+    getMaxWidth: function() {
+        return this._maxWidth;
+    },
+
+    setMaxWidth: function(maxWidth) {
+        this._maxWidth = maxWidth;
+        this.__html.style.maxWidth = numberToCssSize(maxWidth, null, Infinity);
+    },
+
+    /**
+     * Width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: auto
+     *
+     * @property width
+     * @type Number
+     * @default null
+     */
+    _width: null,
+
+    getWidth: function() {
+        return this._width;
+    },
+
+    setWidth: function(width) {
+        this._width = width;
+        this.__html.style.width = numberToCssSize(width, null);
+    },
+
+    /**
+     * Minimum height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: no minimum height
+     *
+     * @property minHeight
+     * @type Number
+     * @default null
+     */
+    _minHeight: null,
+
+    getMinHeight: function() {
+        return this._minHeight;
+    },
+
+    setMinHeight: function(minHeight) {
+        this._minHeight = minHeight;
+        this.__html.style.minHeight = numberToCssSize(minHeight, null, 0);
+    },
+
+    /**
+     * Maximum height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: no maximum height
+     *
+     * @property maxHeight
+     * @type Number
+     * @default null
+     */
+    _maxHeight: null,
+
+    getMaxHeight: function() {
+        return this._maxHeight;
+    },
+
+    setMaxHeight: function(maxHeight) {
+        this._maxHeight = maxHeight;
+        this.__html.style.maxHeight = numberToCssSize(maxHeight, null, Infinity);
+    },
+
+    /**
+     * Height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: auto
+     *
+     * @property height
+     * @type Number
+     * @default null
+     */
+    _height: null,
+
+    getHeight: function() {
+        return this._height;
+    },
+
+    setHeight: function(height) {
+        this._height = height;
+        this.__html.style.height = numberToCssSize(height, null);
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -206,6 +338,9 @@ var Viewport = Container.$extend({
      * @private
      */
     _sizingHack: function() {
+        if (this.height !== null && this.height !== Infinity) {
+            return;
+        }
         if (this.visible && this.__html.viewport.parentNode) {
             var node = this.__html.viewport;
             var height = 0;
@@ -225,6 +360,8 @@ var Viewport = Container.$extend({
                 }
             }
 
+            if (this.maxHeight !== null) height = Math.min(this.maxHeight, height);
+            if (this.minHeight !== null) height = Math.max(this.minHeight, height);
             this.__html.viewport.style.height = height + "px";
             this.__html.viewport.style.display = "";
         }
