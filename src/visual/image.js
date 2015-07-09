@@ -46,7 +46,7 @@ var Widget = require("../widget.js");
  * @extends photonui.Widget
  * @param {Object} params An object that can contain any property of the widget (optional).
  */
-var Image = Widget.$extend({
+var Image_ = Widget.$extend({
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -154,4 +154,4 @@ var Image = Widget.$extend({
 
 });
 
-module.exports = Image;
+module.exports = Image_;

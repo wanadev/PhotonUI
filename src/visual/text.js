@@ -47,7 +47,7 @@ var Helpers = require("../helpers.js");
  * @constructor
  * @extends photonui.Widget
  */
-var Text = Widget.$extend({
+var Text_ = Widget.$extend({
 
 
     //////////////////////////////////////////
@@ -148,4 +148,4 @@ var Text = Widget.$extend({
     }
 });
 
-module.exports = Text;
+module.exports = Text_;

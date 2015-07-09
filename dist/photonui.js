@@ -3655,7 +3655,7 @@ var Dialog = Window.$extend({
     setButtonsNames: function(buttonsNames) {
         var i, widget;
         for (i=0 ; i<this._buttonsNames.length ; i++) {
-            widget = photonui.getWidget(this._buttonsNames[i]);
+            widget = Widget.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
@@ -3663,7 +3663,7 @@ var Dialog = Window.$extend({
         }
         this._buttonsNames = [];
         for (i=0 ; i<buttonsNames.length ; i++) {
-            widget = photonui.getWidget(buttonsNames[i]);
+            widget = Widget.getWidget(buttonsNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -4322,6 +4322,7 @@ var SubMenuItem = MenuItem.$extend({
     },
 
     setMenuName: function(menuName) {
+        var that = this;
 
         function _init() {
             if (!that.menu) return;
@@ -4338,8 +4339,6 @@ var SubMenuItem = MenuItem.$extend({
         this._menuName = menuName;
 
         if (this.menuName) {
-            that = this;
-
             if (this.menu) {
                 _init();
             }
@@ -5014,6 +5013,7 @@ module.exports = Viewport;
 
 var Stone = require("stonejs");
 var Helpers = require("../helpers.js");
+var Widget = require("../widget.js");
 var BaseWindow = require("./basewindow.js");
 
 var _windowList = [];
@@ -5137,7 +5137,7 @@ var Window = BaseWindow.$extend({
         if (modal) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
-            var parentNode = photonui.e_parent || document.getElementsByTagName("body")[0];
+            var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
         }
@@ -5266,7 +5266,7 @@ var Window = BaseWindow.$extend({
      * @private
      */
     _updateWindowList: function() {
-        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {
+        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {   // jshint ignore:line
             if (i === 0) {
                 _windowList[i].html.style.zIndex = 2001;
                 _windowList[i].addClass("photonui-active");
@@ -5362,7 +5362,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":19,"./basewindow.js":10,"stonejs":3}],19:[function(require,module,exports){
+},{"../helpers.js":19,"../widget.js":53,"./basewindow.js":10,"stonejs":3}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8930,7 +8930,7 @@ var GridLayout = Layout.$extend({
 
         // Clean
         this.__html.grid.removeChild(this.__html.gridBody);
-        photonui.Helpers.cleanNode(this.__html.gridBody);
+        Helpers.cleanNode(this.__html.gridBody);
 
         // Build the layout
         var that = this;
@@ -9377,7 +9377,7 @@ var Layout = Container.$extend({
     setChildrenNames: function(childrenNames) {
         var i, widget;
         for (i=0 ; i<this._childrenNames.length ; i++) {
-            widget = photonui.getWidget(this._childrenNames[i]);
+            widget = Widget.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
@@ -9385,7 +9385,7 @@ var Layout = Container.$extend({
         }
         this._childrenNames = [];
         for (i=0 ; i<childrenNames.length ; i++) {
-            widget = photonui.getWidget(childrenNames[i]);
+            widget = Widget.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -12732,7 +12732,7 @@ var Widget = require("../widget.js");
  * @extends photonui.Widget
  * @param {Object} params An object that can contain any property of the widget (optional).
  */
-var Image = Widget.$extend({
+var Image_ = Widget.$extend({
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -12840,7 +12840,7 @@ var Image = Widget.$extend({
 
 });
 
-module.exports = Image;
+module.exports = Image_;
 
 },{"../widget.js":53}],48:[function(require,module,exports){
 /*
@@ -12939,7 +12939,7 @@ var Label = Widget.$extend({
 
     setText: function(text) {
         this._text = text;
-        photonui.Helpers.cleanNode(this.__html.label);
+        Helpers.cleanNode(this.__html.label);
 
         var lines = (text+"").split("\n");
 
@@ -13688,7 +13688,7 @@ var Helpers = require("../helpers.js");
  * @constructor
  * @extends photonui.Widget
  */
-var Text = Widget.$extend({
+var Text_ = Widget.$extend({
 
 
     //////////////////////////////////////////
@@ -13789,7 +13789,7 @@ var Text = Widget.$extend({
     }
 });
 
-module.exports = Text;
+module.exports = Text_;
 
 },{"../helpers.js":19,"../widget.js":53,"stonejs":3}],53:[function(require,module,exports){
 /*

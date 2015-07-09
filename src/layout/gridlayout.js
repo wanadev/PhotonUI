@@ -277,7 +277,7 @@ var GridLayout = Layout.$extend({
 
         // Clean
         this.__html.grid.removeChild(this.__html.gridBody);
-        photonui.Helpers.cleanNode(this.__html.gridBody);
+        Helpers.cleanNode(this.__html.gridBody);
 
         // Build the layout
         var that = this;

@@ -85,7 +85,7 @@ var Layout = Container.$extend({
     setChildrenNames: function(childrenNames) {
         var i, widget;
         for (i=0 ; i<this._childrenNames.length ; i++) {
-            widget = photonui.getWidget(this._childrenNames[i]);
+            widget = Widget.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
@@ -93,7 +93,7 @@ var Layout = Container.$extend({
         }
         this._childrenNames = [];
         for (i=0 ; i<childrenNames.length ; i++) {
-            widget = photonui.getWidget(childrenNames[i]);
+            widget = Widget.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();

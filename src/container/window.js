@@ -38,6 +38,7 @@
 
 var Stone = require("stonejs");
 var Helpers = require("../helpers.js");
+var Widget = require("../widget.js");
 var BaseWindow = require("./basewindow.js");
 
 var _windowList = [];
@@ -161,7 +162,7 @@ var Window = BaseWindow.$extend({
         if (modal) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
-            var parentNode = photonui.e_parent || document.getElementsByTagName("body")[0];
+            var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
         }
@@ -290,7 +291,7 @@ var Window = BaseWindow.$extend({
      * @private
      */
     _updateWindowList: function() {
-        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {
+        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {   // jshint ignore:line
             if (i === 0) {
                 _windowList[i].html.style.zIndex = 2001;
                 _windowList[i].addClass("photonui-active");

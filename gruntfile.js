@@ -46,6 +46,18 @@ module.exports = function(grunt) {
         jshint: {
             all: ['src/**/*.js'],
             options: {
+                futurehostile: true,
+                freeze: true,
+                latedef: true,
+                noarg: true,
+                nocomma: true,
+                nonbsp: true,
+                nonew: true,
+                undef: true,
+                globals: {"File": false},
+                browser: true,
+                browserify: true,
+                devel: true
             }
         },
 

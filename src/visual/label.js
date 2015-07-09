@@ -94,7 +94,7 @@ var Label = Widget.$extend({
 
     setText: function(text) {
         this._text = text;
-        photonui.Helpers.cleanNode(this.__html.label);
+        Helpers.cleanNode(this.__html.label);
 
         var lines = (text+"").split("\n");
 

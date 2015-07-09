@@ -88,7 +88,7 @@ var Dialog = Window.$extend({
     setButtonsNames: function(buttonsNames) {
         var i, widget;
         for (i=0 ; i<this._buttonsNames.length ; i++) {
-            widget = photonui.getWidget(this._buttonsNames[i]);
+            widget = Widget.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
@@ -96,7 +96,7 @@ var Dialog = Window.$extend({
         }
         this._buttonsNames = [];
         for (i=0 ; i<buttonsNames.length ; i++) {
-            widget = photonui.getWidget(buttonsNames[i]);
+            widget = Widget.getWidget(buttonsNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();

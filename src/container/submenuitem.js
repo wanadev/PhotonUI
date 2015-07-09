@@ -80,6 +80,7 @@ var SubMenuItem = MenuItem.$extend({
     },
 
     setMenuName: function(menuName) {
+        var that = this;
 
         function _init() {
             if (!that.menu) return;
@@ -96,8 +97,6 @@ var SubMenuItem = MenuItem.$extend({
         this._menuName = menuName;
 
         if (this.menuName) {
-            that = this;
-
             if (this.menu) {
                 _init();
             }
