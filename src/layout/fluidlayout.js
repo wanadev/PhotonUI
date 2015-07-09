@@ -135,7 +135,7 @@ var FluidLayout = Layout.$extend({
      * @private
      */
     _updateLayout: function() {
-        var children = this.children
+        var children = this.children;
         var fragment = document.createDocumentFragment();
 
         var div = null;

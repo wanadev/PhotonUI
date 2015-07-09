@@ -78,7 +78,6 @@ var Separator = Widget.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");

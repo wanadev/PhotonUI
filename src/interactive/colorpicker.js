@@ -254,7 +254,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         ctx.fillStyle = "#000";
         ctx.arc(100, 100, 73, 2*Math.PI, false);
         ctx.globalCompositeOperation = "destination-out";
-        ctx.fill()
+        ctx.fill();
     },
 
     /**

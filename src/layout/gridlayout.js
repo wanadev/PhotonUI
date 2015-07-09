@@ -217,7 +217,7 @@ var GridLayout = Layout.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility) {
             this._sizingHack();
         }
@@ -301,7 +301,7 @@ var GridLayout = Layout.$extend({
         var child;
         var tr, td, div;
         var cellX, cellY;
-        for (var y=0 ; y<gridHeight ; y++) {
+        for (y=0 ; y<gridHeight ; y++) {
             tr = document.createElement("tr");
             for (var x=0 ; x<gridWidth ; x++) {
                 if (map[y][x]) {
@@ -368,8 +368,8 @@ var GridLayout = Layout.$extend({
                         td.colSpan = child.o.cols;
                         td.rowSpan = child.o.rows;
 
-                        for (var cellY=y ; cellY<y+child.o.rows ; cellY++) {
-                            for (var cellX=x ; cellX<x+child.o.cols ; cellX++) {
+                        for (cellY=y ; cellY<y+child.o.rows ; cellY++) {
+                            for (cellX=x ; cellX<x+child.o.cols ; cellX++) {
                                 map[cellY][cellX] = true;
                             }
                         }
@@ -416,7 +416,7 @@ var GridLayout = Layout.$extend({
             minHeight: null,
             maxHeight: null,
             height: null
-        }
+        };
 
         if (widget.html) {
             if (widget.html.classList.contains("photonui-widget-fixed-height")) {
@@ -613,13 +613,13 @@ var GridLayout = Layout.$extend({
             }
 
             // 2nd pass -> fixed height for all td where rowspan = 1
-            for (var i=0 ; i<nodes.length ; i++) {
+            for (i=0 ; i<nodes.length ; i++) {
                 if (nodes[i].rowSpan && nodes[i].rowSpan > 1) continue;
                 _size(nodes[i]);
             }
 
             // 3rd pass -> fixed height for all td where rowspan > 1
-            for (var i=0 ; i<nodes.length ; i++) {
+            for (i=0 ; i<nodes.length ; i++) {
                 if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) continue;
                 _size(nodes[i]);
             }

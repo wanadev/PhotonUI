@@ -149,7 +149,7 @@ var SpriteSheet = Base.$extend({
     },
 
     setIcons: function(icons) {
-        for (icon in icons) {
+        for (var icon in icons) {
             this._icons[icon] = icons[icon];
         }
     },
@@ -225,6 +225,6 @@ SpriteSheet.getSpriteSheet = function(name) {
         return _spritesheets[name];
     }
     return null;
-}
+};
 
 module.exports = SpriteSheet;

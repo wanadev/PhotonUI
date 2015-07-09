@@ -100,7 +100,7 @@ var AccelManager = Base.$extend({
      * @param {Boolean} safe If true, the accelerator is disable if a field/textArea is focused (optional, default=true)
      */
     addAccel: function(id, keys, callback, safe) {
-        var keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
+        keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
         this.removeAccel(id);
         this.__kbd[id] = {
             keys: keys,
@@ -147,9 +147,9 @@ var AccelManager = Base.$extend({
             if (this.__kbd[id].keys != combo) continue;
 
             if (this.__kbd[id].safe) {
-                if (document.activeElement instanceof HTMLInputElement
-                ||  document.activeElement instanceof HTMLSelectElement
-                ||  document.activeElement instanceof HTMLTextAreaElement) {
+                if (document.activeElement instanceof HTMLInputElement ||
+                    document.activeElement instanceof HTMLSelectElement ||
+                    document.activeElement instanceof HTMLTextAreaElement) {
                     continue;
                 }
             }

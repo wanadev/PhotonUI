@@ -164,7 +164,7 @@ var SpriteIcon = BaseIcon.$extend({
     _update: function() {
         var style = "";
         if (this.spriteSheetName && this.iconName) {
-            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName)
+            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName);
         }
         this.__html.icon.setAttribute("style", style);
     },

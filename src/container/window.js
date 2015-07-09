@@ -65,7 +65,7 @@ var Window = BaseWindow.$extend({
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
         this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click", this.__closeButtonClicked.bind(this));
-        this._bindEvent("totop", this.__html["window"], "mousedown", this.moveToFront.bind(this));
+        this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
 
         // Update Properties
@@ -263,11 +263,11 @@ var Window = BaseWindow.$extend({
         var _ = Stone.lazyGettext;
 
         this.$super();
-        this.__html["window"].className += " photonui-window";
+        this.__html.window.className += " photonui-window";
 
         this.__html.windowTitle = document.createElement("div");
         this.__html.windowTitle.className = "photonui-window-title";
-        this.__html["window"].appendChild(this.__html.windowTitle);
+        this.__html.window.appendChild(this.__html.windowTitle);
 
         this.__html.windowTitleCloseButton = document.createElement("button");
         this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button fa fa-times";
@@ -280,7 +280,7 @@ var Window = BaseWindow.$extend({
 
         this.__html.windowContent = document.createElement("div");
         this.__html.windowContent.className = "photonui-container photonui-window-content";
-        this.__html["window"].appendChild(this.__html.windowContent);
+        this.__html.window.appendChild(this.__html.windowContent);
     },
 
     /**
@@ -291,7 +291,7 @@ var Window = BaseWindow.$extend({
      */
     _updateWindowList: function() {
         for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {
-            if (i == 0) {
+            if (i === 0) {
                 _windowList[i].html.style.zIndex = 2001;
                 _windowList[i].addClass("photonui-active");
             }
@@ -322,8 +322,8 @@ var Window = BaseWindow.$extend({
         if (!this.movable || event.button > 0) {
             return;
         }
-        var offsetX = (event.offsetX != undefined) ? event.offsetX : event.layerX;
-        var offsetY = (event.offsetY != undefined) ? event.offsetY : event.layerY;
+        var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;
+        var offsetY = (event.offsetY !== undefined) ? event.offsetY : event.layerY;
         this.__html.windowTitle.style.cursor = "move";
         this._bindEvent("move.dragging", document, "mousemove", this.__moveDragging.bind(this, offsetX, offsetY));
         this._bindEvent("move.dragend", document, "mouseup", this.__moveDragEnd.bind(this));

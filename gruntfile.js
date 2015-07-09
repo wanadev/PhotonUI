@@ -43,6 +43,12 @@ module.exports = function(grunt) {
             }
         },
 
+        jshint: {
+            all: ['src/**/*.js'],
+            options: {
+            }
+        },
+
         jasmine: {
             pivotal: {
                 src: ['dist/photonui.js', 'test/helpers.js'],
@@ -108,6 +114,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     // Register runnable tasks.
     grunt.registerTask('gen-js', ['browserify', 'uglify']);
@@ -115,5 +122,5 @@ module.exports = function(grunt) {
     grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
     grunt.registerTask('dist', ['default']);
-    grunt.registerTask('test', ['jasmine']);
+    grunt.registerTask('test', ['jshint', 'jasmine']);
 };

@@ -59,7 +59,7 @@ var Select = Widget.$extend({
 
     // Constructor
     __init__: function(params) {
-        var params = params || {};
+        params = params || {};
 
         // Attach popup & special mixin
         this.__popupMenu = new PopupMenu({
@@ -307,7 +307,7 @@ var Select = Widget.$extend({
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
     addChild: function(w, l) {
-        this.__popupMenu.addChild(w, l)
+        this.__popupMenu.addChild(w, l);
         this._updateItemsBinding();
     },
 

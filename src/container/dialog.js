@@ -86,16 +86,17 @@ var Dialog = Window.$extend({
     },
 
     setButtonsNames: function(buttonsNames) {
-        for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            var widget = photonui.getWidget(this._buttonsNames[i]);
+        var i, widget;
+        for (i=0 ; i<this._buttonsNames.length ; i++) {
+            widget = photonui.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
             }
         }
         this._buttonsNames = [];
-        for (var i=0 ; i<buttonsNames.length ; i++) {
-            var widget = photonui.getWidget(buttonsNames[i]);
+        for (i=0 ; i<buttonsNames.length ; i++) {
+            widget = photonui.getWidget(buttonsNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -223,11 +224,11 @@ var Dialog = Window.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.__html["window"].className += " photonui-dialog";
+        this.__html.window.className += " photonui-dialog";
 
         this.__html.buttons = document.createElement("div");
         this.__html.buttons.className = "photonui-dialog-buttons";
-        this.__html["window"].appendChild(this.__html.buttons);
+        this.__html.window.appendChild(this.__html.buttons);
     },
 
     /**
@@ -238,10 +239,10 @@ var Dialog = Window.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         var buttons = this.buttons;
         for (var i=0 ; i<buttons.length ; i++) {
-            if (!this.child instanceof Widget) continue;
+            if (!(this.child instanceof Widget)) continue;
             buttons[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);

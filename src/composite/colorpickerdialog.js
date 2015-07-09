@@ -69,8 +69,8 @@ var ColorPickerDialog = Dialog.$extend({
         this.__widgets = {};
         this._color = new Color();
 
-        var params = params || {};
-        if (params.title == undefined) params.title = _("Select a color...");
+        params = params || {};
+        if (params.title === undefined) params.title = _("Select a color...");
 
         this._registerWEvents(["value-changed"]);
 
@@ -312,7 +312,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     _updateUi: function(color) {
-        var color = color || this.color;
+        color = color || this.color;
         this.__widgets.fieldRed.value = color.red;
         this.__widgets.fieldGreen.value = color.green;
         this.__widgets.fieldBlue.value = color.blue;

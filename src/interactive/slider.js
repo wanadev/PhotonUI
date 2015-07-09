@@ -118,7 +118,7 @@ var Slider = NumericField.$extend({
         // Hack: force grip position after insertion into the DOM...
         setTimeout(function() {
             this.value = this.value;
-        }.bind(this), .01);
+        }.bind(this), 10);
 
         return this.__html.outer;
     },
@@ -167,7 +167,7 @@ var Slider = NumericField.$extend({
         this.__html.grip.className = "photonui-slider-grip";
         this.__html.slider.appendChild(this.__html.grip);
 
-        this.__html.outer.appendChild(this.__html.field)
+        this.__html.outer.appendChild(this.__html.field);
     },
 
     /**
@@ -249,21 +249,21 @@ var Slider = NumericField.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this.value += this.step;
             }

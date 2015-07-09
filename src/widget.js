@@ -203,7 +203,7 @@ var Widget = Base.$extend({
             this.html.title = tooltip;
         }
         else {
-            delete this.html.removeAttribute("title");
+            this.html.removeAttribute("title");
         }
     },
 
@@ -238,7 +238,7 @@ var Widget = Base.$extend({
     setContextMenu: function(contextMenu) {
         var PopupWindow = require("./container/popupwindow.js");
         if (contextMenu instanceof PopupWindow) {
-            this.contextMenuName = contextMenu.name
+            this.contextMenuName = contextMenu.name;
         }
         else {
             this.contextMenuName = null;
@@ -259,7 +259,7 @@ var Widget = Base.$extend({
     },
 
     setLayoutOptions: function(layoutOptions) {
-        for (option in layoutOptions) {
+        for (var option in layoutOptions) {
             this._layoutOptions[option] = layoutOptions[option];
         }
     },
@@ -443,7 +443,7 @@ var Widget = Base.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility && this.visible) {
             this._callCallbacks("show");
         }
@@ -502,7 +502,7 @@ Widget.getWidget = function(name) {
         return _widgets[name];
     }
     return null;
-}
+};
 
 Widget.e_parent = null;
 
@@ -514,11 +514,11 @@ Widget.e_parent = null;
  * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
  */
 Widget.domInsert = function(widget, element) {
-    var element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
+    element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
     if (typeof(element) == "string") {
         element = document.getElementById(element);
     }
     element.appendChild(widget.html);
-}
+};
 
 module.exports = Widget;

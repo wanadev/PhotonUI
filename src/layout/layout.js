@@ -83,16 +83,17 @@ var Layout = Container.$extend({
     },
 
     setChildrenNames: function(childrenNames) {
-        for (var i=0 ; i<this._childrenNames.length ; i++) {
-            var widget = photonui.getWidget(this._childrenNames[i]);
+        var i, widget;
+        for (i=0 ; i<this._childrenNames.length ; i++) {
+            widget = photonui.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
             }
         }
         this._childrenNames = [];
-        for (var i=0 ; i<childrenNames.length ; i++) {
-            var widget = photonui.getWidget(childrenNames[i]);
+        for (i=0 ; i<childrenNames.length ; i++) {
+            widget = photonui.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -238,10 +239,10 @@ var Layout = Container.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         var children = this.children;
         for (var i=0 ; i<children.length ; i++) {
-            if (!this.child instanceof Widget) continue;
+            if (!(this.child instanceof Widget)) continue;
             children[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);

@@ -1416,25 +1416,26 @@ var Base = Class.$extend({
         this._registerWEvents(["destroy"]);
 
         // Create properties from accessors
+        var propName;
         for (var prop in this) {
-            if (prop.indexOf("get") == 0) {
-                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+            if (prop.indexOf("get") === 0) {
+                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
                     enumerable: true,
                     configurable: true
                 });
             }
-            else if (prop.indexOf("set") == 0) {
-                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+            else if (prop.indexOf("set") === 0) {
+                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     set: this[prop],
                     enumerable: true,
                     configurable: true
                 });
             }
-            else if (prop.indexOf("is") == 0) {
-                var propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
+            else if (prop.indexOf("is") === 0) {
+                propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
                     enumerable: true,
@@ -1444,8 +1445,8 @@ var Base = Class.$extend({
         }
 
         // Apply params
-        var params = params || {};
-        for (param in params) {
+        params = params || {};
+        for (var param in params) {
             if (this[param] !== undefined) {
                 this[param] = params[param];
             }
@@ -1545,7 +1546,7 @@ var Base = Class.$extend({
         this.__callbacks[wEvent][id] = {
             callback: callback,
             thisArg: thisArg || null
-        }
+        };
     },
 
     /**
@@ -1628,7 +1629,7 @@ var Base = Class.$extend({
      * @param {Array} wEvents
      */
     _registerWEvents: function(wEvents) {
-        if (this.__callbacks == null) {
+        if (this.__callbacks === null) {
             this.__callbacks = {};
         }
         for (var i in wEvents) {
@@ -1648,7 +1649,7 @@ var Base = Class.$extend({
      * @param {Array} params Parametters that will be sent to the callbacks.
      */
     _callCallbacks: function(wEvent, params) {
-        var params = params || [];
+        params = params || [];
         for (var id in this.__callbacks[wEvent]) {
             this.__callbacks[wEvent][id].callback.apply(
                     this.__callbacks[wEvent][id].thisArg || this,
@@ -2003,8 +2004,8 @@ var ColorPickerDialog = Dialog.$extend({
         this.__widgets = {};
         this._color = new Color();
 
-        var params = params || {};
-        if (params.title == undefined) params.title = _("Select a color...");
+        params = params || {};
+        if (params.title === undefined) params.title = _("Select a color...");
 
         this._registerWEvents(["value-changed"]);
 
@@ -2246,7 +2247,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     _updateUi: function(color) {
-        var color = color || this.color;
+        color = color || this.color;
         this.__widgets.fieldRed.value = color.red;
         this.__widgets.fieldGreen.value = color.green;
         this.__widgets.fieldBlue.value = color.blue;
@@ -2359,10 +2360,10 @@ var FontSelect = Select.$extend({
 
     // Constructor
     __init__: function(params) {
-        var params = params || {};
+        params = params || {};
         this._fonts = [];
         this.$super(params);
-        if (this.fonts.length == 0) this.fonts = ["sans-serif", "serif", "monospace"];
+        if (this.fonts.length === 0) this.fonts = ["sans-serif", "serif", "monospace"];
         this.value = (params.value !== undefined) ? params.value : "sans-serif";
     },
 
@@ -2543,7 +2544,7 @@ var PopupMenu = PopupWindow.$extend({
         Menu.prototype._buildHtml.call(this);
 
         this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
+        this.__html.window.className += " photonui-popupmenu";
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
     },
 
@@ -2628,7 +2629,7 @@ var Select = Widget.$extend({
 
     // Constructor
     __init__: function(params) {
-        var params = params || {};
+        params = params || {};
 
         // Attach popup & special mixin
         this.__popupMenu = new PopupMenu({
@@ -2876,7 +2877,7 @@ var Select = Widget.$extend({
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
     addChild: function(w, l) {
-        this.__popupMenu.addChild(w, l)
+        this.__popupMenu.addChild(w, l);
         this._updateItemsBinding();
     },
 
@@ -3017,7 +3018,7 @@ var BaseWindow = Container.$extend({
         this.$super(params);
 
         // Windows are hidden by default
-        var params = params || {};
+        params = params || {};
         if (params.visible === undefined) {
             this.visible = false;
         }
@@ -3058,7 +3059,7 @@ var BaseWindow = Container.$extend({
     },
 
     setPosition: function(x, y) {
-        if (typeof(x) == "object" && y == undefined) {
+        if (typeof(x) == "object" && y === undefined) {
             this.html.style.left = x.x + "px";
             this.html.style.top = x.y + "px";
             this._x = x.x;
@@ -3282,7 +3283,7 @@ var BaseWindow = Container.$extend({
      * @readOnly
      */
     getHtml: function() {
-        return this.__html["window"];
+        return this.__html.window;
     },
 
     /**
@@ -3330,8 +3331,8 @@ var BaseWindow = Container.$extend({
      * @private
      */
     _buildHtml: function() {
-        this.__html["window"] = document.createElement("div");
-        this.__html["window"].className = "photonui-widget photonui-basewindow";
+        this.__html.window = document.createElement("div");
+        this.__html.window.className = "photonui-widget photonui-basewindow";
     }
 });
 
@@ -3495,7 +3496,7 @@ var Container = Widget.$extend({
     },
 
     setChild: function(child) {
-        if ((!child) || (!child instanceof Widget)) {
+        if ((!child) || (!(child instanceof Widget))) {
             this.childName = null;
             return;
         }
@@ -3521,7 +3522,7 @@ var Container = Widget.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (this.child instanceof Widget) {
             this.child._visibilityChanged(visibility);
         }
@@ -3652,16 +3653,17 @@ var Dialog = Window.$extend({
     },
 
     setButtonsNames: function(buttonsNames) {
-        for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            var widget = photonui.getWidget(this._buttonsNames[i]);
+        var i, widget;
+        for (i=0 ; i<this._buttonsNames.length ; i++) {
+            widget = photonui.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
             }
         }
         this._buttonsNames = [];
-        for (var i=0 ; i<buttonsNames.length ; i++) {
-            var widget = photonui.getWidget(buttonsNames[i]);
+        for (i=0 ; i<buttonsNames.length ; i++) {
+            widget = photonui.getWidget(buttonsNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -3789,11 +3791,11 @@ var Dialog = Window.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.__html["window"].className += " photonui-dialog";
+        this.__html.window.className += " photonui-dialog";
 
         this.__html.buttons = document.createElement("div");
         this.__html.buttons.className = "photonui-dialog-buttons";
-        this.__html["window"].appendChild(this.__html.buttons);
+        this.__html.window.appendChild(this.__html.buttons);
     },
 
     /**
@@ -3804,10 +3806,10 @@ var Dialog = Window.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         var buttons = this.buttons;
         for (var i=0 ; i<buttons.length ; i++) {
-            if (!this.child instanceof Widget) continue;
+            if (!(this.child instanceof Widget)) continue;
             buttons[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);
@@ -4206,8 +4208,12 @@ var PopupWindow = BaseWindow.$extend({
             y = wpos.y - ph - 1;
         }
 
-        if (x < 0) { x = 0 };
-        if (y < 0) { y = 0 };
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
 
         this.setPosition(x, y);
     },
@@ -4224,10 +4230,10 @@ var PopupWindow = BaseWindow.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.__html["window"].className += " photonui-popupwindow";
+        this.__html.window.className += " photonui-popupwindow";
 
         this.__html.inner = document.createElement("div");
-        this.__html["window"].appendChild(this.__html.inner);
+        this.__html.window.appendChild(this.__html.inner);
     }
 });
 
@@ -4316,19 +4322,24 @@ var SubMenuItem = MenuItem.$extend({
     },
 
     setMenuName: function(menuName) {
+
+        function _init() {
+            if (!that.menu) return;
+            that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
+            that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
+            that.active = that.menu.visible;
+        }
+
         if (this.menuName && this.menu) {
             this.menu.removeCallback("fold");
             this.menu.removeCallback("unfold");
         }
+
         this._menuName = menuName;
+
         if (this.menuName) {
             that = this;
-            function _init() {
-                if (!that.menu) return;
-                that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
-                that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
-                that.active = that.menu.visible;
-            }
+
             if (this.menu) {
                 _init();
             }
@@ -4902,7 +4913,7 @@ var Viewport = Container.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility) this._sizingHack();
         this.$super(visibility);
     },
@@ -4923,7 +4934,7 @@ var Viewport = Container.$extend({
 
             this.__html.viewport.style.display = "none";
 
-            while (node = node.parentNode) {
+            while (node = node.parentNode) {  // jshint ignore:line
                 if (!node) break;
                 if (node.offsetHeight > 0) {
                     height = node.offsetHeight;
@@ -5030,7 +5041,7 @@ var Window = BaseWindow.$extend({
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
         this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click", this.__closeButtonClicked.bind(this));
-        this._bindEvent("totop", this.__html["window"], "mousedown", this.moveToFront.bind(this));
+        this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
 
         // Update Properties
@@ -5228,11 +5239,11 @@ var Window = BaseWindow.$extend({
         var _ = Stone.lazyGettext;
 
         this.$super();
-        this.__html["window"].className += " photonui-window";
+        this.__html.window.className += " photonui-window";
 
         this.__html.windowTitle = document.createElement("div");
         this.__html.windowTitle.className = "photonui-window-title";
-        this.__html["window"].appendChild(this.__html.windowTitle);
+        this.__html.window.appendChild(this.__html.windowTitle);
 
         this.__html.windowTitleCloseButton = document.createElement("button");
         this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button fa fa-times";
@@ -5245,7 +5256,7 @@ var Window = BaseWindow.$extend({
 
         this.__html.windowContent = document.createElement("div");
         this.__html.windowContent.className = "photonui-container photonui-window-content";
-        this.__html["window"].appendChild(this.__html.windowContent);
+        this.__html.window.appendChild(this.__html.windowContent);
     },
 
     /**
@@ -5256,7 +5267,7 @@ var Window = BaseWindow.$extend({
      */
     _updateWindowList: function() {
         for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {
-            if (i == 0) {
+            if (i === 0) {
                 _windowList[i].html.style.zIndex = 2001;
                 _windowList[i].addClass("photonui-active");
             }
@@ -5287,8 +5298,8 @@ var Window = BaseWindow.$extend({
         if (!this.movable || event.button > 0) {
             return;
         }
-        var offsetX = (event.offsetX != undefined) ? event.offsetX : event.layerX;
-        var offsetY = (event.offsetY != undefined) ? event.offsetY : event.layerY;
+        var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;
+        var offsetY = (event.offsetY !== undefined) ? event.offsetY : event.layerY;
         this.__html.windowTitle.style.cursor = "move";
         this._bindEvent("move.dragging", document, "mousemove", this.__moveDragging.bind(this, offsetX, offsetY));
         this._bindEvent("move.dragend", document, "mouseup", this.__moveDragEnd.bind(this));
@@ -5402,7 +5413,7 @@ var photonui = require("./photonui.js");
  * @constructor
  */
 var Helpers = function() {
-}
+};
 
 /**
  * Escape HTML.
@@ -5417,7 +5428,7 @@ Helpers.escapeHtml = function(string) {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
-}
+};
 
 /**
  * Generate an UUID version 4 (RFC 4122)
@@ -5434,7 +5445,7 @@ Helpers.uuid4 = function() {
         var r = Math.random()*16|0, v = c == "x" ? r : (r&0x3|0x8);
         return v.toString(16);
     });
-}
+};
 
 /**
  * Clean node (remove all children of the node).
@@ -5447,7 +5458,7 @@ Helpers.cleanNode = function(node) {
     while (node.hasChildNodes()) {
         node.removeChild(node.lastChild);
     }
-}
+};
 
 /**
  * Get the absolute position of an HTML Element.
@@ -5459,9 +5470,10 @@ Helpers.cleanNode = function(node) {
  */
 Helpers.getAbsolutePosition = function(element) {
     if (typeof(element) == "string") element = document.getElementById(element);
-    if (!element instanceof Element) return {x: 0, y: 0};
+    if (!(element instanceof Element)) return {x: 0, y: 0};
+    var css;
     try {
-        var css = getComputedStyle(element);
+        css = getComputedStyle(element);
     }
     catch (e) {
         return {x: 0, y: 0};
@@ -5469,7 +5481,7 @@ Helpers.getAbsolutePosition = function(element) {
     if (!css) return {x: 0, y: 0};
 
     var x = - parseInt(css.borderLeftWidth);
-    var y = - parseInt(css.borderTopWidth);;
+    var y = - parseInt(css.borderTopWidth);
 
     while (element.offsetParent) {
         css = getComputedStyle(element);
@@ -5484,7 +5496,7 @@ Helpers.getAbsolutePosition = function(element) {
     }
 
     return {x: x, y: y};
-}
+};
 
 /**
  * Check and compute size to valid CSS size
@@ -5502,9 +5514,9 @@ Helpers.getAbsolutePosition = function(element) {
  * @return {String} sanitized version of the size.
  */
 Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
-    var nullValue = (nullValue === undefined) ? "auto" : nullValue;
-    var defaultValue = (nullValue === undefined) ? null : defaultValue;
-    var value = (value === undefined) ? defaultValue : value;
+    nullValue = (nullValue === undefined) ? "auto" : nullValue;
+    defaultValue = (nullValue === undefined) ? null : defaultValue;
+    value = (value === undefined) ? defaultValue : value;
 
     if (value === Infinity) {
         return "100%";
@@ -5518,7 +5530,7 @@ Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
     else {
         return nullValue;
     }
-}
+};
 
 module.exports = Helpers;
 
@@ -5810,7 +5822,7 @@ var Button = Widget.$extend({
         if (this._buttonColor) {
             this.__html.button.classList.remove("photonui-button-color-" + this._buttonColor);
         }
-        this._buttonColor = buttonColor
+        this._buttonColor = buttonColor;
         if (buttonColor) {
             this.__html.button.classList.add("photonui-button-color-" + this._buttonColor);
         }
@@ -6261,7 +6273,7 @@ var ColorPalette = Widget.$extend({
         this._palette = palette;
 
         if (!palette) {
-            var palette = ColorPalette.palette;
+            palette = ColorPalette.palette;
         }
 
         // Update
@@ -6270,9 +6282,9 @@ var ColorPalette = Widget.$extend({
 
         var e_tr, e_td, x, y;
         for (y=0 ; y<palette.length ; y++) {
-            var e_tr = document.createElement("tr");
+            e_tr = document.createElement("tr");
             for (x=0 ; x<palette[y].length ; x++) {
-                var e_td = document.createElement("td");
+                e_td = document.createElement("td");
                 e_td.style.backgroundColor = palette[y][x];
                 e_td.onclick = this.__onColorClicked.bind(this, palette[y][x]);
                 e_tr.appendChild(e_td);
@@ -6313,7 +6325,7 @@ var ColorPalette = Widget.$extend({
         this.__html.palette = document.createElement("table");
         this.__html.palette.className = "photonui-widget photonui-colorpalette";
         this.__html.tbody = document.createElement("tbody");
-        this.__html.palette.appendChild(this.__html.tbody)
+        this.__html.palette.appendChild(this.__html.tbody);
     },
 
 
@@ -6601,7 +6613,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         ctx.fillStyle = "#000";
         ctx.arc(100, 100, 73, 2*Math.PI, false);
         ctx.globalCompositeOperation = "destination-out";
-        ctx.fill()
+        ctx.fill();
     },
 
     /**
@@ -7263,15 +7275,15 @@ var NumericField = Field.$extend({
             value = 0;
         }
 
-        if (this.min != null) {
+        if (this.min !== null) {
             value = Math.max(this.min, value);
         }
 
-        if (this.max != null) {
+        if (this.max !== null) {
             value = Math.min(this.max, value);
         }
 
-        if (this.decimalDigits != null) {
+        if (this.decimalDigits !== null) {
             value = value.toFixed(this.decimalDigits);
         }
 
@@ -7297,10 +7309,10 @@ var NumericField = Field.$extend({
      * @return {Boolean}
      */
     _validateInput: function(value) {
-        var value = "" + value;
+        value = "" + value;
         value = value.replace(/ /g, "");  // remove spaces
         if (/^-?[0-9]*(\.|,)?[0-9]*$/.test(value)) {
-            if (this.decimalDigits == 0 && !/^-?[0-9]*$/.test(value)) {
+            if (this.decimalDigits === 0 && !/^-?[0-9]*$/.test(value)) {
                 return false;
             }
             if (this.min !== null && this.min >= 0 && value[0] == "-") {
@@ -7344,9 +7356,9 @@ var NumericField = Field.$extend({
         }
         else {
             var field = this.__html.field;
-            var value = field.value.slice(0, field.selectionStart)
-                        + String.fromCharCode(event.charCode)
-                        + field.value.slice(field.selectionEnd);
+            var value = field.value.slice(0, field.selectionStart) +
+                        String.fromCharCode(event.charCode) +
+                        field.value.slice(field.selectionEnd);
             if (!this._validateInput(value)) {
                 event.preventDefault();
             }
@@ -7389,21 +7401,21 @@ var NumericField = Field.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
            if (wheelDelta >= 0) {
                 this.value += this.step;
             }
@@ -7557,7 +7569,7 @@ var Slider = NumericField.$extend({
         // Hack: force grip position after insertion into the DOM...
         setTimeout(function() {
             this.value = this.value;
-        }.bind(this), .01);
+        }.bind(this), 10);
 
         return this.__html.outer;
     },
@@ -7606,7 +7618,7 @@ var Slider = NumericField.$extend({
         this.__html.grip.className = "photonui-slider-grip";
         this.__html.slider.appendChild(this.__html.grip);
 
-        this.__html.outer.appendChild(this.__html.field)
+        this.__html.outer.appendChild(this.__html.field);
     },
 
     /**
@@ -7688,21 +7700,21 @@ var Slider = NumericField.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this.value += this.step;
             }
@@ -8008,7 +8020,6 @@ var TextField = Field.$extend({
     setType: function(type) {
         if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
             throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
-            return;
         }
         this.__html.field.type = type;
     },
@@ -8237,7 +8248,6 @@ var BoxLayout = Layout.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-layout-orientation-vertical");
@@ -8430,7 +8440,7 @@ var BoxLayout = Layout.$extend({
             maxHeight: null,
             height: null,
             order: null
-        }
+        };
 
         // align
         if (["stretch", "expand"].indexOf(woptions.align) > -1) {
@@ -8621,7 +8631,7 @@ var FluidLayout = Layout.$extend({
      * @private
      */
     _updateLayout: function() {
-        var children = this.children
+        var children = this.children;
         var fragment = document.createDocumentFragment();
 
         var div = null;
@@ -8860,7 +8870,7 @@ var GridLayout = Layout.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility) {
             this._sizingHack();
         }
@@ -8944,7 +8954,7 @@ var GridLayout = Layout.$extend({
         var child;
         var tr, td, div;
         var cellX, cellY;
-        for (var y=0 ; y<gridHeight ; y++) {
+        for (y=0 ; y<gridHeight ; y++) {
             tr = document.createElement("tr");
             for (var x=0 ; x<gridWidth ; x++) {
                 if (map[y][x]) {
@@ -9011,8 +9021,8 @@ var GridLayout = Layout.$extend({
                         td.colSpan = child.o.cols;
                         td.rowSpan = child.o.rows;
 
-                        for (var cellY=y ; cellY<y+child.o.rows ; cellY++) {
-                            for (var cellX=x ; cellX<x+child.o.cols ; cellX++) {
+                        for (cellY=y ; cellY<y+child.o.rows ; cellY++) {
+                            for (cellX=x ; cellX<x+child.o.cols ; cellX++) {
                                 map[cellY][cellX] = true;
                             }
                         }
@@ -9059,7 +9069,7 @@ var GridLayout = Layout.$extend({
             minHeight: null,
             maxHeight: null,
             height: null
-        }
+        };
 
         if (widget.html) {
             if (widget.html.classList.contains("photonui-widget-fixed-height")) {
@@ -9256,13 +9266,13 @@ var GridLayout = Layout.$extend({
             }
 
             // 2nd pass -> fixed height for all td where rowspan = 1
-            for (var i=0 ; i<nodes.length ; i++) {
+            for (i=0 ; i<nodes.length ; i++) {
                 if (nodes[i].rowSpan && nodes[i].rowSpan > 1) continue;
                 _size(nodes[i]);
             }
 
             // 3rd pass -> fixed height for all td where rowspan > 1
-            for (var i=0 ; i<nodes.length ; i++) {
+            for (i=0 ; i<nodes.length ; i++) {
                 if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) continue;
                 _size(nodes[i]);
             }
@@ -9365,16 +9375,17 @@ var Layout = Container.$extend({
     },
 
     setChildrenNames: function(childrenNames) {
-        for (var i=0 ; i<this._childrenNames.length ; i++) {
-            var widget = photonui.getWidget(this._childrenNames[i]);
+        var i, widget;
+        for (i=0 ; i<this._childrenNames.length ; i++) {
+            widget = photonui.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
             }
         }
         this._childrenNames = [];
-        for (var i=0 ; i<childrenNames.length ; i++) {
-            var widget = photonui.getWidget(childrenNames[i]);
+        for (i=0 ; i<childrenNames.length ; i++) {
+            widget = photonui.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -9520,10 +9531,10 @@ var Layout = Container.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         var children = this.children;
         for (var i=0 ; i<children.length ; i++) {
-            if (!this.child instanceof Widget) continue;
+            if (!(this.child instanceof Widget)) continue;
             children[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);
@@ -9787,7 +9798,6 @@ var TabLayout = Layout.$extend({
     setTabsPosition: function(position) {
         if (["top", "bottom", "left", "right"].indexOf(position) < 0 ) {
             throw "Error: The tabs position should be \"top\", \"bottom\", \"left\" or \"right\".";
-            return;
         }
         this._tabsPosition = position;
         this.removeClass("photonui-tablayout-tabposition-top");
@@ -9993,7 +10003,7 @@ var TabLayout = Layout.$extend({
 
         var options = {
             order: null
-        }
+        };
 
         if (woptions.order !== undefined && woptions.order !== null) {
             options.order = woptions.order|0;
@@ -10111,7 +10121,7 @@ var AccelManager = Base.$extend({
      * @param {Boolean} safe If true, the accelerator is disable if a field/textArea is focused (optional, default=true)
      */
     addAccel: function(id, keys, callback, safe) {
-        var keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
+        keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
         this.removeAccel(id);
         this.__kbd[id] = {
             keys: keys,
@@ -10158,9 +10168,9 @@ var AccelManager = Base.$extend({
             if (this.__kbd[id].keys != combo) continue;
 
             if (this.__kbd[id].safe) {
-                if (document.activeElement instanceof HTMLInputElement
-                ||  document.activeElement instanceof HTMLSelectElement
-                ||  document.activeElement instanceof HTMLTextAreaElement) {
+                if (document.activeElement instanceof HTMLInputElement ||
+                    document.activeElement instanceof HTMLSelectElement ||
+                    document.activeElement instanceof HTMLTextAreaElement) {
                     continue;
                 }
             }
@@ -10277,7 +10287,7 @@ var Color = Base.$extend({
     },
 
     setHexString: function(value) {
-        var value = value.replace(" ", "");
+        value = value.replace(" ", "");
         // #FF0000
         if (value.match(/^#[0-9a-f]{6}$/i)) {
             this._red = parseInt(value[1]+value[2], 16);
@@ -10312,7 +10322,7 @@ var Color = Base.$extend({
                 fuchsia: [0xFF, 0x00, 0xFF],
                 purple:  [0x80, 0x00, 0x80]
             };
-            if (colors[value] != undefined) {
+            if (colors[value] !== undefined) {
                 this.setRGB(colors[value]);
             }
         }
@@ -10501,7 +10511,7 @@ var Color = Base.$extend({
         this._red = Math.max(0, Math.min(255, args[0]|0));
         this._green = Math.max(0, Math.min(255, args[1]|0));
         this._blue = Math.max(0, Math.min(255, args[2]|0));
-        if (args[3] != undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
+        if (args[3] !== undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
 
         this._updateHSB();
     },
@@ -10585,7 +10595,7 @@ var Color = Base.$extend({
         }
 
         // Saturation
-        if (max == 0) {
+        if (max === 0) {
             this._saturation = 0;
         }
         else {
@@ -10725,8 +10735,8 @@ var FileManager = Base.$extend({
         this.__fileField.style.opacity = 0;
         this.__fileField.style.display = "none";
         document.getElementsByTagName("body")[0].appendChild(this.__fileField);
-        this._acceptedMimes = [],
-        this._acceptedExts = [],
+        this._acceptedMimes = [];
+        this._acceptedExts = [];
         this._registerWEvents(["file-open"]);
         this.$super(params);
     },
@@ -10925,7 +10935,7 @@ var FileManager = Base.$extend({
 
         // Validate ext
         if (!match) {
-            var ext = file.name.split(".").splice(-1)
+            var ext = file.name.split(".").splice(-1);
             for (var e=0 ; e<this.acceptedExts.length ; e++) {
                 if (ext == this.acceptedExts[e]) {
                     match = true;
@@ -11264,7 +11274,7 @@ var MouseManager = Base.$extend({
     _action: "",
 
     getAction: function() {
-        return this._action
+        return this._action;
     },
 
     /**
@@ -11461,8 +11471,8 @@ var MouseManager = Base.$extend({
         }
 
         // Click
-        if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold
-        && Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
+        if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold &&
+            Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
             this._action = "click";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks("click", [this._dump()]);
@@ -11482,10 +11492,10 @@ var MouseManager = Base.$extend({
         }
 
         // Drag Start
-        if (action == "mouse-move" && this.__prevState.action != "drag-start"
-        && this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
-            if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold
-            || Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
+        if (action == "mouse-move" && this.__prevState.action != "drag-start" &&
+            this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
+            if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold ||
+                Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
                 // Drag Start
                 this._action = "drag-start";
                 this.__event = this.__mouseDownEvent;
@@ -11501,16 +11511,16 @@ var MouseManager = Base.$extend({
         }
 
         // Dragging
-        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start"
-        || this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
+        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start" ||
+                 this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "dragging";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         }
 
         // Drag End
-        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging"
-        || this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
+        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
+                 this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
@@ -11600,21 +11610,21 @@ var MouseManager = Base.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this._stateMachine("scroll-up", event);
             }
@@ -11779,7 +11789,7 @@ var SpriteSheet = Base.$extend({
     },
 
     setIcons: function(icons) {
-        for (icon in icons) {
+        for (var icon in icons) {
             this._icons[icon] = icons[icon];
         }
     },
@@ -11855,7 +11865,7 @@ SpriteSheet.getSpriteSheet = function(name) {
         return _spritesheets[name];
     }
     return null;
-}
+};
 
 module.exports = SpriteSheet;
 
@@ -13177,7 +13187,6 @@ var ProgressBar = Widget.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-progressbar-vertical");
@@ -13371,7 +13380,6 @@ var Separator = Widget.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");
@@ -13608,7 +13616,7 @@ var SpriteIcon = BaseIcon.$extend({
     _update: function() {
         var style = "";
         if (this.spriteSheetName && this.iconName) {
-            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName)
+            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName);
         }
         this.__html.icon.setAttribute("style", style);
     },
@@ -13989,7 +13997,7 @@ var Widget = Base.$extend({
             this.html.title = tooltip;
         }
         else {
-            delete this.html.removeAttribute("title");
+            this.html.removeAttribute("title");
         }
     },
 
@@ -14024,7 +14032,7 @@ var Widget = Base.$extend({
     setContextMenu: function(contextMenu) {
         var PopupWindow = require("./container/popupwindow.js");
         if (contextMenu instanceof PopupWindow) {
-            this.contextMenuName = contextMenu.name
+            this.contextMenuName = contextMenu.name;
         }
         else {
             this.contextMenuName = null;
@@ -14045,7 +14053,7 @@ var Widget = Base.$extend({
     },
 
     setLayoutOptions: function(layoutOptions) {
-        for (option in layoutOptions) {
+        for (var option in layoutOptions) {
             this._layoutOptions[option] = layoutOptions[option];
         }
     },
@@ -14229,7 +14237,7 @@ var Widget = Base.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility && this.visible) {
             this._callCallbacks("show");
         }
@@ -14288,7 +14296,7 @@ Widget.getWidget = function(name) {
         return _widgets[name];
     }
     return null;
-}
+};
 
 Widget.e_parent = null;
 
@@ -14300,12 +14308,12 @@ Widget.e_parent = null;
  * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
  */
 Widget.domInsert = function(widget, element) {
-    var element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
+    element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
     if (typeof(element) == "string") {
         element = document.getElementById(element);
     }
     element.appendChild(widget.html);
-}
+};
 
 module.exports = Widget;
 

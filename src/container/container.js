@@ -155,7 +155,7 @@ var Container = Widget.$extend({
     },
 
     setChild: function(child) {
-        if ((!child) || (!child instanceof Widget)) {
+        if ((!child) || (!(child instanceof Widget))) {
             this.childName = null;
             return;
         }
@@ -181,7 +181,7 @@ var Container = Widget.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (this.child instanceof Widget) {
             this.child._visibilityChanged(visibility);
         }

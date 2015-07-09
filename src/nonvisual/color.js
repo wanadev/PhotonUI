@@ -99,7 +99,7 @@ var Color = Base.$extend({
     },
 
     setHexString: function(value) {
-        var value = value.replace(" ", "");
+        value = value.replace(" ", "");
         // #FF0000
         if (value.match(/^#[0-9a-f]{6}$/i)) {
             this._red = parseInt(value[1]+value[2], 16);
@@ -134,7 +134,7 @@ var Color = Base.$extend({
                 fuchsia: [0xFF, 0x00, 0xFF],
                 purple:  [0x80, 0x00, 0x80]
             };
-            if (colors[value] != undefined) {
+            if (colors[value] !== undefined) {
                 this.setRGB(colors[value]);
             }
         }
@@ -323,7 +323,7 @@ var Color = Base.$extend({
         this._red = Math.max(0, Math.min(255, args[0]|0));
         this._green = Math.max(0, Math.min(255, args[1]|0));
         this._blue = Math.max(0, Math.min(255, args[2]|0));
-        if (args[3] != undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
+        if (args[3] !== undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
 
         this._updateHSB();
     },
@@ -407,7 +407,7 @@ var Color = Base.$extend({
         }
 
         // Saturation
-        if (max == 0) {
+        if (max === 0) {
             this._saturation = 0;
         }
         else {

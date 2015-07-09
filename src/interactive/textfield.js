@@ -83,7 +83,6 @@ var TextField = Field.$extend({
     setType: function(type) {
         if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
             throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
-            return;
         }
         this.__html.field.type = type;
     },

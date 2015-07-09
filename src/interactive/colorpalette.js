@@ -122,7 +122,7 @@ var ColorPalette = Widget.$extend({
         this._palette = palette;
 
         if (!palette) {
-            var palette = ColorPalette.palette;
+            palette = ColorPalette.palette;
         }
 
         // Update
@@ -131,9 +131,9 @@ var ColorPalette = Widget.$extend({
 
         var e_tr, e_td, x, y;
         for (y=0 ; y<palette.length ; y++) {
-            var e_tr = document.createElement("tr");
+            e_tr = document.createElement("tr");
             for (x=0 ; x<palette[y].length ; x++) {
-                var e_td = document.createElement("td");
+                e_td = document.createElement("td");
                 e_td.style.backgroundColor = palette[y][x];
                 e_td.onclick = this.__onColorClicked.bind(this, palette[y][x]);
                 e_tr.appendChild(e_td);
@@ -174,7 +174,7 @@ var ColorPalette = Widget.$extend({
         this.__html.palette = document.createElement("table");
         this.__html.palette.className = "photonui-widget photonui-colorpalette";
         this.__html.tbody = document.createElement("tbody");
-        this.__html.palette.appendChild(this.__html.tbody)
+        this.__html.palette.appendChild(this.__html.tbody);
     },
 
 

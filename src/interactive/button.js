@@ -285,7 +285,7 @@ var Button = Widget.$extend({
         if (this._buttonColor) {
             this.__html.button.classList.remove("photonui-button-color-" + this._buttonColor);
         }
-        this._buttonColor = buttonColor
+        this._buttonColor = buttonColor;
         if (buttonColor) {
             this.__html.button.classList.add("photonui-button-color-" + this._buttonColor);
         }

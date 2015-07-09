@@ -328,7 +328,7 @@ var Viewport = Container.$extend({
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
     _visibilityChanged: function(visibility) {
-        var visibility = (visibility !== undefined) ? visibility : this.visible;
+        visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility) this._sizingHack();
         this.$super(visibility);
     },
@@ -349,7 +349,7 @@ var Viewport = Container.$extend({
 
             this.__html.viewport.style.display = "none";
 
-            while (node = node.parentNode) {
+            while (node = node.parentNode) {  // jshint ignore:line
                 if (!node) break;
                 if (node.offsetHeight > 0) {
                     height = node.offsetHeight;

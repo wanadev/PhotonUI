@@ -148,8 +148,12 @@ var PopupWindow = BaseWindow.$extend({
             y = wpos.y - ph - 1;
         }
 
-        if (x < 0) { x = 0 };
-        if (y < 0) { y = 0 };
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
 
         this.setPosition(x, y);
     },
@@ -166,10 +170,10 @@ var PopupWindow = BaseWindow.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.__html["window"].className += " photonui-popupwindow";
+        this.__html.window.className += " photonui-popupwindow";
 
         this.__html.inner = document.createElement("div");
-        this.__html["window"].appendChild(this.__html.inner);
+        this.__html.window.appendChild(this.__html.inner);
     }
 });
 
