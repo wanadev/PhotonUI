@@ -4626,7 +4626,9 @@ var Viewport = Container.$extend({
     __init__: function(params) {
         this.$super(params);
         this._updateProperties([
-            "padding", "verticalScrollbar", "horizontalScrollbar"
+            "padding", "verticalScrollbar", "horizontalScrollbar",
+            "minWidth", "maxWidth", "width",
+            "minHeight", "maxHeight", "height"
         ]);
     },
 
@@ -4735,7 +4737,7 @@ var Viewport = Container.$extend({
 
     setMinWidth: function(minWidth) {
         this._minWidth = minWidth;
-        this.__html.style.minWidth = numberToCssSize(minWidth, null, 0);
+        this.__html.viewport.style.minWidth = numberToCssSize(minWidth, null, 0);
     },
 
     /**
@@ -4757,7 +4759,7 @@ var Viewport = Container.$extend({
 
     setMaxWidth: function(maxWidth) {
         this._maxWidth = maxWidth;
-        this.__html.style.maxWidth = numberToCssSize(maxWidth, null, Infinity);
+        this.__html.viewport.style.maxWidth = numberToCssSize(maxWidth, null, Infinity);
     },
 
     /**
@@ -4769,9 +4771,9 @@ var Viewport = Container.$extend({
      *
      * @property width
      * @type Number
-     * @default null
+     * @default Infinity
      */
-    _width: null,
+    _width: Infinity,
 
     getWidth: function() {
         return this._width;
@@ -4779,7 +4781,7 @@ var Viewport = Container.$extend({
 
     setWidth: function(width) {
         this._width = width;
-        this.__html.style.width = numberToCssSize(width, null);
+        this.__html.viewport.style.width = numberToCssSize(width, null);
     },
 
     /**
@@ -4801,7 +4803,7 @@ var Viewport = Container.$extend({
 
     setMinHeight: function(minHeight) {
         this._minHeight = minHeight;
-        this.__html.style.minHeight = numberToCssSize(minHeight, null, 0);
+        this.__html.viewport.style.minHeight = numberToCssSize(minHeight, null, 0);
     },
 
     /**
@@ -4823,7 +4825,7 @@ var Viewport = Container.$extend({
 
     setMaxHeight: function(maxHeight) {
         this._maxHeight = maxHeight;
-        this.__html.style.maxHeight = numberToCssSize(maxHeight, null, Infinity);
+        this.__html.viewport.style.maxHeight = numberToCssSize(maxHeight, null, Infinity);
     },
 
     /**
@@ -4835,9 +4837,9 @@ var Viewport = Container.$extend({
      *
      * @property height
      * @type Number
-     * @default null
+     * @default Infinity
      */
-    _height: null,
+    _height: Infinity,
 
     getHeight: function() {
         return this._height;
@@ -4845,7 +4847,7 @@ var Viewport = Container.$extend({
 
     setHeight: function(height) {
         this._height = height;
-        this.__html.style.height = numberToCssSize(height, null);
+        this.__html.viewport.style.height = numberToCssSize(height, null);
     },
 
     /**
@@ -4912,7 +4914,7 @@ var Viewport = Container.$extend({
      * @private
      */
     _sizingHack: function() {
-        if (this.height !== null && this.height !== Infinity) {
+        if (this.height !== Infinity) {
             return;
         }
         if (this.visible && this.__html.viewport.parentNode) {
