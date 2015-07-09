@@ -444,7 +444,7 @@ var Widget = Base.$extend({
      */
     _visibilityChanged: function(visibility) {
         var visibility = (visibility !== undefined) ? visibility : this.visible;
-        if (visibility) {
+        if (visibility && this.visible) {
             this._callCallbacks("show");
         }
         else {
