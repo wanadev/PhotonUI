@@ -110,10 +110,6 @@ var FluidLayout = Layout.$extend({
     //////////////////////////////////////////
 
 
-    // ====== Public methods ======
-
-
-
     // ====== Private methods ======
 
 
