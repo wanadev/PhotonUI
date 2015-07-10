@@ -114,18 +114,24 @@ var Widget = require("../widget.js");
  * @extends photonui.Base
  * @param {photonui.Widget} element Any PhotonUI Widget (optional).
  * @param {HTMLElement} element Any HTML element (optional).
+ * @param {Object} params additional params (optional).
  */
 var MouseManager = Base.$extend({
 
     // Constructor
-    __init__: function(element) {
+    __init__: function(element, params) {
         this._registerWEvents([
             "mouse-event", "mouse-down", "mouse-up", "click", "double-click",
             "drag-start", "dragging", "drag-end", "mouse-move", "scroll-up",
             "scroll-down"
         ]);
-        this.$super();
-        this.element = element;
+        if (element && (element instanceof Widget || element instanceof HTMLElement)) {
+            this.$super(params);
+            this.element = element;
+        }
+        else {
+            this.$super(element);
+        }
     },
 
 
