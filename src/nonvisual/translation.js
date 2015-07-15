@@ -44,6 +44,9 @@ var Base = require("../base.js");
  *
  * Documentation: https://github.com/flozz/stone.js/blob/master/README.md
  *
+ * NOTE: When you instantiate the translation widget, you can pass to it
+ * the `noGlobal` option to avoid the creation of the global `window._` function.
+ *
  * wEvents:
  *
  *   * locale-changed:
@@ -59,10 +62,13 @@ var Translation = Base.$extend({
 
     // Constructor
     __init__: function(params) {
+        params = params || {};
         this._registerWEvents(["locale-changed"]);
         this.$super(params);
         this._bindEvent("locale-changed", document, "stonejs-locale-changed", this.__onStonejsLocaleChanged.bind(this));
-        window._ = this.lazyGettext;
+        if (!params.noGlobal) {
+            window._ = this.lazyGettext;
+        }
     },
 
 
