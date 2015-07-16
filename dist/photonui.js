@@ -1225,8 +1225,9 @@ function LazyString(string, replacements) {
 function gettext(string, replacements) {
     var result = string;
 
-    if (locale && catalogs[locale] && catalogs[locale][string]) {
-        result = catalogs[locale][string];
+    if (locale && catalogs[locale] && catalogs[locale].messages[string] &&
+        catalogs[locale].messages[string].length > 0 && catalogs[locale].messages[string][0] !== "") {
+        result = catalogs[locale].messages[string][0];
     }
 
     if (replacements) {
