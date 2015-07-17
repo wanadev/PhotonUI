@@ -1352,7 +1352,7 @@ module.exports = {
 
 },{}],4:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1664,7 +1664,7 @@ module.exports = Base;
 
 },{"./helpers.js":19,"classyjs":1}],5:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1935,7 +1935,7 @@ module.exports = ColorButton;
 
 },{"../container/popupwindow.js":14,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../layout/boxlayout.js":31,"../nonvisual/color.js":38,"./colorpickerdialog.js":6,"stonejs":3}],6:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2307,7 +2307,7 @@ module.exports = ColorPickerDialog;
 
 },{"../container/dialog.js":12,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../interactive/colorpicker.js":23,"../interactive/slider.js":26,"../layout/boxlayout.js":31,"../layout/gridlayout.js":33,"../nonvisual/color.js":38,"../visual/faicon.js":46,"../visual/label.js":48,"../visual/separator.js":50,"stonejs":3}],7:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2448,7 +2448,7 @@ module.exports = FontSelect;
 
 },{"../container/menuitem.js":13,"./select.js":9,"stonejs":3}],8:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2570,7 +2570,7 @@ module.exports = PopupMenu;
 
 },{"../container/popupwindow.js":14,"../layout/menu.js":35}],9:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2958,7 +2958,7 @@ module.exports = Select;
 
 },{"../container/menuitem.js":13,"../helpers.js":19,"../widget.js":53,"./popupmenu.js":8,"stonejs":3}],10:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3341,7 +3341,7 @@ module.exports = BaseWindow;
 
 },{"../widget.js":53,"./container.js":11}],11:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3567,7 +3567,7 @@ module.exports = Container;
 
 },{"../widget.js":53}],12:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3821,7 +3821,7 @@ module.exports = Dialog;
 
 },{"../helpers.js":19,"../widget.js":53,"./window.js":18}],13:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4060,7 +4060,7 @@ module.exports = MenuItem;
 
 },{"../helpers.js":19,"../visual/baseicon.js":44,"../widget.js":53,"./container.js":11}],14:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4242,7 +4242,7 @@ module.exports = PopupWindow;
 
 },{"./basewindow.js":10}],15:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4584,7 +4584,7 @@ module.exports = TabItem;
 
 },{"../helpers.js":19,"./container.js":11}],17:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4975,7 +4975,7 @@ module.exports = Viewport;
 
 },{"../helpers.js":19,"./container.js":11}],18:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5365,7 +5365,7 @@ module.exports = Window;
 
 },{"../helpers.js":19,"../widget.js":53,"./basewindow.js":10,"stonejs":3}],19:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5537,7 +5537,7 @@ module.exports = Helpers;
 
 },{"./photonui.js":43}],20:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5964,7 +5964,7 @@ module.exports = Button;
 
 },{"../helpers.js":19,"../visual/baseicon.js":44,"../widget.js":53}],21:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6151,7 +6151,7 @@ module.exports = CheckBox;
 
 },{"../widget.js":53}],22:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6359,7 +6359,7 @@ module.exports = ColorPalette;
 
 },{"../helpers.js":19,"../nonvisual/color.js":38,"../widget.js":53}],23:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6880,7 +6880,7 @@ module.exports = ColorPicker;
 
 },{"../helpers.js":19,"../nonvisual/color.js":38,"../nonvisual/mousemanager.js":40,"../widget.js":53}],24:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7078,7 +7078,7 @@ module.exports = Field;
 
 },{"../widget.js":53}],25:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7451,7 +7451,7 @@ module.exports = NumericField;
 
 },{"./field.js":24}],26:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7757,7 +7757,7 @@ module.exports = Slider;
 
 },{"../helpers.js":19,"./numericfield.js":25}],27:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7817,7 +7817,7 @@ module.exports = Switch;
 
 },{"./checkbox.js":21}],28:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7937,7 +7937,7 @@ module.exports = TextAreaField;
 
 },{"./field.js":24}],29:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8051,7 +8051,7 @@ module.exports = TextField;
 
 },{"./field.js":24}],30:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8153,7 +8153,7 @@ module.exports = ToggleButton;
 
 },{"./button.js":20,"./checkbox.js":21}],31:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8496,7 +8496,7 @@ module.exports = BoxLayout;
 
 },{"../helpers.js":19,"./layout.js":34}],32:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8649,7 +8649,7 @@ module.exports = FluidLayout;
 
 },{"../helpers.js":19,"./layout.js":34}],33:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9288,7 +9288,7 @@ module.exports = GridLayout;
 
 },{"../helpers.js":19,"./layout.js":34}],34:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9558,7 +9558,7 @@ module.exports = Layout;
 
 },{"../container/container.js":11,"../widget.js":53}],35:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10017,7 +10017,7 @@ module.exports = TabLayout;
 
 },{"../container/tabitem.js":16,"../helpers.js":19,"../widget.js":53,"./layout.js":34}],37:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10184,7 +10184,7 @@ module.exports = AccelManager;
 
 },{"../base.js":4,"keyboardjs":2}],38:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10666,7 +10666,7 @@ module.exports = Color;
 
 },{"../base.js":4}],39:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10995,7 +10995,7 @@ module.exports = FileManager;
 
 },{"../base.js":4}],40:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11642,7 +11642,7 @@ module.exports = MouseManager;
 
 },{"../base.js":4,"../helpers.js":19,"../widget.js":53}],41:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11874,7 +11874,7 @@ module.exports = SpriteSheet;
 
 },{"../base.js":4}],42:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12049,7 +12049,7 @@ module.exports = Translation;
 
 },{"../base.js":4,"stonejs":3}],43:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12158,7 +12158,7 @@ module.exports = photonui;
 
 },{"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/tabitem.js":16,"./container/viewport.js":17,"./container/window.js":18,"./helpers.js":19,"./interactive/button.js":20,"./interactive/checkbox.js":21,"./interactive/colorpalette.js":22,"./interactive/colorpicker.js":23,"./interactive/field.js":24,"./interactive/numericfield.js":25,"./interactive/slider.js":26,"./interactive/switch.js":27,"./interactive/textareafield.js":28,"./interactive/textfield.js":29,"./interactive/togglebutton.js":30,"./layout/boxlayout.js":31,"./layout/fluidlayout.js":32,"./layout/gridlayout.js":33,"./layout/layout.js":34,"./layout/menu.js":35,"./layout/tablayout.js":36,"./nonvisual/accelmanager.js":37,"./nonvisual/color.js":38,"./nonvisual/filemanager.js":39,"./nonvisual/mousemanager.js":40,"./nonvisual/spritesheet.js":41,"./nonvisual/translation.js":42,"./visual/baseicon.js":44,"./visual/canvas.js":45,"./visual/faicon.js":46,"./visual/image.js":47,"./visual/label.js":48,"./visual/progressbar.js":49,"./visual/separator.js":50,"./visual/spriteicon.js":51,"./visual/text.js":52,"./widget.js":53,"classyjs":1,"keyboardjs":2,"stonejs":3}],44:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12228,7 +12228,7 @@ module.exports = BaseIcon;
 
 },{"../widget.js":53}],45:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12515,7 +12515,7 @@ module.exports = Canvas;
 
 },{"../widget.js":53}],46:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12694,7 +12694,7 @@ module.exports = FAIcon;
 
 },{"./baseicon.js":44}],47:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12853,7 +12853,7 @@ module.exports = Image_;
 
 },{"../widget.js":53}],48:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13070,7 +13070,7 @@ module.exports = Label;
 
 },{"../helpers.js":19,"../widget.js":53}],49:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13310,7 +13310,7 @@ module.exports = ProgressBar;
 
 },{"../widget.js":53}],50:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13460,7 +13460,7 @@ module.exports = Separator;
 
 },{"../widget.js":53}],51:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13649,7 +13649,7 @@ module.exports = SpriteIcon;
 
 },{"../nonvisual/spritesheet.js":41,"./baseicon.js":44}],52:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13802,7 +13802,7 @@ module.exports = Text_;
 
 },{"../helpers.js":19,"../widget.js":53,"stonejs":3}],53:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
