@@ -1,6 +1,6 @@
 {
   "name": "photonui",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0",
   "description": "A work-in-progress MVC/Swing style JavaScript UI library.",
   "homepage": "http://wanadev.github.io/PhotonUI/",
   "author": "Wanadev (http://wanadev.fr/)",
