@@ -1,49 +1,136 @@
 # PhotonUI - A javascript framework to create user interfaces
 
-* **Website:** http://wanadev.github.io/PhotonUI/
+[ ![NPM Version](http://img.shields.io/npm/v/photonui.svg?style=flat) ](https://www.npmjs.com/package/photonui)
+[ ![License](http://img.shields.io/npm/l/photonui.svg?style=flat) ](https://github.com/wanadev/PhotonUI/blob/master/LICENSE)
 
+PhotonUI is a work in progress javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
+
+* **Website:** http://wanadev.github.io/PhotonUI/
 * **Quick start:** http://wanadev.github.io/PhotonUI/doc/quick-start.html
 
 
-## Building
+## Getting Started
 
-  1. Install [Node.js](https://nodejs.org/) (or [io.js](https://iojs.org/)) and [npm](http://npmjs.org).
+### Standalone Version
 
-  2. Clone this repository: `git clone https://github.com/wanadev/PhotonUI.git`
+All the files you need are in the `dist` folder. You just have to import
 
-  3. Install `grund-cli` globally (to have the `grunt` command): `npm install -g grunt-cli`
+* `photonui-base.css` (must be imported first),
+* `photonui-theme-particle.css`,
+* and`photonui.js` (or `photonui.min.js`)
 
-  4. Run `npm install` in the project directory.
-
-  5. You should now be able to build the project by running `grunt` or `grunt dist` in the project directory.
+in your page:
 
 
-## License
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Boilerplate</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        <link type="text/css" rel="stylesheet" href="dist/photonui-base.css" />
+        <link type="text/css" rel="stylesheet" href="dist/photonui-theme-particle.css" />
+        <script src="dist/photonui.js"></script>
+        
+    </head>
+    <body>
+    </body>
+</html>
+```
+
+
+### NPM and Browserify
+
+If you are using [Browserify][browserify] in your project, a [NPM package][npm] is available. To install it, juste type:
 
 ```
-Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-  * Redistributions of source code must retain the above copyright notice, this
-    list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
-  * Neither the name of Wanadev nor the names of its contributors may be used
-    to endorse or promote products derived from this software without specific
-    prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+npm install --save photonui
 ```
+
+then, to use it in your project you just have to import PhotonUI:
+
+```js
+var photonui = require("photonui");
+```
+
+**NOTE:** do not forget to import CSS files in yout HTML page:
+
+```html
+<link rel="stylesheet" href="./node_modules/photonui/dist/photonui-base.css" />
+<link rel="stylesheet" href="./node_modules/photonui/dist/photonui-theme-particle.css" />
+```
+
+
+## Hacking
+
+PhotonUI is built using [Grunt][grunt], [Less][less] and [Browserify][browserify]. If you want to hack it, you will have to install few tools.
+
+
+### Installing Dependencies
+
+To build PhotonUI, you will first have to install [Node.js][nodejs] (or [io.js][iojs]).
+
+**NOTE:** If you are on Ubuntu / Debian Linux you must install the `nodejs-legacy` package.
+
+Next, install globaly the `grunt-cli` npm package:
+
+    npm install -g grunt-cli
+
+Then install the PhotonUI's dependencies:
+
+    npm install
+
+
+### Building PhotonUI
+
+Once the build stuff and dependencies installed, you just have to run the `grunt` command to build PhotonUI:
+
+    grunt
+
+All generated files are in the `dist` folder.
+
+
+### Testing
+
+To run the PhotonUI tests, you can use the following command:
+
+    grunt test
+
+**BUT** some tests will fail because [PhantomJS][phantomjs], the browser used to run the tests, embedded a very old Webkit version. So you currently have to launch the tests manually in your browser:
+
+1. Check that the javascript is well formed: `grunt jshint`
+2. Build PhotonUI: `grunt`
+3. Run the tests: open `test/index.html` in your browser.
+
+
+### Creating Your Own widgets
+
+If you want to create you own PhotonUI widgets, first read this:
+
+* http://wanadev.github.io/PhotonUI/doc/custom-widget.html
+
+The documentation above explain how to create a custom widget **outside** of the PhotonUI project.
+
+Once you feel comfortable with the custom widget creation, you can create widgets inside the PhotonUI project. We created a [Yeoman][yo] generator that creates all required files for you:
+
+* https://github.com/wanadev/generator-photonui-widget
+
+
+## Related projects:
+
+* [photonui-site](https://github.com/wanadev/photonui-site): The PhotonUI's site
+* [generator-photonui-widget](https://github.com/wanadev/generator-photonui-widget): The PhotonUI widget generator
+
+
+
+
+[browserify]: http://browserify.org/
+[npm]: https://www.npmjs.com/package/photonui
+[grunt]: http://gruntjs.com/
+[less]: http://lesscss.org/
+[nodejs]: https://nodejs.org/
+[iojs]: https://iojs.org/
+[phantomjs]: http://phantomjs.org/
+[yo]: http://yeoman.io/

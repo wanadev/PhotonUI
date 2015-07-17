@@ -132,5 +132,5 @@ module.exports = function(grunt) {
     grunt.registerTask('gen-js', ['browserify', 'uglify']);
     grunt.registerTask('gen-css', ['less:less_base', 'less:less_theme', 'clean:assets', 'copy:assets']);
     grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
-    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('test', ['jshint', 'default', 'jasmine']);
 };
