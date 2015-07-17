@@ -85,7 +85,7 @@ module.exports = function(grunt) {
                     'dist/photonui-base.css': 'less/base/photonui-base.less'
                 }
             },
-            less_themes: {
+            less_theme: {
                 options: {
                     paths: ['.'],
                     plugins: [
@@ -94,8 +94,7 @@ module.exports = function(grunt) {
                     ],
                 },
                 files: {
-                    'dist/photonui-theme-particle.css': 'less/theme-particle/photonui-theme-particle.less',
-                    'dist/photonui-theme-wave.css': 'less/theme-wave/photonui-theme-wave.less'
+                    'dist/photonui-theme-particle.css': 'less/theme-particle/photonui-theme-particle.less'
                 }
             },
         },
@@ -129,10 +128,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
     // Register runnable tasks.
-    grunt.registerTask('gen-js', ['browserify', 'uglify']);
-    grunt.registerTask('gen-css', ['less:less_base', 'less:less_themes', 'clean:assets', 'copy:assets']);
-    grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
-    grunt.registerTask('dist', ['default']);
+    grunt.registerTask('gen-js', ['browserify', 'uglify']);
+    grunt.registerTask('gen-css', ['less:less_base', 'less:less_theme', 'clean:assets', 'copy:assets']);
+    grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
     grunt.registerTask('test', ['jshint', 'jasmine']);
 };
