@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,7 +83,6 @@ var TextField = Field.$extend({
     setType: function(type) {
         if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
             throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
-            return;
         }
         this.__html.field.type = type;
     },

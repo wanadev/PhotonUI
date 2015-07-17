@@ -1,5 +1,6 @@
 function addTitle(text) {
     var workingArea = document.getElementById("working-area");
+    if (!workingArea) workingArea = document.getElementsByTagName("body")[0];
     var h1 = document.createElement("h1");
     h1.appendChild(document.createTextNode(text));
     workingArea.appendChild(h1);
@@ -7,6 +8,7 @@ function addTitle(text) {
 
 function addTestArea() {
     var workingArea = document.getElementById("working-area");
+    if (!workingArea) workingArea = document.getElementsByTagName("body")[0];
     var div = document.createElement("div");
     div.className = "test-area";
     workingArea.appendChild(div);
@@ -90,3 +92,25 @@ var DummyLayout = photonui.Layout.$extend({
         this.__html.ul.appendChild(fragment);
     }
 });
+
+
+function toBeAlmostEqualToMatcher() {
+    return {
+        compare: function(value1, value2, precision) {
+            var precision = precision || 1;
+
+            if (value1 >= value2 - precision && value1 <= value2 + precision) {
+                return {
+                    pass: true,
+                    message: "Expected " + value1 + " NOT to be almost equal to " + value2 + " (precision: " + precision + ")"
+                };
+            }
+            else {
+                return {
+                    pass: false,
+                    message: "Expected " + value1 + " to be almost equal to " + value2 + " (precision: " + precision + ")"
+                };
+            }
+        }
+    };
+}

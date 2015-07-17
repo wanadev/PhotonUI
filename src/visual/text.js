@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Widget = require("../widget.js");
 var Helpers = require("../helpers.js");
 
@@ -47,7 +47,7 @@ var Helpers = require("../helpers.js");
  * @constructor
  * @extends photonui.Widget
  */
-var Text = Widget.$extend({
+var Text_ = Widget.$extend({
 
 
     //////////////////////////////////////////
@@ -148,4 +148,4 @@ var Text = Widget.$extend({
     }
 });
 
-module.exports = Text;
+module.exports = Text_;

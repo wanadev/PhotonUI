@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -119,7 +119,7 @@ var CheckBox = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-checkbox";
+        this.__html.outer.className = "photonui-widget photonui-checkbox photonui-widget-fixed-width photonui-widget-fixed-height";
 
         this.__html.checkbox = document.createElement("input");
         this.__html.checkbox.type = "checkbox";

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ var photonui = require("./photonui.js");
  * @constructor
  */
 var Helpers = function() {
-}
+};
 
 /**
  * Escape HTML.
@@ -63,7 +63,7 @@ Helpers.escapeHtml = function(string) {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
-}
+};
 
 /**
  * Generate an UUID version 4 (RFC 4122)
@@ -80,7 +80,7 @@ Helpers.uuid4 = function() {
         var r = Math.random()*16|0, v = c == "x" ? r : (r&0x3|0x8);
         return v.toString(16);
     });
-}
+};
 
 /**
  * Clean node (remove all children of the node).
@@ -93,7 +93,7 @@ Helpers.cleanNode = function(node) {
     while (node.hasChildNodes()) {
         node.removeChild(node.lastChild);
     }
-}
+};
 
 /**
  * Get the absolute position of an HTML Element.
@@ -105,9 +105,10 @@ Helpers.cleanNode = function(node) {
  */
 Helpers.getAbsolutePosition = function(element) {
     if (typeof(element) == "string") element = document.getElementById(element);
-    if (!element instanceof Element) return {x: 0, y: 0};
+    if (!(element instanceof Element)) return {x: 0, y: 0};
+    var css;
     try {
-        var css = getComputedStyle(element);
+        css = getComputedStyle(element);
     }
     catch (e) {
         return {x: 0, y: 0};
@@ -115,7 +116,7 @@ Helpers.getAbsolutePosition = function(element) {
     if (!css) return {x: 0, y: 0};
 
     var x = - parseInt(css.borderLeftWidth);
-    var y = - parseInt(css.borderTopWidth);;
+    var y = - parseInt(css.borderTopWidth);
 
     while (element.offsetParent) {
         css = getComputedStyle(element);
@@ -130,6 +131,40 @@ Helpers.getAbsolutePosition = function(element) {
     }
 
     return {x: x, y: y};
-}
+};
+
+/**
+ * Check and compute size to valid CSS size
+ *
+ * Valid values and transformations:
+ *     undefined  -> defaultValue
+ *     null       -> "auto" (if "auto" is alowed, "0px" else)
+ *     +Infinity  -> "100%"
+ *     Number     -> "<Number>px"
+ *
+ * @method numberToCssSize
+ * @param {Number} value
+ * @param {Number} defaultValue (opt, default=nullValue)
+ * @param {String} nullValue (opt, default="auto")
+ * @return {String} sanitized version of the size.
+ */
+Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
+    nullValue = (nullValue === undefined) ? "auto" : nullValue;
+    defaultValue = (nullValue === undefined) ? null : defaultValue;
+    value = (value === undefined) ? defaultValue : value;
+
+    if (value === Infinity) {
+        return "100%";
+    }
+    else if (!isNaN(parseFloat(value))) {
+        return Math.max(0, parseFloat(value)|0) + "px";
+    }
+    else if (value !== defaultValue) {
+        return Helpers.numberToCssSize(defaultValue, defaultValue, nullValue);
+    }
+    else {
+        return nullValue;
+    }
+};
 
 module.exports = Helpers;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,8 +65,8 @@ var FileManager = Base.$extend({
         this.__fileField.style.opacity = 0;
         this.__fileField.style.display = "none";
         document.getElementsByTagName("body")[0].appendChild(this.__fileField);
-        this._acceptedMimes = [],
-        this._acceptedExts = [],
+        this._acceptedMimes = [];
+        this._acceptedExts = [];
         this._registerWEvents(["file-open"]);
         this.$super(params);
     },
@@ -265,7 +265,7 @@ var FileManager = Base.$extend({
 
         // Validate ext
         if (!match) {
-            var ext = file.name.split(".").splice(-1)
+            var ext = file.name.split(".").splice(-1);
             for (var e=0 ; e<this.acceptedExts.length ; e++) {
                 if (ext == this.acceptedExts[e]) {
                     match = true;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,12 @@ var Layout = Container.$extend({
     __init__: function(params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
+
+        // Force to update the parent of the children
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            children[i]._parentName = this.name;
+        }
     },
 
 
@@ -77,16 +83,17 @@ var Layout = Container.$extend({
     },
 
     setChildrenNames: function(childrenNames) {
-        for (var i=0 ; i<this._childrenNames.length ; i++) {
-            var widget = photonui.getWidget(this._childrenNames[i]);
+        var i, widget;
+        for (i=0 ; i<this._childrenNames.length ; i++) {
+            widget = Widget.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
             }
         }
         this._childrenNames = [];
-        for (var i=0 ; i<childrenNames.length ; i++) {
-            var widget = photonui.getWidget(childrenNames[i]);
+        for (i=0 ; i<childrenNames.length ; i++) {
+            widget = Widget.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -107,8 +114,10 @@ var Layout = Container.$extend({
      */
     getChildren: function() {
         var children = [];
+        var widget;
         for (var i=0 ; i<this._childrenNames.length ; i++) {
-            children.push(Widget.getWidget(this._childrenNames[i]));
+            widget = Widget.getWidget(this._childrenNames[i]);
+            if (widget instanceof Widget) children.push(widget);
         }
         return children;
     },
@@ -126,7 +135,6 @@ var Layout = Container.$extend({
     // Override getChildName / setChildName / getChild / setChild
 
     getChildName: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -135,7 +143,6 @@ var Layout = Container.$extend({
     },
 
     getChild: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -222,6 +229,23 @@ var Layout = Container.$extend({
      */
     _updateLayout: function() {
         throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            if (!(this.child instanceof Widget)) continue;
+            children[i]._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
     },
 
 

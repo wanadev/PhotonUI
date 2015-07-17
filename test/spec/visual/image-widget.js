@@ -40,4 +40,8 @@ describe("photonui.Image (widget)", function() {
         expect(this.c.containerNode.childNodes.length).toEqual(0);
     });
 
+    it("have its name as id of its HTML element", function() {
+        expect(this.w.html.id).toEqual(this.w.name);
+    });
+
 });

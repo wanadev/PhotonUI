@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,7 @@ var PopupMenu = PopupWindow.$extend({
         setChildName:     Menu.prototype.setChildName,
         getChild:         Menu.prototype.getChild,
         setChild:         Menu.prototype.setChild,
+        _iconVisible:     Menu.prototype._iconVisible,
         isIconVisible:    Menu.prototype.isIconVisible,
         setIconVisible:   Menu.prototype.setIconVisible,
         addChild:         Menu.prototype.addChild,
@@ -95,7 +96,7 @@ var PopupMenu = PopupWindow.$extend({
         Menu.prototype._buildHtml.call(this);
 
         this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
+        this.__html.window.className += " photonui-popupmenu";
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
     },
 

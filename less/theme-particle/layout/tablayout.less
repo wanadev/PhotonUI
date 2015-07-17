@@ -1,0 +1,203 @@
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+
+
+.photonui-tablayout {
+
+    @tab-horiz-height: 30px;
+    @tab-horiz-active-height: 36px;
+
+    @tab-vert-height: 32px;
+    @tab-vert-active-width: 120px;
+
+    @tab-padding-vert: 8px;
+    @shadow: 0 0 2px rgba(0, 0, 0, .2);
+
+    .photonui-tablayout-tabs {
+        .photonui-tabitem-tab {
+            border: @color-widget-border solid 1px;
+            vertical-align: middle;
+            padding: 0 @tab-padding-vert;
+            cursor: pointer;
+            background: @color-widget-face;
+            transition: all @transition-duration;
+
+            &:hover {
+                background: @color-background-alt;
+            }
+
+            &.photonui-tabitem-active {
+                background: @color-background-alt;
+                z-index: 10;
+                /*box-shadow: @shadow;*/
+            }
+        }
+    }
+
+    .photonui-tablayout-content {
+
+        background: @color-background-alt;
+        border: @color-widget-border solid 1px;
+        box-shadow: @shadow;
+    }
+
+    &.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox,
+    &.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox {
+
+        .photonui-tablayout-tabs {
+            height: @tab-horiz-active-height;
+            min-height: @tab-horiz-active-height;
+            max-height: @tab-horiz-active-height;
+
+            .photonui-tabitem-tab {
+                line-height: @tab-horiz-height;
+                height: @tab-horiz-height;
+                text-align: center;
+                margin-right: -1px;
+
+                &.photonui-tabitem-active {
+                    height: @tab-horiz-active-height;
+                    line-height: @tab-horiz-active-height;
+                }
+            }
+        }
+
+        .photonui-tablayout-content {
+        }
+    }
+
+    &.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox,
+    &.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox {
+
+        .photonui-tablayout-tabs {
+            width: @tab-vert-active-width;
+            min-width: @tab-vert-active-width;
+            max-width: @tab-vert-active-width;
+            padding-top: 1px;
+
+            .photonui-tabitem-tab {
+                width: calc(100% - 6px);
+                line-height: @tab-vert-height;
+                height: @tab-vert-height;
+                text-align: @tab-vert-height;
+                text-align: left;
+                margin-top: -1px;
+
+                &.photonui-tabitem-active {
+                    width: 100%;
+                }
+            }
+        }
+
+        .photonui-tablayout-content {
+            width: 100%;
+        }
+    }
+
+
+    &.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox {
+
+        .photonui-tablayout-tabs {
+            .photonui-tabitem-tab {
+                align-self: flex-end;
+                border-bottom: none;
+
+                &.photonui-tabitem-active {
+                    margin-bottom: -1px;
+                    box-shadow: -1px  0   0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 0   -1px 0 rgba(0, 0, 0, .05),
+                                -2px -2px 0 rgba(0, 0, 0, .01),
+                                 2px -2px 0 rgba(0, 0, 0, .01);
+                }
+            }
+        }
+    }
+
+    &.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox {
+
+        .photonui-tablayout-tabs {
+            .photonui-tabitem-tab {
+                align-self: flex-start;
+                border-top: none;
+
+                &.photonui-tabitem-active {
+                    margin-top: -1px;
+                    box-shadow: -1px  0   0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                -2px  2px 0 rgba(0, 0, 0, .01),
+                                 2px  2px 0 rgba(0, 0, 0, .01);
+                }
+            }
+        }
+    }
+
+    &.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox {
+
+        .photonui-tablayout-tabs {
+            .photonui-tabitem-tab {
+                align-self: flex-end;
+                border-right: none;
+                text-align: right;
+
+                &.photonui-tabitem-active {
+                    margin-right: -1px;
+                    padding-right: @tab-padding-vert + 1;
+                    box-shadow:  0   -1px 0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                -1px  0   0 rgba(0, 0, 0, .05),
+                                -2px -2px 0 rgba(0, 0, 0, .01),
+                                -2px  2px 0 rgba(0, 0, 0, .01);
+                }
+            }
+        }
+    }
+
+    &.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox {
+
+        .photonui-tablayout-tabs {
+            .photonui-tabitem-tab {
+                align-self: flex-start;
+                border-left: none;
+
+                &.photonui-tabitem-active {
+                    margin-left: -1px;
+                    padding-left: @tab-padding-vert + 1;
+                    box-shadow:  0   -1px 0 rgba(0, 0, 0, .05),
+                                 0    1px 0 rgba(0, 0, 0, .05),
+                                 1px  0   0 rgba(0, 0, 0, .05),
+                                 2px -2px 0 rgba(0, 0, 0, .01),
+                                 2px  2px 0 rgba(0, 0, 0, .01);
+                }
+            }
+        }
+    }
+}

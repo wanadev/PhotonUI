@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,25 +64,26 @@ var Base = Class.$extend({
         this._registerWEvents(["destroy"]);
 
         // Create properties from accessors
+        var propName;
         for (var prop in this) {
-            if (prop.indexOf("get") == 0) {
-                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+            if (prop.indexOf("get") === 0) {
+                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
                     enumerable: true,
                     configurable: true
                 });
             }
-            else if (prop.indexOf("set") == 0) {
-                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+            else if (prop.indexOf("set") === 0) {
+                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     set: this[prop],
                     enumerable: true,
                     configurable: true
                 });
             }
-            else if (prop.indexOf("is") == 0) {
-                var propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
+            else if (prop.indexOf("is") === 0) {
+                propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
                     enumerable: true,
@@ -92,8 +93,8 @@ var Base = Class.$extend({
         }
 
         // Apply params
-        var params = params || {};
-        for (param in params) {
+        params = params || {};
+        for (var param in params) {
             if (this[param] !== undefined) {
                 this[param] = params[param];
             }
@@ -193,7 +194,7 @@ var Base = Class.$extend({
         this.__callbacks[wEvent][id] = {
             callback: callback,
             thisArg: thisArg || null
-        }
+        };
     },
 
     /**
@@ -238,6 +239,7 @@ var Base = Class.$extend({
      * @param {Function} callback The function that will be called when the event occured.
      */
     _bindEvent: function(id, element, evName, callback) {
+        this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
             element: element,
@@ -258,6 +260,7 @@ var Base = Class.$extend({
      * @param {String} id The id of the event.
      */
     _unbindEvent: function(id) {
+        if (!this.__events[id]) return;
         this.__events[id].element.removeEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,
@@ -274,7 +277,7 @@ var Base = Class.$extend({
      * @param {Array} wEvents
      */
     _registerWEvents: function(wEvents) {
-        if (this.__callbacks == null) {
+        if (this.__callbacks === null) {
             this.__callbacks = {};
         }
         for (var i in wEvents) {
@@ -294,7 +297,7 @@ var Base = Class.$extend({
      * @param {Array} params Parametters that will be sent to the callbacks.
      */
     _callCallbacks: function(wEvent, params) {
-        var params = params || [];
+        params = params || [];
         for (var id in this.__callbacks[wEvent]) {
             this.__callbacks[wEvent][id].callback.apply(
                     this.__callbacks[wEvent][id].thisArg || this,

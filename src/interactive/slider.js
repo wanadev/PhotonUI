@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -118,20 +118,9 @@ var Slider = NumericField.$extend({
         // Hack: force grip position after insertion into the DOM...
         setTimeout(function() {
             this.value = this.value;
-        }.bind(this), .01);
+        }.bind(this), 10);
 
         return this.__html.outer;
-    },
-
-    // Update the slider when setting the value...
-    setValue: function(value) {
-        this.$super(value);
-
-        var v = value - this.min;
-        var m = this.max - this.min;
-        var p = Math.min(Math.max(v/m, 0), 1);
-        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth - 4;
-        this.__html.grip.style.left = Math.floor(p*w) + 2 + "px";
     },
 
 
@@ -144,6 +133,20 @@ var Slider = NumericField.$extend({
 
 
     /**
+     * Update the value in the html field.
+     *
+     * @method _updateFieldValue
+     * @private
+     */
+    _updateFieldValue: function() {
+        this.$super();
+        var v = this.value - this.min;
+        var m = this.max - this.min;
+        var p = Math.min(Math.max(v/m, 0), 1);
+        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
+    },
+
+    /**
      * Build the widget HTML.
      *
      * @method _buildHtml
@@ -153,7 +156,7 @@ var Slider = NumericField.$extend({
         this.$super();
 
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-slider";
+        this.__html.outer.className = "photonui-widget photonui-slider photonui-widget-fixed-height";
 
         this.__html.slider = document.createElement("div");
         this.__html.slider.className = "photonui-slider-slider";
@@ -164,7 +167,7 @@ var Slider = NumericField.$extend({
         this.__html.grip.className = "photonui-slider-grip";
         this.__html.slider.appendChild(this.__html.grip);
 
-        this.__html.outer.appendChild(this.__html.field)
+        this.__html.outer.appendChild(this.__html.field);
     },
 
     /**
@@ -246,21 +249,21 @@ var Slider = NumericField.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this.value += this.step;
             }

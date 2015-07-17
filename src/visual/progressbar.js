@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -100,9 +100,11 @@ var ProgressBar = Widget.$extend({
         this._value = Math.min(Math.max(value, 0), 1);
         if (this.orientation == "horizontal") {
             this.__html.bar.style.width = Math.floor(this.value * 100) + "%";
+            this.__html.bar.style.height = "";
         }
         else {
             this.__html.bar.style.height = Math.floor(this.value * 100) + "%";
+            this.__html.bar.style.width = "";
         }
         this.__html.textContent.innerHTML = Math.floor(this.value * 100) + " %";
     },
@@ -123,12 +125,14 @@ var ProgressBar = Widget.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-progressbar-vertical");
         this.removeClass("photonui-progressbar-horizontal");
         this.addClass("photonui-progressbar-" + this.orientation);
+
+        // Refresh the value...
+        this.value = this.value;
     },
 
     /**
@@ -193,6 +197,14 @@ var ProgressBar = Widget.$extend({
     _buildHtml: function() {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-progressbar";
+
+        // Hack: needed to help grid layout (<table>) to size properly its cells...
+        this.__html.filldiv = document.createElement("div");
+        this.__html.filldiv.className = "photonui-progressbar-fill";
+        this.__html.filldiv.innerHTML = "xxxxxxxxxxx";
+        this.__html.filldiv.style.opacity = 0;
+        this.__html.filldiv.style.pointerEvents = "none";
+        this.__html.outer.appendChild(this.__html.filldiv);
 
         this.__html.text = document.createElement("div");
         this.__html.text.className = "photonui-progressbar-text";

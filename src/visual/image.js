@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ var Widget = require("../widget.js");
  * @extends photonui.Widget
  * @param {Object} params An object that can contain any property of the widget (optional).
  */
-var Image = Widget.$extend({
+var Image_ = Widget.$extend({
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -154,4 +154,4 @@ var Image = Widget.$extend({
 
 });
 
-module.exports = Image;
+module.exports = Image_;

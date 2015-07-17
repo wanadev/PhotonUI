@@ -6,24 +6,28 @@
         <title>PhotonUI - Jasmine Spec Runner v2.3.4</title>
 
         <link rel="shortcut icon" type="image/png" href="../lib/jasmine-2.3.4/jasmine_favicon.png">
-        <link rel="stylesheet" href="../lib/jasmine-2.3.4/jasmine.css">
+        <link rel="stylesheet" href="jasmine-2.3.4/jasmine.css">
         <link rel="stylesheet" href="style.css">
 
-        <script src="../lib/jasmine-2.3.4/jasmine.js"></script>
-        <script src="../lib/jasmine-2.3.4/jasmine-html.js"></script>
-        <script src="../lib/jasmine-2.3.4/boot.js"></script>
+        <script src="jasmine-2.3.4/jasmine.js"></script>
+        <script src="jasmine-2.3.4/jasmine-html.js"></script>
+        <script src="jasmine-2.3.4/boot.js"></script>
 
         <!-- include source files here... -->
         <link rel="stylesheet" href="../dist/photonui-base.css">
         <link rel="stylesheet" href="../dist/photonui-theme-particle.css">
         <script src="../dist/photonui.js"></script>
         <script src="helpers.js"></script>
+        <script>
+            window._STANDALONE_TEST = true;
+        </script>
     </head>
 
     <body>
         <div id="working-area"></div>
 
         <!-- include spec files here... -->
+        <script src="spec/helpers.js"></script>
         <script src="spec/widget.js"></script>
         <script src="spec/container/container.js"></script>
         <script src="spec/layout/layout.js"></script>
@@ -33,7 +37,30 @@
         <script src="spec/layout/gridlayout.js"></script>
         <script src="spec/visual/image-widget.js"></script>
         <script src="spec/visual/image.js"></script>
+        <script src="spec/container/tabitem-widget.js"></script>
+        <script src="spec/container/tabitem-container.js"></script>
+        <script src="spec/container/tabitem.js"></script>
+        <script src="spec/layout/tablayout-widget.js"></script>
+        <script src="spec/layout/tablayout-layout.js"></script>
+        <script src="spec/layout/tablayout.js"></script>
+        <script src="spec/container/viewport-widget.js"></script>
+        <script src="spec/container/viewport-container.js"></script>
+        <script src="spec/container/viewport.js"></script>
+        <script src="spec/visual/label-widget.js"></script>
+        <script src="spec/visual/label.js"></script>
+        <script src="spec/interactive/slider-widget.js"></script>
+        <script src="spec/interactive/slider.js"></script>
+        <script src="spec/composite/select-widget.js"></script>
+        <script src="spec/composite/select.js"></script>
+        <script src="spec/composite/fontselect-widget.js"></script>
+        <script src="spec/composite/fontselect.js"></script>
+        <script src="spec/container/dialog-widget.js"></script>
+        <script src="spec/container/dialog-container.js"></script>
         <script src="spec/container/dialog-layout.js"></script>
+        <script src="spec/container/dialog.js"></script>
+        <script src="spec/layout/fluidlayout-widget.js"></script>
+        <script src="spec/layout/fluidlayout-layout.js"></script>
+        <script src="spec/layout/fluidlayout.js"></script>
         <!-- [generator] -->
         <!-- DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR! -->
     </body>

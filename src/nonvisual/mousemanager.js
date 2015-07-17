@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -114,18 +114,24 @@ var Widget = require("../widget.js");
  * @extends photonui.Base
  * @param {photonui.Widget} element Any PhotonUI Widget (optional).
  * @param {HTMLElement} element Any HTML element (optional).
+ * @param {Object} params additional params (optional).
  */
 var MouseManager = Base.$extend({
 
     // Constructor
-    __init__: function(element) {
+    __init__: function(element, params) {
         this._registerWEvents([
             "mouse-event", "mouse-down", "mouse-up", "click", "double-click",
             "drag-start", "dragging", "drag-end", "mouse-move", "scroll-up",
             "scroll-down"
         ]);
-        this.$super();
-        this.element = element;
+        if (element && (element instanceof Widget || element instanceof HTMLElement)) {
+            this.$super(params);
+            this.element = element;
+        }
+        else {
+            this.$super(element);
+        }
     },
 
 
@@ -275,7 +281,7 @@ var MouseManager = Base.$extend({
     _action: "",
 
     getAction: function() {
-        return this._action
+        return this._action;
     },
 
     /**
@@ -472,8 +478,8 @@ var MouseManager = Base.$extend({
         }
 
         // Click
-        if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold
-        && Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
+        if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold &&
+            Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
             this._action = "click";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks("click", [this._dump()]);
@@ -493,10 +499,10 @@ var MouseManager = Base.$extend({
         }
 
         // Drag Start
-        if (action == "mouse-move" && this.__prevState.action != "drag-start"
-        && this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
-            if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold
-            || Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
+        if (action == "mouse-move" && this.__prevState.action != "drag-start" &&
+            this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
+            if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold ||
+                Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
                 // Drag Start
                 this._action = "drag-start";
                 this.__event = this.__mouseDownEvent;
@@ -512,16 +518,16 @@ var MouseManager = Base.$extend({
         }
 
         // Dragging
-        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start"
-        || this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
+        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start" ||
+                 this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "dragging";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         }
 
         // Drag End
-        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging"
-        || this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
+        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
+                 this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
@@ -611,21 +617,21 @@ var MouseManager = Base.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this._stateMachine("scroll-up", event);
             }

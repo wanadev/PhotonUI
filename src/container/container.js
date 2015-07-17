@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,18 @@ var Widget = require("../widget.js");
  */
 var Container = Widget.$extend({
 
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+
+        this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
+
+        // Force to update the parent of the child
+        if (this._childName) {
+            this.child._parentName = this.name;
+        }
+    },
+
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
@@ -54,6 +66,54 @@ var Container = Widget.$extend({
 
     // ====== Public properties ======
 
+
+    /**
+     * Horizontaly expand the container's child widget.
+     *
+     * @property horizontalChildExpansion
+     * @type Boolean
+     * @default true
+     */
+    _horizontalChildExpansion: true,
+
+    getHorizontalChildExpansion: function() {
+        return this._horizontalChildExpansion;
+    },
+
+    setHorizontalChildExpansion: function(expansion) {
+        this._horizontalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-horizontal");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-horizontal");
+        }
+    },
+
+    /**
+     * Verticaly expand the container's child widget.
+     *
+     * @property verticalChildExpansion
+     * @type Boolean
+     * @default false
+     */
+    _verticalChildExpansion: false,
+
+    getVerticalChildExpansion: function() {
+        return this._verticalChildExpansion;
+    },
+
+    setVerticalChildExpansion: function(expansion) {
+        this._verticalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-vertical");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-vertical");
+        }
+    },
 
     /**
      * The child widget name.
@@ -95,7 +155,7 @@ var Container = Widget.$extend({
     },
 
     setChild: function(child) {
-        if ((!child) || (!child instanceof Widget)) {
+        if ((!child) || (!(child instanceof Widget))) {
             this.childName = null;
             return;
         }
@@ -110,8 +170,22 @@ var Container = Widget.$extend({
      * @readOnly
      */
     getContainerNode: function() {
-        console.warn("getContainerNode() method not implemented for this widget.");
         return null;
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (this.child instanceof Widget) {
+            this.child._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
     },
 
 

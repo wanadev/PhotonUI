@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Dialog = require("../container/dialog.js");
 var BoxLayout = require("../layout/boxlayout.js");
 var GridLayout = require("../layout/gridlayout.js");
@@ -69,8 +69,8 @@ var ColorPickerDialog = Dialog.$extend({
         this.__widgets = {};
         this._color = new Color();
 
-        var params = params || {};
-        if (params.title == undefined) params.title = _("Select a color...");
+        params = params || {};
+        if (params.title === undefined) params.title = _("Select a color...");
 
         this._registerWEvents(["value-changed"]);
 
@@ -87,6 +87,8 @@ var ColorPickerDialog = Dialog.$extend({
 
 
     // ====== Public properties ======
+
+    _padding: 10,
 
 
     /**
@@ -147,8 +149,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
-            orientation: "horizontal",
-            verticalPadding: 5
+            orientation: "horizontal"
         });
         this.child = this.__widgets.hbox;
 
@@ -311,7 +312,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     _updateUi: function(color) {
-        var color = color || this.color;
+        color = color || this.color;
         this.__widgets.fieldRed.value = color.red;
         this.__widgets.fieldGreen.value = color.green;
         this.__widgets.fieldBlue.value = color.blue;

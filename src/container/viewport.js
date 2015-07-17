@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@
  */
 
 var Container = require("./container.js");
+var numberToCssSize = require("../helpers.js").numberToCssSize;
 
 /**
  * Viewport.
@@ -51,7 +52,9 @@ var Viewport = Container.$extend({
     __init__: function(params) {
         this.$super(params);
         this._updateProperties([
-            "padding", "verticalScrollbar", "horizontalScrollbar"
+            "padding", "verticalScrollbar", "horizontalScrollbar",
+            "minWidth", "maxWidth", "width",
+            "minHeight", "maxHeight", "height"
         ]);
     },
 
@@ -142,6 +145,138 @@ var Viewport = Container.$extend({
     },
 
     /**
+     * Minimum width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: no minimum width
+     *
+     * @property minWidth
+     * @type Number
+     * @default null
+     */
+    _minWidth: null,
+
+    getMinWidth: function() {
+        return this._minWidth;
+    },
+
+    setMinWidth: function(minWidth) {
+        this._minWidth = minWidth;
+        this.__html.viewport.style.minWidth = numberToCssSize(minWidth, null, 0);
+    },
+
+    /**
+     * Maximum width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: no maximum width
+     *
+     * @property maxWidth
+     * @type Number
+     * @default null
+     */
+    _maxWidth: null,
+
+    getMaxWidth: function() {
+        return this._maxWidth;
+    },
+
+    setMaxWidth: function(maxWidth) {
+        this._maxWidth = maxWidth;
+        this.__html.viewport.style.maxWidth = numberToCssSize(maxWidth, null, Infinity);
+    },
+
+    /**
+     * Width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: auto
+     *
+     * @property width
+     * @type Number
+     * @default Infinity
+     */
+    _width: Infinity,
+
+    getWidth: function() {
+        return this._width;
+    },
+
+    setWidth: function(width) {
+        this._width = width;
+        this.__html.viewport.style.width = numberToCssSize(width, null);
+    },
+
+    /**
+     * Minimum height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: no minimum height
+     *
+     * @property minHeight
+     * @type Number
+     * @default null
+     */
+    _minHeight: null,
+
+    getMinHeight: function() {
+        return this._minHeight;
+    },
+
+    setMinHeight: function(minHeight) {
+        this._minHeight = minHeight;
+        this.__html.viewport.style.minHeight = numberToCssSize(minHeight, null, 0);
+    },
+
+    /**
+     * Maximum height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: no maximum height
+     *
+     * @property maxHeight
+     * @type Number
+     * @default null
+     */
+    _maxHeight: null,
+
+    getMaxHeight: function() {
+        return this._maxHeight;
+    },
+
+    setMaxHeight: function(maxHeight) {
+        this._maxHeight = maxHeight;
+        this.__html.viewport.style.maxHeight = numberToCssSize(maxHeight, null, Infinity);
+    },
+
+    /**
+     * Height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: auto
+     *
+     * @property height
+     * @type Number
+     * @default Infinity
+     */
+    _height: Infinity,
+
+    getHeight: function() {
+        return this._height;
+    },
+
+    setHeight: function(height) {
+        this._height = height;
+        this.__html.viewport.style.height = numberToCssSize(height, null);
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -150,6 +285,7 @@ var Viewport = Container.$extend({
      * @readOnly
      */
     getHtml: function() {
+        setTimeout(this._sizingHack.bind(this), 10);
         return this.__html.viewport;
     },
 
@@ -161,7 +297,7 @@ var Viewport = Container.$extend({
      * @readOnly
      */
     getContainerNode: function() {
-        return this.html;
+        return this.__html.viewport;
     },
 
 
@@ -182,6 +318,55 @@ var Viewport = Container.$extend({
     _buildHtml: function() {
         this.__html.viewport = document.createElement("div");
         this.__html.viewport.className = "photonui-widget photonui-viewport photonui-container";
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility) this._sizingHack();
+        this.$super(visibility);
+    },
+
+    /**
+     * HACK: set the right height.
+     *
+     * @method _sizingHack
+     * @private
+     */
+    _sizingHack: function() {
+        if (this.height !== Infinity) {
+            return;
+        }
+        if (this.visible && this.__html.viewport.parentNode) {
+            var node = this.__html.viewport;
+            var height = 0;
+
+            this.__html.viewport.style.display = "none";
+
+            while (node = node.parentNode) {  // jshint ignore:line
+                if (!node) break;
+                if (node.offsetHeight > 0) {
+                    height = node.offsetHeight;
+                    var style = getComputedStyle(node);
+                    height -= parseFloat(style.paddingTop);
+                    height -= parseFloat(style.paddingBottom);
+                    height -= parseFloat(style.borderTopWidth);
+                    height -= parseFloat(style.borderBottomWidth);
+                    break;
+                }
+            }
+
+            if (this.maxHeight !== null) height = Math.min(this.maxHeight, height);
+            if (this.minHeight !== null) height = Math.max(this.minHeight, height);
+            this.__html.viewport.style.height = height + "px";
+            this.__html.viewport.style.display = "";
+        }
     },
 
 

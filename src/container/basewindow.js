@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ var BaseWindow = Container.$extend({
         this.$super(params);
 
         // Windows are hidden by default
-        var params = params || {};
+        params = params || {};
         if (params.visible === undefined) {
             this.visible = false;
         }
@@ -101,7 +101,7 @@ var BaseWindow = Container.$extend({
     },
 
     setPosition: function(x, y) {
-        if (typeof(x) == "object" && y == undefined) {
+        if (typeof(x) == "object" && y === undefined) {
             this.html.style.left = x.x + "px";
             this.html.style.top = x.y + "px";
             this._x = x.x;
@@ -325,7 +325,7 @@ var BaseWindow = Container.$extend({
      * @readOnly
      */
     getHtml: function() {
-        return this.__html["window"];
+        return this.__html.window;
     },
 
     /**
@@ -357,8 +357,8 @@ var BaseWindow = Container.$extend({
         var node = Widget.e_parent || document.getElementsByTagName("body")[0];
         if (!node) return;
         this.setPosition(
-                Math.round((node.offsetWidth - this.offsetWidth) / 2),
-                Math.round((node.offsetHeight - this.offsetHeight) / 2)
+                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0)|0,
+                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0)|0
         );
     },
 
@@ -373,8 +373,8 @@ var BaseWindow = Container.$extend({
      * @private
      */
     _buildHtml: function() {
-        this.__html["window"] = document.createElement("div");
-        this.__html["window"].className = "photonui-widget photonui-basewindow";
+        this.__html.window = document.createElement("div");
+        this.__html.window.className = "photonui-widget photonui-basewindow";
     }
 });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@ var photonui = {};
 photonui.lib = {};
 photonui.lib.Class = require("classyjs");
 photonui.lib.KeyboardJS = require("keyboardjs");
-photonui.lib.Stone = require("../lib/stone");
+photonui.lib.Stone = require("stonejs");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -99,6 +99,8 @@ photonui.PopupWindow = require("./container/popupwindow.js");
 photonui.Dialog = require("./container/dialog.js");
 photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
+photonui.TabItem = require("./container/tabitem.js");
+photonui.TabLayout = require("./layout/tablayout.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 

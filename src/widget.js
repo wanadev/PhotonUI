@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@
  * @namespace photonui
  */
 
-var Stone = require("../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
 
@@ -48,11 +48,11 @@ var _widgets = {};
  * wEvents:
  *
  *   * show:
- *      - description: called when the widget is displayed.
+ *      - description: called when the widget is displayed (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
- *   * hidden:
- *      - description: called when the widget is hidden.
+ *   * hide:
+ *      - description: called when the widget is hidden (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
  * @class Widget
@@ -171,18 +171,17 @@ var Widget = Base.$extend({
     },
 
     setVisible: function(visible) {
-        this._visible = visible;
+        this._visible = !!visible;
         if (!this.html) {
             return;
         }
-        if (this.visible) {
+        if (visible) {
             this.html.style.display = "";
-            this._callCallbacks("show");
         }
         else {
             this.html.style.display = "none";
-            this._callCallbacks("hide");
         }
+        this._visibilityChanged();
     },
 
     /**
@@ -204,7 +203,7 @@ var Widget = Base.$extend({
             this.html.title = tooltip;
         }
         else {
-            delete this.html.removeAttribute("title");
+            this.html.removeAttribute("title");
         }
     },
 
@@ -239,7 +238,7 @@ var Widget = Base.$extend({
     setContextMenu: function(contextMenu) {
         var PopupWindow = require("./container/popupwindow.js");
         if (contextMenu instanceof PopupWindow) {
-            this.contextMenuName = contextMenu.name
+            this.contextMenuName = contextMenu.name;
         }
         else {
             this.contextMenuName = null;
@@ -260,7 +259,7 @@ var Widget = Base.$extend({
     },
 
     setLayoutOptions: function(layoutOptions) {
-        for (option in layoutOptions) {
+        for (var option in layoutOptions) {
             this._layoutOptions[option] = layoutOptions[option];
         }
     },
@@ -436,6 +435,23 @@ var Widget = Base.$extend({
         console.warn("_buildHtml() method not implemented for this widget.");
     },
 
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility && this.visible) {
+            this._callCallbacks("show");
+        }
+        else {
+            this._callCallbacks("hide");
+        }
+    },
+
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -486,7 +502,7 @@ Widget.getWidget = function(name) {
         return _widgets[name];
     }
     return null;
-}
+};
 
 Widget.e_parent = null;
 
@@ -498,11 +514,11 @@ Widget.e_parent = null;
  * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
  */
 Widget.domInsert = function(widget, element) {
-    var element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
+    element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
     if (typeof(element) == "string") {
         element = document.getElementById(element);
     }
     element.appendChild(widget.html);
-}
+};
 
 module.exports = Widget;

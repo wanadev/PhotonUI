@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,8 +94,17 @@ var Label = Widget.$extend({
 
     setText: function(text) {
         this._text = text;
-        photonui.Helpers.cleanNode(this.__html.label);
-        this.__html.label.appendChild(document.createTextNode(text));
+        Helpers.cleanNode(this.__html.label);
+
+        var lines = (text+"").split("\n");
+
+        for (var i=0 ; i<lines.length ; i++) {
+            this.__html.label.appendChild(document.createTextNode(lines[i]));
+            if (i<lines.length-1) {
+                this.__html.label.appendChild(document.createElement("br"));
+            }
+        }
+
     },
 
     /**
@@ -150,6 +159,9 @@ var Label = Widget.$extend({
                 );
             }
         }
+        else {
+            this.__html.label.removeAttribute("for");
+        }
     },
 
     /**
@@ -196,7 +208,7 @@ var Label = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.label = document.createElement("label");
-        this.__html.label.className = "photonui-widget photonui-label";
+        this.__html.label.className = "photonui-widget photonui-label photonui-widget-fixed-height";
     }
 });
 

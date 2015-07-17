@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -95,7 +95,6 @@ var BoxLayout = Layout.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-layout-orientation-vertical");
@@ -288,7 +287,7 @@ var BoxLayout = Layout.$extend({
             maxHeight: null,
             height: null,
             order: null
-        }
+        };
 
         // align
         if (["stretch", "expand"].indexOf(woptions.align) > -1) {

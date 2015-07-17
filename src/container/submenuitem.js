@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,15 +80,29 @@ var SubMenuItem = MenuItem.$extend({
     },
 
     setMenuName: function(menuName) {
-        if (this.menuName) {
+        var that = this;
+
+        function _init() {
+            if (!that.menu) return;
+            that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
+            that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
+            that.active = that.menu.visible;
+        }
+
+        if (this.menuName && this.menu) {
             this.menu.removeCallback("fold");
             this.menu.removeCallback("unfold");
         }
+
         this._menuName = menuName;
+
         if (this.menuName) {
-            this.menu.registerCallback("fold", "hide", this.__onToggleFold, this);
-            this.menu.registerCallback("unfold", "show", this.__onToggleFold, this);
-            this.active = this.menu.visible;
+            if (this.menu) {
+                _init();
+            }
+            else {
+                setTimeout(_init, 10);
+            }
         }
     },
 

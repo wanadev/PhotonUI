@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,16 @@
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("../base.js");
 
 /**
  * A wrapper around Stone.js to fire locale events to widgets.
  *
  * Documentation: https://github.com/flozz/stone.js/blob/master/README.md
+ *
+ * NOTE: When you instantiate the translation widget, you can pass to it
+ * the `noGlobal` option to avoid the creation of the global `window._` function.
  *
  * wEvents:
  *
@@ -59,10 +62,13 @@ var Translation = Base.$extend({
 
     // Constructor
     __init__: function(params) {
+        params = params || {};
         this._registerWEvents(["locale-changed"]);
         this.$super(params);
         this._bindEvent("locale-changed", document, "stonejs-locale-changed", this.__onStonejsLocaleChanged.bind(this));
-        window._ = this.lazyGettext;
+        if (!params.noGlobal) {
+            window._ = this.lazyGettext;
+        }
     },
 
 

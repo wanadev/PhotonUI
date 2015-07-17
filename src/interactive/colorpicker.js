@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -254,7 +254,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         ctx.fillStyle = "#000";
         ctx.arc(100, 100, 73, 2*Math.PI, false);
         ctx.globalCompositeOperation = "destination-out";
-        ctx.fill()
+        ctx.fill();
     },
 
     /**

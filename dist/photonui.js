@@ -1,182 +1,4 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*
- * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of the author nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-(function (root, factory) {
-    // Assign to module.exports if the environment supports CommonJS.
-    // If root.Stone is already defined/truthy, use a Browser version nonetheless.
-    // ^ Useful for nw.js or atom-shell where you might want to still use the global version.
-    if (typeof module === "object" && module.exports && !root.Stone) {
-        module.exports = factory();
-    }
-    // Otherwise use a global variable.
-    else {
-        root.Stone = factory();
-    }
-
-} (this, function() {
-
-    var catalogs = {};
-    var locale = null;
-    var domScan = false;
-
-    function LazyString(string, replacements) {
-        this.toString = gettext.bind(this, string, replacements);
-    }
-
-    function gettext(string, replacements) {
-        var result = string;
-
-        if (locale && catalogs[locale] && catalogs[locale][string]) {
-            result = catalogs[locale][string];
-        }
-
-        if (replacements) {
-            for (var r in replacements) {
-                result = result.replace(new RegExp("\{" + r + "\}", "g"), replacements[r]);
-            }
-        }
-
-        return result;
-    }
-
-    function lazyGettext(string, replacements) {
-        return new LazyString(string, replacements);
-    }
-
-    function addCatalogs(newCatalogs) {
-        for (var locale in newCatalogs) {
-            catalogs[locale] = newCatalogs[locale];
-        }
-    }
-
-    function getLocale() {
-        return locale;
-    }
-
-    function setLocale(l) {
-        locale = l;
-        if (domScan) {
-            updateDomTranslation();
-        }
-        _sendEvent("stonejs-locale-changed");
-    }
-
-    function guessUserLanguage() {
-        var lang = navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || null;
-
-        if (lang) {
-            lang = lang.toLowerCase();
-        }
-
-        if (lang && lang.length > 3) {
-            lang = lang.split(";")[0];
-            lang = lang.split(",")[0];
-            lang = lang.split("-")[0];
-            lang = lang.split("_")[0];
-            if (lang.length > 3) {
-                lang = null;
-            }
-        }
-
-        return lang || "en";
-    }
-
-    function _sendEvent(name, data) {
-        var data = data || {};
-        var ev = null;
-        try {
-            ev = new Event(name);
-        }
-        catch (e) {
-            // The old-fashioned way... THANK YOU MSIE!
-            ev = document.createEvent("Event");
-            ev.initEvent(name, true, false);
-        }
-        for (var i in data) {
-            ev[i] = data[i];
-        }
-        document.dispatchEvent(ev);
-    }
-
-    function _autoloadCatalogs(event) {
-        addCatalogs(event.catalog);
-    }
-
-    document.addEventListener("stonejs-autoload-catalogs", _autoloadCatalogs, true);
-
-    function enableDomScan(enable) {
-        domScan = !!enable;
-        if (domScan) {
-            updateDomTranslation();
-        }
-    }
-
-    function updateDomTranslation() {
-        var elements = document.getElementsByTagName("*");
-        var params = null;
-        var attrs = null;
-        var i = 0;
-        var j = 0;
-        for (i=0 ; i<elements.length ; i++) {
-            if (elements[i].hasAttribute("stonejs")) {
-                // First pass
-                if (!elements[i].hasAttribute("stonejs-orig-string")) {
-                    elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
-                }
-
-                params = {};
-                attrs = elements[i].attributes;
-                for (j=0 ; j<attrs.length ; j++) {
-                    if (attrs[j].name.indexOf("stonejs-param-") == 0) {
-                        params[attrs[j].name.substr(14)] = attrs[j].value;
-                    }
-                }
-
-                elements[i].innerHTML = gettext(elements[i].getAttribute("stonejs-orig-string"), params);
-            }
-        }
-    }
-
-    return {
-        LazyString: LazyString,
-        gettext: gettext,
-        lazyGettext: lazyGettext,
-        addCatalogs: addCatalogs,
-        getLocale: getLocale,
-        setLocale: setLocale,
-        guessUserLanguage: guessUserLanguage,
-        enableDomScan: enableDomScan,
-        updateDomTranslation: updateDomTranslation
-    }
-}));
-
-},{}],2:[function(require,module,exports){
 /**
  * Classy - classy classes for JavaScript
  *
@@ -338,7 +160,7 @@
   /* export the class */
   return Class;
 });
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * Title: KeyboardJS
  * Version: v0.4.1
@@ -370,12 +192,12 @@
 	function constructAMD() {
 
 		//create a library instance
-		return init();
+		return init(context);
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library;
-			library = factory('amd');
+			library = factory(context, 'amd');
 			library.fork = init;
 			return library;
 		}
@@ -387,14 +209,14 @@
 	function constructCommonJS() {
 
 		//create a library instance
-		module.exports = init();
+		module.exports = init(context);
 
 		return;
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library;
-			library = factory('CommonJS');
+			library = factory(context, 'CommonJS');
 			library.fork = init;
 			return library;
 
@@ -409,16 +231,16 @@
 		var library;
 
 		//create a library instance
-		library = init();
-		library.noConflict('KeyboardJS', 'k');
+		library = init(context);
 
 		//spawns a library instance
-		function init() {
+		function init(context) {
 			var library, namespaces = [], previousValues = {};
 
-			library = factory('global');
+			library = factory(context, 'global');
 			library.fork = init;
 			library.noConflict = noConflict;
+			library.noConflict('KeyboardJS', 'k');
 			return library;
 
 			//sets library namespaces
@@ -452,13 +274,13 @@
 		}
 	}
 
-})(this, function(env) {
+})(this, function(targetWindow, env) {
 	var KeyboardJS = {}, locales = {}, locale, map, macros, activeKeys = [], bindings = [], activeBindings = [],
 	activeMacros = [], aI, usLocale;
-
+	targetWindow = (targetWindow && Object.getOwnPropertyNames(targetWindow).length > 0 ) ? targetWindow : window;
 
 	///////////////////////
-	// DEFUALT US LOCALE //
+	// DEFAULT US LOCALE //
 	///////////////////////
 
 	//define US locale
@@ -539,7 +361,7 @@
 			"108": ["numenter"],
 			"109": ["numsubtract", "num-"],
 			"110": ["numdecimal", "num."],
-			"111": ["numdevide", "num/"],
+			"111": ["numdivide", "num/"],
 			"144": ["numlock", "num"],
 
 			//function keys
@@ -587,6 +409,28 @@
 		usLocale.map[aI] = String.fromCharCode(aI + 32);
 		usLocale.macros.push(['shift + ' + String.fromCharCode(aI + 32) + ', capslock + ' + String.fromCharCode(aI + 32), [String.fromCharCode(aI)]]);
 	}
+
+  // Support command key on Mac.
+	// This is unfortunately browser specific
+	if(/^Mac/.test(navigator.platform)){
+		// Chrome,Safari
+		if(/Chrome/.test(navigator.userAgent) ||
+			 /Safari/.test(navigator.userAgent)){
+				 usLocale.map["93"] = usLocale.map["92"];
+		}
+		// Opera
+		if(/Opera/.test(navigator.userAgent)){
+			usLocale.map["17"] = usLocale.map["91"];
+			delete usLocale.map["91"];
+		}
+		// Firefox
+		if(/Firefox/.test(navigator.userAgent)){
+			usLocale.map["224"] = usLocale.map["91"];
+			delete usLocale.map["91"];
+		}
+		delete usLocale.map["92"];
+	}
+
 	registerLocale('us', usLocale);
 	getSetLocale('us');
 
@@ -607,6 +451,8 @@
 	KeyboardJS.enable = enable;
 	KeyboardJS.disable = disable;
 	KeyboardJS.activeKeys = getActiveKeys;
+	KeyboardJS.releaseKey = removeActiveKey;
+	KeyboardJS.pressKey = addActiveKey;
 	KeyboardJS.on = createBinding;
 	KeyboardJS.clear = removeBindingByKeyCombo;
 	KeyboardJS.clear.key = removeBindingByKeyName;
@@ -632,16 +478,16 @@
 	 * Enables KeyboardJS
 	 */
 	function enable() {
-		if(window.addEventListener) {
-			document.addEventListener('keydown', keydown, false);
-			document.addEventListener('keyup', keyup, false);
-			window.addEventListener('blur', reset, false);
-			window.addEventListener('webkitfullscreenchange', reset, false);
-			window.addEventListener('mozfullscreenchange', reset, false);
-		} else if(window.attachEvent) {
-			document.attachEvent('onkeydown', keydown);
-			document.attachEvent('onkeyup', keyup);
-			window.attachEvent('onblur', reset);
+		if(targetWindow.addEventListener) {
+			targetWindow.document.addEventListener('keydown', keydown, false);
+			targetWindow.document.addEventListener('keyup', keyup, false);
+			targetWindow.addEventListener('blur', reset, false);
+			targetWindow.addEventListener('webkitfullscreenchange', reset, false);
+			targetWindow.addEventListener('mozfullscreenchange', reset, false);
+		} else if(targetWindow.attachEvent) {
+			targetWindow.document.attachEvent('onkeydown', keydown);
+			targetWindow.document.attachEvent('onkeyup', keyup);
+			targetWindow.attachEvent('onblur', reset);
 		}
 	}
 
@@ -650,16 +496,16 @@
 	 */
 	function disable() {
 		reset();
-		if(window.removeEventListener) {
-			document.removeEventListener('keydown', keydown, false);
-			document.removeEventListener('keyup', keyup, false);
-			window.removeEventListener('blur', reset, false);
-			window.removeEventListener('webkitfullscreenchange', reset, false);
-			window.removeEventListener('mozfullscreenchange', reset, false);
-		} else if(window.detachEvent) {
-			document.detachEvent('onkeydown', keydown);
-			document.detachEvent('onkeyup', keyup);
-			window.detachEvent('onblur', reset);
+		if(targetWindow.removeEventListener) {
+			targetWindow.document.removeEventListener('keydown', keydown, false);
+			targetWindow.document.removeEventListener('keyup', keyup, false);
+			targetWindow.removeEventListener('blur', reset, false);
+			targetWindow.removeEventListener('webkitfullscreenchange', reset, false);
+			targetWindow.removeEventListener('mozfullscreenchange', reset, false);
+		} else if(targetWindow.detachEvent) {
+			targetWindow.document.detachEvent('onkeydown', keydown);
+			targetWindow.document.detachEvent('onkeyup', keyup);
+			targetWindow.detachEvent('onblur', reset);
 		}
 	}
 
@@ -1248,6 +1094,22 @@
 		var keyCode = getKeyCode(keyName);
 		if(keyCode === '91' || keyCode === '92') { activeKeys = []; } //remove all key on release of super.
 		else { activeKeys.splice(activeKeys.indexOf(keyName), 1); }
+		// Mac Specific remove all keys on release of super
+		if(/^Mac/.test(navigator.platform)){
+			// Chrome,Safari
+			if(/Chrome/.test(navigator.userAgent) ||
+				 /Safari/.test(navigator.userAgent)){
+				if(keyCode === '91' || keyCode === '93') { activeKeys = []; }
+			}
+			// Opera
+			if(/Opera/.test(navigator.userAgent) && keyCode == "17"){
+				activeKeys = [];
+			}
+			// Firefox
+			if(/Firefox/.test(navigator.userAgent) && keyCode == "224"){
+				activeKeys = [];
+			}
+		}
 	}
 
 
@@ -1299,9 +1161,198 @@
 	}
 });
 
+
+
+},{}],3:[function(require,module,exports){
+/*
+ * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of the author nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+var catalogs = {};
+var locale = null;
+var domScan = false;
+
+function LazyString(string, replacements) {
+    this.toString = gettext.bind(this, string, replacements);
+
+    var props = Object.getOwnPropertyNames(String.prototype);
+    for (var i=0 ; i<props.length ; i++) {
+        if (props[i] == "toString") continue;
+        if (typeof(String.prototype[props[i]]) == "function") {
+            this[props[i]] = function() {
+                var translatedString = this.self.toString();
+                return translatedString[this.prop].apply(translatedString, arguments);
+            }.bind({self: this, prop: props[i]});
+        }
+        else {
+            Object.defineProperty(this, props[i], {
+                get: function() {
+                    var translatedString = this.self.toString();
+                    return translatedString[this.prop]
+                }.bind({self: this, prop: props[i]}),
+                enumerable: false,
+                configurable: false
+            });
+        }
+    }
+}
+
+function gettext(string, replacements) {
+    var result = string;
+
+    if (locale && catalogs[locale] && catalogs[locale].messages[string] &&
+        catalogs[locale].messages[string].length > 0 && catalogs[locale].messages[string][0] !== "") {
+        result = catalogs[locale].messages[string][0];
+    }
+
+    if (replacements) {
+        for (var r in replacements) {
+            result = result.replace(new RegExp("\{" + r + "\}", "g"), replacements[r]);
+        }
+    }
+
+    return result;
+}
+
+function lazyGettext(string, replacements) {
+    return new LazyString(string, replacements);
+}
+
+function addCatalogs(newCatalogs) {
+    for (var locale in newCatalogs) {
+        catalogs[locale] = newCatalogs[locale];
+    }
+}
+
+function getLocale() {
+    return locale;
+}
+
+function setLocale(l) {
+    locale = l;
+    if (domScan) {
+        updateDomTranslation();
+    }
+    _sendEvent("stonejs-locale-changed");
+}
+
+function guessUserLanguage() {
+    var lang = navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || null;
+
+    if (lang) {
+        lang = lang.toLowerCase();
+    }
+
+    if (lang && lang.length > 3) {
+        lang = lang.split(";")[0];
+        lang = lang.split(",")[0];
+        lang = lang.split("-")[0];
+        lang = lang.split("_")[0];
+        if (lang.length > 3) {
+            lang = null;
+        }
+    }
+
+    return lang || "en";
+}
+
+function _sendEvent(name, data) {
+    var data = data || {};
+    var ev = null;
+    try {
+        ev = new Event(name);
+    }
+    catch (e) {
+        // The old-fashioned way... THANK YOU MSIE!
+        ev = document.createEvent("Event");
+        ev.initEvent(name, true, false);
+    }
+    for (var i in data) {
+        ev[i] = data[i];
+    }
+    document.dispatchEvent(ev);
+}
+
+function _autoloadCatalogs(event) {
+    addCatalogs(event.catalog);
+}
+
+document.addEventListener("stonejs-autoload-catalogs", _autoloadCatalogs, true);
+
+function enableDomScan(enable) {
+    domScan = !!enable;
+    if (domScan) {
+        updateDomTranslation();
+    }
+}
+
+function updateDomTranslation() {
+    var elements = document.getElementsByTagName("*");
+    var params = null;
+    var attrs = null;
+    var i = 0;
+    var j = 0;
+    for (i=0 ; i<elements.length ; i++) {
+        if (elements[i].hasAttribute("stonejs")) {
+            // First pass
+            if (!elements[i].hasAttribute("stonejs-orig-string")) {
+                elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
+            }
+
+            params = {};
+            attrs = elements[i].attributes;
+            for (j=0 ; j<attrs.length ; j++) {
+                if (attrs[j].name.indexOf("stonejs-param-") == 0) {
+                    params[attrs[j].name.substr(14)] = attrs[j].value;
+                }
+            }
+
+            __gettext = gettext;  // Avoid false detection
+            elements[i].innerHTML = __gettext(elements[i].getAttribute("stonejs-orig-string"), params);
+        }
+    }
+}
+
+module.exports = {
+    LazyString: LazyString,
+    gettext: gettext,
+    lazyGettext: lazyGettext,
+    addCatalogs: addCatalogs,
+    getLocale: getLocale,
+    setLocale: setLocale,
+    guessUserLanguage: guessUserLanguage,
+    enableDomScan: enableDomScan,
+    updateDomTranslation: updateDomTranslation
+};
+
 },{}],4:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1366,25 +1417,26 @@ var Base = Class.$extend({
         this._registerWEvents(["destroy"]);
 
         // Create properties from accessors
+        var propName;
         for (var prop in this) {
-            if (prop.indexOf("get") == 0) {
-                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+            if (prop.indexOf("get") === 0) {
+                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
                     enumerable: true,
                     configurable: true
                 });
             }
-            else if (prop.indexOf("set") == 0) {
-                var propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
+            else if (prop.indexOf("set") === 0) {
+                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     set: this[prop],
                     enumerable: true,
                     configurable: true
                 });
             }
-            else if (prop.indexOf("is") == 0) {
-                var propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
+            else if (prop.indexOf("is") === 0) {
+                propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
                     enumerable: true,
@@ -1394,8 +1446,8 @@ var Base = Class.$extend({
         }
 
         // Apply params
-        var params = params || {};
-        for (param in params) {
+        params = params || {};
+        for (var param in params) {
             if (this[param] !== undefined) {
                 this[param] = params[param];
             }
@@ -1495,7 +1547,7 @@ var Base = Class.$extend({
         this.__callbacks[wEvent][id] = {
             callback: callback,
             thisArg: thisArg || null
-        }
+        };
     },
 
     /**
@@ -1540,6 +1592,7 @@ var Base = Class.$extend({
      * @param {Function} callback The function that will be called when the event occured.
      */
     _bindEvent: function(id, element, evName, callback) {
+        this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
             element: element,
@@ -1560,6 +1613,7 @@ var Base = Class.$extend({
      * @param {String} id The id of the event.
      */
     _unbindEvent: function(id) {
+        if (!this.__events[id]) return;
         this.__events[id].element.removeEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,
@@ -1576,7 +1630,7 @@ var Base = Class.$extend({
      * @param {Array} wEvents
      */
     _registerWEvents: function(wEvents) {
-        if (this.__callbacks == null) {
+        if (this.__callbacks === null) {
             this.__callbacks = {};
         }
         for (var i in wEvents) {
@@ -1596,7 +1650,7 @@ var Base = Class.$extend({
      * @param {Array} params Parametters that will be sent to the callbacks.
      */
     _callCallbacks: function(wEvent, params) {
-        var params = params || [];
+        params = params || [];
         for (var id in this.__callbacks[wEvent]) {
             this.__callbacks[wEvent][id].callback.apply(
                     this.__callbacks[wEvent][id].thisArg || this,
@@ -1608,9 +1662,9 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":18,"classyjs":2}],5:[function(require,module,exports){
+},{"./helpers.js":19,"classyjs":1}],5:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1647,7 +1701,7 @@ module.exports = Base;
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Button = require("../interactive/button.js");
 var Color = require("../nonvisual/color.js");
 var ColorPalette = require("../interactive/colorpalette.js");
@@ -1879,9 +1933,9 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../../lib/stone.js":1,"../container/popupwindow.js":14,"../interactive/button.js":19,"../interactive/colorpalette.js":21,"../layout/boxlayout.js":30,"../nonvisual/color.js":36,"./colorpickerdialog.js":6}],6:[function(require,module,exports){
+},{"../container/popupwindow.js":14,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../layout/boxlayout.js":31,"../nonvisual/color.js":38,"./colorpickerdialog.js":6,"stonejs":3}],6:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1918,7 +1972,7 @@ module.exports = ColorButton;
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Dialog = require("../container/dialog.js");
 var BoxLayout = require("../layout/boxlayout.js");
 var GridLayout = require("../layout/gridlayout.js");
@@ -1951,8 +2005,8 @@ var ColorPickerDialog = Dialog.$extend({
         this.__widgets = {};
         this._color = new Color();
 
-        var params = params || {};
-        if (params.title == undefined) params.title = _("Select a color...");
+        params = params || {};
+        if (params.title === undefined) params.title = _("Select a color...");
 
         this._registerWEvents(["value-changed"]);
 
@@ -1969,6 +2023,8 @@ var ColorPickerDialog = Dialog.$extend({
 
 
     // ====== Public properties ======
+
+    _padding: 10,
 
 
     /**
@@ -2029,8 +2085,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
-            orientation: "horizontal",
-            verticalPadding: 5
+            orientation: "horizontal"
         });
         this.child = this.__widgets.hbox;
 
@@ -2193,7 +2248,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     _updateUi: function(color) {
-        var color = color || this.color;
+        color = color || this.color;
         this.__widgets.fieldRed.value = color.red;
         this.__widgets.fieldGreen.value = color.green;
         this.__widgets.fieldBlue.value = color.blue;
@@ -2250,9 +2305,9 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../../lib/stone.js":1,"../container/dialog.js":12,"../interactive/button.js":19,"../interactive/colorpalette.js":21,"../interactive/colorpicker.js":22,"../interactive/slider.js":25,"../layout/boxlayout.js":30,"../layout/gridlayout.js":32,"../nonvisual/color.js":36,"../visual/faicon.js":44,"../visual/label.js":46,"../visual/separator.js":48}],7:[function(require,module,exports){
+},{"../container/dialog.js":12,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../interactive/colorpicker.js":23,"../interactive/slider.js":26,"../layout/boxlayout.js":31,"../layout/gridlayout.js":33,"../nonvisual/color.js":38,"../visual/faicon.js":46,"../visual/label.js":48,"../visual/separator.js":50,"stonejs":3}],7:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2289,7 +2344,7 @@ module.exports = ColorPickerDialog;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Select = require("./select.js");
 var MenuItem = require("../container/menuitem.js");
 
@@ -2306,9 +2361,11 @@ var FontSelect = Select.$extend({
 
     // Constructor
     __init__: function(params) {
+        params = params || {};
         this._fonts = [];
         this.$super(params);
-        if (this.fonts.length == 0) this.fonts = ["sans-serif", "serif", "monospace"];
+        if (this.fonts.length === 0) this.fonts = ["sans-serif", "serif", "monospace"];
+        this.value = (params.value !== undefined) ? params.value : "sans-serif";
     },
 
 
@@ -2341,15 +2398,6 @@ var FontSelect = Select.$extend({
     },
 
     /**
-     * The field value.
-     *
-     * @property value
-     * @type String (maybe)
-     * @default "sans-serif"
-     */
-    _value: "sans-serif",
-
-    /**
      * The placeholder displayed if nothing is selected.
      *
      * @property Placeholder
@@ -2378,14 +2426,29 @@ var FontSelect = Select.$extend({
         item.html.style.fontFamily = fontName;
         this.addChild(item);
         this._fonts.push(fontName);
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.$super();
+        this.__html.select.className += " photonui-fontselect";
     }
 });
 
 module.exports = FontSelect;
 
-},{"../../lib/stone.js":1,"../container/menuitem.js":13,"./select.js":9}],8:[function(require,module,exports){
+},{"../container/menuitem.js":13,"./select.js":9,"stonejs":3}],8:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2452,6 +2515,7 @@ var PopupMenu = PopupWindow.$extend({
         setChildName:     Menu.prototype.setChildName,
         getChild:         Menu.prototype.getChild,
         setChild:         Menu.prototype.setChild,
+        _iconVisible:     Menu.prototype._iconVisible,
         isIconVisible:    Menu.prototype.isIconVisible,
         setIconVisible:   Menu.prototype.setIconVisible,
         addChild:         Menu.prototype.addChild,
@@ -2481,7 +2545,7 @@ var PopupMenu = PopupWindow.$extend({
         Menu.prototype._buildHtml.call(this);
 
         this.__html.inner.appendChild(this.__html.outer);
-        this.__html["window"].className += " photonui-popupmenu";
+        this.__html.window.className += " photonui-popupmenu";
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
     },
 
@@ -2504,9 +2568,9 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":14,"../layout/menu.js":34}],9:[function(require,module,exports){
+},{"../container/popupwindow.js":14,"../layout/menu.js":35}],9:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2543,7 +2607,7 @@ module.exports = PopupMenu;
  * @namespace photonui
  */
 
-var Stone  = require("../../lib/stone.js");
+var Stone  = require("stonejs");
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var PopupMenu = require("./popupmenu.js");
@@ -2566,17 +2630,19 @@ var Select = Widget.$extend({
 
     // Constructor
     __init__: function(params) {
+        params = params || {};
+
         // Attach popup & special mixin
         this.__popupMenu = new PopupMenu({
             maxHeight: 300,
             className: "photonui-select-popup",
+            iconVisible: false
         });
-        this.__popupMenu.iconVisible = false;
 
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value"]);
+        this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
 
         this.setValue(params.value || this.value, true);
@@ -2704,8 +2770,9 @@ var Select = Widget.$extend({
      * @type Number
      * @default: null (no minimum)
      */
+    _minWidthDefined: false,
     getPopupMinWidth: function () { return this.__popupMenu.getMinWidth(); },
-    setPopupMinWidth: function (p) { this.__popupMenu.setMinWidth(p); },
+    setPopupMinWidth: function (p) { this._minWidthDefined = true ; this.__popupMenu.setMinWidth(p); },
 
     /**
      * Maximum height of the popup container node.
@@ -2763,7 +2830,15 @@ var Select = Widget.$extend({
      * @default: false
      */
     isIconVisible: function () { return this.__popupMenu.isIconVisible(); },
-    setIconVisible: function (p) { this.__popupMenu.setIconVisible(p); },
+    setIconVisible: function (p) {
+        if (!p) {
+            this.addClass("photonui-select-noicon");
+        }
+        else {
+            this.removeClass("photonui-select-noicon");
+        }
+        this.__popupMenu.setIconVisible(p);
+    },
 
     /**
      * Html outer element of the widget (if any).
@@ -2803,7 +2878,7 @@ var Select = Widget.$extend({
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
     addChild: function(w, l) {
-        this.__popupMenu.addChild(w, l)
+        this.__popupMenu.addChild(w, l);
         this._updateItemsBinding();
     },
 
@@ -2862,6 +2937,9 @@ var Select = Widget.$extend({
      * @param event
      */
     __onClick: function(event) {
+        if (!this._minWidthDefined) {
+            this.popupMinWidth = this.offsetWidth;
+        }
         this.__popupMenu.popupWidget(this);
     },
 
@@ -2878,9 +2956,9 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../../lib/stone.js":1,"../container/menuitem.js":13,"../helpers.js":18,"../widget.js":51,"./popupmenu.js":8}],10:[function(require,module,exports){
+},{"../container/menuitem.js":13,"../helpers.js":19,"../widget.js":53,"./popupmenu.js":8,"stonejs":3}],10:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2941,7 +3019,7 @@ var BaseWindow = Container.$extend({
         this.$super(params);
 
         // Windows are hidden by default
-        var params = params || {};
+        params = params || {};
         if (params.visible === undefined) {
             this.visible = false;
         }
@@ -2982,7 +3060,7 @@ var BaseWindow = Container.$extend({
     },
 
     setPosition: function(x, y) {
-        if (typeof(x) == "object" && y == undefined) {
+        if (typeof(x) == "object" && y === undefined) {
             this.html.style.left = x.x + "px";
             this.html.style.top = x.y + "px";
             this._x = x.x;
@@ -3206,7 +3284,7 @@ var BaseWindow = Container.$extend({
      * @readOnly
      */
     getHtml: function() {
-        return this.__html["window"];
+        return this.__html.window;
     },
 
     /**
@@ -3238,8 +3316,8 @@ var BaseWindow = Container.$extend({
         var node = Widget.e_parent || document.getElementsByTagName("body")[0];
         if (!node) return;
         this.setPosition(
-                Math.round((node.offsetWidth - this.offsetWidth) / 2),
-                Math.round((node.offsetHeight - this.offsetHeight) / 2)
+                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0)|0,
+                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0)|0
         );
     },
 
@@ -3254,16 +3332,16 @@ var BaseWindow = Container.$extend({
      * @private
      */
     _buildHtml: function() {
-        this.__html["window"] = document.createElement("div");
-        this.__html["window"].className = "photonui-widget photonui-basewindow";
+        this.__html.window = document.createElement("div");
+        this.__html.window.className = "photonui-widget photonui-basewindow";
     }
 });
 
 module.exports = BaseWindow;
 
-},{"../widget.js":51,"./container.js":11}],11:[function(require,module,exports){
+},{"../widget.js":53,"./container.js":11}],11:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3311,6 +3389,18 @@ var Widget = require("../widget.js");
  */
 var Container = Widget.$extend({
 
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+
+        this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
+
+        // Force to update the parent of the child
+        if (this._childName) {
+            this.child._parentName = this.name;
+        }
+    },
+
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
@@ -3318,6 +3408,54 @@ var Container = Widget.$extend({
 
     // ====== Public properties ======
 
+
+    /**
+     * Horizontaly expand the container's child widget.
+     *
+     * @property horizontalChildExpansion
+     * @type Boolean
+     * @default true
+     */
+    _horizontalChildExpansion: true,
+
+    getHorizontalChildExpansion: function() {
+        return this._horizontalChildExpansion;
+    },
+
+    setHorizontalChildExpansion: function(expansion) {
+        this._horizontalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-horizontal");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-horizontal");
+        }
+    },
+
+    /**
+     * Verticaly expand the container's child widget.
+     *
+     * @property verticalChildExpansion
+     * @type Boolean
+     * @default false
+     */
+    _verticalChildExpansion: false,
+
+    getVerticalChildExpansion: function() {
+        return this._verticalChildExpansion;
+    },
+
+    setVerticalChildExpansion: function(expansion) {
+        this._verticalChildExpansion = !!expansion;
+        if (!this.containerNode) return;
+        if (expansion) {
+            this.containerNode.classList.add("photonui-container-expand-child-vertical");
+        }
+        else {
+            this.containerNode.classList.remove("photonui-container-expand-child-vertical");
+        }
+    },
 
     /**
      * The child widget name.
@@ -3359,7 +3497,7 @@ var Container = Widget.$extend({
     },
 
     setChild: function(child) {
-        if ((!child) || (!child instanceof Widget)) {
+        if ((!child) || (!(child instanceof Widget))) {
             this.childName = null;
             return;
         }
@@ -3374,8 +3512,22 @@ var Container = Widget.$extend({
      * @readOnly
      */
     getContainerNode: function() {
-        console.warn("getContainerNode() method not implemented for this widget.");
         return null;
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (this.child instanceof Widget) {
+            this.child._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
     },
 
 
@@ -3413,9 +3565,9 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":51}],12:[function(require,module,exports){
+},{"../widget.js":53}],12:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3451,7 +3603,7 @@ module.exports = Container;
  * @submodule Container
  * @namespace photonui
  */
- 
+
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var Window = require("./window.js");
@@ -3471,6 +3623,12 @@ var Dialog = Window.$extend({
     __init__: function(params) {
         this._buttonsNames = [];
         this.$super(params);
+
+        // Force to update the parent of the buttons
+        var buttons = this.buttons;
+        for (var i=0 ; i<buttons.length ; i++) {
+            buttons[i]._parentName = this.name;
+        }
     },
 
 
@@ -3496,16 +3654,17 @@ var Dialog = Window.$extend({
     },
 
     setButtonsNames: function(buttonsNames) {
-        for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            var widget = photonui.getWidget(this._buttonsNames[i]);
+        var i, widget;
+        for (i=0 ; i<this._buttonsNames.length ; i++) {
+            widget = Widget.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
             }
         }
         this._buttonsNames = [];
-        for (var i=0 ; i<buttonsNames.length ; i++) {
-            var widget = photonui.getWidget(buttonsNames[i]);
+        for (i=0 ; i<buttonsNames.length ; i++) {
+            widget = Widget.getWidget(buttonsNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -3526,8 +3685,10 @@ var Dialog = Window.$extend({
      */
     getButtons: function() {
         var buttons = [];
+        var widget;
         for (var i=0 ; i<this._buttonsNames.length ; i++) {
-            buttons.push(Widget.getWidget(this._buttonsNames[i]));
+            widget = Widget.getWidget(this._buttonsNames[i]);
+            if (widget instanceof Widget) buttons.push(widget);
         }
         return buttons;
     },
@@ -3586,6 +3747,7 @@ var Dialog = Window.$extend({
 
     // Alias needed for photonui.Widget.unparent()
     removeChild: function() {
+        this.$super.apply(this, arguments);
         this.removeButton.apply(this, arguments);
     },
 
@@ -3630,19 +3792,36 @@ var Dialog = Window.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.addClass("photonui-dialog");
+        this.__html.window.className += " photonui-dialog";
 
         this.__html.buttons = document.createElement("div");
         this.__html.buttons.className = "photonui-dialog-buttons";
-        this.__html["window"].appendChild(this.__html.buttons);
-    }
+        this.__html.window.appendChild(this.__html.buttons);
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        var buttons = this.buttons;
+        for (var i=0 ; i<buttons.length ; i++) {
+            if (!(this.child instanceof Widget)) continue;
+            buttons[i]._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
+    },
 });
 
 module.exports = Dialog;
 
-},{"../helpers.js":18,"../widget.js":51,"./window.js":17}],13:[function(require,module,exports){
+},{"../helpers.js":19,"../widget.js":53,"./window.js":18}],13:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3879,9 +4058,9 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":18,"../visual/baseicon.js":42,"../widget.js":51,"./container.js":11}],14:[function(require,module,exports){
+},{"../helpers.js":19,"../visual/baseicon.js":44,"../widget.js":53,"./container.js":11}],14:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4030,8 +4209,12 @@ var PopupWindow = BaseWindow.$extend({
             y = wpos.y - ph - 1;
         }
 
-        if (x < 0) { x = 0 };
-        if (y < 0) { y = 0 };
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
 
         this.setPosition(x, y);
     },
@@ -4048,10 +4231,10 @@ var PopupWindow = BaseWindow.$extend({
      */
     _buildHtml: function() {
         this.$super();
-        this.__html["window"].className += " photonui-popupwindow";
+        this.__html.window.className += " photonui-popupwindow";
 
         this.__html.inner = document.createElement("div");
-        this.__html["window"].appendChild(this.__html.inner);
+        this.__html.window.appendChild(this.__html.inner);
     }
 });
 
@@ -4059,7 +4242,7 @@ module.exports = PopupWindow;
 
 },{"./basewindow.js":10}],15:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4140,15 +4323,29 @@ var SubMenuItem = MenuItem.$extend({
     },
 
     setMenuName: function(menuName) {
-        if (this.menuName) {
+        var that = this;
+
+        function _init() {
+            if (!that.menu) return;
+            that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
+            that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
+            that.active = that.menu.visible;
+        }
+
+        if (this.menuName && this.menu) {
             this.menu.removeCallback("fold");
             this.menu.removeCallback("unfold");
         }
+
         this._menuName = menuName;
+
         if (this.menuName) {
-            this.menu.registerCallback("fold", "hide", this.__onToggleFold, this);
-            this.menu.registerCallback("unfold", "show", this.__onToggleFold, this);
-            this.active = this.menu.visible;
+            if (this.menu) {
+                _init();
+            }
+            else {
+                setTimeout(_init, 10);
+            }
         }
     },
 
@@ -4197,9 +4394,197 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":34,"../widget.js":51,"./menuitem.js":13}],16:[function(require,module,exports){
+},{"../layout/menu.js":35,"../widget.js":53,"./menuitem.js":13}],16:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule Container
+ * @namespace photonui
+ */
+
+
+var Helpers = require("../helpers.js");
+var Container = require("./container.js");
+
+
+/**
+ * Tab Item.
+ *
+ * @class TabItem
+ * @constructor
+ * @extends photonui.Container
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var TabItem = Container.$extend({
+
+    // Constructor
+    __init__: function(params) {
+        this.$super(params);
+        this._updateProperties(["title"]);
+
+        this._bindEvent("tab-click", this.__html.tab, "click", this.show.bind(this));
+    },
+
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+
+    // ====== Public properties ======
+
+
+    /**
+     * Tab title.
+     *
+     * @property title
+     * @type String
+     * @default "Tab"
+     */
+    _title: "Tab",
+
+    getTitle: function() {
+        return this._title;
+    },
+
+    setTitle: function(title) {
+        this._title = title;
+        Helpers.cleanNode(this.__html.tab);
+        this.__html.tab.appendChild(document.createTextNode(title));
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.div;
+    },
+
+    /**
+     * Tab Html element.
+     *
+     * @property tabHtml
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getTabHtml: function() {
+        return this.__html.tab;
+    },
+
+    /**
+     * HTML Element that contain the child widget HTML.
+     *
+     * @property containerNode
+     * @type HTMLElement
+     * @readOnly
+     */
+    getContainerNode: function() {
+        return this.__html.div;
+    },
+
+    /**
+     * Is the widget visible or hidden.
+     *
+     * @property visible
+     * @type Boolean
+     * @default false
+     */
+    _visible: false,
+
+    setVisible: function(visible, noParent) {
+        this.$super(visible);
+
+        if (visible) {
+            if (this.parent) {
+                var children = this.parent.children;
+                for (var i=0 ; i<children.length ; i++) {
+                    if (!(children[i] instanceof TabItem)) continue;
+                    if (children[i] === this) continue;
+                    if (children[i].visible) children[i].setVisible(false, true);
+                }
+                this.parent._activeTabName = this.name;
+            }
+
+            this.addClass("photonui-tabitem-active");
+            this.__html.tab.className = "photonui-tabitem-tab photonui-tabitem-active";
+        }
+        else {
+            if (this.parent && !noParent) {
+                this.parent.activeTab = null;
+            }
+            this.removeClass("photonui-tabitem-active");
+            this.__html.tab.className = "photonui-tabitem-tab";
+        }
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.div = document.createElement("div");
+        this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
+        this.__html.tab = document.createElement("div");
+        this.__html.tab.className = "photonui-tabitem-tab";
+    }
+
+});
+
+
+module.exports = TabItem;
+
+
+},{"../helpers.js":19,"./container.js":11}],17:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4237,6 +4622,7 @@ module.exports = SubMenuItem;
  */
 
 var Container = require("./container.js");
+var numberToCssSize = require("../helpers.js").numberToCssSize;
 
 /**
  * Viewport.
@@ -4251,7 +4637,9 @@ var Viewport = Container.$extend({
     __init__: function(params) {
         this.$super(params);
         this._updateProperties([
-            "padding", "verticalScrollbar", "horizontalScrollbar"
+            "padding", "verticalScrollbar", "horizontalScrollbar",
+            "minWidth", "maxWidth", "width",
+            "minHeight", "maxHeight", "height"
         ]);
     },
 
@@ -4342,6 +4730,138 @@ var Viewport = Container.$extend({
     },
 
     /**
+     * Minimum width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: no minimum width
+     *
+     * @property minWidth
+     * @type Number
+     * @default null
+     */
+    _minWidth: null,
+
+    getMinWidth: function() {
+        return this._minWidth;
+    },
+
+    setMinWidth: function(minWidth) {
+        this._minWidth = minWidth;
+        this.__html.viewport.style.minWidth = numberToCssSize(minWidth, null, 0);
+    },
+
+    /**
+     * Maximum width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: no maximum width
+     *
+     * @property maxWidth
+     * @type Number
+     * @default null
+     */
+    _maxWidth: null,
+
+    getMaxWidth: function() {
+        return this._maxWidth;
+    },
+
+    setMaxWidth: function(maxWidth) {
+        this._maxWidth = maxWidth;
+        this.__html.viewport.style.maxWidth = numberToCssSize(maxWidth, null, Infinity);
+    },
+
+    /**
+     * Width.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent width
+     *     * null: auto
+     *
+     * @property width
+     * @type Number
+     * @default Infinity
+     */
+    _width: Infinity,
+
+    getWidth: function() {
+        return this._width;
+    },
+
+    setWidth: function(width) {
+        this._width = width;
+        this.__html.viewport.style.width = numberToCssSize(width, null);
+    },
+
+    /**
+     * Minimum height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: no minimum height
+     *
+     * @property minHeight
+     * @type Number
+     * @default null
+     */
+    _minHeight: null,
+
+    getMinHeight: function() {
+        return this._minHeight;
+    },
+
+    setMinHeight: function(minHeight) {
+        this._minHeight = minHeight;
+        this.__html.viewport.style.minHeight = numberToCssSize(minHeight, null, 0);
+    },
+
+    /**
+     * Maximum height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: no maximum height
+     *
+     * @property maxHeight
+     * @type Number
+     * @default null
+     */
+    _maxHeight: null,
+
+    getMaxHeight: function() {
+        return this._maxHeight;
+    },
+
+    setMaxHeight: function(maxHeight) {
+        this._maxHeight = maxHeight;
+        this.__html.viewport.style.maxHeight = numberToCssSize(maxHeight, null, Infinity);
+    },
+
+    /**
+     * Height.
+     *
+     *     * Number: the size in px
+     *     * Infinity: 100% of the parent height
+     *     * null: auto
+     *
+     * @property height
+     * @type Number
+     * @default Infinity
+     */
+    _height: Infinity,
+
+    getHeight: function() {
+        return this._height;
+    },
+
+    setHeight: function(height) {
+        this._height = height;
+        this.__html.viewport.style.height = numberToCssSize(height, null);
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -4350,6 +4870,7 @@ var Viewport = Container.$extend({
      * @readOnly
      */
     getHtml: function() {
+        setTimeout(this._sizingHack.bind(this), 10);
         return this.__html.viewport;
     },
 
@@ -4361,7 +4882,7 @@ var Viewport = Container.$extend({
      * @readOnly
      */
     getContainerNode: function() {
-        return this.html;
+        return this.__html.viewport;
     },
 
 
@@ -4384,6 +4905,55 @@ var Viewport = Container.$extend({
         this.__html.viewport.className = "photonui-widget photonui-viewport photonui-container";
     },
 
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility) this._sizingHack();
+        this.$super(visibility);
+    },
+
+    /**
+     * HACK: set the right height.
+     *
+     * @method _sizingHack
+     * @private
+     */
+    _sizingHack: function() {
+        if (this.height !== Infinity) {
+            return;
+        }
+        if (this.visible && this.__html.viewport.parentNode) {
+            var node = this.__html.viewport;
+            var height = 0;
+
+            this.__html.viewport.style.display = "none";
+
+            while (node = node.parentNode) {  // jshint ignore:line
+                if (!node) break;
+                if (node.offsetHeight > 0) {
+                    height = node.offsetHeight;
+                    var style = getComputedStyle(node);
+                    height -= parseFloat(style.paddingTop);
+                    height -= parseFloat(style.paddingBottom);
+                    height -= parseFloat(style.borderTopWidth);
+                    height -= parseFloat(style.borderBottomWidth);
+                    break;
+                }
+            }
+
+            if (this.maxHeight !== null) height = Math.min(this.maxHeight, height);
+            if (this.minHeight !== null) height = Math.max(this.minHeight, height);
+            this.__html.viewport.style.height = height + "px";
+            this.__html.viewport.style.display = "";
+        }
+    },
+
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -4403,9 +4973,9 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"./container.js":11}],17:[function(require,module,exports){
+},{"../helpers.js":19,"./container.js":11}],18:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4442,8 +5012,9 @@ module.exports = Viewport;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Helpers = require("../helpers.js");
+var Widget = require("../widget.js");
 var BaseWindow = require("./basewindow.js");
 
 var _windowList = [];
@@ -4471,7 +5042,7 @@ var Window = BaseWindow.$extend({
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
         this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click", this.__closeButtonClicked.bind(this));
-        this._bindEvent("totop", this.__html["window"], "mousedown", this.moveToFront.bind(this));
+        this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
 
         // Update Properties
@@ -4567,7 +5138,7 @@ var Window = BaseWindow.$extend({
         if (modal) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
-            var parentNode = photonui.e_parent || document.getElementsByTagName("body")[0];
+            var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
         }
@@ -4669,11 +5240,11 @@ var Window = BaseWindow.$extend({
         var _ = Stone.lazyGettext;
 
         this.$super();
-        this.__html["window"].className += " photonui-window";
+        this.__html.window.className += " photonui-window";
 
         this.__html.windowTitle = document.createElement("div");
         this.__html.windowTitle.className = "photonui-window-title";
-        this.__html["window"].appendChild(this.__html.windowTitle);
+        this.__html.window.appendChild(this.__html.windowTitle);
 
         this.__html.windowTitleCloseButton = document.createElement("button");
         this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button fa fa-times";
@@ -4685,8 +5256,8 @@ var Window = BaseWindow.$extend({
         this.__html.windowTitle.appendChild(this.__html.windowTitleText);
 
         this.__html.windowContent = document.createElement("div");
-        this.__html.windowContent.className = "photonui-container photonui-window-content photonui-container-expand-child";
-        this.__html["window"].appendChild(this.__html.windowContent);
+        this.__html.windowContent.className = "photonui-container photonui-window-content";
+        this.__html.window.appendChild(this.__html.windowContent);
     },
 
     /**
@@ -4696,8 +5267,8 @@ var Window = BaseWindow.$extend({
      * @private
      */
     _updateWindowList: function() {
-        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {
-            if (i == 0) {
+        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {   // jshint ignore:line
+            if (i === 0) {
                 _windowList[i].html.style.zIndex = 2001;
                 _windowList[i].addClass("photonui-active");
             }
@@ -4728,8 +5299,8 @@ var Window = BaseWindow.$extend({
         if (!this.movable || event.button > 0) {
             return;
         }
-        var offsetX = (event.offsetX != undefined) ? event.offsetX : event.layerX;
-        var offsetY = (event.offsetY != undefined) ? event.offsetY : event.layerY;
+        var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;
+        var offsetY = (event.offsetY !== undefined) ? event.offsetY : event.layerY;
         this.__html.windowTitle.style.cursor = "move";
         this._bindEvent("move.dragging", document, "mousemove", this.__moveDragging.bind(this, offsetX, offsetY));
         this._bindEvent("move.dragend", document, "mouseup", this.__moveDragEnd.bind(this));
@@ -4792,9 +5363,9 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../../lib/stone.js":1,"../helpers.js":18,"./basewindow.js":10}],18:[function(require,module,exports){
+},{"../helpers.js":19,"../widget.js":53,"./basewindow.js":10,"stonejs":3}],19:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4843,7 +5414,7 @@ var photonui = require("./photonui.js");
  * @constructor
  */
 var Helpers = function() {
-}
+};
 
 /**
  * Escape HTML.
@@ -4858,7 +5429,7 @@ Helpers.escapeHtml = function(string) {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
-}
+};
 
 /**
  * Generate an UUID version 4 (RFC 4122)
@@ -4875,7 +5446,7 @@ Helpers.uuid4 = function() {
         var r = Math.random()*16|0, v = c == "x" ? r : (r&0x3|0x8);
         return v.toString(16);
     });
-}
+};
 
 /**
  * Clean node (remove all children of the node).
@@ -4888,7 +5459,7 @@ Helpers.cleanNode = function(node) {
     while (node.hasChildNodes()) {
         node.removeChild(node.lastChild);
     }
-}
+};
 
 /**
  * Get the absolute position of an HTML Element.
@@ -4900,9 +5471,10 @@ Helpers.cleanNode = function(node) {
  */
 Helpers.getAbsolutePosition = function(element) {
     if (typeof(element) == "string") element = document.getElementById(element);
-    if (!element instanceof Element) return {x: 0, y: 0};
+    if (!(element instanceof Element)) return {x: 0, y: 0};
+    var css;
     try {
-        var css = getComputedStyle(element);
+        css = getComputedStyle(element);
     }
     catch (e) {
         return {x: 0, y: 0};
@@ -4910,7 +5482,7 @@ Helpers.getAbsolutePosition = function(element) {
     if (!css) return {x: 0, y: 0};
 
     var x = - parseInt(css.borderLeftWidth);
-    var y = - parseInt(css.borderTopWidth);;
+    var y = - parseInt(css.borderTopWidth);
 
     while (element.offsetParent) {
         css = getComputedStyle(element);
@@ -4925,13 +5497,47 @@ Helpers.getAbsolutePosition = function(element) {
     }
 
     return {x: x, y: y};
-}
+};
+
+/**
+ * Check and compute size to valid CSS size
+ *
+ * Valid values and transformations:
+ *     undefined  -> defaultValue
+ *     null       -> "auto" (if "auto" is alowed, "0px" else)
+ *     +Infinity  -> "100%"
+ *     Number     -> "<Number>px"
+ *
+ * @method numberToCssSize
+ * @param {Number} value
+ * @param {Number} defaultValue (opt, default=nullValue)
+ * @param {String} nullValue (opt, default="auto")
+ * @return {String} sanitized version of the size.
+ */
+Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
+    nullValue = (nullValue === undefined) ? "auto" : nullValue;
+    defaultValue = (nullValue === undefined) ? null : defaultValue;
+    value = (value === undefined) ? defaultValue : value;
+
+    if (value === Infinity) {
+        return "100%";
+    }
+    else if (!isNaN(parseFloat(value))) {
+        return Math.max(0, parseFloat(value)|0) + "px";
+    }
+    else if (value !== defaultValue) {
+        return Helpers.numberToCssSize(defaultValue, defaultValue, nullValue);
+    }
+    else {
+        return nullValue;
+    }
+};
 
 module.exports = Helpers;
 
-},{"./photonui.js":41}],19:[function(require,module,exports){
+},{"./photonui.js":43}],20:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5192,6 +5798,38 @@ var Button = Widget.$extend({
     },
 
     /**
+     * Button's color.
+     *
+     * The available colors depends on the theme. Particle, the
+     * default PhotonUI theme provides the following colors:
+     *
+     *   * `blue`
+     *   * `red`
+     *   * `yellow`
+     *   * `green`
+     *   * null (default)
+     *
+     * @property buttonColor
+     * @type string
+     * @default null
+     */
+    _buttonColor: null,
+
+    getButtonColor: function() {
+        return this._buttonColor;
+    },
+
+    setButtonColor: function(buttonColor) {
+        if (this._buttonColor) {
+            this.__html.button.classList.remove("photonui-button-color-" + this._buttonColor);
+        }
+        this._buttonColor = buttonColor;
+        if (buttonColor) {
+            this.__html.button.classList.add("photonui-button-color-" + this._buttonColor);
+        }
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -5312,6 +5950,9 @@ Button._buttonMixin = {
     _appearance:         Button.prototype._appearance,
     getAppearance:       Button.prototype.getAppearance,
     setAppearance:       Button.prototype.setAppearance,
+    _buttonColor:        Button.prototype._buttonColor,
+    getButtonColor:      Button.prototype.getButtonColor,
+    setButtonColor:      Button.prototype.setButtonColor,
     // Private methods
     _update:             Button.prototype._update,
     _buildButtonHtml:    Button.prototype._buildHtml,
@@ -5321,9 +5962,9 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":18,"../visual/baseicon.js":42,"../widget.js":51}],20:[function(require,module,exports){
+},{"../helpers.js":19,"../visual/baseicon.js":44,"../widget.js":53}],21:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5443,7 +6084,7 @@ var CheckBox = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-checkbox";
+        this.__html.outer.className = "photonui-widget photonui-checkbox photonui-widget-fixed-width photonui-widget-fixed-height";
 
         this.__html.checkbox = document.createElement("input");
         this.__html.checkbox.type = "checkbox";
@@ -5508,9 +6149,9 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":51}],21:[function(require,module,exports){
+},{"../widget.js":53}],22:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5633,7 +6274,7 @@ var ColorPalette = Widget.$extend({
         this._palette = palette;
 
         if (!palette) {
-            var palette = ColorPalette.palette;
+            palette = ColorPalette.palette;
         }
 
         // Update
@@ -5642,9 +6283,9 @@ var ColorPalette = Widget.$extend({
 
         var e_tr, e_td, x, y;
         for (y=0 ; y<palette.length ; y++) {
-            var e_tr = document.createElement("tr");
+            e_tr = document.createElement("tr");
             for (x=0 ; x<palette[y].length ; x++) {
-                var e_td = document.createElement("td");
+                e_td = document.createElement("td");
                 e_td.style.backgroundColor = palette[y][x];
                 e_td.onclick = this.__onColorClicked.bind(this, palette[y][x]);
                 e_tr.appendChild(e_td);
@@ -5685,7 +6326,7 @@ var ColorPalette = Widget.$extend({
         this.__html.palette = document.createElement("table");
         this.__html.palette.className = "photonui-widget photonui-colorpalette";
         this.__html.tbody = document.createElement("tbody");
-        this.__html.palette.appendChild(this.__html.tbody)
+        this.__html.palette.appendChild(this.__html.tbody);
     },
 
 
@@ -5716,9 +6357,9 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":18,"../nonvisual/color.js":36,"../widget.js":51}],22:[function(require,module,exports){
+},{"../helpers.js":19,"../nonvisual/color.js":38,"../widget.js":53}],23:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5973,7 +6614,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         ctx.fillStyle = "#000";
         ctx.arc(100, 100, 73, 2*Math.PI, false);
         ctx.globalCompositeOperation = "destination-out";
-        ctx.fill()
+        ctx.fill();
     },
 
     /**
@@ -6237,9 +6878,9 @@ var MouseManager = require("../nonvisual/mousemanager.js");
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":18,"../nonvisual/color.js":36,"../nonvisual/mousemanager.js":38,"../widget.js":51}],23:[function(require,module,exports){
+},{"../helpers.js":19,"../nonvisual/color.js":38,"../nonvisual/mousemanager.js":40,"../widget.js":53}],24:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6435,9 +7076,9 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":51}],24:[function(require,module,exports){
+},{"../widget.js":53}],25:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6635,15 +7276,15 @@ var NumericField = Field.$extend({
             value = 0;
         }
 
-        if (this.min != null) {
+        if (this.min !== null) {
             value = Math.max(this.min, value);
         }
 
-        if (this.max != null) {
+        if (this.max !== null) {
             value = Math.min(this.max, value);
         }
 
-        if (this.decimalDigits != null) {
+        if (this.decimalDigits !== null) {
             value = value.toFixed(this.decimalDigits);
         }
 
@@ -6669,10 +7310,10 @@ var NumericField = Field.$extend({
      * @return {Boolean}
      */
     _validateInput: function(value) {
-        var value = "" + value;
+        value = "" + value;
         value = value.replace(/ /g, "");  // remove spaces
         if (/^-?[0-9]*(\.|,)?[0-9]*$/.test(value)) {
-            if (this.decimalDigits == 0 && !/^-?[0-9]*$/.test(value)) {
+            if (this.decimalDigits === 0 && !/^-?[0-9]*$/.test(value)) {
                 return false;
             }
             if (this.min !== null && this.min >= 0 && value[0] == "-") {
@@ -6716,9 +7357,9 @@ var NumericField = Field.$extend({
         }
         else {
             var field = this.__html.field;
-            var value = field.value.slice(0, field.selectionStart)
-                        + String.fromCharCode(event.charCode)
-                        + field.value.slice(field.selectionEnd);
+            var value = field.value.slice(0, field.selectionStart) +
+                        String.fromCharCode(event.charCode) +
+                        field.value.slice(field.selectionEnd);
             if (!this._validateInput(value)) {
                 event.preventDefault();
             }
@@ -6761,21 +7402,21 @@ var NumericField = Field.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
            if (wheelDelta >= 0) {
                 this.value += this.step;
             }
@@ -6808,9 +7449,9 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":23}],25:[function(require,module,exports){
+},{"./field.js":24}],26:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6929,20 +7570,9 @@ var Slider = NumericField.$extend({
         // Hack: force grip position after insertion into the DOM...
         setTimeout(function() {
             this.value = this.value;
-        }.bind(this), .01);
+        }.bind(this), 10);
 
         return this.__html.outer;
-    },
-
-    // Update the slider when setting the value...
-    setValue: function(value) {
-        this.$super(value);
-
-        var v = value - this.min;
-        var m = this.max - this.min;
-        var p = Math.min(Math.max(v/m, 0), 1);
-        var w = this.__html.slider.offsetWidth - this.__html.grip.offsetWidth - 4;
-        this.__html.grip.style.left = Math.floor(p*w) + 2 + "px";
     },
 
 
@@ -6955,6 +7585,20 @@ var Slider = NumericField.$extend({
 
 
     /**
+     * Update the value in the html field.
+     *
+     * @method _updateFieldValue
+     * @private
+     */
+    _updateFieldValue: function() {
+        this.$super();
+        var v = this.value - this.min;
+        var m = this.max - this.min;
+        var p = Math.min(Math.max(v/m, 0), 1);
+        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
+    },
+
+    /**
      * Build the widget HTML.
      *
      * @method _buildHtml
@@ -6964,7 +7608,7 @@ var Slider = NumericField.$extend({
         this.$super();
 
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-slider";
+        this.__html.outer.className = "photonui-widget photonui-slider photonui-widget-fixed-height";
 
         this.__html.slider = document.createElement("div");
         this.__html.slider.className = "photonui-slider-slider";
@@ -6975,7 +7619,7 @@ var Slider = NumericField.$extend({
         this.__html.grip.className = "photonui-slider-grip";
         this.__html.slider.appendChild(this.__html.grip);
 
-        this.__html.outer.appendChild(this.__html.field)
+        this.__html.outer.appendChild(this.__html.field);
     },
 
     /**
@@ -7057,21 +7701,21 @@ var Slider = NumericField.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this.value += this.step;
             }
@@ -7111,9 +7755,9 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":18,"./numericfield.js":24}],26:[function(require,module,exports){
+},{"../helpers.js":19,"./numericfield.js":25}],27:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7171,9 +7815,9 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":20}],27:[function(require,module,exports){
+},{"./checkbox.js":21}],28:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7291,9 +7935,9 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":23}],28:[function(require,module,exports){
+},{"./field.js":24}],29:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7377,7 +8021,6 @@ var TextField = Field.$extend({
     setType: function(type) {
         if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
             throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
-            return;
         }
         this.__html.field.type = type;
     },
@@ -7406,9 +8049,9 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":23}],29:[function(require,module,exports){
+},{"./field.js":24}],30:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7465,6 +8108,8 @@ var ToggleButton = CheckBox.$extend({
         this.__buttonInit();
         this.removeClass("photonui-checkbox");
         this.addClass("photonui-togglebutton");
+        this.removeClass("photonui-widget-fixed-height");
+        this.removeClass("photonui-widget-fixed-width");
     },
 
     // photonui.Button constructor (without the call to $super)
@@ -7506,9 +8151,9 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":19,"./checkbox.js":20}],30:[function(require,module,exports){
+},{"./button.js":20,"./checkbox.js":21}],31:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7604,7 +8249,6 @@ var BoxLayout = Layout.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-layout-orientation-vertical");
@@ -7797,7 +8441,7 @@ var BoxLayout = Layout.$extend({
             maxHeight: null,
             height: null,
             order: null
-        }
+        };
 
         // align
         if (["stretch", "expand"].indexOf(woptions.align) > -1) {
@@ -7850,9 +8494,9 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":18,"./layout.js":33}],31:[function(require,module,exports){
+},{"../helpers.js":19,"./layout.js":34}],32:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7963,10 +8607,6 @@ var FluidLayout = Layout.$extend({
     //////////////////////////////////////////
 
 
-    // ====== Public methods ======
-
-
-
     // ====== Private methods ======
 
 
@@ -7988,7 +8628,7 @@ var FluidLayout = Layout.$extend({
      * @private
      */
     _updateLayout: function() {
-        var children = this.children
+        var children = this.children;
         var fragment = document.createDocumentFragment();
 
         var div = null;
@@ -8007,9 +8647,9 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":18,"./layout.js":33}],32:[function(require,module,exports){
+},{"../helpers.js":19,"./layout.js":34}],33:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8158,10 +8798,11 @@ var GridLayout = Layout.$extend({
 
     setVerticalSpacing: function(verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
-        this._updatingLayout = true;
-        this._updateSpacing();
-        this._updatingLayout = false;
-        this._sizingHack();
+        //this._updatingLayout = true;
+        //this._updateSpacing();
+        //this._updatingLayout = false;
+        //this._sizingHack();
+        this._updateLayout();
     },
 
     /**
@@ -8179,10 +8820,11 @@ var GridLayout = Layout.$extend({
 
     setHorizontalSpacing: function(horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
-        this._updatingLayout = true;
-        this._updateSpacing();
-        this._updatingLayout = false;
-        this._sizingHack();
+        //this._updatingLayout = true;
+        //this._updateSpacing();
+        //this._updatingLayout = false;
+        //this._sizingHack();
+        this._updateLayout();
     },
 
     /**
@@ -8216,6 +8858,21 @@ var GridLayout = Layout.$extend({
 
     // ====== Private methods ======
 
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility) {
+            this._sizingHack();
+        }
+        this.$super(visibility);
+    },
 
     /**
      * Build the widget HTML.
@@ -8261,6 +8918,8 @@ var GridLayout = Layout.$extend({
             minY = Math.min(options.y, minY);
             maxX = Math.max(options.x, maxX);
             maxY = Math.max(options.y, maxY);
+            maxX = Math.max(options.x + options.cols - 1, maxX);
+            maxY = Math.max(options.y + options.rows - 1, maxY);
         }
 
         var gridWidth = maxX - minX + 1;
@@ -8268,7 +8927,7 @@ var GridLayout = Layout.$extend({
 
         // Clean
         this.__html.grid.removeChild(this.__html.gridBody);
-        photonui.Helpers.cleanNode(this.__html.gridBody);
+        Helpers.cleanNode(this.__html.gridBody);
 
         // Build the layout
         var that = this;
@@ -8292,7 +8951,7 @@ var GridLayout = Layout.$extend({
         var child;
         var tr, td, div;
         var cellX, cellY;
-        for (var y=0 ; y<gridHeight ; y++) {
+        for (y=0 ; y<gridHeight ; y++) {
             tr = document.createElement("tr");
             for (var x=0 ; x<gridWidth ; x++) {
                 if (map[y][x]) {
@@ -8310,31 +8969,62 @@ var GridLayout = Layout.$extend({
                 if (child) {
                     div.appendChild(child.w.html);
 
+                    // Spacing exceptions
+                    var horizontalSpacing = this.horizontalSpacing;
+                    var verticalSpacing = this.verticalSpacing;
+                    if (x+child.o.cols >= gridWidth) {
+                        td.className += " photonui-gridlayout-lastcol";
+                        verticalSpacing = 0;
+                    }
+                    if (y+child.o.rows >= gridHeight) {
+                        td.className += " photonui-gridlayout-lastrow";
+                        horizontalSpacing = 0;
+                    }
+
                     // layout options: vertical/horizontal Align
                     td.className += " photonui-layout-verticalalign-" + child.o.verticalAlign;
                     td.className += " photonui-layout-horizontalalign-" + child.o.horizontalAlign;
 
                     // layout options: *width
-                    if (child.o.minWidth !== null) div.style.minWidth = child.o.minWidth + "px";
-                    if (child.o.maxWidth !== null) div.style.maxWidth = child.o.maxWidth + "px";
-                    if (child.o.width !== null) div.style.width = child.o.width + "px";
+                    if (child.o.minWidth !== null) {
+                        div.style.minWidth = child.o.minWidth + "px";
+                        td.style.minWidth = (child.o.minWidth + verticalSpacing) + "px";
+                    }
+                    if (child.o.maxWidth !== null) {
+                        div.style.maxWidth = child.o.maxWidth + "px";
+                        td.style.maxWidth = (child.o.maxWidth + verticalSpacing) + "px";
+                    }
+                    if (child.o.width !== null) {
+                        div.style.width = child.o.width + "px";
+                        td.style.width = (child.o.width + verticalSpacing) + "px";
+                    }
 
                     // layout options: *height
-                    if (child.o.minHeight !== null) div.style.minHeight = child.o.minHeight + "px";
-                    if (child.o.maxHeight !== null) div.style.maxHeight = child.o.maxHeight + "px";
-                    if (child.o.height !== null) div.style.height = child.o.height + "px";
+                    if (child.o.minHeight !== null) {
+                        div.style.minHeight = child.o.minHeight + "px";
+                        td.style.minHeight = (child.o.minHeight + horizontalSpacing) + "px";
+                    }
+                    if (child.o.maxHeight !== null) {
+                        div.style.maxHeight = child.o.maxHeight + "px";
+                        td.style.maxHeight = (child.o.maxHeight + horizontalSpacing) + "px";
+                    }
+                    if (child.o.height !== null) {
+                        div.style.height = child.o.height + "px";
+                        td.style.height = (child.o.height + horizontalSpacing) + "px";
+                    }
 
                     // rowspan / colspan
                     if (child.o.cols > 1 || child.o.rows > 1) {
                         td.colSpan = child.o.cols;
                         td.rowSpan = child.o.rows;
 
-                        for (var cellY=y ; cellY<y+child.o.rows ; cellY++) {
-                            for (var cellX=x ; cellX<x+child.o.cols ; cellX++) {
+                        for (cellY=y ; cellY<y+child.o.rows ; cellY++) {
+                            for (cellX=x ; cellX<x+child.o.cols ; cellX++) {
                                 map[cellY][cellX] = true;
                             }
                         }
                     }
+
                 }
             }
             this.__html.gridBody.appendChild(tr);
@@ -8376,6 +9066,15 @@ var GridLayout = Layout.$extend({
             minHeight: null,
             maxHeight: null,
             height: null
+        };
+
+        if (widget.html) {
+            if (widget.html.classList.contains("photonui-widget-fixed-height")) {
+                options.verticalAlign = "center";
+            }
+            if (widget.html.classList.contains("photonui-widget-fixed-width")) {
+                options.horizontalAlign = "center";
+            }
         }
 
         // [Compatibility with old GridLayout] position / place
@@ -8542,12 +9241,37 @@ var GridLayout = Layout.$extend({
         }
 
         function _hack() {
+            function _size(node) {
+                var tdHeight;
+                if (node.style.minHeight && node.style.minHeight == node.style.maxHeight) {
+                    tdHeight = parseFloat(node.style.minHeight);
+                }
+                else if (node.classList.contains("photonui-gridlayout-lastrow")) {
+                    tdHeight = node.offsetHeight;
+                }
+                else {
+                    tdHeight = node.offsetHeight;
+                }
+                node.style.height = tdHeight + "px";
+            }
+
             var nodes = this.__html.outerbox.querySelectorAll("#" + this.name + " > table > tbody > tr > td");
+
+            // 1st pass -> height: auto
             for (var i=0 ; i<nodes.length ; i++) {
                 nodes[i].style.height = "auto";
             }
-            for (var i=0 ; i<nodes.length ; i++) {
-                nodes[i].style.height = nodes[i].offsetHeight + "px";
+
+            // 2nd pass -> fixed height for all td where rowspan = 1
+            for (i=0 ; i<nodes.length ; i++) {
+                if (nodes[i].rowSpan && nodes[i].rowSpan > 1) continue;
+                _size(nodes[i]);
+            }
+
+            // 3rd pass -> fixed height for all td where rowspan > 1
+            for (i=0 ; i<nodes.length ; i++) {
+                if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) continue;
+                _size(nodes[i]);
             }
 
             this._updatingLayout = false;
@@ -8562,9 +9286,9 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":18,"./layout.js":33}],33:[function(require,module,exports){
+},{"../helpers.js":19,"./layout.js":34}],34:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8617,6 +9341,12 @@ var Layout = Container.$extend({
     __init__: function(params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
+
+        // Force to update the parent of the children
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            children[i]._parentName = this.name;
+        }
     },
 
 
@@ -8642,16 +9372,17 @@ var Layout = Container.$extend({
     },
 
     setChildrenNames: function(childrenNames) {
-        for (var i=0 ; i<this._childrenNames.length ; i++) {
-            var widget = photonui.getWidget(this._childrenNames[i]);
+        var i, widget;
+        for (i=0 ; i<this._childrenNames.length ; i++) {
+            widget = Widget.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
                 widget._parentName = null;
             }
         }
         this._childrenNames = [];
-        for (var i=0 ; i<childrenNames.length ; i++) {
-            var widget = photonui.getWidget(childrenNames[i]);
+        for (i=0 ; i<childrenNames.length ; i++) {
+            widget = Widget.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
                     widget.unparent();
@@ -8672,8 +9403,10 @@ var Layout = Container.$extend({
      */
     getChildren: function() {
         var children = [];
+        var widget;
         for (var i=0 ; i<this._childrenNames.length ; i++) {
-            children.push(Widget.getWidget(this._childrenNames[i]));
+            widget = Widget.getWidget(this._childrenNames[i]);
+            if (widget instanceof Widget) children.push(widget);
         }
         return children;
     },
@@ -8691,7 +9424,6 @@ var Layout = Container.$extend({
     // Override getChildName / setChildName / getChild / setChild
 
     getChildName: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -8700,7 +9432,6 @@ var Layout = Container.$extend({
     },
 
     getChild: function() {
-        console.warn("Warning: You cannot use getChild() on layout widgets, please use getChildren() instead.");
         return null;
     },
 
@@ -8789,6 +9520,23 @@ var Layout = Container.$extend({
         throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
     },
 
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        var children = this.children;
+        for (var i=0 ; i<children.length ; i++) {
+            if (!(this.child instanceof Widget)) continue;
+            children[i]._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
+    },
+
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -8808,9 +9556,9 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":11,"../widget.js":51}],34:[function(require,module,exports){
+},{"../container/container.js":11,"../widget.js":53}],35:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8890,10 +9638,10 @@ var Menu = Layout.$extend({
     setIconVisible: function(iconVisible) {
         this._iconVisible = iconVisible;
         if (iconVisible) {
-            this.removeClass("photonui-menu-noicon");
+            this.__html.outer.classList.remove("photonui-menu-noicon");
         }
         else {
-            this.addClass("photonui-menu-noicon");
+            this.__html.outer.classList.add("photonui-menu-noicon");
         }
     },
 
@@ -8955,9 +9703,321 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":18,"./layout.js":33}],35:[function(require,module,exports){
+},{"../helpers.js":19,"./layout.js":34}],36:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule Layout
+ * @namespace photonui
+ */
+
+
+var Helpers = require("../helpers.js");
+var Layout = require("./layout.js");
+var TabItem = require("../container/tabitem.js");
+var Widget = require("../widget.js");
+
+
+/**
+ * Tab Layout
+ *
+ * @class TabLayout
+ * @constructor
+ * @extends photonui.Layout
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var TabLayout = Layout.$extend({
+
+    // Constructor
+    __init__: function(params) {
+        this._registerWEvents([]);
+        this.$super(params);
+        this._updateProperties(["activeTab", "tabsPosition", "padding"]);
+    },
+
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+
+    // ====== Public properties ======
+
+    /**
+     * Define the tabs position.
+     *
+     *   * top
+     *   * bottom
+     *   * left
+     *   * right
+     *
+     * @property tabsPosition
+     * @type String
+     * @default "top"
+     */
+    _tabsPosition: "top",
+
+    getTabsPosition: function() {
+        return this._tabsPosition;
+    },
+
+    setTabsPosition: function(position) {
+        if (["top", "bottom", "left", "right"].indexOf(position) < 0 ) {
+            throw "Error: The tabs position should be \"top\", \"bottom\", \"left\" or \"right\".";
+        }
+        this._tabsPosition = position;
+        this.removeClass("photonui-tablayout-tabposition-top");
+        this.removeClass("photonui-tablayout-tabposition-bottom");
+        this.removeClass("photonui-tablayout-tabposition-left");
+        this.removeClass("photonui-tablayout-tabposition-right");
+        this.addClass("photonui-tablayout-tabposition-" + position);
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function() {
+        return this.__html.outer;
+    },
+
+    /**
+     * Define the active tab name.
+     *
+     * @property activeTabName
+     * @type String
+     * @default null
+     */
+    _activeTabName: null,
+
+    getActiveTabName: function() {
+        return this._activeTabName;
+    },
+
+    setActiveTabName: function(tabName) {
+        var activeTab = Widget.getWidget(tabName);
+        if (activeTab instanceof TabItem) {
+            activeTab.show();
+            return;
+        }
+
+        if (!this._activeTab) {
+            var children = this.children;
+            for (var i=0 ; i<children.length ; i++) {
+                if (!(children[i] instanceof TabItem)) {
+                    continue;
+                }
+                children[i].show();
+                break;
+            }
+        }
+    },
+
+    /**
+     * Container node padding.
+     *
+     * @property padding
+     * @type Number
+     * @default 10
+     */
+    _padding: 10,
+
+    getPadding: function() {
+        return this._padding;
+    },
+
+    setPadding: function(padding) {
+        this._padding = padding;
+        this.__html.content.style.padding = padding + "px";
+    },
+
+    /**
+     * Define the active tab.
+     *
+     * @property activeTab
+     * @type photonui.Widget
+     * @default null
+     */
+    getActiveTab: function() {
+        return Widget.getWidget(this.activeTabName);
+    },
+
+    setActiveTab: function(tab) {
+        if (tab instanceof Widget) {
+            this.activeTabName = tab.name;
+        }
+        else {
+            this.activeTabName = null;
+        }
+    },
+
+    //
+    setChildrenNames: function(childrenNames) {
+        this.$super(childrenNames);
+        if (!this.activeTabName) {
+            this.activeTabName = null;
+        }
+    },
+
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+
+    // ====== Public methods ======
+
+
+    addChild: function(widget, layoutOptions) {
+        this.$super(widget, layoutOptions);
+        if (!this.activeTabName && widget instanceof TabItem) {
+            this.activeTabName = widget.name;
+        }
+    },
+
+    /**
+     * Remove a widget from the layout.
+     *
+     * @method removeChild
+     * @param {photonui.Widget} widget The widget to remove.
+     */
+    removeChild: function(widget) {
+        this.$super(widget);
+        if (widget === this.activeTab) {
+            this.activeTabName = null;
+        }
+    },
+
+
+    // ====== Private methods ======
+
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function() {
+        this.__html.outer = document.createElement("div");
+        this.__html.outer.className = "photonui-widget photonui-tablayout";
+
+        this.__html.inner = document.createElement("div");
+        this.__html.inner.className = "photonui-tablayout-innerbox";
+        this.__html.outer.appendChild(this.__html.inner);
+
+        this.__html.tabs = document.createElement("div");
+        this.__html.tabs.className = "photonui-tablayout-tabs";
+        this.__html.inner.appendChild(this.__html.tabs);
+
+        this.__html.content = document.createElement("div");
+        this.__html.content.className = "photonui-tablayout-content";
+        this.__html.inner.appendChild(this.__html.content);
+    },
+
+    /**
+     * Update the layout.
+     *
+     * @method _updateLayout
+     * @private
+     */
+    _updateLayout: function() {
+        Helpers.cleanNode(this.__html.tabs);
+        Helpers.cleanNode(this.__html.content);
+
+        var children = this.children;  // Cache for perf
+        var tabsFragment = document.createDocumentFragment();
+        var contentFragment = document.createDocumentFragment();
+
+        var options;
+        for (var i=0 ; i<children.length ; i++) {
+            if (!(children[i] instanceof TabItem)) {
+                continue;
+            }
+
+            options = this._computeLayoutOptions(children[i]);
+
+            if (options.order !== null) {
+                children[i].tabHtml.style.order = options.order;
+            }
+            else {
+                children[i].tabHtml.style.order = 0;
+            }
+
+            tabsFragment.appendChild(children[i].tabHtml);
+            contentFragment.appendChild(children[i].html);
+        }
+
+        this.__html.tabs.appendChild(tabsFragment);
+        this.__html.content.appendChild(contentFragment);
+    },
+
+    /**
+     * Returns a normalized layoutOption for a given widget.
+     *
+     * @method _computeLayoutOptions
+     * @private
+     * @param {photonui.Widget} widget
+     * @return {Object} the layout options
+     */
+    _computeLayoutOptions: function(widget) {
+        var woptions = widget.layoutOptions || {};
+
+        var options = {
+            order: null
+        };
+
+        if (woptions.order !== undefined && woptions.order !== null) {
+            options.order = woptions.order|0;
+        }
+
+        return options;
+    }
+
+});
+
+
+module.exports = TabLayout;
+
+
+},{"../container/tabitem.js":16,"../helpers.js":19,"../widget.js":53,"./layout.js":34}],37:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9058,7 +10118,7 @@ var AccelManager = Base.$extend({
      * @param {Boolean} safe If true, the accelerator is disable if a field/textArea is focused (optional, default=true)
      */
     addAccel: function(id, keys, callback, safe) {
-        var keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
+        keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
         this.removeAccel(id);
         this.__kbd[id] = {
             keys: keys,
@@ -9105,9 +10165,9 @@ var AccelManager = Base.$extend({
             if (this.__kbd[id].keys != combo) continue;
 
             if (this.__kbd[id].safe) {
-                if (document.activeElement instanceof HTMLInputElement
-                ||  document.activeElement instanceof HTMLSelectElement
-                ||  document.activeElement instanceof HTMLTextAreaElement) {
+                if (document.activeElement instanceof HTMLInputElement ||
+                    document.activeElement instanceof HTMLSelectElement ||
+                    document.activeElement instanceof HTMLTextAreaElement) {
                     continue;
                 }
             }
@@ -9122,9 +10182,9 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":4,"keyboardjs":3}],36:[function(require,module,exports){
+},{"../base.js":4,"keyboardjs":2}],38:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9224,7 +10284,7 @@ var Color = Base.$extend({
     },
 
     setHexString: function(value) {
-        var value = value.replace(" ", "");
+        value = value.replace(" ", "");
         // #FF0000
         if (value.match(/^#[0-9a-f]{6}$/i)) {
             this._red = parseInt(value[1]+value[2], 16);
@@ -9259,7 +10319,7 @@ var Color = Base.$extend({
                 fuchsia: [0xFF, 0x00, 0xFF],
                 purple:  [0x80, 0x00, 0x80]
             };
-            if (colors[value] != undefined) {
+            if (colors[value] !== undefined) {
                 this.setRGB(colors[value]);
             }
         }
@@ -9448,7 +10508,7 @@ var Color = Base.$extend({
         this._red = Math.max(0, Math.min(255, args[0]|0));
         this._green = Math.max(0, Math.min(255, args[1]|0));
         this._blue = Math.max(0, Math.min(255, args[2]|0));
-        if (args[3] != undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
+        if (args[3] !== undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
 
         this._updateHSB();
     },
@@ -9532,7 +10592,7 @@ var Color = Base.$extend({
         }
 
         // Saturation
-        if (max == 0) {
+        if (max === 0) {
             this._saturation = 0;
         }
         else {
@@ -9604,9 +10664,9 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":4}],37:[function(require,module,exports){
+},{"../base.js":4}],39:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9672,8 +10732,8 @@ var FileManager = Base.$extend({
         this.__fileField.style.opacity = 0;
         this.__fileField.style.display = "none";
         document.getElementsByTagName("body")[0].appendChild(this.__fileField);
-        this._acceptedMimes = [],
-        this._acceptedExts = [],
+        this._acceptedMimes = [];
+        this._acceptedExts = [];
         this._registerWEvents(["file-open"]);
         this.$super(params);
     },
@@ -9872,7 +10932,7 @@ var FileManager = Base.$extend({
 
         // Validate ext
         if (!match) {
-            var ext = file.name.split(".").splice(-1)
+            var ext = file.name.split(".").splice(-1);
             for (var e=0 ; e<this.acceptedExts.length ; e++) {
                 if (ext == this.acceptedExts[e]) {
                     match = true;
@@ -9933,9 +10993,9 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":4}],38:[function(require,module,exports){
+},{"../base.js":4}],40:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10050,18 +11110,24 @@ var Widget = require("../widget.js");
  * @extends photonui.Base
  * @param {photonui.Widget} element Any PhotonUI Widget (optional).
  * @param {HTMLElement} element Any HTML element (optional).
+ * @param {Object} params additional params (optional).
  */
 var MouseManager = Base.$extend({
 
     // Constructor
-    __init__: function(element) {
+    __init__: function(element, params) {
         this._registerWEvents([
             "mouse-event", "mouse-down", "mouse-up", "click", "double-click",
             "drag-start", "dragging", "drag-end", "mouse-move", "scroll-up",
             "scroll-down"
         ]);
-        this.$super();
-        this.element = element;
+        if (element && (element instanceof Widget || element instanceof HTMLElement)) {
+            this.$super(params);
+            this.element = element;
+        }
+        else {
+            this.$super(element);
+        }
     },
 
 
@@ -10211,7 +11277,7 @@ var MouseManager = Base.$extend({
     _action: "",
 
     getAction: function() {
-        return this._action
+        return this._action;
     },
 
     /**
@@ -10408,8 +11474,8 @@ var MouseManager = Base.$extend({
         }
 
         // Click
-        if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold
-        && Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
+        if (action == "mouse-up" && (Math.abs(this.pageX - this.__mouseDownEvent.pageX) <= this._threshold &&
+            Math.abs(this.pageY - this.__mouseDownEvent.pageY) <= this._threshold)) {
             this._action = "click";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks("click", [this._dump()]);
@@ -10429,10 +11495,10 @@ var MouseManager = Base.$extend({
         }
 
         // Drag Start
-        if (action == "mouse-move" && this.__prevState.action != "drag-start"
-        && this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
-            if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold
-            || Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
+        if (action == "mouse-move" && this.__prevState.action != "drag-start" &&
+            this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
+            if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold ||
+                Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
                 // Drag Start
                 this._action = "drag-start";
                 this.__event = this.__mouseDownEvent;
@@ -10448,16 +11514,16 @@ var MouseManager = Base.$extend({
         }
 
         // Dragging
-        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start"
-        || this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
+        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start" ||
+                 this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "dragging";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         }
 
         // Drag End
-        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging"
-        || this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
+        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
+                 this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
@@ -10547,21 +11613,21 @@ var MouseManager = Base.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this._stateMachine("scroll-up", event);
             }
@@ -10574,9 +11640,9 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":4,"../helpers.js":18,"../widget.js":51}],39:[function(require,module,exports){
+},{"../base.js":4,"../helpers.js":19,"../widget.js":53}],41:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10726,7 +11792,7 @@ var SpriteSheet = Base.$extend({
     },
 
     setIcons: function(icons) {
-        for (icon in icons) {
+        for (var icon in icons) {
             this._icons[icon] = icons[icon];
         }
     },
@@ -10802,13 +11868,13 @@ SpriteSheet.getSpriteSheet = function(name) {
         return _spritesheets[name];
     }
     return null;
-}
+};
 
 module.exports = SpriteSheet;
 
-},{"../base.js":4}],40:[function(require,module,exports){
+},{"../base.js":4}],42:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10845,13 +11911,16 @@ module.exports = SpriteSheet;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("../base.js");
 
 /**
  * A wrapper around Stone.js to fire locale events to widgets.
  *
  * Documentation: https://github.com/flozz/stone.js/blob/master/README.md
+ *
+ * NOTE: When you instantiate the translation widget, you can pass to it
+ * the `noGlobal` option to avoid the creation of the global `window._` function.
  *
  * wEvents:
  *
@@ -10868,10 +11937,13 @@ var Translation = Base.$extend({
 
     // Constructor
     __init__: function(params) {
+        params = params || {};
         this._registerWEvents(["locale-changed"]);
         this.$super(params);
         this._bindEvent("locale-changed", document, "stonejs-locale-changed", this.__onStonejsLocaleChanged.bind(this));
-        window._ = this.lazyGettext;
+        if (!params.noGlobal) {
+            window._ = this.lazyGettext;
+        }
     },
 
 
@@ -10975,9 +12047,9 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../../lib/stone.js":1,"../base.js":4}],41:[function(require,module,exports){
+},{"../base.js":4,"stonejs":3}],43:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11021,7 +12093,7 @@ var photonui = {};
 photonui.lib = {};
 photonui.lib.Class = require("classyjs");
 photonui.lib.KeyboardJS = require("keyboardjs");
-photonui.lib.Stone = require("../lib/stone");
+photonui.lib.Stone = require("stonejs");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -11077,12 +12149,16 @@ photonui.PopupWindow = require("./container/popupwindow.js");
 photonui.Dialog = require("./container/dialog.js");
 photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
+photonui.TabItem = require("./container/tabitem.js");
+photonui.TabLayout = require("./layout/tablayout.js");
+// [generator]
+// DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
 module.exports = photonui;
 
-},{"../lib/stone":1,"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/viewport.js":16,"./container/window.js":17,"./helpers.js":18,"./interactive/button.js":19,"./interactive/checkbox.js":20,"./interactive/colorpalette.js":21,"./interactive/colorpicker.js":22,"./interactive/field.js":23,"./interactive/numericfield.js":24,"./interactive/slider.js":25,"./interactive/switch.js":26,"./interactive/textareafield.js":27,"./interactive/textfield.js":28,"./interactive/togglebutton.js":29,"./layout/boxlayout.js":30,"./layout/fluidlayout.js":31,"./layout/gridlayout.js":32,"./layout/layout.js":33,"./layout/menu.js":34,"./nonvisual/accelmanager.js":35,"./nonvisual/color.js":36,"./nonvisual/filemanager.js":37,"./nonvisual/mousemanager.js":38,"./nonvisual/spritesheet.js":39,"./nonvisual/translation.js":40,"./visual/baseicon.js":42,"./visual/canvas.js":43,"./visual/faicon.js":44,"./visual/image.js":45,"./visual/label.js":46,"./visual/progressbar.js":47,"./visual/separator.js":48,"./visual/spriteicon.js":49,"./visual/text.js":50,"./widget.js":51,"classyjs":2,"keyboardjs":3}],42:[function(require,module,exports){
+},{"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/tabitem.js":16,"./container/viewport.js":17,"./container/window.js":18,"./helpers.js":19,"./interactive/button.js":20,"./interactive/checkbox.js":21,"./interactive/colorpalette.js":22,"./interactive/colorpicker.js":23,"./interactive/field.js":24,"./interactive/numericfield.js":25,"./interactive/slider.js":26,"./interactive/switch.js":27,"./interactive/textareafield.js":28,"./interactive/textfield.js":29,"./interactive/togglebutton.js":30,"./layout/boxlayout.js":31,"./layout/fluidlayout.js":32,"./layout/gridlayout.js":33,"./layout/layout.js":34,"./layout/menu.js":35,"./layout/tablayout.js":36,"./nonvisual/accelmanager.js":37,"./nonvisual/color.js":38,"./nonvisual/filemanager.js":39,"./nonvisual/mousemanager.js":40,"./nonvisual/spritesheet.js":41,"./nonvisual/translation.js":42,"./visual/baseicon.js":44,"./visual/canvas.js":45,"./visual/faicon.js":46,"./visual/image.js":47,"./visual/label.js":48,"./visual/progressbar.js":49,"./visual/separator.js":50,"./visual/spriteicon.js":51,"./visual/text.js":52,"./widget.js":53,"classyjs":1,"keyboardjs":2,"stonejs":3}],44:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11150,9 +12226,9 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":51}],43:[function(require,module,exports){
+},{"../widget.js":53}],45:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11437,9 +12513,9 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":51}],44:[function(require,module,exports){
+},{"../widget.js":53}],46:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11616,9 +12692,9 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":42}],45:[function(require,module,exports){
+},{"./baseicon.js":44}],47:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11665,7 +12741,7 @@ var Widget = require("../widget.js");
  * @extends photonui.Widget
  * @param {Object} params An object that can contain any property of the widget (optional).
  */
-var Image = Widget.$extend({
+var Image_ = Widget.$extend({
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -11773,11 +12849,11 @@ var Image = Widget.$extend({
 
 });
 
-module.exports = Image;
+module.exports = Image_;
 
-},{"../widget.js":51}],46:[function(require,module,exports){
+},{"../widget.js":53}],48:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11872,8 +12948,17 @@ var Label = Widget.$extend({
 
     setText: function(text) {
         this._text = text;
-        photonui.Helpers.cleanNode(this.__html.label);
-        this.__html.label.appendChild(document.createTextNode(text));
+        Helpers.cleanNode(this.__html.label);
+
+        var lines = (text+"").split("\n");
+
+        for (var i=0 ; i<lines.length ; i++) {
+            this.__html.label.appendChild(document.createTextNode(lines[i]));
+            if (i<lines.length-1) {
+                this.__html.label.appendChild(document.createElement("br"));
+            }
+        }
+
     },
 
     /**
@@ -11928,6 +13013,9 @@ var Label = Widget.$extend({
                 );
             }
         }
+        else {
+            this.__html.label.removeAttribute("for");
+        }
     },
 
     /**
@@ -11974,15 +13062,15 @@ var Label = Widget.$extend({
      */
     _buildHtml: function() {
         this.__html.label = document.createElement("label");
-        this.__html.label.className = "photonui-widget photonui-label";
+        this.__html.label.className = "photonui-widget photonui-label photonui-widget-fixed-height";
     }
 });
 
 module.exports = Label;
 
-},{"../helpers.js":18,"../widget.js":51}],47:[function(require,module,exports){
+},{"../helpers.js":19,"../widget.js":53}],49:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12083,9 +13171,11 @@ var ProgressBar = Widget.$extend({
         this._value = Math.min(Math.max(value, 0), 1);
         if (this.orientation == "horizontal") {
             this.__html.bar.style.width = Math.floor(this.value * 100) + "%";
+            this.__html.bar.style.height = "";
         }
         else {
             this.__html.bar.style.height = Math.floor(this.value * 100) + "%";
+            this.__html.bar.style.width = "";
         }
         this.__html.textContent.innerHTML = Math.floor(this.value * 100) + " %";
     },
@@ -12106,12 +13196,14 @@ var ProgressBar = Widget.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-progressbar-vertical");
         this.removeClass("photonui-progressbar-horizontal");
         this.addClass("photonui-progressbar-" + this.orientation);
+
+        // Refresh the value...
+        this.value = this.value;
     },
 
     /**
@@ -12177,6 +13269,14 @@ var ProgressBar = Widget.$extend({
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-progressbar";
 
+        // Hack: needed to help grid layout (<table>) to size properly its cells...
+        this.__html.filldiv = document.createElement("div");
+        this.__html.filldiv.className = "photonui-progressbar-fill";
+        this.__html.filldiv.innerHTML = "xxxxxxxxxxx";
+        this.__html.filldiv.style.opacity = 0;
+        this.__html.filldiv.style.pointerEvents = "none";
+        this.__html.outer.appendChild(this.__html.filldiv);
+
         this.__html.text = document.createElement("div");
         this.__html.text.className = "photonui-progressbar-text";
         this.__html.outer.appendChild(this.__html.text);
@@ -12208,9 +13308,9 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":51}],48:[function(require,module,exports){
+},{"../widget.js":53}],50:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12289,12 +13389,20 @@ var Separator = Widget.$extend({
     setOrientation: function(orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
             throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
-            return;
         }
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");
         this.removeClass("photonui-separator-horizontal");
-        this.addClass("photonui-separator-" + this.orientation);
+        this.addClass("photonui-separator-" + this._orientation);
+
+        this.removeClass("photonui-widget-fixed-height");
+        this.removeClass("photonui-widget-fixed-width");
+        if (this._orientation == "horizontal") {
+            this.addClass("photonui-widget-fixed-height");
+        }
+        else {
+            this.addClass("photonui-widget-fixed-width");
+        }
     },
 
     /**
@@ -12350,9 +13458,9 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":51}],49:[function(require,module,exports){
+},{"../widget.js":53}],51:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12517,7 +13625,7 @@ var SpriteIcon = BaseIcon.$extend({
     _update: function() {
         var style = "";
         if (this.spriteSheetName && this.iconName) {
-            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName)
+            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName);
         }
         this.__html.icon.setAttribute("style", style);
     },
@@ -12539,9 +13647,9 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":39,"./baseicon.js":42}],50:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":41,"./baseicon.js":44}],52:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12578,7 +13686,7 @@ module.exports = SpriteIcon;
  * @namespace photonui
  */
 
-var Stone = require("../../lib/stone.js");
+var Stone = require("stonejs");
 var Widget = require("../widget.js");
 var Helpers = require("../helpers.js");
 
@@ -12589,7 +13697,7 @@ var Helpers = require("../helpers.js");
  * @constructor
  * @extends photonui.Widget
  */
-var Text = Widget.$extend({
+var Text_ = Widget.$extend({
 
 
     //////////////////////////////////////////
@@ -12690,11 +13798,11 @@ var Text = Widget.$extend({
     }
 });
 
-module.exports = Text;
+module.exports = Text_;
 
-},{"../../lib/stone.js":1,"../helpers.js":18,"../widget.js":51}],51:[function(require,module,exports){
+},{"../helpers.js":19,"../widget.js":53,"stonejs":3}],53:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12730,7 +13838,7 @@ module.exports = Text;
  * @namespace photonui
  */
 
-var Stone = require("../lib/stone.js");
+var Stone = require("stonejs");
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
 
@@ -12743,11 +13851,11 @@ var _widgets = {};
  * wEvents:
  *
  *   * show:
- *      - description: called when the widget is displayed.
+ *      - description: called when the widget is displayed (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
- *   * hidden:
- *      - description: called when the widget is hidden.
+ *   * hide:
+ *      - description: called when the widget is hidden (a change in the parent's visibility can also trigger this event).
  *      - callback:    function(widget)
  *
  * @class Widget
@@ -12866,18 +13974,17 @@ var Widget = Base.$extend({
     },
 
     setVisible: function(visible) {
-        this._visible = visible;
+        this._visible = !!visible;
         if (!this.html) {
             return;
         }
-        if (this.visible) {
+        if (visible) {
             this.html.style.display = "";
-            this._callCallbacks("show");
         }
         else {
             this.html.style.display = "none";
-            this._callCallbacks("hide");
         }
+        this._visibilityChanged();
     },
 
     /**
@@ -12899,7 +14006,7 @@ var Widget = Base.$extend({
             this.html.title = tooltip;
         }
         else {
-            delete this.html.removeAttribute("title");
+            this.html.removeAttribute("title");
         }
     },
 
@@ -12934,7 +14041,7 @@ var Widget = Base.$extend({
     setContextMenu: function(contextMenu) {
         var PopupWindow = require("./container/popupwindow.js");
         if (contextMenu instanceof PopupWindow) {
-            this.contextMenuName = contextMenu.name
+            this.contextMenuName = contextMenu.name;
         }
         else {
             this.contextMenuName = null;
@@ -12955,7 +14062,7 @@ var Widget = Base.$extend({
     },
 
     setLayoutOptions: function(layoutOptions) {
-        for (option in layoutOptions) {
+        for (var option in layoutOptions) {
             this._layoutOptions[option] = layoutOptions[option];
         }
     },
@@ -13131,6 +14238,23 @@ var Widget = Base.$extend({
         console.warn("_buildHtml() method not implemented for this widget.");
     },
 
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function(visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility && this.visible) {
+            this._callCallbacks("show");
+        }
+        else {
+            this._callCallbacks("hide");
+        }
+    },
+
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -13181,7 +14305,7 @@ Widget.getWidget = function(name) {
         return _widgets[name];
     }
     return null;
-}
+};
 
 Widget.e_parent = null;
 
@@ -13193,14 +14317,14 @@ Widget.e_parent = null;
  * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
  */
 Widget.domInsert = function(widget, element) {
-    var element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
+    element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
     if (typeof(element) == "string") {
         element = document.getElementById(element);
     }
     element.appendChild(widget.html);
-}
+};
 
 module.exports = Widget;
 
-},{"../lib/stone.js":1,"./base.js":4,"./container/popupwindow.js":14,"./helpers.js":18,"./photonui.js":41}]},{},[41])(41)
+},{"./base.js":4,"./container/popupwindow.js":14,"./helpers.js":19,"./photonui.js":43,"stonejs":3}]},{},[43])(43)
 });

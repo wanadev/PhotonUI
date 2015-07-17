@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,10 +79,10 @@ var Menu = Layout.$extend({
     setIconVisible: function(iconVisible) {
         this._iconVisible = iconVisible;
         if (iconVisible) {
-            this.removeClass("photonui-menu-noicon");
+            this.__html.outer.classList.remove("photonui-menu-noicon");
         }
         else {
-            this.addClass("photonui-menu-noicon");
+            this.__html.outer.classList.add("photonui-menu-noicon");
         }
     },
 

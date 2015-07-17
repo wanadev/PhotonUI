@@ -44,6 +44,21 @@ describe("photonui.Dialog (buttons layout)", function() {
         expect(this.w3.parent).toBe(this.l1);
     });
 
+    it("can update its buttons parents (declarative way)", function() {
+        var l1 = new photonui.Dialog({
+            buttons: [
+                new DummyWidget({name: "widget1"})
+            ]
+        });
+        var w1 = photonui.getWidget("widget1");
+
+        expect(l1.buttons.length).toEqual(1);
+        expect(w1.parentName).toBe(l1.name);
+        expect(w1.parent).toBe(l1);
+
+        l1.destroy();
+    });
+
     it("can have its buttons removed", function() {
         this.l1.buttons = [this.w1, this.w2];
         this.l1.buttons = [];

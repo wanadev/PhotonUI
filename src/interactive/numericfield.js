@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -197,15 +197,15 @@ var NumericField = Field.$extend({
             value = 0;
         }
 
-        if (this.min != null) {
+        if (this.min !== null) {
             value = Math.max(this.min, value);
         }
 
-        if (this.max != null) {
+        if (this.max !== null) {
             value = Math.min(this.max, value);
         }
 
-        if (this.decimalDigits != null) {
+        if (this.decimalDigits !== null) {
             value = value.toFixed(this.decimalDigits);
         }
 
@@ -231,10 +231,10 @@ var NumericField = Field.$extend({
      * @return {Boolean}
      */
     _validateInput: function(value) {
-        var value = "" + value;
+        value = "" + value;
         value = value.replace(/ /g, "");  // remove spaces
         if (/^-?[0-9]*(\.|,)?[0-9]*$/.test(value)) {
-            if (this.decimalDigits == 0 && !/^-?[0-9]*$/.test(value)) {
+            if (this.decimalDigits === 0 && !/^-?[0-9]*$/.test(value)) {
                 return false;
             }
             if (this.min !== null && this.min >= 0 && value[0] == "-") {
@@ -278,9 +278,9 @@ var NumericField = Field.$extend({
         }
         else {
             var field = this.__html.field;
-            var value = field.value.slice(0, field.selectionStart)
-                        + String.fromCharCode(event.charCode)
-                        + field.value.slice(field.selectionEnd);
+            var value = field.value.slice(0, field.selectionStart) +
+                        String.fromCharCode(event.charCode) +
+                        field.value.slice(field.selectionEnd);
             if (!this._validateInput(value)) {
                 event.preventDefault();
             }
@@ -323,21 +323,21 @@ var NumericField = Field.$extend({
         var wheelDelta = null;
 
         // Webkit
-        if (event.wheelDeltaY != undefined) {
+        if (event.wheelDeltaY !== undefined) {
             wheelDelta = event.wheelDeltaY;
         }
         // MSIE
-        if (event.wheelDelta != undefined) {
+        if (event.wheelDelta !== undefined) {
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis != undefined && event.detail != undefined) {
+        if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
                 wheelDelta = - event.detail;
             }
         }
 
-        if (wheelDelta != null) {
+        if (wheelDelta !== null) {
            if (wheelDelta >= 0) {
                 this.value += this.step;
             }

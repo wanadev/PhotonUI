@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * @namespace photonui
  */
 
-var _ = require("../../lib/stone.js").gettext;
+var _ = require("stonejs").gettext;
 var Button = require("../interactive/button.js");
 var Color = require("../nonvisual/color.js");
 var ColorPalette = require("../interactive/colorpalette.js");

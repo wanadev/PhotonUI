@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -164,7 +164,7 @@ var SpriteIcon = BaseIcon.$extend({
     _update: function() {
         var style = "";
         if (this.spriteSheetName && this.iconName) {
-            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName)
+            style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName);
         }
         this.__html.icon.setAttribute("style", style);
     },
