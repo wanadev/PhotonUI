@@ -73,7 +73,8 @@ var PopupMenu = PopupWindow.$extend({
         removeChild:      Menu.prototype.removeChild,
         empty:            Menu.prototype.empty,
         destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
+        _updateLayout:    Menu.prototype._updateLayout,
+        _lockUpdate:      Menu.prototype._lockUpdate
     }],
 
 

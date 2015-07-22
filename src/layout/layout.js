@@ -199,12 +199,16 @@ var Layout = Container.$extend({
      * @method empty
      */
     empty: function() {
+        this._lockUpdate(true);
+
         var children = this.children;
         for (var i=0 ; i<children.length ; i++) {
             if (children[i]) {
                 children[i].destroy();
             }
         }
+
+        this._lockUpdate(false);
     },
 
     /**
@@ -220,6 +224,24 @@ var Layout = Container.$extend({
 
     // ====== Private methods ======
 
+
+    /**
+     * Lock the update of the layout.
+     *
+     * @method _lockUpdate
+     * @private
+     */
+    _lockUpdate: function(lock) {
+        if (lock) {
+            this.__lockedUpdateLayout = this._updateLayout;
+            this._updateLayout = function(){};
+        }
+        else {
+            this._updateLayout = this.__lockedUpdateLayout;
+            delete this.__lockedUpdateLayout;
+            this._updateLayout();
+        }
+    },
 
     /**
      * Update the layout.
