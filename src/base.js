@@ -37,7 +37,7 @@
 
 
 var Class = require("classyjs");
-var Helpers = require("./helpers.js");
+var uuid = require("uuid");
 
 
 /**
@@ -108,11 +108,11 @@ var Base = Class.$extend({
             for (var wEvent in params.callbacks) {
                 ev = params.callbacks[wEvent];
                 if (typeof(ev) == "function") {
-                    this.registerCallback(Helpers.uuid4(), wEvent, ev);
+                    this.registerCallback(uuid.v4(), wEvent, ev);
                 }
                 else if (ev instanceof Array) {
                     for (i=0 ; i<ev.length ; i++) {
-                        this.registerCallback(Helpers.uuid4(), wEvent, ev[i]);
+                        this.registerCallback(uuid.v4(), wEvent, ev[i]);
                     }
                 }
                 else {

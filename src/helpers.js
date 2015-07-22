@@ -38,7 +38,7 @@
  */
 
 
-var photonui = require("./photonui.js");
+var uuid = require("uuid");
 
 
 /**
@@ -66,20 +66,18 @@ Helpers.escapeHtml = function(string) {
 };
 
 /**
- * Generate an UUID version 4 (RFC 4122)
+ * Generate an UUID version 4 (RFC 4122).
  *
- * From:
- * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+ * This method is deprecated, please use `photonui.lib.uuid.v4()` instead.
  *
  * @method uuid4
  * @static
+ * @deprecated
  * @return {String} The generated UUID
  */
 Helpers.uuid4 = function() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-        var r = Math.random()*16|0, v = c == "x" ? r : (r&0x3|0x8);
-        return v.toString(16);
-    });
+    console.warn("PhotonUI: 'photonui.Helpers.uuid4()' is deprecated. Use 'photonui.lib.uuid.v4()' instead.");
+    return uuid.v4();
 };
 
 /**
@@ -143,6 +141,7 @@ Helpers.getAbsolutePosition = function(element) {
  *     Number     -> "<Number>px"
  *
  * @method numberToCssSize
+ * @static
  * @param {Number} value
  * @param {Number} defaultValue (opt, default=nullValue)
  * @param {String} nullValue (opt, default="auto")

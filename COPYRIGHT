@@ -26,6 +26,12 @@ Stone.js:
     Web site: https://github.com/flozz/stone.js
 
 
+node-uuid:
+    Copyright (c) 2010-2012 Robert Kieffer
+    License: MIT <https://github.com/defunctzombie/node-uuid/blob/master/LICENSE.md>
+    web site: https://github.com/defunctzombie/node-uuid
+
+
 Font Awesome:
 
     by Dave Gandy

@@ -36,10 +36,11 @@
  */
 
 var Stone = require("stonejs");
+var uuid = require("uuid");
+
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
 
-var photonui = require("./photonui.js");
 var _widgets = {};
 
 /**
@@ -82,7 +83,7 @@ var Widget = Base.$extend({
 
         // Default name
         if (!this.name) {
-            this.name = "widget-" + Helpers.uuid4();
+            this.name = "widget-" + uuid.v4();
         }
 
         // Additional className
@@ -114,7 +115,7 @@ var Widget = Base.$extend({
      *
      * @property name
      * @type String
-     * @default "widget-" + photonui.Helpers.uuid4()
+     * @default "widget-" + uuid.v4()
      */
     _name: null,
 
