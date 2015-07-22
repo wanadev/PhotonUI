@@ -91,6 +91,10 @@ Once the build stuff and dependencies installed, you just have to run the `grunt
 
 All generated files are in the `dist` folder.
 
+**NOTE:** during the development, it can be annoying to run the `grunt` command every time you make a change. You can instead run the following command to automatically rebuild what changed each time you modify a file:
+
+    grunt watch
+
 
 ### Testing
 

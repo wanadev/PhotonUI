@@ -1612,6 +1612,8 @@ module.exports = uuid;
 var Class = require("classyjs");
 var uuid = require("uuid");
 
+var Helpers = require("./helpers.js");
+
 
 /**
  * Base class for all PhotonUI Classes.
@@ -1761,7 +1763,7 @@ var Base = Class.$extend({
      */
     registerCallback: function(id, wEvent, callback, thisArg) {
         if (!this.__callbacks[wEvent]) {
-            console.error("This widget have no '" + wEvent + "' event.");
+            Helpers.log("error", "This widget has no '" + wEvent + "' wEvent.");
             return;
         }
         this.__callbacks[wEvent][id] = {
@@ -1882,7 +1884,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"classyjs":1,"uuid":5}],7:[function(require,module,exports){
+},{"./helpers.js":21,"classyjs":1,"uuid":5}],7:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14319,7 +14321,7 @@ var Widget = Base.$extend({
      * @readOnly
      */
     getHtml: function() {
-        console.warn("getHtml() method not implemented for this widget.");
+        Helpers.log("debug", "getHtml() method is not implemented on this widget.");
         return null;
     },
 
@@ -14478,7 +14480,7 @@ var Widget = Base.$extend({
      * @private
      */
     _buildHtml: function() {
-        console.warn("_buildHtml() method not implemented for this widget.");
+        Helpers.log("debug", "_buildHtml() method not implemented on this widget.");
     },
 
     /**

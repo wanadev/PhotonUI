@@ -109,6 +109,30 @@ module.exports = function(grunt) {
             }
         },
 
+        watch: {
+            javascript: {
+                files: ['src/**/*.js'],
+                tasks: ['browserify'],
+                options: {
+                    spawn: false
+                }
+            },
+            lessBase: {
+                files: ['less/base/**/*.less'],
+                tasks: ['less:less_base'],
+                options: {
+                    spawn: false
+                }
+            },
+            lessTheme: {
+                files: ['less/theme-particle/**/*.less'],
+                tasks: ['less:less_theme'],
+                options: {
+                    spawn: false
+                }
+            }
+        },
+
         clean: {
             dist: ['dist'],
             docs: ['doc'],
@@ -125,6 +149,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Register runnable tasks.
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
