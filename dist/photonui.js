@@ -8689,6 +8689,8 @@ module.exports = FluidLayout;
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 
+var _sizingHackEnabled = null;
+
 /**
  * Grid layout.
  *
@@ -9219,19 +9221,19 @@ var GridLayout = Layout.$extend({
         }
 
         // Automatically disable the hack for webkit browsers
-        if (localStorage._photonui_gridlayout_sizinghack == "disabled") {
+        if (_sizingHackEnabled === false) {
             return;
         }
-        else if (localStorage._photonui_gridlayout_sizinghack === undefined) {
+        else if (_sizingHackEnabled === null) {
             var isWebkit = false;
             if ("WebkitAppearance" in document.documentElement.style) isWebkit = true;
             if ("WebKitCSSMatrix" in window) isWebkit = true;
             if (isWebkit) {
-                localStorage._photonui_gridlayout_sizinghack = "disabled";
+                _sizingHackEnabled = false;
                 return;
             }
             else {
-                localStorage._photonui_gridlayout_sizinghack = "enabled";
+                _sizingHackEnabled = true;
             }
         }
 
