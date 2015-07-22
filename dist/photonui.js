@@ -5662,7 +5662,7 @@ Helpers.escapeHtml = function(string) {
  * @return {String} The generated UUID
  */
 Helpers.uuid4 = function() {
-    console.warn("PhotonUI: 'photonui.Helpers.uuid4()' is deprecated. Use 'photonui.lib.uuid.v4()' instead.");
+    Helpers.log("warn", "'photonui.Helpers.uuid4()' is deprecated. Use 'photonui.lib.uuid.v4()' instead.");
     return uuid.v4();
 };
 
@@ -5751,6 +5751,26 @@ Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
         return nullValue;
     }
 };
+
+/**
+ * Write log into the terminal.
+ *
+ * @method log
+ * @static
+ * @param {String} level The log level ("info", "warn", "error", ...)
+ * @param {String} message The message to log
+ */
+Helpers.log = function(level, message) {
+    try {
+        if (!window.console) return;
+        if (!window.console.log) return;
+        if (!window.console[level]) level = "log";
+        window.console[level]("PhotonUI: " + message);
+    }
+    catch (e) {
+    }
+};
+
 
 module.exports = Helpers;
 

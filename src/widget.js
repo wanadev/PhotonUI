@@ -274,7 +274,7 @@ var Widget = Base.$extend({
      * @readOnly
      */
     getHtml: function() {
-        console.warn("getHtml() method not implemented for this widget.");
+        Helpers.log("debug", "getHtml() method is not implemented on this widget.");
         return null;
     },
 
@@ -433,7 +433,7 @@ var Widget = Base.$extend({
      * @private
      */
     _buildHtml: function() {
-        console.warn("_buildHtml() method not implemented for this widget.");
+        Helpers.log("debug", "_buildHtml() method not implemented on this widget.");
     },
 
     /**

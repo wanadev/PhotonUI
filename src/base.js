@@ -39,6 +39,8 @@
 var Class = require("classyjs");
 var uuid = require("uuid");
 
+var Helpers = require("./helpers.js");
+
 
 /**
  * Base class for all PhotonUI Classes.
@@ -188,7 +190,7 @@ var Base = Class.$extend({
      */
     registerCallback: function(id, wEvent, callback, thisArg) {
         if (!this.__callbacks[wEvent]) {
-            console.error("This widget have no '" + wEvent + "' event.");
+            Helpers.log("error", "This widget has no '" + wEvent + "' wEvent.");
             return;
         }
         this.__callbacks[wEvent][id] = {
