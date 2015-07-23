@@ -60,6 +60,13 @@ module.exports = function(grunt) {
             }
         },
 
+        jscs: {
+            src: "src/**/*.js",
+            options: {
+                config: ".jscsrc"
+            }
+        },
+
         jasmine: {
             pivotal: {
                 src: ['dist/photonui.js', 'test/helpers.js'],
@@ -150,11 +157,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks("grunt-jscs");
 
     // Register runnable tasks.
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
     grunt.registerTask('gen-js', ['browserify', 'uglify']);
     grunt.registerTask('gen-css', ['less:less_base', 'less:less_theme', 'clean:assets', 'copy:assets']);
     grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
-    grunt.registerTask('test', ['jshint', 'default', 'jasmine']);
+    grunt.registerTask('test', ['jshint', 'jscs', 'default', 'jasmine']);
 };
