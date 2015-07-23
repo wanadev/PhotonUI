@@ -1,6 +1,6 @@
 {
   "name": "photonui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A work-in-progress MVC/Swing style JavaScript UI library.",
   "homepage": "http://wanadev.github.io/PhotonUI/",
   "author": "Wanadev (http://wanadev.fr/)",
@@ -28,7 +28,8 @@
   "dependencies": {
     "classyjs": ">=0.9.0",
     "keyboardjs": "flozz/KeyboardJS",
-    "stonejs": ">=2.0.0"
+    "stonejs": ">=2.0.0",
+    "uuid": "^2.0.1"
   },
   "devDependencies": {
     "grunt": ">=0.4.5",
@@ -40,7 +41,9 @@
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-less": ">=1.0.0",
     "grunt-contrib-uglify": ">=0.8.0",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-contrib-yuidoc": ">=0.7.0",
+    "grunt-jscs": "^1.8.0",
     "less-plugin-autoprefix": ">=1.4.1",
     "less-plugin-clean-css": ">=1.5.0"
   }

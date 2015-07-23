@@ -50,7 +50,7 @@ var Button = require("./button.js");
 var ToggleButton = CheckBox.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
         this.__buttonInit();
@@ -61,7 +61,7 @@ var ToggleButton = CheckBox.$extend({
     },
 
     // photonui.Button constructor (without the call to $super)
-    __buttonInit: function() {
+    __buttonInit: function () {
         // Bind js events
         this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
 
@@ -73,14 +73,11 @@ var ToggleButton = CheckBox.$extend({
     // Mixin
     __include__: [Button._buttonMixin],
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -88,7 +85,7 @@ var ToggleButton = CheckBox.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this._buildButtonHtml();
         this.__html.outer.appendChild(this.__html.button);

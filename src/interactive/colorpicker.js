@@ -55,10 +55,10 @@ var MouseManager = require("../nonvisual/mousemanager.js");
  * @extends photonui.Widget
  * @param {Object} params An object that can contain any property of the widget (optional).
  */
- var ColorPicker = Widget.$extend({
+var ColorPicker = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["value-changed"]);
         this._color = new Color();
         this.__buffH = document.createElement("canvas");
@@ -87,11 +87,9 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         this._bindEvent("value-changed", this.__html.preview, "change", this.__onValueChanged.bind(this));
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -101,11 +99,11 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @property value
      * @type String
      */
-    getValue: function() {
+    getValue: function () {
         return this.color.hexString;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.color.hexString = value;
         this._updateSB();
         this._updateCanvas();
@@ -119,17 +117,18 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             if (this._color) {
                 this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
             }
             this._color = color;
-            this._color.registerCallback("photonui.colorpicker.value-changed::" + this.name, "value-changed", function() {
+            this._color.registerCallback("photonui.colorpicker.value-changed::" +
+                                         this.name, "value-changed", function () {
                 this._updateSB();
                 this._updateCanvas();
             }.bind(this));
@@ -146,7 +145,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -189,13 +188,11 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      */
     __disableSBUpdate: false,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
-    destroy: function() {
+    destroy: function () {
         this.__mouseManager.destroy();
         this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
         this.$super();
@@ -207,14 +204,13 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-colorpicker";
         this.__html.canvas = document.createElement("canvas");
         this.__html.canvas.width = 200;
         this.__html.canvas.height = 200;
         this.__html.outer.appendChild(this.__html.canvas);
-
 
         this.__html.previewOuter = document.createElement("span");
         this.__html.previewOuter.className = "photonui-colorpicker-previewouter";
@@ -234,25 +230,25 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateH
      * @private
      */
-    _updateH: function() {
+    _updateH: function () {
         var canvas = this.__buffH;
         var ctx = canvas.getContext("2d");
         var color = new Color();
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        for (var i=0 ; i<360 ; i++) {
+        for (var i = 0 ; i < 360 ; i++) {
             color.hue = 360 - i;
             ctx.beginPath();
             ctx.fillStyle = color.hexString;
-            ctx.arc(100, 100, 90, Math.PI*i/180, Math.PI*((i+2)%360)/180, false);
+            ctx.arc(100, 100, 90, Math.PI * i / 180, Math.PI * ((i + 2) % 360) / 180, false);
             ctx.lineTo(100, 100);
             ctx.fill();
         }
 
         ctx.beginPath();
         ctx.fillStyle = "#000";
-        ctx.arc(100, 100, 73, 2*Math.PI, false);
+        ctx.arc(100, 100, 73, 2 * Math.PI, false);
         ctx.globalCompositeOperation = "destination-out";
         ctx.fill();
     },
@@ -263,8 +259,8 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateSBmask
      * @private
      */
-    _updateSBmask: function() {
-       var canvas = this.__buffSBmask;
+    _updateSBmask: function () {
+        var canvas = this.__buffSBmask;
         var ctx = canvas.getContext("2d");
         var pix = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -272,19 +268,19 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         var saturation = 0;
         var b = 0;
         var s = 0;
-        for (b=0 ; b<100 ; b++) {
-            for (s=0 ; s<100 ; s++) {
+        for (b = 0 ; b < 100 ; b++) {
+            for (s = 0 ; s < 100 ; s++) {
                 i = 400 * b + 4 * s;
 
                 // some magic here
-                saturation = (  (  0.5 * (  1-s/100  ) +0.5) * (1-b/100) *255)<<0;
+                saturation = ((0.5 * (1 - s / 100) + 0.5) * (1 - b / 100) * 255) << 0;
 
-                pix.data[i+0] = saturation;
-                pix.data[i+1] = saturation;
-                pix.data[i+2] = saturation;
+                pix.data[i + 0] = saturation;
+                pix.data[i + 1] = saturation;
+                pix.data[i + 2] = saturation;
 
                 // more magic
-                pix.data[i+3] = ( ( 1- (  ((s/100)) * (1-(b/100))  ) ) *255)<<0;
+                pix.data[i + 3] = ((1 - (((s / 100)) * (1 - (b / 100)))) * 255) << 0;
             }
         }
 
@@ -297,12 +293,14 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateSB
      * @private
      */
-    _updateSB: function() {
-        if (this.__disableSBUpdate) return;
+    _updateSB: function () {
+        if (this.__disableSBUpdate) {
+            return;
+        }
 
         var canvas = this.__buffSB;
         var ctx = canvas.getContext("2d");
-        
+
         var color = new Color({
             hue: this.color.hue,
             saturation: 100,
@@ -330,7 +328,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateCanvas
      * @private
      */
-    _updateCanvas: function() {
+    _updateCanvas: function () {
         var canvas = this.__html.canvas;
         var ctx = canvas.getContext("2d");
 
@@ -347,14 +345,14 @@ var MouseManager = require("../nonvisual/mousemanager.js");
 
         // Square cursor
         ctx.beginPath();
-        ctx.arc(this.color.saturation + 50, 100 - this.color.brightness + 50, 6, 2*Math.PI, false);
+        ctx.arc(this.color.saturation + 50, 100 - this.color.brightness + 50, 6, 2 * Math.PI, false);
         ctx.stroke();
 
         // Square cursor
         ctx.translate(100, 100);
-        ctx.rotate(-this.color.hue*Math.PI/180);
+        ctx.rotate(-this.color.hue * Math.PI / 180);
         ctx.beginPath();
-        ctx.arc(81, 0, 6, 2*Math.PI, false);
+        ctx.arc(81, 0, 6, 2 * Math.PI, false);
         ctx.stroke();
 
         ctx.restore();
@@ -372,7 +370,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param mstate
      * @return {Boolean}
      */
-    _pointerOnSquare: function(mstate) {
+    _pointerOnSquare: function (mstate) {
         return (mstate.x >= 50 && mstate.x <= 150 && mstate.y >= 50 && mstate.y <= 150);
     },
 
@@ -384,10 +382,10 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param mstate
      * @return {Boolean}
      */
-    _pointerOnCircle: function(mstate) {
+    _pointerOnCircle: function (mstate) {
         var dx = Math.abs(100 - mstate.x);
         var dy = Math.abs(100 - mstate.y);
-        var h = Math.sqrt(dx*dx + dy*dy);
+        var h = Math.sqrt(dx * dx + dy * dy);
         return (h >= 74 && h <= 90);
     },
 
@@ -399,23 +397,25 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param mstate
      * @return {Number} the angle in degree.
      */
-    _pointerAngle: function(mstate) {
+    _pointerAngle: function (mstate) {
         var dx = Math.abs(100 - mstate.x);
         var dy = Math.abs(100 - mstate.y);
-        var angle = Math.atan(dy/dx)*180/Math.PI;
+        var angle = Math.atan(dy / dx) * 180 / Math.PI;
 
-        if (mstate.x < 100 && mstate.y < 100) angle = 180 - angle;
-        else if (mstate.x < 100 && mstate.y >= 100) angle += 180;
-        else if (mstate.x >= 100 && mstate.y > 100) angle = 360 - angle;
+        if (mstate.x < 100 && mstate.y < 100) {
+            angle = 180 - angle;
+        } else if (mstate.x < 100 && mstate.y >= 100) {
+            angle += 180;
+        } else if (mstate.x >= 100 && mstate.y > 100) {
+            angle = 360 - angle;
+        }
 
-        return angle|0;
+        return angle | 0;
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onMouseMove
@@ -423,11 +423,10 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onMouseMove: function(manager, mstate) {
+    __onMouseMove: function (manager, mstate) {
         if (this._pointerOnSquare(mstate) || this._pointerOnCircle(mstate)) {
             this.__html.canvas.style.cursor = "crosshair";
-        }
-        else {
+        } else {
             this.__html.canvas.style.cursor = "default";
         }
     },
@@ -438,15 +437,14 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onMouseDown: function(manager, mstate) {
+    __onMouseDown: function (manager, mstate) {
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.color.saturation = mstate.x - 50;
             this.color.brightness = 150 - mstate.y;
             this.__disableSBUpdate = false;
             this._callCallbacks("value-changed", this.color);
-        }
-        else if (this._pointerOnCircle(mstate)) {
+        } else if (this._pointerOnCircle(mstate)) {
             this.color.hue = this._pointerAngle(mstate);
             this._callCallbacks("value-changed", this.color);
         }
@@ -458,13 +456,12 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDragStart: function(manager, mstate) {
+    __onDragStart: function (manager, mstate) {
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingSquare.bind(this));
             this.__mouseManager.registerCallback("drag-end", "drag-end", this.__onDragEnd.bind(this));
-        }
-        else if (this._pointerOnCircle(mstate)) {
+        } else if (this._pointerOnCircle(mstate)) {
             this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingCircle.bind(this));
             this.__mouseManager.registerCallback("drag-end", "drag-end", this.__onDragEnd.bind(this));
         }
@@ -476,7 +473,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDraggingSquare: function(manager, mstate) {
+    __onDraggingSquare: function (manager, mstate) {
         this.color.saturation = mstate.x - 50;
         this.color.brightness = 150 - mstate.y;
         this._callCallbacks("value-changed", this.color);
@@ -488,7 +485,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDraggingCircle: function(manager, mstate) {
+    __onDraggingCircle: function (manager, mstate) {
         this.color.hue = this._pointerAngle(mstate);
         this._callCallbacks("value-changed", this.color);
     },
@@ -499,7 +496,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDragEnd: function(manager, mstate) {
+    __onDragEnd: function (manager, mstate) {
         this.__mouseManager.removeCallback("dragging");
         this.__mouseManager.removeCallback("drag-end");
         this.__disableSBUpdate = false;
@@ -509,7 +506,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method __onValueChanged
      * @private
      */
-    __onValueChanged: function() {
+    __onValueChanged: function () {
         this.color.hexString = this.__html.preview.value;
         this.__html.preview.value = this.color.hexString;
         this._callCallbacks("value-changed", this.color);

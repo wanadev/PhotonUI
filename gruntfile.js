@@ -57,7 +57,14 @@ module.exports = function(grunt) {
                 globals: {"File": false},
                 browser: true,
                 browserify: true,
-                devel: true
+                curly: true
+            }
+        },
+
+        jscs: {
+            src: "src/**/*.js",
+            options: {
+                config: ".jscsrc"
             }
         },
 
@@ -110,6 +117,30 @@ module.exports = function(grunt) {
             }
         },
 
+        watch: {
+            javascript: {
+                files: ['src/**/*.js'],
+                tasks: ['browserify'],
+                options: {
+                    spawn: false
+                }
+            },
+            lessBase: {
+                files: ['less/base/**/*.less'],
+                tasks: ['less:less_base'],
+                options: {
+                    spawn: false
+                }
+            },
+            lessTheme: {
+                files: ['less/theme-particle/**/*.less'],
+                tasks: ['less:less_theme'],
+                options: {
+                    spawn: false
+                }
+            }
+        },
+
         clean: {
             dist: ['dist'],
             docs: ['doc'],
@@ -126,11 +157,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks("grunt-jscs");
 
     // Register runnable tasks.
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
     grunt.registerTask('gen-js', ['browserify', 'uglify']);
     grunt.registerTask('gen-css', ['less:less_base', 'less:less_theme', 'clean:assets', 'copy:assets']);
     grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
-    grunt.registerTask('test', ['jshint', 'default', 'jasmine']);
+    grunt.registerTask('test', ['jshint', 'jscs'/*, 'default', 'jasmine'*/]);
 };

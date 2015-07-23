@@ -37,9 +37,7 @@
  * @namespace photonui
  */
 
-
-var photonui = require("./photonui.js");
-
+var uuid = require("uuid");
 
 /**
  * Helpers.
@@ -47,7 +45,7 @@ var photonui = require("./photonui.js");
  * @class Helpers
  * @constructor
  */
-var Helpers = function() {
+var Helpers = function () {
 };
 
 /**
@@ -58,7 +56,7 @@ var Helpers = function() {
  * @param {String} string
  * @return {String}
  */
-Helpers.escapeHtml = function(string) {
+Helpers.escapeHtml = function (string) {
     return string
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -66,20 +64,18 @@ Helpers.escapeHtml = function(string) {
 };
 
 /**
- * Generate an UUID version 4 (RFC 4122)
+ * Generate an UUID version 4 (RFC 4122).
  *
- * From:
- * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+ * This method is deprecated, please use `photonui.lib.uuid.v4()` instead.
  *
  * @method uuid4
  * @static
+ * @deprecated
  * @return {String} The generated UUID
  */
-Helpers.uuid4 = function() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-        var r = Math.random()*16|0, v = c == "x" ? r : (r&0x3|0x8);
-        return v.toString(16);
-    });
+Helpers.uuid4 = function () {
+    Helpers.log("warn", "'photonui.Helpers.uuid4()' is deprecated. Use 'photonui.lib.uuid.v4()' instead.");
+    return uuid.v4();
 };
 
 /**
@@ -89,7 +85,7 @@ Helpers.uuid4 = function() {
  * @static
  * @param {HTMLElement} node
  */
-Helpers.cleanNode = function(node) {
+Helpers.cleanNode = function (node) {
     while (node.hasChildNodes()) {
         node.removeChild(node.lastChild);
     }
@@ -103,20 +99,25 @@ Helpers.cleanNode = function(node) {
  * @param {HTMLElement} element The HTML element (or its id)
  * @return {Object} `{x: <Number>, y: <Number>}
  */
-Helpers.getAbsolutePosition = function(element) {
-    if (typeof(element) == "string") element = document.getElementById(element);
-    if (!(element instanceof Element)) return {x: 0, y: 0};
+Helpers.getAbsolutePosition = function (element) {
+    if (typeof(element) == "string") {
+        element = document.getElementById(element);
+    }
+    if (!(element instanceof Element)) {
+        return {x: 0, y: 0};
+    }
     var css;
     try {
         css = getComputedStyle(element);
-    }
-    catch (e) {
+    } catch (e) {
         return {x: 0, y: 0};
     }
-    if (!css) return {x: 0, y: 0};
+    if (!css) {
+        return {x: 0, y: 0};
+    }
 
-    var x = - parseInt(css.borderLeftWidth);
-    var y = - parseInt(css.borderTopWidth);
+    var x = -parseInt(css.borderLeftWidth);
+    var y = -parseInt(css.borderTopWidth);
 
     while (element.offsetParent) {
         css = getComputedStyle(element);
@@ -143,27 +144,49 @@ Helpers.getAbsolutePosition = function(element) {
  *     Number     -> "<Number>px"
  *
  * @method numberToCssSize
+ * @static
  * @param {Number} value
  * @param {Number} defaultValue (opt, default=nullValue)
  * @param {String} nullValue (opt, default="auto")
  * @return {String} sanitized version of the size.
  */
-Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
+Helpers.numberToCssSize = function (value, defaultValue, nullValue) {
     nullValue = (nullValue === undefined) ? "auto" : nullValue;
     defaultValue = (nullValue === undefined) ? null : defaultValue;
     value = (value === undefined) ? defaultValue : value;
 
     if (value === Infinity) {
         return "100%";
-    }
-    else if (!isNaN(parseFloat(value))) {
-        return Math.max(0, parseFloat(value)|0) + "px";
-    }
-    else if (value !== defaultValue) {
+    } else if (!isNaN(parseFloat(value))) {
+        return Math.max(0, parseFloat(value) | 0) + "px";
+    } else if (value !== defaultValue) {
         return Helpers.numberToCssSize(defaultValue, defaultValue, nullValue);
-    }
-    else {
+    } else {
         return nullValue;
+    }
+};
+
+/**
+ * Write log into the terminal.
+ *
+ * @method log
+ * @static
+ * @param {String} level The log level ("info", "warn", "error", ...)
+ * @param {String} message The message to log
+ */
+Helpers.log = function (level, message) {
+    try {
+        if (!window.console) {
+            return;
+        }
+        if (!window.console.log) {
+            return;
+        }
+        if (!window.console[level]) {
+            level = "log";
+        }
+        window.console[level]("PhotonUI: " + message);
+    } catch (e) {
     }
 };
 

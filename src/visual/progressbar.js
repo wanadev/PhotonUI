@@ -48,19 +48,16 @@ var Widget = require("../widget.js");
 var ProgressBar = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["orientation", "value", "pulsate"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Html outer element of the widget (if any).
@@ -70,18 +67,15 @@ var ProgressBar = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * The progression (form 0.00 to 1.00).
@@ -92,17 +86,16 @@ var ProgressBar = Widget.$extend({
      */
     _value: 0,
 
-    getValue: function() {
+    getValue: function () {
         return this._value;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this._value = Math.min(Math.max(value, 0), 1);
         if (this.orientation == "horizontal") {
             this.__html.bar.style.width = Math.floor(this.value * 100) + "%";
             this.__html.bar.style.height = "";
-        }
-        else {
+        } else {
             this.__html.bar.style.height = Math.floor(this.value * 100) + "%";
             this.__html.bar.style.width = "";
         }
@@ -118,13 +111,13 @@ var ProgressBar = Widget.$extend({
      */
     _orientation: "horizontal",
 
-    getOrientation: function() {
+    getOrientation: function () {
         return this._orientation;
     },
 
-    setOrientation: function(orientation) {
+    setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-progressbar-vertical");
@@ -144,22 +137,20 @@ var ProgressBar = Widget.$extend({
      */
     _pulsate: false,
 
-    isPulsate: function() {
+    isPulsate: function () {
         return this._pulsate;
     },
 
-    setPulsate: function(pulsate) {
+    setPulsate: function (pulsate) {
         this._pulsate = pulsate;
         if (pulsate) {
             this.addClass("photonui-progressbar-pulsate");
             if (this.orientation == "horizontal") {
                 this.__html.bar.style.width = "";
-            }
-            else {
+            } else {
                 this.__html.bar.style.height = "";
             }
-        }
-        else {
+        } else {
             this.removeClass("photonui-progressbar-pulsate");
             this.value = this.value;
         }
@@ -174,16 +165,15 @@ var ProgressBar = Widget.$extend({
      */
     _textVisible: true,
 
-    isTextVisible: function() {
+    isTextVisible: function () {
         return this._textVisible;
     },
 
-    setTextVisible: function(textVisible) {
+    setTextVisible: function (textVisible) {
         this._textVisible = textVisible;
         if (this.textVisible) {
             this.__html.text.style.display = "";
-        }
-        else {
+        } else {
             this.__html.text.style.display = "none";
         }
     },
@@ -194,7 +184,7 @@ var ProgressBar = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-progressbar";
 
@@ -218,11 +208,9 @@ var ProgressBar = Widget.$extend({
         this.__html.outer.appendChild(this.__html.bar);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -230,7 +218,7 @@ var ProgressBar = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });

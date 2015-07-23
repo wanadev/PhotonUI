@@ -1,9 +1,11 @@
 # PhotonUI - A javascript framework to create user interfaces
 
-[ ![NPM Version](http://img.shields.io/npm/v/photonui.svg?style=flat) ](https://www.npmjs.com/package/photonui)
-[ ![License](http://img.shields.io/npm/l/photonui.svg?style=flat) ](https://github.com/wanadev/PhotonUI/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/wanadev/PhotonUI.svg?branch=master)](https://travis-ci.org/wanadev/PhotonUI)
+[![NPM Version](http://img.shields.io/npm/v/photonui.svg?style=flat)](https://www.npmjs.com/package/photonui)
+[![License](http://img.shields.io/npm/l/photonui.svg?style=flat)](https://github.com/wanadev/PhotonUI/blob/master/LICENSE)
 
-PhotonUI is a work in progress javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
+
+PhotonUI javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
 
 * **Website:** http://wanadev.github.io/PhotonUI/
 * **Quick start:** http://wanadev.github.io/PhotonUI/doc/quick-start.html
@@ -91,16 +93,29 @@ Once the build stuff and dependencies installed, you just have to run the `grunt
 
 All generated files are in the `dist` folder.
 
+**NOTE:** during the development, it can be annoying to run the `grunt` command every time you make a change. You can instead run the following command to automatically rebuild what changed each time you modify a file:
+
+    grunt watch
+
+
+### Coding Style
+
+PhotonUI follows the [Yandex Javascript CodeStyle][codestyle-yandex] **EXCEPT** for the quote marks where we use **double quotes** (`"`).
+
+You can automatically check your code follows the conventions by using this command:
+
+    grunt jscs
+
 
 ### Testing
 
-To run the PhotonUI tests, you can use the following command:
+~~To run the PhotonUI tests, you can use the following command:~~
 
-    grunt test
+~~grunt test~~
 
-**BUT** some tests will fail because [PhantomJS][phantomjs], the browser used to run the tests, embedded a very old Webkit version. So you currently have to launch the tests manually in your browser:
+As [PhantomJS][phantomjs], the browser used to run the tests, embedded a very old Webkit version, the tests cannot be automatically ; you have to run them manually in you browser:
 
-1. Check that the javascript is well formed: `grunt jshint`
+1. Check that the javascript is well formed and that it follows the coding style: `grunt jshint jscs`
 2. Build PhotonUI: `grunt`
 3. Run the tests: open `test/index.html` in your browser.
 
@@ -124,6 +139,14 @@ Once you feel comfortable with the custom widget creation, you can create widget
 * [generator-photonui-widget](https://github.com/wanadev/generator-photonui-widget): The PhotonUI widget generator
 
 
+## Changelog:
+
+* **1.0.1:**
+  * Fixes (GridLayout exception on some edge cases, flat ToggleButton theme)
+  * Optimizations (destroying a layout widget)
+
+* **1.0.0:**
+  * First release
 
 
 [browserify]: http://browserify.org/
@@ -134,3 +157,4 @@ Once you feel comfortable with the custom widget creation, you can create widget
 [iojs]: https://iojs.org/
 [phantomjs]: http://phantomjs.org/
 [yo]: http://yeoman.io/
+[codestyle-yandex]: https://github.com/yandex/codestyle/blob/master/javascript.md

@@ -48,19 +48,16 @@ var Widget = require("../widget.js");
 var Separator = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["orientation"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The separator orientation ("vertical" or "horizontal").
@@ -71,13 +68,13 @@ var Separator = Widget.$extend({
      */
     _orientation: "horizontal",
 
-    getOrientation: function() {
+    getOrientation: function () {
         return this._orientation;
     },
 
-    setOrientation: function(orientation) {
+    setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");
@@ -88,8 +85,7 @@ var Separator = Widget.$extend({
         this.removeClass("photonui-widget-fixed-width");
         if (this._orientation == "horizontal") {
             this.addClass("photonui-widget-fixed-height");
-        }
-        else {
+        } else {
             this.addClass("photonui-widget-fixed-width");
         }
     },
@@ -102,18 +98,15 @@ var Separator = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -121,18 +114,16 @@ var Separator = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-separator";
         this.__html.hr = document.createElement("hr");
         this.__html.outer.appendChild(this.__html.hr);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -140,7 +131,7 @@ var Separator = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
