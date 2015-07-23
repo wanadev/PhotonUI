@@ -103,7 +103,7 @@ var TextAreaField = Field.$extend({
      */
     _buildHtml: function () {
         this.__html.field = document.createElement("textarea");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-textarea";
+        this.__html.field.className = "photonui-widget photonui-field photonui-textareafield";
         this.__html.field.cols = 20;
         this.__html.field.rows = 3;
     }
