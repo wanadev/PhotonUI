@@ -139,6 +139,14 @@ Once you feel comfortable with the custom widget creation, you can create widget
 * [generator-photonui-widget](https://github.com/wanadev/generator-photonui-widget): The PhotonUI widget generator
 
 
+## Changelog:
+
+* **1.0.1:**
+  * Fixes (GridLayout exception on some edge cases, flat ToggleButton theme)
+  * Optimizations (destroying a layout widget)
+
+* **1.0.0:**
+  * First release
 
 
 [browserify]: http://browserify.org/
