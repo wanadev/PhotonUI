@@ -107,7 +107,8 @@ var ColorButton = Button.$extend({
                 this._color.removeCallback("photonui.colorbutton.value-changed::" + this.name);
             }
             this._color = color;
-            this._color.registerCallback("photonui.colorbutton.value-changed::" + this.name, "value-changed", this.__onColorChanged, this);
+            this._color.registerCallback("photonui.colorbutton.value-changed::" +
+                                         this.name, "value-changed", this.__onColorChanged, this);
         }
         this.__onColorChanged();
         if (color instanceof Color) {
@@ -129,7 +130,7 @@ var ColorButton = Button.$extend({
     },
 
     setDialogOnly: function (dialogOnly) {
-        this._dialogOnly = !!dialogOnly;
+        this._dialogOnly = Boolean(dialogOnly);
     },
 
     //////////////////////////////////////////
@@ -195,7 +196,8 @@ var ColorButton = Button.$extend({
 
         // Callbacks
         this.__widgets.palette.registerCallback("value-changed", "value-changed", this.__onValueChanged, this);
-        this.__widgets.colorPickerDialog.registerCallback("value-changed", "value-changed", this.__onValueChanged, this);
+        this.__widgets.colorPickerDialog.registerCallback("value-changed", "value-changed",
+                                                          this.__onValueChanged, this);
         this.__widgets.custom.registerCallback("click", "click", this.__onCustomButtonClicked, this);
 
         // Color

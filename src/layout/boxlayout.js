@@ -157,7 +157,8 @@ var BoxLayout = Layout.$extend({
         var children = this.children;
         var nodes = this.__html.outerbox.childNodes;
         var last = 0;
-        var lastOrder, currentOrder;
+        var lastOrder;
+        var currentOrder;
         for (var i = 0 ; i < nodes.length ; i++) {
             lastOrder = 0;
             currentOrder = 0;

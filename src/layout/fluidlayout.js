@@ -35,7 +35,7 @@
  * @submodule Layout
  * @namespace photonui
  */
- 
+
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 

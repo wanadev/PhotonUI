@@ -254,8 +254,8 @@ var GridLayout = Layout.$extend({
         var children = this.children;
 
         // Determine the grid geometry (min x, min y, max x, max y)
-        var minX = +Infinity;
-        var minY = +Infinity;
+        var minX = Infinity;
+        var minY = Infinity;
         var maxX = -Infinity;
         var maxY = -Infinity;
 
@@ -297,8 +297,11 @@ var GridLayout = Layout.$extend({
         }
 
         var child;
-        var tr, td, div;
-        var cellX, cellY;
+        var tr;
+        var td;
+        var div;
+        var cellX;
+        var cellY;
         for (y = 0 ; y < gridHeight ; y++) {
             tr = document.createElement("tr");
             for (var x = 0 ; x < gridWidth ; x++) {

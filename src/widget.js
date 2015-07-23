@@ -49,11 +49,13 @@ var _widgets = {};
  * wEvents:
  *
  *   * show:
- *      - description: called when the widget is displayed (a change in the parent's visibility can also trigger this event).
+ *      - description: called when the widget is displayed (a change in the parent's
+ *                     visibility can also trigger this event).
  *      - callback:    function(widget)
  *
  *   * hide:
- *      - description: called when the widget is hidden (a change in the parent's visibility can also trigger this event).
+ *      - description: called when the widget is hidden (a change in the parent's visibility
+ *                     can also trigger this event).
  *      - callback:    function(widget)
  *
  * @class Widget
@@ -169,7 +171,7 @@ var Widget = Base.$extend({
     },
 
     setVisible: function (visible) {
-        this._visible = !!visible;
+        this._visible = Boolean(visible);
         if (!this.html) {
             return;
         }

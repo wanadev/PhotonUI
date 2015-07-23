@@ -80,7 +80,8 @@ var Layout = Container.$extend({
     },
 
     setChildrenNames: function (childrenNames) {
-        var i, widget;
+        var i;
+        var widget;
         for (i = 0 ; i < this._childrenNames.length ; i++) {
             widget = Widget.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);

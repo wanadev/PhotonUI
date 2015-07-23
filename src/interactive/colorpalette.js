@@ -126,7 +126,10 @@ var ColorPalette = Widget.$extend({
         this.__html.palette.removeChild(this.__html.tbody);
         Helpers.cleanNode(this.__html.tbody);
 
-        var e_tr, e_td, x, y;
+        var e_tr;
+        var e_td;
+        var x;
+        var y;
         for (y = 0 ; y < palette.length ; y++) {
             e_tr = document.createElement("tr");
             for (x = 0 ; x < palette[y].length ; x++) {

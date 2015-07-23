@@ -61,7 +61,8 @@ var Slider = NumericField.$extend({
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
         this._bindEvent("slider-keydown", this.__html.slider, "keydown", this.__onSliderKeyDown.bind(this));
         this._bindEvent("slider-mousewheel", this.__html.slider, "mousewheel", this.__onSliderMouseWheel.bind(this));
-        this._bindEvent("slider-mousewheel-firefox", this.__html.slider, "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
+        this._bindEvent("slider-mousewheel-firefox", this.__html.slider,
+                        "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("field-contextmenu", this.__html.field, "contextmenu", this.__onFieldContextMenu.bind(this));
     },
 
@@ -135,7 +136,8 @@ var Slider = NumericField.$extend({
         var v = this.value - this.min;
         var m = this.max - this.min;
         var p = Math.min(Math.max(v / m, 0), 1);
-        this.__html.grip.style.left = "calc(" + Math.floor(p * 100) + "% - " + Math.floor(this.__html.grip.offsetWidth * p) + "px)";
+        this.__html.grip.style.left = "calc(" + Math.floor(p * 100) + "% - " +
+                                      Math.floor(this.__html.grip.offsetWidth * p) + "px)";
     },
 
     /**

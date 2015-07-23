@@ -133,7 +133,7 @@ var Translation = Base.$extend({
      * @return {LazyString}
      */
     lazyGettext: Stone.lazyGettext,
-    
+
     /**
      * Enable/disable Stone.js translating elements with the "stonejs" attribute in the DOM.
      *
@@ -141,7 +141,7 @@ var Translation = Base.$extend({
      * @param {Boolean} boolean Enable or disable DOM scanning.
      */
     enableDomScan: Stone.enableDomScan,
-    
+
     /**
      * Re-translate elements with the "stonejs" attribute in the DOM.
      *

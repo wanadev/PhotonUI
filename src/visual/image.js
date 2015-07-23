@@ -90,7 +90,7 @@ var Image_ = Widget.$extend({
             this._width = width;
             this.__html.image.width = width;
         } else {
-            this.__html.image.width = '';
+            this.__html.image.width = "";
         }
     },
 
@@ -112,7 +112,7 @@ var Image_ = Widget.$extend({
             this._height = height;
             this.__html.image.height = height;
         } else {
-            this.__html.image.height = '';
+            this.__html.image.height = "";
         }
     },
 
@@ -144,7 +144,7 @@ var Image_ = Widget.$extend({
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-image";
 
-        this.__html.image = document.createElement('img');
+        this.__html.image = document.createElement("img");
         this.__html.div.appendChild(this.__html.image);
     }
 

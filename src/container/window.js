@@ -65,9 +65,11 @@ var Window = BaseWindow.$extend({
 
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
-        this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click", this.__closeButtonClicked.bind(this));
+        this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click",
+                        this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
-        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
+        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
+                        function (event) { event.stopPropagation(); });
 
         // Update Properties
         this._updateProperties(["title", "closeButtonVisible"]);

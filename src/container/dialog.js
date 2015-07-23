@@ -83,7 +83,8 @@ var Dialog = Window.$extend({
     },
 
     setButtonsNames: function (buttonsNames) {
-        var i, widget;
+        var i;
+        var widget;
         for (i = 0 ; i < this._buttonsNames.length ; i++) {
             widget = Widget.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);

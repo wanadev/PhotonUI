@@ -107,16 +107,16 @@ var Color = Base.$extend({
             this._green = parseInt(value[3] + value[4], 16);
             this._blue = parseInt(value[5] + value[6], 16);
             this._updateHSB();
-        }
+
         // #F00
-        else if (value.match(/^#[0-9a-f]{3}$/i)) {
+        } else if (value.match(/^#[0-9a-f]{3}$/i)) {
             this._red = parseInt(value[1] + value[1], 16);
             this._green = parseInt(value[2] + value[2], 16);
             this._blue = parseInt(value[3] + value[3], 16);
             this._updateHSB();
-        }
+
         // Named colors
-        else {
+        } else {
             var colors = {
                 white:   [0xFF, 0xFF, 0xFF],
                 silver:  [0xC0, 0xC0, 0xC0],

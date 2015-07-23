@@ -79,7 +79,7 @@ var Container = Widget.$extend({
     },
 
     setHorizontalChildExpansion: function (expansion) {
-        this._horizontalChildExpansion = !!expansion;
+        this._horizontalChildExpansion = Boolean(expansion);
         if (!this.containerNode) {
             return;
         }
@@ -104,7 +104,7 @@ var Container = Widget.$extend({
     },
 
     setVerticalChildExpansion: function (expansion) {
-        this._verticalChildExpansion = !!expansion;
+        this._verticalChildExpansion = Boolean(expansion);
         if (!this.containerNode) {
             return;
         }

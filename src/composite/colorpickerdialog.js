@@ -108,7 +108,8 @@ var ColorPickerDialog = Dialog.$extend({
                 this._color.removeCallback("photonui.colorpickerdialog.value-changed::" + this.name);
             }
             this._color = color;
-            this._color.registerCallback("photonui.colorpickerdialog.value-changed::" + this.name, "value-changed", this.__onColorChanged, this);
+            this._color.registerCallback("photonui.colorpickerdialog.value-changed::" + this.name, "value-changed",
+                                         this.__onColorChanged, this);
         }
         this.__onColorChanged();
     },
@@ -211,7 +212,12 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Separator
         this.__widgets.separator2 = new Separator();
-        this.__widgets.grid.addChild(this.__widgets.separator2, {gridX: 0, gridY: 3, verticalExpansion: false, gridWidth: 2});
+        this.__widgets.grid.addChild(this.__widgets.separator2, {
+            gridX: 0,
+            gridY: 3,
+            verticalExpansion: false,
+            gridWidth: 2
+        });
 
         // Hue field + label
         this.__widgets.fieldHue = new Slider({
@@ -274,34 +280,43 @@ var ColorPickerDialog = Dialog.$extend({
         // == Bindings ==
         this.__widgets.colorPalette.color = this.__widgets.colorPicker.color;
 
-        this.__widgets.colorPicker.color.registerCallback("colorpickerdialog.colorPicker.value-changed", "value-changed", this._updateUi, this);
+        this.__widgets.colorPicker.color.registerCallback(
+            "colorpickerdialog.colorPicker.value-changed", "value-changed", this._updateUi, this);
 
-        this.__widgets.fieldRed.registerCallback("colorpickerdialog.fieldRed.value-changed", "value-changed", function (widget, value) {
+        this.__widgets.fieldRed.registerCallback(
+            "colorpickerdialog.fieldRed.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.red = value;
         }, this);
 
-        this.__widgets.fieldGreen.registerCallback("colorpickerdialog.fieldGreen.value-changed", "value-changed", function (widget, value) {
+        this.__widgets.fieldGreen.registerCallback(
+            "colorpickerdialog.fieldGreen.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.green = value;
         }, this);
 
-        this.__widgets.fieldBlue.registerCallback("colorpickerdialog.fieldBlue.value-changed", "value-changed", function (widget, value) {
+        this.__widgets.fieldBlue.registerCallback(
+            "colorpickerdialog.fieldBlue.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.blue = value;
         }, this);
 
-        this.__widgets.fieldHue.registerCallback("colorpickerdialog.fieldHue.value-changed", "value-changed", function (widget, value) {
+        this.__widgets.fieldHue.registerCallback(
+            "colorpickerdialog.fieldHue.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.hue = value;
         }, this);
 
-        this.__widgets.fieldSaturation.registerCallback("colorpickerdialog.fieldSaturation.value-changed", "value-changed", function (widget, value) {
+        this.__widgets.fieldSaturation.registerCallback(
+            "colorpickerdialog.fieldSaturation.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.saturation = value;
         }, this);
 
-        this.__widgets.fieldBrightness.registerCallback("colorpickerdialog.fieldBrightness.value-changed", "value-changed", function (widget, value) {
+        this.__widgets.fieldBrightness.registerCallback(
+            "colorpickerdialog.fieldBrightness.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.brightness = value;
         }, this);
 
-        this.__widgets.buttonOk.registerCallback("colorpickerdialog.buttonOk.click", "click", this.__onValidate, this);
-        this.__widgets.buttonCancel.registerCallback("colorpickerdialog.buttonCancel.click", "click", this.__onCancel, this);
+        this.__widgets.buttonOk.registerCallback(
+            "colorpickerdialog.buttonOk.click", "click", this.__onValidate, this);
+        this.__widgets.buttonCancel.registerCallback(
+            "colorpickerdialog.buttonCancel.click", "click", this.__onCancel, this);
         this.registerCallback("colorpickerdialog.close", "close-button-clicked", this.__onCancel, this);
     },
 

@@ -154,7 +154,8 @@ var Canvas = Widget.$extend({
         }
 
         /**
-         * Returns a Blob object representing the image contained in the canvas (at the native resolution of the canvas).
+         * Returns a Blob object representing the image contained in the canvas (at the native
+         * resolution of the canvas).
          *
          * Proxy of the native canvas method if exists. For more informations see:
          *

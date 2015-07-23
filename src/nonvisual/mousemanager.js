@@ -96,7 +96,8 @@ var Widget = require("../widget.js");
  *
  *     {
  *         event: <Object>,       // The original js event
- *         action: <String>,      // The event name (mouse-down/up/move, click, double-click, drag-start/end, dragging, scroll-up/down)
+ *         action: <String>,      // The event name (mouse-down/up/move, click, double-click,
+ *                                //    drag-start/end, dragging, scroll-up/down)
  *         pageX: <Number>,       // X position, relative to page top-left corner.
  *         pageY: <Number>,       // Y position, relative to page top-left corner.
  *         x: <Number>,           // X position, relative to the HTML element.
@@ -527,18 +528,16 @@ var MouseManager = Base.$extend({
                 this._callCallbacks("mouse-event", [this._dump()]);
                 this._callCallbacks(this.action, [this._dump()]);
             }
-        }
 
         // Dragging
-        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start" ||
+        } else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start" ||
                  this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "dragging";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
-        }
 
         // Drag End
-        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
+        } else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
                  this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
             this._callCallbacks("mouse-event", [this._dump()]);

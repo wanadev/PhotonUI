@@ -184,7 +184,7 @@ var NumericField = Field.$extend({
      * @param {String|Number} value The raw value.
      */
     _updateValue: function (value) {
-        value = ("" + value).replace(",", "."); // ","
+        value = String(value).replace(",", "."); // ","
         value = value.replace(/ /g, "");  // remove spaces
         value = parseFloat(value);
         if (isNaN(value)) {
@@ -213,7 +213,7 @@ var NumericField = Field.$extend({
      * @private
      */
     _updateFieldValue: function () {
-        this.__html.field.value = ("" + this._value).replace(".", this.decimalSymbol);
+        this.__html.field.value = String(this._value).replace(".", this.decimalSymbol);
     },
 
     /**
@@ -225,7 +225,7 @@ var NumericField = Field.$extend({
      * @return {Boolean}
      */
     _validateInput: function (value) {
-        value = "" + value;
+        value = String(value);
         value = value.replace(/ /g, "");  // remove spaces
         if (/^-?[0-9]*(\.|,)?[0-9]*$/.test(value)) {
             if (this.decimalDigits === 0 && !/^-?[0-9]*$/.test(value)) {
@@ -261,7 +261,12 @@ var NumericField = Field.$extend({
      * @param event
      */
     __onKeypress: function (event) {
-        if (event.ctrlKey || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == "Backspace" || event.key == "Delete") {
+        if (event.ctrlKey ||
+            event.key == "ArrowLeft" ||
+            event.key == "ArrowRight" ||
+            event.key == "Backspace" ||
+            event.key == "Delete"
+        ) {
             return;
         } else if (event.keyCode == 13) {  // Enter
             this._updateFieldValue();

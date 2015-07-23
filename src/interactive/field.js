@@ -164,7 +164,7 @@ var Field = Widget.$extend({
             this._callCallbacks("selection-changed", [
                 this.__html.field.selectionStart,
                 this.__html.field.selectionEnd,
-                ("" + this.getValue()).substring(this.__html.field.selectionStart, this.__html.field.selectionEnd),
+                String(this.getValue()).substring(this.__html.field.selectionStart, this.__html.field.selectionEnd),
                 event]);
         }.bind(this));
     },
