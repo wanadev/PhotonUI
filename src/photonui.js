@@ -36,7 +36,6 @@
  * @namespace photonui
  */
 
-
 var photonui = {};
 
 // Include libraries in module.

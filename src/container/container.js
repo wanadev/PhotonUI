@@ -48,7 +48,7 @@ var Widget = require("../widget.js");
 var Container = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
 
         this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
@@ -63,9 +63,7 @@ var Container = Widget.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Horizontaly expand the container's child widget.
@@ -76,17 +74,18 @@ var Container = Widget.$extend({
      */
     _horizontalChildExpansion: true,
 
-    getHorizontalChildExpansion: function() {
+    getHorizontalChildExpansion: function () {
         return this._horizontalChildExpansion;
     },
 
-    setHorizontalChildExpansion: function(expansion) {
-        this._horizontalChildExpansion = !!expansion;
-        if (!this.containerNode) return;
+    setHorizontalChildExpansion: function (expansion) {
+        this._horizontalChildExpansion = Boolean(expansion);
+        if (!this.containerNode) {
+            return;
+        }
         if (expansion) {
             this.containerNode.classList.add("photonui-container-expand-child-horizontal");
-        }
-        else {
+        } else {
             this.containerNode.classList.remove("photonui-container-expand-child-horizontal");
         }
     },
@@ -100,17 +99,18 @@ var Container = Widget.$extend({
      */
     _verticalChildExpansion: false,
 
-    getVerticalChildExpansion: function() {
+    getVerticalChildExpansion: function () {
         return this._verticalChildExpansion;
     },
 
-    setVerticalChildExpansion: function(expansion) {
-        this._verticalChildExpansion = !!expansion;
-        if (!this.containerNode) return;
+    setVerticalChildExpansion: function (expansion) {
+        this._verticalChildExpansion = Boolean(expansion);
+        if (!this.containerNode) {
+            return;
+        }
         if (expansion) {
             this.containerNode.classList.add("photonui-container-expand-child-vertical");
-        }
-        else {
+        } else {
             this.containerNode.classList.remove("photonui-container-expand-child-vertical");
         }
     },
@@ -124,11 +124,11 @@ var Container = Widget.$extend({
      */
     _childName: null,
 
-    getChildName: function() {
+    getChildName: function () {
         return this._childName;
     },
 
-    setChildName: function(childName) {
+    setChildName: function (childName) {
         if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.removeChild(this.child.html);
             this.child._parentName = null;
@@ -150,11 +150,11 @@ var Container = Widget.$extend({
      * @type photonui.Widget
      * @default null (no child)
      */
-    getChild: function() {
+    getChild: function () {
         return Widget.getWidget(this.childName);
     },
 
-    setChild: function(child) {
+    setChild: function (child) {
         if ((!child) || (!(child instanceof Widget))) {
             this.childName = null;
             return;
@@ -169,7 +169,7 @@ var Container = Widget.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return null;
     },
 
@@ -180,7 +180,7 @@ var Container = Widget.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         if (this.child instanceof Widget) {
             this.child._visibilityChanged(visibility);
@@ -188,11 +188,9 @@ var Container = Widget.$extend({
         this.$super(visibility);
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Public methods ======
 
@@ -202,7 +200,7 @@ var Container = Widget.$extend({
      * @method removeChild
      * @param {photonui.Widget} widget The widget to remove/
      */
-    removeChild: function(widget) {
+    removeChild: function (widget) {
         if (this.child == widget) {
             this.child = null;
         }
@@ -213,7 +211,7 @@ var Container = Widget.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         if (this.childName && this.child) {
             this.child.destroy();
         }

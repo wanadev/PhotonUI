@@ -28,7 +28,6 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -51,7 +50,7 @@ var _spritesheets = {};
 var SpriteSheet = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._icons = {};
         this.$super(params);
         this._updateProperties(["name"]);
@@ -61,9 +60,7 @@ var SpriteSheet = Base.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The sprit sheet name.
@@ -74,11 +71,11 @@ var SpriteSheet = Base.$extend({
      */
     _name: "default",
 
-    getName: function() {
+    getName: function () {
         return this._name;
     },
 
-    setName: function(name) {
+    setName: function (name) {
         if (_spritesheets[this.name] == this) {
             delete _spritesheets[this.name];
         }
@@ -95,11 +92,11 @@ var SpriteSheet = Base.$extend({
      */
     _imageUrl: null,
 
-    getImageUrl: function() {
+    getImageUrl: function () {
         return this._imageUrl;
     },
 
-    setImageUrl: function(url) {
+    setImageUrl: function (url) {
         if (!url) {
             this._imageUrl = null;
             return;
@@ -121,11 +118,11 @@ var SpriteSheet = Base.$extend({
      */
     _size: 16,
 
-    getSize: function() {
+    getSize: function () {
         return this._size;
     },
 
-    setSize: function(size) {
+    setSize: function (size) {
         this._size = size;
     },
 
@@ -144,24 +141,21 @@ var SpriteSheet = Base.$extend({
      */
     _icons: {},
 
-    getIcons: function() {
+    getIcons: function () {
         return this._icons;
     },
 
-    setIcons: function(icons) {
+    setIcons: function (icons) {
         for (var icon in icons) {
             this._icons[icon] = icons[icon];
         }
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Get icon position.
@@ -170,7 +164,7 @@ var SpriteSheet = Base.$extend({
      * @param {String} iconName
      * @return {Object} `{x: Number, y: Number}`
      */
-    getIconPosition: function(iconName) {
+    getIconPosition: function (iconName) {
         return {x: this.icons[iconName][0], y: this.icons[iconName][1]};
     },
 
@@ -181,7 +175,7 @@ var SpriteSheet = Base.$extend({
      * @param {String} iconName
      * @return {String} the CSS.
      */
-    getIconCss: function(iconName) {
+    getIconCss: function (iconName) {
         return "width: "      + this.size + "px; " +
                "height: "     + this.size + "px; " +
                "background: " + "url(" + this.imageUrl + ") " +
@@ -197,7 +191,7 @@ var SpriteSheet = Base.$extend({
      * @param {Number} x
      * @param {Number} y
      */
-    addIcon: function(iconName, x ,y) {
+    addIcon: function (iconName, x, y) {
         this.icons = {iconName: [x, y]};
     },
 
@@ -207,7 +201,7 @@ var SpriteSheet = Base.$extend({
      * @method removeIcon
      * @param {String} iconName
      */
-    removeIcon: function(iconName) {
+    removeIcon: function (iconName) {
         delete this._icons[iconName];
     }
 });
@@ -220,7 +214,7 @@ var SpriteSheet = Base.$extend({
  *
  * @return {photonui.SpriteSheet} The sprite sheet or null.
  */
-SpriteSheet.getSpriteSheet = function(name) {
+SpriteSheet.getSpriteSheet = function (name) {
     if (_spritesheets[name] !== undefined) {
         return _spritesheets[name];
     }

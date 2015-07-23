@@ -96,6 +96,15 @@ All generated files are in the `dist` folder.
     grunt watch
 
 
+### Coding Style
+
+PhotonUI follows the [Yandex Javascript CodeStyle][codestyle-yandex] **EXCEPT** for the quote marks where we use **double quotes** (`"`).
+
+You can automatically check your code follows the conventions by using this command:
+
+    grunt jscs
+
+
 ### Testing
 
 To run the PhotonUI tests, you can use the following command:
@@ -105,8 +114,9 @@ To run the PhotonUI tests, you can use the following command:
 **BUT** some tests will fail because [PhantomJS][phantomjs], the browser used to run the tests, embedded a very old Webkit version. So you currently have to launch the tests manually in your browser:
 
 1. Check that the javascript is well formed: `grunt jshint`
-2. Build PhotonUI: `grunt`
-3. Run the tests: open `test/index.html` in your browser.
+2. Check that the code follows our coding style: `grunt jscs`
+3. Build PhotonUI: `grunt`
+4. Run the tests: open `test/index.html` in your browser.
 
 
 ### Creating Your Own widgets
@@ -138,3 +148,4 @@ Once you feel comfortable with the custom widget creation, you can create widget
 [iojs]: https://iojs.org/
 [phantomjs]: http://phantomjs.org/
 [yo]: http://yeoman.io/
+[codestyle-yandex]: https://github.com/yandex/codestyle/blob/master/javascript.md

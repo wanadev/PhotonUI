@@ -51,24 +51,21 @@ var BaseIcon = require("../visual/baseicon.js");
 var MenuItem = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
         this._updateProperties(["text", "icon", "active"]);
 
-        this._bindEvent("click", this.__html.outer, "click", function(event) {
+        this._bindEvent("click", this.__html.outer, "click", function (event) {
             this._callCallbacks("click", [event]);
         }.bind(this));
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * An optional value for the item (can be used in select).
@@ -79,11 +76,11 @@ var MenuItem = Container.$extend({
      */
     _value: "",
 
-    getValue: function() {
+    getValue: function () {
         return this._value;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this._value = value;
     },
 
@@ -96,11 +93,11 @@ var MenuItem = Container.$extend({
      */
     _text: "Menu Item",
 
-    getText: function() {
+    getText: function () {
         return this._text;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._text = text;
         Helpers.cleanNode(this.__html.text);
         this.__html.text.appendChild(document.createTextNode(text));
@@ -115,11 +112,11 @@ var MenuItem = Container.$extend({
      */
     _iconName: null,
 
-    getIconName: function() {
+    getIconName: function () {
         return this._iconName;
     },
 
-    setIconName: function(iconName) {
+    setIconName: function (iconName) {
         this._iconName = iconName;
         Helpers.cleanNode(this.__html.icon);
         if (this._iconName) {
@@ -134,11 +131,11 @@ var MenuItem = Container.$extend({
      * @type photonui.BaseIcon
      * @default: null
      */
-    getIcon: function() {
+    getIcon: function () {
         return Widget.getWidget(this._iconName);
     },
 
-    setIcon: function(icon) {
+    setIcon: function (icon) {
         if (icon instanceof BaseIcon) {
             this.iconName = icon.name;
             return;
@@ -155,17 +152,16 @@ var MenuItem = Container.$extend({
      */
     _active: false,
 
-    getActive: function() {
+    getActive: function () {
         return this._active;
     },
 
-    setActive: function(active) {
+    setActive: function (active) {
         this._active = active;
 
         if (active) {
             this.addClass("photonui-menuitem-active");
-        }
-        else {
+        } else {
             this.removeClass("photonui-menuitem-active");
         }
     },
@@ -178,7 +174,7 @@ var MenuItem = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -189,18 +185,15 @@ var MenuItem = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.widget;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -208,7 +201,7 @@ var MenuItem = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-menuitem";
 
@@ -225,11 +218,9 @@ var MenuItem = Container.$extend({
         this.__html.outer.appendChild(this.__html.widget);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     // TODO Internal events callback here
 });

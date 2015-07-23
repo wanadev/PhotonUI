@@ -55,7 +55,7 @@ var Base = require("../base.js");
 var FileManager = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.__fileField = document.createElement("input");
         this.__fileField.type = "file";
         this.__fileField.addEventListener("change", this.__onFileSelected.bind(this), false);
@@ -71,14 +71,11 @@ var FileManager = Base.$extend({
         this.$super(params);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * List of the accepted mime types.
@@ -89,11 +86,11 @@ var FileManager = Base.$extend({
      */
     _acceptedMimes: [],
 
-    getAcceptedMimes: function() {
+    getAcceptedMimes: function () {
         return this._acceptedMimes;
     },
 
-    setAcceptedMimes: function(mimes) {
+    setAcceptedMimes: function (mimes) {
         this._acceptedMimes = mimes;
         this._updateAccepted();
     },
@@ -107,11 +104,11 @@ var FileManager = Base.$extend({
      */
     _acceptedExts: [],
 
-    getAcceptedExts: function() {
+    getAcceptedExts: function () {
         return this._acceptedExts;
     },
 
-    setAcceptedExts: function(exts) {
+    setAcceptedExts: function (exts) {
         this._acceptedExts = exts;
         this._updateAccepted();
     },
@@ -125,11 +122,11 @@ var FileManager = Base.$extend({
      */
     _dropZone: null,
 
-    getDropZone: function() {
+    getDropZone: function () {
         return this._dropZone;
     },
 
-    setDropZone: function(element) {
+    setDropZone: function (element) {
         // Unbind
         if (this._dropZone) {
             this._unbindEvent("document-dragover");
@@ -142,13 +139,13 @@ var FileManager = Base.$extend({
 
         // Bind
         if (element) {
-            this._bindEvent("document-dragover", document, "dragover", function(event) {
+            this._bindEvent("document-dragover", document, "dragover", function (event) {
                 event.preventDefault();
             });
-            this._bindEvent("document-drop", document, "drop", function(event) {
+            this._bindEvent("document-drop", document, "drop", function (event) {
                 event.preventDefault();
             });
-            this._bindEvent("element-dragover", document, "dragover", function(event) {});
+            this._bindEvent("element-dragover", document, "dragover", function (event) {});
             this._bindEvent("element-drop", document, "drop", this.__onFileDropped.bind(this));
         }
     },
@@ -162,24 +159,21 @@ var FileManager = Base.$extend({
      */
     _multiselect: false,
 
-    getMultiselect: function() {
+    getMultiselect: function () {
         return this._multiselect;
     },
 
-    setMultiselect: function(multiselect) {
+    setMultiselect: function (multiselect) {
         this._multiselect = multiselect;
 
         if (multiselect) {
             this.__fileField.multiple = "true";
-        }
-        else {
+        } else {
             delete this.__fileField.multiple;
         }
     },
 
-
     // ====== Private properties ======
-
 
     /**
      * The file field for opening the file dialog.
@@ -190,21 +184,18 @@ var FileManager = Base.$extend({
      */
     __fileField: null,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Open the FileOpen dialog to allow user to browse its HDD for a file.
      *
      * @method open
      */
-    open: function() {
+    open: function () {
         this.__fileField.style.display = "inline-block";
         this.__fileField.focus();
         this.__fileField.click();
@@ -216,14 +207,12 @@ var FileManager = Base.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         document.getElementsByTagName("body")[0].removeChild(this.__fileField);
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Update accepted mimes/extentions.
@@ -231,10 +220,10 @@ var FileManager = Base.$extend({
      * @method _updateAccepted
      * @private
      */
-    _updateAccepted: function() {
+    _updateAccepted: function () {
         var result = [];
 
-        for (var i=0 ; i<this.acceptedExts.length ; i++) {
+        for (var i = 0 ; i < this.acceptedExts.length ; i++) {
             result.push("." + this.acceptedExts[i].toLocaleLowerCase());
         }
 
@@ -252,11 +241,11 @@ var FileManager = Base.$extend({
      * @param {Number} x The x postition of the mouse (d&d only).
      * @param {Number} y The y postition of the mouse (d&d only).
      */
-    _openFile: function(file, x, y) {
+    _openFile: function (file, x, y) {
         var match = false;
 
         // Validate mime
-        for (var m=0 ; m<this.acceptedMimes.length ; m++) {
+        for (var m = 0 ; m < this.acceptedMimes.length ; m++) {
             if (file.type == this.acceptedMimes[m]) {
                 match = true;
                 break;
@@ -266,7 +255,7 @@ var FileManager = Base.$extend({
         // Validate ext
         if (!match) {
             var ext = file.name.split(".").splice(-1);
-            for (var e=0 ; e<this.acceptedExts.length ; e++) {
+            for (var e = 0 ; e < this.acceptedExts.length ; e++) {
                 if (ext == this.acceptedExts[e]) {
                     match = true;
                     break;
@@ -279,21 +268,19 @@ var FileManager = Base.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onFileDropped
      * @private
      * @param event
      */
-    __onFileDropped: function(event) {
+    __onFileDropped: function (event) {
         for (var i in event.dataTransfer.files) {
             var file = event.dataTransfer.files[i];
-            if(file instanceof File) {
+            if (file instanceof File) {
                 this._openFile(file, event.pageX, event.pageY);
             }
         }
@@ -304,10 +291,10 @@ var FileManager = Base.$extend({
      * @private
      * @param event
      */
-    __onFileSelected: function(event) {
+    __onFileSelected: function (event) {
         for (var i in this.__fileField.files) {
             var file = this.__fileField.files[i];
-            if(file instanceof File) {
+            if (file instanceof File) {
                 this._openFile(file);
             }
         }
@@ -319,7 +306,7 @@ var FileManager = Base.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
