@@ -8148,7 +8148,7 @@ var TextField = Field.$extend({
      */
     _buildHtml: function () {
         this.__html.field = document.createElement("input");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-text";
+        this.__html.field.className = "photonui-widget photonui-field photonui-textfield";
         this.__html.field.type = "text";
     }
 });
