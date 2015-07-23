@@ -85,7 +85,7 @@ var TextField = Field.$extend({
             type != "tel" &&
             type != "url"
         ) {
-            throw "Error: The type should be \"text\", \"password\", \"email\", \"search\", \"tel\" or \"url\".";
+            throw new Error("The type should be \"text\", \"password\", \"email\", \"search\", \"tel\" or \"url\".");
         }
         this.__html.field.type = type;
     },

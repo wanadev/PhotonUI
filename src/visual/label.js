@@ -122,7 +122,7 @@ var Label = Widget.$extend({
 
     setTextAlign: function (textAlign) {
         if (textAlign != "left" && textAlign != "center" && textAlign != "right") {
-            throw "Text alignement sould be 'left', 'center' or 'right'.";
+            throw new Error("Text alignement sould be 'left', 'center' or 'right'.");
         }
         this._textAlign = textAlign;
         this.__html.label.style.textAlign = textAlign;

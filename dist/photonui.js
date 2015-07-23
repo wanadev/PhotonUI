@@ -8129,7 +8129,7 @@ var TextField = Field.$extend({
             type != "tel" &&
             type != "url"
         ) {
-            throw "Error: The type should be \"text\", \"password\", \"email\", \"search\", \"tel\" or \"url\".";
+            throw new Error("The type should be \"text\", \"password\", \"email\", \"search\", \"tel\" or \"url\".");
         }
         this.__html.field.type = type;
     },
@@ -8348,7 +8348,7 @@ var BoxLayout = Layout.$extend({
 
     setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-layout-orientation-vertical");
@@ -9633,7 +9633,7 @@ var Layout = Container.$extend({
      * @private
      */
     _updateLayout: function () {
-        throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+        throw new Error("you should define the _updateLayout() method when you extend a layout widget.");
     },
 
     /**
@@ -9899,7 +9899,7 @@ var TabLayout = Layout.$extend({
 
     setTabsPosition: function (position) {
         if (["top", "bottom", "left", "right"].indexOf(position) < 0) {
-            throw "Error: The tabs position should be \"top\", \"bottom\", \"left\" or \"right\".";
+            throw new Error("The tabs position should be \"top\", \"bottom\", \"left\" or \"right\".");
         }
         this._tabsPosition = position;
         this.removeClass("photonui-tablayout-tabposition-top");
@@ -13034,7 +13034,7 @@ var Label = Widget.$extend({
 
     setTextAlign: function (textAlign) {
         if (textAlign != "left" && textAlign != "center" && textAlign != "right") {
-            throw "Text alignement sould be 'left', 'center' or 'right'.";
+            throw new Error("Text alignement sould be 'left', 'center' or 'right'.");
         }
         this._textAlign = textAlign;
         this.__html.label.style.textAlign = textAlign;
@@ -13237,7 +13237,7 @@ var ProgressBar = Widget.$extend({
 
     setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-progressbar-vertical");
@@ -13422,7 +13422,7 @@ var Separator = Widget.$extend({
 
     setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");

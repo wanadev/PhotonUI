@@ -244,7 +244,7 @@ var Layout = Container.$extend({
      * @private
      */
     _updateLayout: function () {
-        throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+        throw new Error("you should define the _updateLayout() method when you extend a layout widget.");
     },
 
     /**
