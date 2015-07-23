@@ -55,30 +55,25 @@ var Base = require("../base.js");
 var Color = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["value-changed"]);
         if (typeof(params) == "object" && !Array.isArray(params)) {
             this.$super(params);
-        }
-        else {
+        } else {
             this.$super();
             if (typeof(params) == "string") {
                 this.hexString = params;
-            }
-            else if (Array.isArray(params)) {
+            } else if (Array.isArray(params)) {
                 this.setRGBA(params);
-            }
-            else if (arguments.length >= 3) {
+            } else if (arguments.length >= 3) {
                 this.setRGBA.apply(this, arguments);
             }
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -88,34 +83,40 @@ var Color = Base.$extend({
      * @property hexString
      * @type String
      */
-    getHexString: function() {
+    getHexString: function () {
         var r = this.red.toString(16).toUpperCase();
-        if (r.length == 1) r = "0" + r;
+        if (r.length == 1) {
+            r = "0" + r;
+        }
         var g = this.green.toString(16).toUpperCase();
-        if (g.length == 1) g = "0" + g;
+        if (g.length == 1) {
+            g = "0" + g;
+        }
         var b = this.blue.toString(16).toUpperCase();
-        if (b.length == 1) b = "0" + b;
+        if (b.length == 1) {
+            b = "0" + b;
+        }
         return "#" + r + g + b;
     },
 
-    setHexString: function(value) {
+    setHexString: function (value) {
         value = value.replace(" ", "");
         // #FF0000
         if (value.match(/^#[0-9a-f]{6}$/i)) {
-            this._red = parseInt(value[1]+value[2], 16);
-            this._green = parseInt(value[3]+value[4], 16);
-            this._blue = parseInt(value[5]+value[6], 16);
+            this._red = parseInt(value[1] + value[2], 16);
+            this._green = parseInt(value[3] + value[4], 16);
+            this._blue = parseInt(value[5] + value[6], 16);
             this._updateHSB();
-        }
+
         // #F00
-        else if (value.match(/^#[0-9a-f]{3}$/i)) {
-            this._red = parseInt(value[1]+value[1], 16);
-            this._green = parseInt(value[2]+value[2], 16);
-            this._blue = parseInt(value[3]+value[3], 16);
+        } else if (value.match(/^#[0-9a-f]{3}$/i)) {
+            this._red = parseInt(value[1] + value[1], 16);
+            this._green = parseInt(value[2] + value[2], 16);
+            this._blue = parseInt(value[3] + value[3], 16);
             this._updateHSB();
-        }
+
         // Named colors
-        else {
+        } else {
             var colors = {
                 white:   [0xFF, 0xFF, 0xFF],
                 silver:  [0xC0, 0xC0, 0xC0],
@@ -148,7 +149,7 @@ var Color = Base.$extend({
      * @type String
      * @readOnly
      */
-    getRgbString: function() {
+    getRgbString: function () {
         return "rgb(" + this._red + ", " + this._green + ", " + this._blue + ")";
     },
 
@@ -159,7 +160,7 @@ var Color = Base.$extend({
      * @type String
      * @readOnly
      */
-    getRgbaString: function() {
+    getRgbaString: function () {
         return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + (this._alpha / 255) + ")";
     },
 
@@ -171,12 +172,12 @@ var Color = Base.$extend({
      */
     _red: 255,
 
-    getRed: function() {
+    getRed: function () {
         return this._red;
     },
 
-    setRed: function(red) {
-        this._red = Math.max(0, Math.min(255, red|0));
+    setRed: function (red) {
+        this._red = Math.max(0, Math.min(255, red | 0));
         this._updateHSB();
     },
 
@@ -188,12 +189,12 @@ var Color = Base.$extend({
      */
     _green: 0,
 
-    getGreen: function() {
+    getGreen: function () {
         return this._green;
     },
 
-    setGreen: function(green) {
-        this._green = Math.max(0, Math.min(255, green|0));
+    setGreen: function (green) {
+        this._green = Math.max(0, Math.min(255, green | 0));
         this._updateHSB();
     },
 
@@ -205,12 +206,12 @@ var Color = Base.$extend({
      */
     _blue: 0,
 
-    getBlue: function() {
+    getBlue: function () {
         return this._blue;
     },
 
-    setBlue: function(blue) {
-        this._blue = Math.max(0, Math.min(255, blue|0));
+    setBlue: function (blue) {
+        this._blue = Math.max(0, Math.min(255, blue | 0));
         this._updateHSB();
     },
 
@@ -222,12 +223,12 @@ var Color = Base.$extend({
      */
     _alpha: 255,
 
-    getAlpha: function() {
+    getAlpha: function () {
         return this._alpha;
     },
 
-    setAlpha: function(alpha) {
-        this._alpha = Math.max(0, Math.min(255, alpha|0));
+    setAlpha: function (alpha) {
+        this._alpha = Math.max(0, Math.min(255, alpha | 0));
         this._callCallbacks("value-changed");
     },
 
@@ -239,12 +240,12 @@ var Color = Base.$extend({
      */
     _hue: 0,
 
-    getHue: function() {
+    getHue: function () {
         return this._hue;
     },
 
-    setHue: function(hue) {
-        this._hue = Math.max(0, Math.min(360, hue|0));
+    setHue: function (hue) {
+        this._hue = Math.max(0, Math.min(360, hue | 0));
         this._updateRGB();
     },
 
@@ -256,12 +257,12 @@ var Color = Base.$extend({
      */
     _saturation: 100,
 
-    getSaturation: function() {
+    getSaturation: function () {
         return this._saturation;
     },
 
-    setSaturation: function(saturation) {
-        this._saturation = Math.max(0, Math.min(100, saturation|0));
+    setSaturation: function (saturation) {
+        this._saturation = Math.max(0, Math.min(100, saturation | 0));
         this._updateRGB();
     },
 
@@ -273,20 +274,18 @@ var Color = Base.$extend({
      */
     _brightness: 100,
 
-    getBrightness: function() {
+    getBrightness: function () {
         return this._brightness;
     },
 
-    setBrightness: function(brightness) {
-        this._brightness = Math.max(0, Math.min(100, brightness|0));
+    setBrightness: function (brightness) {
+        this._brightness = Math.max(0, Math.min(100, brightness | 0));
         this._updateRGB();
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Public methods ======
 
@@ -300,7 +299,7 @@ var Color = Base.$extend({
      * @param {Number} green (0-255)
      * @param {Number} blue (0-255)
      */
-    setRGB: function() {
+    setRGB: function () {
         this.setRGBA.apply(this, arguments);
     },
 
@@ -315,15 +314,21 @@ var Color = Base.$extend({
      * @param {Number} blue (0-255)
      * @param {Number} alpha (optional, 0-255)
      */
-    setRGBA: function() {
+    setRGBA: function () {
         var args = arguments;
-        if (arguments.length == 1 && Array.isArray(arguments[0])) args = arguments[0];
-        if (args.length < 3) return;
+        if (arguments.length == 1 && Array.isArray(arguments[0])) {
+            args = arguments[0];
+        }
+        if (args.length < 3) {
+            return;
+        }
 
-        this._red = Math.max(0, Math.min(255, args[0]|0));
-        this._green = Math.max(0, Math.min(255, args[1]|0));
-        this._blue = Math.max(0, Math.min(255, args[2]|0));
-        if (args[3] !== undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
+        this._red = Math.max(0, Math.min(255, args[0] | 0));
+        this._green = Math.max(0, Math.min(255, args[1] | 0));
+        this._blue = Math.max(0, Math.min(255, args[2] | 0));
+        if (args[3] !== undefined) {
+            this._alpha = Math.max(0, Math.min(255, args[3] | 0));
+        }
 
         this._updateHSB();
     },
@@ -334,7 +339,7 @@ var Color = Base.$extend({
      * @method getRGB
      * @return {Array} [red(0-255), green(0-255), blue(0-255)]
      */
-    getRGB: function() {
+    getRGB: function () {
         return [this._red, this._green, this._blue];
     },
 
@@ -344,7 +349,7 @@ var Color = Base.$extend({
      * @method getRGBA
      * @return {Array} [red(0-255), green(0-255), blue(0-255), alpha(0-255)]
      */
-    getRGBA: function() {
+    getRGBA: function () {
         return [this._red, this._green, this._blue, this._alpha];
     },
 
@@ -358,19 +363,23 @@ var Color = Base.$extend({
      * @param {Number} saturation (0-100)
      * @param {Number} brightness (0-100)
      */
-    setHSB: function() {
+    setHSB: function () {
         var args = arguments;
-        if (arguments.length == 1 && Array.isArray(arguments[0])) args = arguments[0];
-        if (args.length != 3) return;
+        if (arguments.length == 1 && Array.isArray(arguments[0])) {
+            args = arguments[0];
+        }
+        if (args.length != 3) {
+            return;
+        }
 
-        this._hue = Math.max(0, Math.min(360, args[0]|0));
-        this._saturation = Math.max(0, Math.min(100, args[1]|0));
-        this._brightness = Math.max(0, Math.min(100, args[2]|0));
+        this._hue = Math.max(0, Math.min(360, args[0] | 0));
+        this._saturation = Math.max(0, Math.min(100, args[1] | 0));
+        this._brightness = Math.max(0, Math.min(100, args[2] | 0));
 
         this._updateRGB();
     },
 
-    toString: function() {
+    toString: function () {
         return this.hexString;
     },
 
@@ -382,7 +391,7 @@ var Color = Base.$extend({
      * @method _updateHSB
      * @private
      */
-    _updateHSB: function() {
+    _updateHSB: function () {
         // http://fr.wikipedia.org/wiki/Teinte_Saturation_Valeur#Conversion_de_RVB_vers_TSV
 
         var r = this._red / 255;
@@ -395,23 +404,19 @@ var Color = Base.$extend({
         // Hue
         if (max == min) {
             this._hue = 0;
-        }
-        else if (max == r) {
+        } else if (max == r) {
             this._hue = Math.round((60 * (g - b) / (max - min) + 360) % 360);
-        }
-        else if (max == g) {
+        } else if (max == g) {
             this._hue = Math.round(60 * (b - r) / (max - min) + 120);
-        }
-        else if (max == b) {
+        } else if (max == b) {
             this._hue = Math.round(60 * (r - g) / (max - min) + 240);
         }
 
         // Saturation
         if (max === 0) {
             this._saturation = 0;
-        }
-        else {
-            this._saturation = Math.round((1 - min/max) * 100);
+        } else {
+            this._saturation = Math.round((1 - min / max) * 100);
         }
 
         // Brightness
@@ -427,14 +432,14 @@ var Color = Base.$extend({
      * @method _updateRGB
      * @private
      */
-    _updateRGB: function() {
+    _updateRGB: function () {
         // http://fr.wikipedia.org/wiki/Teinte_Saturation_Valeur#Conversion_de_TSV_vers_RVB
 
         var h = this.hue % 360;
         var s = this.saturation / 100;
         var b = this.brightness / 100;
 
-        var ti = ((h / 60)|0) % 6;
+        var ti = ((h / 60) | 0) % 6;
         var f = h / 60 - ti;
         var l = b * (1 - s);
         var m = b * (1 - f * s);
@@ -442,34 +447,34 @@ var Color = Base.$extend({
 
         switch (ti) {
             case 0:
-                this._red = (b * 255)|0;
-                this._green = (n * 255)|0;
-                this._blue = (l * 255)|0;
+                this._red = (b * 255) | 0;
+                this._green = (n * 255) | 0;
+                this._blue = (l * 255) | 0;
                 break;
             case 1:
-                this._red = (m * 255)|0;
-                this._green = (b * 255)|0;
-                this._blue = (l * 255)|0;
+                this._red = (m * 255) | 0;
+                this._green = (b * 255) | 0;
+                this._blue = (l * 255) | 0;
                 break;
             case 2:
-                this._red = (l * 255)|0;
-                this._green = (b * 255)|0;
-                this._blue = (n * 255)|0;
+                this._red = (l * 255) | 0;
+                this._green = (b * 255) | 0;
+                this._blue = (n * 255) | 0;
                 break;
             case 3:
-                this._red = (l * 255)|0;
-                this._green = (m * 255)|0;
-                this._blue = (b * 255)|0;
+                this._red = (l * 255) | 0;
+                this._green = (m * 255) | 0;
+                this._blue = (b * 255) | 0;
                 break;
             case 4:
-                this._red = (n * 255)|0;
-                this._green = (l * 255)|0;
-                this._blue = (b * 255)|0;
+                this._red = (n * 255) | 0;
+                this._green = (l * 255) | 0;
+                this._blue = (b * 255) | 0;
                 break;
             case 5:
-                this._red = (b * 255)|0;
-                this._green = (l * 255)|0;
-                this._blue = (m * 255)|0;
+                this._red = (b * 255) | 0;
+                this._green = (l * 255) | 0;
+                this._blue = (m * 255) | 0;
                 break;
         }
 

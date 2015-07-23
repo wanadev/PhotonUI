@@ -52,25 +52,22 @@ var _windowList = [];
 var Dialog = Window.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._buttonsNames = [];
         this.$super(params);
 
         // Force to update the parent of the buttons
         var buttons = this.buttons;
-        for (var i=0 ; i<buttons.length ; i++) {
+        for (var i = 0 ; i < buttons.length ; i++) {
             buttons[i]._parentName = this.name;
         }
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Dialog button widgets name.
@@ -81,13 +78,14 @@ var Dialog = Window.$extend({
      */
     _buttonsNames: [],
 
-    getButtonsNames: function() {
+    getButtonsNames: function () {
         return this._buttonsNames;
     },
 
-    setButtonsNames: function(buttonsNames) {
-        var i, widget;
-        for (i=0 ; i<this._buttonsNames.length ; i++) {
+    setButtonsNames: function (buttonsNames) {
+        var i;
+        var widget;
+        for (i = 0 ; i < this._buttonsNames.length ; i++) {
             widget = Widget.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);
             if (index >= 0) {
@@ -95,7 +93,7 @@ var Dialog = Window.$extend({
             }
         }
         this._buttonsNames = [];
-        for (i=0 ; i<buttonsNames.length ; i++) {
+        for (i = 0 ; i < buttonsNames.length ; i++) {
             widget = Widget.getWidget(buttonsNames[i]);
             if (widget) {
                 if (widget.parent) {
@@ -115,19 +113,21 @@ var Dialog = Window.$extend({
      * @type Array
      * @default []
      */
-    getButtons: function() {
+    getButtons: function () {
         var buttons = [];
         var widget;
-        for (var i=0 ; i<this._buttonsNames.length ; i++) {
+        for (var i = 0 ; i < this._buttonsNames.length ; i++) {
             widget = Widget.getWidget(this._buttonsNames[i]);
-            if (widget instanceof Widget) buttons.push(widget);
+            if (widget instanceof Widget) {
+                buttons.push(widget);
+            }
         }
         return buttons;
     },
 
-    setButtons: function(buttons) {
+    setButtons: function (buttons) {
         var buttonsNames = [];
-        for (var i=0 ; i<buttons.length ; i++) {
+        for (var i = 0 ; i < buttons.length ; i++) {
             if (buttons[i] instanceof Widget) {
                 buttonsNames.push(buttons[i].name);
             }
@@ -135,14 +135,11 @@ var Dialog = Window.$extend({
         this.buttonsNames = buttonsNames;
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a button to the dialog.
@@ -150,7 +147,7 @@ var Dialog = Window.$extend({
      * @method addButton
      * @param {photonui.Widget} widget The button to add.
      */
-    addButton: function(widget, layoutOptions) {
+    addButton: function (widget, layoutOptions) {
         if (widget.parent) {
             widget.unparent();
         }
@@ -168,7 +165,7 @@ var Dialog = Window.$extend({
      * @method removeButton
      * @param {photonui.Widget} widget The button to remove.
      */
-    removeButton: function(widget) {
+    removeButton: function (widget) {
         var index = this._buttonsNames.indexOf(widget.name);
         if (index >= 0) {
             this._buttonsNames.splice(index, 1);
@@ -178,7 +175,7 @@ var Dialog = Window.$extend({
     },
 
     // Alias needed for photonui.Widget.unparent()
-    removeChild: function() {
+    removeChild: function () {
         this.$super.apply(this, arguments);
         this.removeButton.apply(this, arguments);
     },
@@ -188,9 +185,9 @@ var Dialog = Window.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         var buttons = this.buttons;
-        for (var i=0 ; i<buttons.length ; i++) {
+        for (var i = 0 ; i < buttons.length ; i++) {
             if (buttons[i]) {
                 buttons[i].destroy();
             }
@@ -198,9 +195,7 @@ var Dialog = Window.$extend({
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Update dialog buttons.
@@ -208,10 +203,10 @@ var Dialog = Window.$extend({
      * @method _updateButtons
      * @private
      */
-    _updateButtons: function() {
+    _updateButtons: function () {
         Helpers.cleanNode(this.__html.buttons);
         var buttons = this.buttons;
-        for (var i=buttons.length-1 ; i>=0 ; i--) {
+        for (var i = buttons.length - 1 ; i >= 0 ; i--) {
             this.__html.buttons.appendChild(buttons[i].html);
         }
     },
@@ -222,7 +217,7 @@ var Dialog = Window.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.window.className += " photonui-dialog";
 
@@ -238,11 +233,13 @@ var Dialog = Window.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var buttons = this.buttons;
-        for (var i=0 ; i<buttons.length ; i++) {
-            if (!(this.child instanceof Widget)) continue;
+        for (var i = 0 ; i < buttons.length ; i++) {
+            if (!(this.child instanceof Widget)) {
+                continue;
+            }
             buttons[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);

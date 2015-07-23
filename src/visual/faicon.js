@@ -28,7 +28,6 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -54,7 +53,7 @@ var BaseIcon = require("./baseicon.js");
 var FAIcon = BaseIcon.$extend({
 
     // Constructor
-    __init__: function(params1, params2) {
+    __init__: function (params1, params2) {
         var params = {};
         if (params1 && typeof(params1) == "string") {
             params.iconName = params1;
@@ -63,22 +62,18 @@ var FAIcon = BaseIcon.$extend({
                     params[i] = params2[i];
                 }
             }
-        }
-        else if (params1) {
+        } else if (params1) {
             params = params1;
         }
         this.$super(params);
         this._updateProperties(["iconName", "size", "color"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The Font Awesome icon name (e.g. "fa-cog").
@@ -91,11 +86,11 @@ var FAIcon = BaseIcon.$extend({
      */
     _iconName: "",
 
-    getIconName: function() {
+    getIconName: function () {
         return this._iconName;
     },
 
-    setIconName: function(iconName) {
+    setIconName: function (iconName) {
         this._iconName = iconName || "";
         this.__html.icon.className = "fa " + this.iconName + " " + this.size;
     },
@@ -111,11 +106,11 @@ var FAIcon = BaseIcon.$extend({
      */
     _size: "",
 
-    getSize: function() {
+    getSize: function () {
         return this._size;
     },
 
-    setSize: function(size) {
+    setSize: function (size) {
         this._size = size || "";
         this.__html.icon.className = "fa " + this.iconName + " " + this.size;
     },
@@ -129,11 +124,11 @@ var FAIcon = BaseIcon.$extend({
      */
     _color: "inherit",
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         this._color = color || "inherit";
         this.__html.icon.style.color = this.color;
     },
@@ -146,18 +141,15 @@ var FAIcon = BaseIcon.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -165,7 +157,7 @@ var FAIcon = BaseIcon.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("span");
         this.__html.outer.className = "photonui-widget photonui-icon photonui-faicon";
 

@@ -49,7 +49,7 @@ var Widget = require("../widget.js");
 var Canvas = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["width", "height"]);
 
@@ -154,7 +154,8 @@ var Canvas = Widget.$extend({
         }
 
         /**
-         * Returns a Blob object representing the image contained in the canvas (at the native resolution of the canvas).
+         * Returns a Blob object representing the image contained in the canvas (at the native
+         * resolution of the canvas).
          *
          * Proxy of the native canvas method if exists. For more informations see:
          *
@@ -169,14 +170,11 @@ var Canvas = Widget.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Canvas width.
@@ -185,11 +183,11 @@ var Canvas = Widget.$extend({
      * @type Number
      * default 300
      */
-    getWidth: function() {
+    getWidth: function () {
         return this.__html.canvas.width;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         this.__html.canvas.width = width || 300;
     },
 
@@ -200,11 +198,11 @@ var Canvas = Widget.$extend({
      * @type Number
      * default 150
      */
-    getHeight: function() {
+    getHeight: function () {
         return this.__html.canvas.height;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         this.__html.canvas.height = height || 150;
     },
 
@@ -215,7 +213,7 @@ var Canvas = Widget.$extend({
      * @readOnly
      * @type HTMLElement
      */
-    getCanvas: function() {
+    getCanvas: function () {
         return this.__html.canvas;
     },
 
@@ -227,7 +225,7 @@ var Canvas = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -238,18 +236,15 @@ var Canvas = Widget.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getInteractiveNode: function() {
+    getInteractiveNode: function () {
         return this.__html.canvas;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -257,7 +252,7 @@ var Canvas = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-canvas";
 
@@ -265,11 +260,9 @@ var Canvas = Widget.$extend({
         this.__html.outer.appendChild(this.__html.canvas);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -277,7 +270,7 @@ var Canvas = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });

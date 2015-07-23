@@ -49,19 +49,16 @@ var Layout = require("./layout.js");
 var Menu = Layout.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["iconVisible"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Define if icon on menu items are visible.
@@ -72,16 +69,15 @@ var Menu = Layout.$extend({
      */
     _iconVisible: true,
 
-    isIconVisible: function() {
+    isIconVisible: function () {
         return this._iconVisible;
     },
 
-    setIconVisible: function(iconVisible) {
+    setIconVisible: function (iconVisible) {
         this._iconVisible = iconVisible;
         if (iconVisible) {
             this.__html.outer.classList.remove("photonui-menu-noicon");
-        }
-        else {
+        } else {
             this.__html.outer.classList.add("photonui-menu-noicon");
         }
     },
@@ -94,18 +90,15 @@ var Menu = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -113,7 +106,7 @@ var Menu = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-default";
     },
@@ -124,7 +117,7 @@ var Menu = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         // Detache the outer element from the document tree
         //TODO
 
@@ -133,7 +126,7 @@ var Menu = Layout.$extend({
 
         // Append children
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             this.__html.outer.appendChild(children[i].html);
         }
 

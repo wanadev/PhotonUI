@@ -49,25 +49,22 @@ var Container = require("../container/container.js");
 var Layout = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
 
         // Force to update the parent of the children
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             children[i]._parentName = this.name;
         }
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Layout children widgets name.
@@ -78,13 +75,14 @@ var Layout = Container.$extend({
      */
     _childrenNames: [],
 
-    getChildrenNames: function() {
+    getChildrenNames: function () {
         return this._childrenNames;
     },
 
-    setChildrenNames: function(childrenNames) {
-        var i, widget;
-        for (i=0 ; i<this._childrenNames.length ; i++) {
+    setChildrenNames: function (childrenNames) {
+        var i;
+        var widget;
+        for (i = 0 ; i < this._childrenNames.length ; i++) {
             widget = Widget.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
@@ -92,7 +90,7 @@ var Layout = Container.$extend({
             }
         }
         this._childrenNames = [];
-        for (i=0 ; i<childrenNames.length ; i++) {
+        for (i = 0 ; i < childrenNames.length ; i++) {
             widget = Widget.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
@@ -112,19 +110,21 @@ var Layout = Container.$extend({
      * @type Array
      * @default []
      */
-    getChildren: function() {
+    getChildren: function () {
         var children = [];
         var widget;
-        for (var i=0 ; i<this._childrenNames.length ; i++) {
+        for (var i = 0 ; i < this._childrenNames.length ; i++) {
             widget = Widget.getWidget(this._childrenNames[i]);
-            if (widget instanceof Widget) children.push(widget);
+            if (widget instanceof Widget) {
+                children.push(widget);
+            }
         }
         return children;
     },
 
-    setChildren: function(children) {
+    setChildren: function (children) {
         var childrenNames = [];
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             if (children[i] instanceof Widget) {
                 childrenNames.push(children[i].name);
             }
@@ -134,30 +134,27 @@ var Layout = Container.$extend({
 
     // Override getChildName / setChildName / getChild / setChild
 
-    getChildName: function() {
+    getChildName: function () {
         return null;
     },
 
-    setChildName: function(childName) {
+    setChildName: function (childName) {
         this.childrenNames = [childName];
     },
 
-    getChild: function() {
+    getChild: function () {
         return null;
     },
 
-    setChild: function(child) {
+    setChild: function (child) {
         this.children = [child];
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a widget to the layout.
@@ -166,7 +163,7 @@ var Layout = Container.$extend({
      * @param {photonui.Widget} widget The widget to add.
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
-    addChild: function(widget, layoutOptions) {
+    addChild: function (widget, layoutOptions) {
         if (widget.parent) {
             widget.unparent();
         }
@@ -184,7 +181,7 @@ var Layout = Container.$extend({
      * @method removeChild
      * @param {photonui.Widget} widget The widget to remove.
      */
-    removeChild: function(widget) {
+    removeChild: function (widget) {
         var index = this._childrenNames.indexOf(widget.name);
         if (index >= 0) {
             this._childrenNames.splice(index, 1);
@@ -198,11 +195,11 @@ var Layout = Container.$extend({
      *
      * @method empty
      */
-    empty: function() {
+    empty: function () {
         this._lockUpdate(true);
 
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             if (children[i]) {
                 children[i].destroy();
             }
@@ -216,14 +213,12 @@ var Layout = Container.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this.empty();
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Lock the update of the layout.
@@ -231,12 +226,11 @@ var Layout = Container.$extend({
      * @method _lockUpdate
      * @private
      */
-    _lockUpdate: function(lock) {
+    _lockUpdate: function (lock) {
         if (lock) {
             this.__lockedUpdateLayout = this._updateLayout;
-            this._updateLayout = function(){};
-        }
-        else {
+            this._updateLayout = function () {};
+        } else {
             this._updateLayout = this.__lockedUpdateLayout;
             delete this.__lockedUpdateLayout;
             this._updateLayout();
@@ -249,8 +243,8 @@ var Layout = Container.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
-        throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+    _updateLayout: function () {
+        throw new Error("you should define the _updateLayout() method when you extend a layout widget.");
     },
 
     /**
@@ -260,21 +254,21 @@ var Layout = Container.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
-            if (!(this.child instanceof Widget)) continue;
+        for (var i = 0 ; i < children.length ; i++) {
+            if (!(this.child instanceof Widget)) {
+                continue;
+            }
             children[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -282,7 +276,7 @@ var Layout = Container.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });

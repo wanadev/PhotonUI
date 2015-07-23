@@ -48,15 +48,14 @@ var BaseWindow = require("./basewindow.js");
 var PopupWindow = BaseWindow.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._bindEvent("document-mousedown-close", document, "mousedown", this.hide.bind(this));
         this._bindEvent("popup-click-close", this.html, "click", this.hide.bind(this));
-        this._bindEvent("mousedown-preventclose", this.html, "mousedown", function(event) {
+        this._bindEvent("mousedown-preventclose", this.html, "mousedown", function (event) {
             event.stopPropagation();
         }.bind(this));
     },
-
 
     /**
      * HTML Element that contain the child widget HTML.
@@ -65,18 +64,15 @@ var PopupWindow = BaseWindow.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.inner;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Pop the window at the given position.
@@ -85,7 +81,7 @@ var PopupWindow = BaseWindow.$extend({
      * @param {Number} x
      * @param {Number} y
      */
-    popupXY: function(x, y) {
+    popupXY: function (x, y) {
         this.setPosition(-1337, -1337);
         this.show();
 
@@ -118,7 +114,7 @@ var PopupWindow = BaseWindow.$extend({
      * @method popupWidget
      * @param {photonui.Widget} widget
      */
-    popupWidget: function(widget) {
+    popupWidget: function (widget) {
         this.setPosition(-1337, -1337);
         this.show();
 
@@ -133,18 +129,15 @@ var PopupWindow = BaseWindow.$extend({
 
         if (wpos.x + pw < e_body.offsetWidth) {
             x = wpos.x;
-        }
-        else if (wpos.x + ww < e_body.offsetWidth) {
+        } else if (wpos.x + ww < e_body.offsetWidth) {
             x = wpos.x + ww - pw;
-        }
-        else {
+        } else {
             x = e_body.offsetWidth - pw;
         }
 
         if (wpos.y + wh + ph < e_body.offsetHeight) {
             y = wpos.y + wh + 1;
-        }
-        else if (wpos.y - ph >= 0) {
+        } else if (wpos.y - ph >= 0) {
             y = wpos.y - ph - 1;
         }
 
@@ -158,9 +151,7 @@ var PopupWindow = BaseWindow.$extend({
         this.setPosition(x, y);
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -168,7 +159,7 @@ var PopupWindow = BaseWindow.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.window.className += " photonui-popupwindow";
 

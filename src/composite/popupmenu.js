@@ -51,7 +51,7 @@ var Menu = require("../layout/menu.js");
 var PopupMenu = PopupWindow.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
     },
@@ -77,14 +77,11 @@ var PopupMenu = PopupWindow.$extend({
         _lockUpdate:      Menu.prototype._lockUpdate
     }],
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -92,7 +89,7 @@ var PopupMenu = PopupWindow.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         Menu.prototype._buildHtml.call(this);
 
@@ -101,11 +98,9 @@ var PopupMenu = PopupWindow.$extend({
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -113,7 +108,7 @@ var PopupMenu = PopupWindow.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });

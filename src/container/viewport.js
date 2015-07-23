@@ -49,7 +49,7 @@ var numberToCssSize = require("../helpers.js").numberToCssSize;
 var Viewport = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties([
             "padding", "verticalScrollbar", "horizontalScrollbar",
@@ -58,11 +58,9 @@ var Viewport = Container.$extend({
         ]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -75,11 +73,11 @@ var Viewport = Container.$extend({
      */
     _padding: 0,
 
-    getPadding: function() {
+    getPadding: function () {
         return this._padding;
     },
 
-    setPadding: function(padding) {
+    setPadding: function (padding) {
         this._padding = padding;
         this.containerNode.style.padding = padding + "px";
     },
@@ -97,19 +95,17 @@ var Viewport = Container.$extend({
      */
     _verticalScrollbar: null,
 
-    getVerticalScrollbar: function() {
+    getVerticalScrollbar: function () {
         return this._verticalScrollbar;
     },
 
-    setVerticalScrollbar: function(visibility) {
+    setVerticalScrollbar: function (visibility) {
         this._verticalScrollbar = visibility;
         if (visibility === true) {
             this.__html.viewport.style.overflowY = "scroll";
-        }
-        else if (visibility === false) {
+        } else if (visibility === false) {
             this.__html.viewport.style.overflowY = "hidden";
-        }
-        else {
+        } else {
             this.__html.viewport.style.overflowY = "auto";
         }
     },
@@ -127,19 +123,17 @@ var Viewport = Container.$extend({
      */
     _horizontalScrollbar: null,
 
-    getHorizontalScrollbar: function() {
+    getHorizontalScrollbar: function () {
         return this._horizontalScrollbar;
     },
 
-    setHorizontalScrollbar: function(visibility) {
+    setHorizontalScrollbar: function (visibility) {
         this._horizontalScrollbar = visibility;
         if (visibility === true) {
             this.__html.viewport.style.overflowX = "scroll";
-        }
-        else if (visibility === false) {
+        } else if (visibility === false) {
             this.__html.viewport.style.overflowX = "hidden";
-        }
-        else {
+        } else {
             this.__html.viewport.style.overflowX = "auto";
         }
     },
@@ -157,11 +151,11 @@ var Viewport = Container.$extend({
      */
     _minWidth: null,
 
-    getMinWidth: function() {
+    getMinWidth: function () {
         return this._minWidth;
     },
 
-    setMinWidth: function(minWidth) {
+    setMinWidth: function (minWidth) {
         this._minWidth = minWidth;
         this.__html.viewport.style.minWidth = numberToCssSize(minWidth, null, 0);
     },
@@ -179,11 +173,11 @@ var Viewport = Container.$extend({
      */
     _maxWidth: null,
 
-    getMaxWidth: function() {
+    getMaxWidth: function () {
         return this._maxWidth;
     },
 
-    setMaxWidth: function(maxWidth) {
+    setMaxWidth: function (maxWidth) {
         this._maxWidth = maxWidth;
         this.__html.viewport.style.maxWidth = numberToCssSize(maxWidth, null, Infinity);
     },
@@ -201,11 +195,11 @@ var Viewport = Container.$extend({
      */
     _width: Infinity,
 
-    getWidth: function() {
+    getWidth: function () {
         return this._width;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         this._width = width;
         this.__html.viewport.style.width = numberToCssSize(width, null);
     },
@@ -223,11 +217,11 @@ var Viewport = Container.$extend({
      */
     _minHeight: null,
 
-    getMinHeight: function() {
+    getMinHeight: function () {
         return this._minHeight;
     },
 
-    setMinHeight: function(minHeight) {
+    setMinHeight: function (minHeight) {
         this._minHeight = minHeight;
         this.__html.viewport.style.minHeight = numberToCssSize(minHeight, null, 0);
     },
@@ -245,11 +239,11 @@ var Viewport = Container.$extend({
      */
     _maxHeight: null,
 
-    getMaxHeight: function() {
+    getMaxHeight: function () {
         return this._maxHeight;
     },
 
-    setMaxHeight: function(maxHeight) {
+    setMaxHeight: function (maxHeight) {
         this._maxHeight = maxHeight;
         this.__html.viewport.style.maxHeight = numberToCssSize(maxHeight, null, Infinity);
     },
@@ -267,11 +261,11 @@ var Viewport = Container.$extend({
      */
     _height: Infinity,
 
-    getHeight: function() {
+    getHeight: function () {
         return this._height;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         this._height = height;
         this.__html.viewport.style.height = numberToCssSize(height, null);
     },
@@ -284,7 +278,7 @@ var Viewport = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         setTimeout(this._sizingHack.bind(this), 10);
         return this.__html.viewport;
     },
@@ -296,18 +290,15 @@ var Viewport = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.viewport;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -315,7 +306,7 @@ var Viewport = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.viewport = document.createElement("div");
         this.__html.viewport.className = "photonui-widget photonui-viewport photonui-container";
     },
@@ -327,9 +318,11 @@ var Viewport = Container.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
-        if (visibility) this._sizingHack();
+        if (visibility) {
+            this._sizingHack();
+        }
         this.$super(visibility);
     },
 
@@ -339,7 +332,7 @@ var Viewport = Container.$extend({
      * @method _sizingHack
      * @private
      */
-    _sizingHack: function() {
+    _sizingHack: function () {
         if (this.height !== Infinity) {
             return;
         }
@@ -350,7 +343,9 @@ var Viewport = Container.$extend({
             this.__html.viewport.style.display = "none";
 
             while (node = node.parentNode) {  // jshint ignore:line
-                if (!node) break;
+                if (!node) {
+                    break;
+                }
                 if (node.offsetHeight > 0) {
                     height = node.offsetHeight;
                     var style = getComputedStyle(node);
@@ -362,18 +357,20 @@ var Viewport = Container.$extend({
                 }
             }
 
-            if (this.maxHeight !== null) height = Math.min(this.maxHeight, height);
-            if (this.minHeight !== null) height = Math.max(this.minHeight, height);
+            if (this.maxHeight !== null) {
+                height = Math.min(this.maxHeight, height);
+            }
+            if (this.minHeight !== null) {
+                height = Math.max(this.minHeight, height);
+            }
             this.__html.viewport.style.height = height + "px";
             this.__html.viewport.style.display = "";
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -381,7 +378,7 @@ var Viewport = Container.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
