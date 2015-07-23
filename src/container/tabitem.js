@@ -36,10 +36,8 @@
  * @namespace photonui
  */
 
-
 var Helpers = require("../helpers.js");
 var Container = require("./container.js");
-
 
 /**
  * Tab Item.
@@ -52,21 +50,18 @@ var Container = require("./container.js");
 var TabItem = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["title"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.show.bind(this));
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Tab title.
@@ -77,11 +72,11 @@ var TabItem = Container.$extend({
      */
     _title: "Tab",
 
-    getTitle: function() {
+    getTitle: function () {
         return this._title;
     },
 
-    setTitle: function(title) {
+    setTitle: function (title) {
         this._title = title;
         Helpers.cleanNode(this.__html.tab);
         this.__html.tab.appendChild(document.createTextNode(title));
@@ -95,7 +90,7 @@ var TabItem = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.div;
     },
 
@@ -107,7 +102,7 @@ var TabItem = Container.$extend({
      * @default null
      * @readOnly
      */
-    getTabHtml: function() {
+    getTabHtml: function () {
         return this.__html.tab;
     },
 
@@ -118,7 +113,7 @@ var TabItem = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.div;
     },
 
@@ -131,13 +126,13 @@ var TabItem = Container.$extend({
      */
     _visible: false,
 
-    setVisible: function(visible, noParent) {
+    setVisible: function (visible, noParent) {
         this.$super(visible);
 
         if (visible) {
             if (this.parent) {
                 var children = this.parent.children;
-                for (var i=0 ; i<children.length ; i++) {
+                for (var i = 0 ; i < children.length ; i++) {
                     if (!(children[i] instanceof TabItem)) continue;
                     if (children[i] === this) continue;
                     if (children[i].visible) children[i].setVisible(false, true);
@@ -147,8 +142,7 @@ var TabItem = Container.$extend({
 
             this.addClass("photonui-tabitem-active");
             this.__html.tab.className = "photonui-tabitem-tab photonui-tabitem-active";
-        }
-        else {
+        } else {
             if (this.parent && !noParent) {
                 this.parent.activeTab = null;
             }
@@ -157,14 +151,11 @@ var TabItem = Container.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -172,7 +163,7 @@ var TabItem = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
         this.__html.tab = document.createElement("div");
@@ -180,7 +171,6 @@ var TabItem = Container.$extend({
     }
 
 });
-
 
 module.exports = TabItem;
 

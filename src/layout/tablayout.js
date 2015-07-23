@@ -36,12 +36,10 @@
  * @namespace photonui
  */
 
-
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 var TabItem = require("../container/tabitem.js");
 var Widget = require("../widget.js");
-
 
 /**
  * Tab Layout
@@ -54,17 +52,15 @@ var Widget = require("../widget.js");
 var TabLayout = Layout.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
         this._updateProperties(["activeTab", "tabsPosition", "padding"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -82,12 +78,12 @@ var TabLayout = Layout.$extend({
      */
     _tabsPosition: "top",
 
-    getTabsPosition: function() {
+    getTabsPosition: function () {
         return this._tabsPosition;
     },
 
-    setTabsPosition: function(position) {
-        if (["top", "bottom", "left", "right"].indexOf(position) < 0 ) {
+    setTabsPosition: function (position) {
+        if (["top", "bottom", "left", "right"].indexOf(position) < 0) {
             throw "Error: The tabs position should be \"top\", \"bottom\", \"left\" or \"right\".";
         }
         this._tabsPosition = position;
@@ -106,7 +102,7 @@ var TabLayout = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -119,11 +115,11 @@ var TabLayout = Layout.$extend({
      */
     _activeTabName: null,
 
-    getActiveTabName: function() {
+    getActiveTabName: function () {
         return this._activeTabName;
     },
 
-    setActiveTabName: function(tabName) {
+    setActiveTabName: function (tabName) {
         var activeTab = Widget.getWidget(tabName);
         if (activeTab instanceof TabItem) {
             activeTab.show();
@@ -132,7 +128,7 @@ var TabLayout = Layout.$extend({
 
         if (!this._activeTab) {
             var children = this.children;
-            for (var i=0 ; i<children.length ; i++) {
+            for (var i = 0 ; i < children.length ; i++) {
                 if (!(children[i] instanceof TabItem)) {
                     continue;
                 }
@@ -151,11 +147,11 @@ var TabLayout = Layout.$extend({
      */
     _padding: 10,
 
-    getPadding: function() {
+    getPadding: function () {
         return this._padding;
     },
 
-    setPadding: function(padding) {
+    setPadding: function (padding) {
         this._padding = padding;
         this.__html.content.style.padding = padding + "px";
     },
@@ -167,37 +163,33 @@ var TabLayout = Layout.$extend({
      * @type photonui.Widget
      * @default null
      */
-    getActiveTab: function() {
+    getActiveTab: function () {
         return Widget.getWidget(this.activeTabName);
     },
 
-    setActiveTab: function(tab) {
+    setActiveTab: function (tab) {
         if (tab instanceof Widget) {
             this.activeTabName = tab.name;
-        }
-        else {
+        } else {
             this.activeTabName = null;
         }
     },
 
     //
-    setChildrenNames: function(childrenNames) {
+    setChildrenNames: function (childrenNames) {
         this.$super(childrenNames);
         if (!this.activeTabName) {
             this.activeTabName = null;
         }
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
 
-
-    addChild: function(widget, layoutOptions) {
+    addChild: function (widget, layoutOptions) {
         this.$super(widget, layoutOptions);
         if (!this.activeTabName && widget instanceof TabItem) {
             this.activeTabName = widget.name;
@@ -210,16 +202,14 @@ var TabLayout = Layout.$extend({
      * @method removeChild
      * @param {photonui.Widget} widget The widget to remove.
      */
-    removeChild: function(widget) {
+    removeChild: function (widget) {
         this.$super(widget);
         if (widget === this.activeTab) {
             this.activeTabName = null;
         }
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -227,7 +217,7 @@ var TabLayout = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-tablayout";
 
@@ -250,7 +240,7 @@ var TabLayout = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         Helpers.cleanNode(this.__html.tabs);
         Helpers.cleanNode(this.__html.content);
 
@@ -259,7 +249,7 @@ var TabLayout = Layout.$extend({
         var contentFragment = document.createDocumentFragment();
 
         var options;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             if (!(children[i] instanceof TabItem)) {
                 continue;
             }
@@ -268,8 +258,7 @@ var TabLayout = Layout.$extend({
 
             if (options.order !== null) {
                 children[i].tabHtml.style.order = options.order;
-            }
-            else {
+            } else {
                 children[i].tabHtml.style.order = 0;
             }
 
@@ -289,7 +278,7 @@ var TabLayout = Layout.$extend({
      * @param {photonui.Widget} widget
      * @return {Object} the layout options
      */
-    _computeLayoutOptions: function(widget) {
+    _computeLayoutOptions: function (widget) {
         var woptions = widget.layoutOptions || {};
 
         var options = {
@@ -297,14 +286,13 @@ var TabLayout = Layout.$extend({
         };
 
         if (woptions.order !== undefined && woptions.order !== null) {
-            options.order = woptions.order|0;
+            options.order = woptions.order | 0;
         }
 
         return options;
     }
 
 });
-
 
 module.exports = TabLayout;
 

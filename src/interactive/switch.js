@@ -48,7 +48,7 @@ var CheckBox = require("./checkbox.js");
 var Switch = CheckBox.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this.removeClass("photonui-checkbox");
         this.addClass("photonui-switch");

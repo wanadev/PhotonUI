@@ -49,7 +49,7 @@ var Helpers = require("../helpers.js");
 var Label = Widget.$extend({
 
     // Constructor
-    __init__: function(params1, params2) {
+    __init__: function (params1, params2) {
         var params = {};
         if (params1 && typeof(params1) == "string") {
             params.text = params1;
@@ -58,8 +58,7 @@ var Label = Widget.$extend({
                     params[i] = params2[i];
                 }
             }
-        }
-        else if (params1) {
+        } else if (params1) {
             params = params1;
         }
         params.layoutOptions = params.layoutOptions || {};
@@ -70,14 +69,11 @@ var Label = Widget.$extend({
         this._updateProperties(["text", "textAlign", "forInputName"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The label text.
@@ -88,19 +84,19 @@ var Label = Widget.$extend({
      */
     _text: "Label",
 
-    getText: function() {
+    getText: function () {
         return this._text;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._text = text;
         Helpers.cleanNode(this.__html.label);
 
-        var lines = (text+"").split("\n");
+        var lines = (text + "").split("\n");
 
-        for (var i=0 ; i<lines.length ; i++) {
+        for (var i = 0 ; i < lines.length ; i++) {
             this.__html.label.appendChild(document.createTextNode(lines[i]));
-            if (i<lines.length-1) {
+            if (i < lines.length - 1) {
                 this.__html.label.appendChild(document.createElement("br"));
             }
         }
@@ -120,11 +116,11 @@ var Label = Widget.$extend({
      */
     _textAlign: "left",
 
-    getTextAlign: function() {
+    getTextAlign: function () {
         return this._textAlign;
     },
 
-    setTextAlign: function(textAlign) {
+    setTextAlign: function (textAlign) {
         if (textAlign != "left" && textAlign != "center" && textAlign != "right") {
             throw "Text alignement sould be 'left', 'center' or 'right'.";
         }
@@ -141,25 +137,23 @@ var Label = Widget.$extend({
      */
     _forInputName: null,
 
-    getForInputName: function() {
+    getForInputName: function () {
         return this._forInputName;
     },
 
-    setForInputName: function(forInputName) {
+    setForInputName: function (forInputName) {
         this._forInputName = forInputName;
         if (this._forInputName) {
             if (this.forInput) {
                 this.__html.label.setAttribute("for",
                         Helpers.escapeHtml(this.forInput.inputId || this.forInput.name)
                 );
-            }
-            else {
+            } else {
                 this.__html.label.setAttribute("for",
                         Helpers.escapeHtml(forInputName)
                 );
             }
-        }
-        else {
+        } else {
             this.__html.label.removeAttribute("for");
         }
     },
@@ -171,11 +165,11 @@ var Label = Widget.$extend({
      * @type photonui.Field, photonui.CheckBox
      * @default null
      */
-    getForInput: function() {
+    getForInput: function () {
         return Widget.getWidget(this.forInputName);
     },
 
-    setForInput: function(forInput) {
+    setForInput: function (forInput) {
         this.forInputName = forInput.name;
     },
 
@@ -187,18 +181,15 @@ var Label = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.label;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -206,7 +197,7 @@ var Label = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.label = document.createElement("label");
         this.__html.label.className = "photonui-widget photonui-label photonui-widget-fixed-height";
     }

@@ -61,7 +61,7 @@ var Base = require("../base.js");
 var Translation = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         params = params || {};
         this._registerWEvents(["locale-changed"]);
         this.$super(params);
@@ -71,14 +71,11 @@ var Translation = Base.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The current locale (e.g. "fr", "en", "it",...).
@@ -90,14 +87,11 @@ var Translation = Base.$extend({
     getLocale: Stone.getLocale,
     setLocale: Stone.setLocale,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add one or more Stone.js catalog (a catalog contain all translated strings for a specific locale).
@@ -155,17 +149,15 @@ var Translation = Base.$extend({
      */
     updateDomTranslation: Stone.updateDomTranslation,
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onStonejsLocaleChanged
      * @private
      */
-    __onStonejsLocaleChanged: function() {
+    __onStonejsLocaleChanged: function () {
         this._callCallbacks("locale-changed", [this.locale]);
     }
 });

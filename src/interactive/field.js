@@ -70,7 +70,7 @@ var Widget = require("../widget.js");
 var Field = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents([
             "value-changed", "keydown", "keyup", "keypress",
             "selection-changed"
@@ -80,14 +80,11 @@ var Field = Widget.$extend({
         this.__html.field.name = this.name;
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The field value.
@@ -96,11 +93,11 @@ var Field = Widget.$extend({
      * @type String (maybe)
      * @default ""
      */
-    getValue: function() {
+    getValue: function () {
         return this.__html.field.value;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.__html.field.value = value;
     },
 
@@ -113,11 +110,11 @@ var Field = Widget.$extend({
      */
     _placeholder: "",
 
-    getPlaceholder: function() {
+    getPlaceholder: function () {
         return this._placeholder;
     },
 
-    setPlaceholder: function(placeholder) {
+    setPlaceholder: function (placeholder) {
         this._placeholder = placeholder;
         this.__html.field.placeholder = placeholder;
     },
@@ -130,18 +127,15 @@ var Field = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.field;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Bind Field events.
@@ -149,24 +143,24 @@ var Field = Widget.$extend({
      * @method _bindFieldEvents
      * @private
      */
-    _bindFieldEvents: function() {
-        this._bindEvent("value-changed", this.__html.field, "change", function(event) {
+    _bindFieldEvents: function () {
+        this._bindEvent("value-changed", this.__html.field, "change", function (event) {
             this._callCallbacks("value-changed", [this.getValue()]);
         }.bind(this));
 
-        this._bindEvent("keydown", this.__html.field, "keydown", function(event) {
+        this._bindEvent("keydown", this.__html.field, "keydown", function (event) {
             this._callCallbacks("keydown", [event]);
         }.bind(this));
 
-        this._bindEvent("keyup", this.__html.field, "keyup", function(event) {
+        this._bindEvent("keyup", this.__html.field, "keyup", function (event) {
             this._callCallbacks("keyup", [event]);
         }.bind(this));
 
-        this._bindEvent("keypress", this.__html.field, "keypress", function(event) {
+        this._bindEvent("keypress", this.__html.field, "keypress", function (event) {
             this._callCallbacks("keypress", [event]);
         }.bind(this));
 
-        this._bindEvent("selection-changed", this.__html.field, "select", function(event) {
+        this._bindEvent("selection-changed", this.__html.field, "select", function (event) {
             this._callCallbacks("selection-changed", [
                 this.__html.field.selectionStart,
                 this.__html.field.selectionEnd,
@@ -175,11 +169,9 @@ var Field = Widget.$extend({
         }.bind(this));
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the context menu should be displayed.
@@ -188,7 +180,7 @@ var Field = Widget.$extend({
      * @private
      * @param event
      */
-    __onContextMenu: function(event) {
+    __onContextMenu: function (event) {
         event.stopPropagation();  // Enable context menu on fields
     }
 });

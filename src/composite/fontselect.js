@@ -52,7 +52,7 @@ var MenuItem = require("../container/menuitem.js");
 var FontSelect = Select.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         params = params || {};
         this._fonts = [];
         this.$super(params);
@@ -60,14 +60,11 @@ var FontSelect = Select.$extend({
         this.value = (params.value !== undefined) ? params.value : "sans-serif";
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The font list
@@ -78,13 +75,13 @@ var FontSelect = Select.$extend({
      */
     _fonts: null,
 
-    getFonts: function() {
+    getFonts: function () {
         return this._fonts;
     },
 
-    setFonts: function(fonts) {
+    setFonts: function (fonts) {
         this._fonts = [];
-        for (var i=0 ; i<fonts.length ; i++) {
+        for (var i = 0 ; i < fonts.length ; i++) {
             this.addFont(fonts[i]);
         }
     },
@@ -98,14 +95,11 @@ var FontSelect = Select.$extend({
      */
     _placeholder: Stone.lazyGettext("Select a font..."),
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a widget to the layout.
@@ -113,16 +107,14 @@ var FontSelect = Select.$extend({
      * @method addChild
      * @param {String} fontName
      */
-    addFont: function(fontName) {
+    addFont: function (fontName) {
         var item = new MenuItem({value: fontName, text: fontName});
         item.html.style.fontFamily = fontName;
         this.addChild(item);
         this._fonts.push(fontName);
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -130,7 +122,7 @@ var FontSelect = Select.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.select.className += " photonui-fontselect";
     }

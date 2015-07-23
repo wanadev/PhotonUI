@@ -60,7 +60,7 @@ var ColorPickerDialog = require("./colorpickerdialog.js");
 var ColorButton = Button.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.__widgets = {};
         this._color = new Color();
         this._registerWEvents(["value-changed"]);
@@ -69,11 +69,9 @@ var ColorButton = Button.$extend({
         this._updateProperties(["color"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -83,11 +81,11 @@ var ColorButton = Button.$extend({
      * @property value
      * @type String
      */
-    getValue: function() {
+    getValue: function () {
         return this.color.hexString;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.color.hexString = value;
     },
 
@@ -99,11 +97,11 @@ var ColorButton = Button.$extend({
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             if (this._color) {
                 this._color.removeCallback("photonui.colorbutton.value-changed::" + this.name);
@@ -117,7 +115,6 @@ var ColorButton = Button.$extend({
         }
     },
 
-
     /**
      * Display only the color picker dialog instead of showing the palette first.
      *
@@ -127,31 +124,26 @@ var ColorButton = Button.$extend({
      */
     _dialogOnly: false,
 
-    isDialogOnly: function() {
+    isDialogOnly: function () {
         return this._dialogOnly;
     },
 
-    setDialogOnly: function(dialogOnly) {
+    setDialogOnly: function (dialogOnly) {
         this._dialogOnly = !!dialogOnly;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
 
-
-    destroy: function() {
+    destroy: function () {
         this._color.removeCallback("photonui.colorbutton.value-changed::" + this.name);
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Update the button content
@@ -159,7 +151,7 @@ var ColorButton = Button.$extend({
      * @method _update
      * @private
      */
-    _update: function() {
+    _update: function () {
         // Do nothing
     },
 
@@ -169,7 +161,7 @@ var ColorButton = Button.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.button = document.createElement("button");
         this.__html.button.className = "photonui-widget photonui-button";
@@ -186,8 +178,8 @@ var ColorButton = Button.$extend({
      * @method _buildUi
      * @private
      */
-     //TODO: Build UI
-    _buildUi: function() {
+    //TODO: Build UI
+    _buildUi: function () {
         this.__widgets.popup = new PopupWindow();
         this.__widgets.vbox = new BoxLayout({verticalSpacing: 0, horizontalSpacing: 0});
         this.__widgets.popup.child = this.__widgets.vbox;
@@ -211,11 +203,9 @@ var ColorButton = Button.$extend({
         this.__widgets.colorPickerDialog.color = this.color;
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the button is clicked.
@@ -224,13 +214,12 @@ var ColorButton = Button.$extend({
      * @private
      * @param event
      */
-    __onButtonClicked: function(event) {
+    __onButtonClicked: function (event) {
         this._callCallbacks("click", [event]);
         if (this.dialogOnly) {
             this.__widgets.colorPickerDialog.show();
             this.__widgets.colorPickerDialog.center();
-        }
-        else {
+        } else {
             this.__widgets.popup.popupWidget(this);
         }
     },
@@ -243,7 +232,7 @@ var ColorButton = Button.$extend({
      * @param {photonui.Widget} widget
      * @param {String} color
      */
-    __onValueChanged: function(widget, color) {
+    __onValueChanged: function (widget, color) {
         this._callCallbacks("value-changed", [this.color]);
     },
 
@@ -252,7 +241,7 @@ var ColorButton = Button.$extend({
      * @method __onColorChanged
      * @private
      */
-    __onColorChanged: function() {
+    __onColorChanged: function () {
         this.__html.color.style.backgroundColor = this.color.hexString;
     },
 
@@ -260,7 +249,7 @@ var ColorButton = Button.$extend({
      * @method __onCustomButtonClicked
      * @private
      */
-    __onCustomButtonClicked: function() {
+    __onCustomButtonClicked: function () {
         this.__widgets.colorPickerDialog.show();
         this.__widgets.colorPickerDialog.center();
     }

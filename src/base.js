@@ -35,12 +35,10 @@
  * @namespace photonui
  */
 
-
 var Class = require("classyjs");
 var uuid = require("uuid");
 
 var Helpers = require("./helpers.js");
-
 
 /**
  * Base class for all PhotonUI Classes.
@@ -58,7 +56,7 @@ var Helpers = require("./helpers.js");
 var Base = Class.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         // New instances for object properties
         this.__events = {};
 
@@ -75,16 +73,14 @@ var Base = Class.$extend({
                     enumerable: true,
                     configurable: true
                 });
-            }
-            else if (prop.indexOf("set") === 0) {
+            } else if (prop.indexOf("set") === 0) {
                 propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     set: this[prop],
                     enumerable: true,
                     configurable: true
                 });
-            }
-            else if (prop.indexOf("is") === 0) {
+            } else if (prop.indexOf("is") === 0) {
                 propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
@@ -111,13 +107,11 @@ var Base = Class.$extend({
                 ev = params.callbacks[wEvent];
                 if (typeof(ev) == "function") {
                     this.registerCallback(uuid.v4(), wEvent, ev);
-                }
-                else if (ev instanceof Array) {
-                    for (i=0 ; i<ev.length ; i++) {
+                } else if (ev instanceof Array) {
+                    for (i = 0 ; i < ev.length ; i++) {
                         this.registerCallback(uuid.v4(), wEvent, ev[i]);
                     }
-                }
-                else {
+                } else {
                     for (evId in ev) {
                         this.registerCallback(evId, wEvent, ev[evId]);
                     }
@@ -126,14 +120,11 @@ var Base = Class.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Private properties ======
-
 
     /**
      * Object containing references javascript events binding (for widget
@@ -154,21 +145,18 @@ var Base = Class.$extend({
      */
     __callbacks: null,  // Registered callback
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Destroy the class.
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this._callCallbacks("destroy");
         for (var id in this.__events) {
             this._unbindEvent(id);
@@ -188,7 +176,7 @@ var Base = Class.$extend({
      * @param {Function} callback The callback function.
      * @param {Object} thisArg The value of this (optionnal, default = current widget).
      */
-    registerCallback: function(id, wEvent, callback, thisArg) {
+    registerCallback: function (id, wEvent, callback, thisArg) {
         if (!this.__callbacks[wEvent]) {
             Helpers.log("error", "This widget has no '" + wEvent + "' wEvent.");
             return;
@@ -205,7 +193,7 @@ var Base = Class.$extend({
      * @method removeCallback
      * @param {String} id The id of the callback.
      */
-    removeCallback: function(id) {
+    removeCallback: function (id) {
         for (var wEvent in this.__callbacks) {
             if (this.__callbacks[wEvent][id]) {
                 delete this.__callbacks[wEvent][id];
@@ -213,9 +201,7 @@ var Base = Class.$extend({
         }
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Force the update of the given properties.
@@ -224,8 +210,8 @@ var Base = Class.$extend({
      * @private
      * @param {Array} properties The properties to update.
      */
-    _updateProperties: function(properties) {
-        for (var i=0 ; i<properties.length ; i++) {
+    _updateProperties: function (properties) {
+        for (var i = 0 ; i < properties.length ; i++) {
             this[properties[i]] = this[properties[i]];
         }
     },
@@ -240,7 +226,7 @@ var Base = Class.$extend({
      * @param {String} evName The event name (e.g. "mousemove", "click",...).
      * @param {Function} callback The function that will be called when the event occured.
      */
-    _bindEvent: function(id, element, evName, callback) {
+    _bindEvent: function (id, element, evName, callback) {
         this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
@@ -261,7 +247,7 @@ var Base = Class.$extend({
      * @private
      * @param {String} id The id of the event.
      */
-    _unbindEvent: function(id) {
+    _unbindEvent: function (id) {
         if (!this.__events[id]) return;
         this.__events[id].element.removeEventListener(
                 this.__events[id].evName,
@@ -278,7 +264,7 @@ var Base = Class.$extend({
      * @private
      * @param {Array} wEvents
      */
-    _registerWEvents: function(wEvents) {
+    _registerWEvents: function (wEvents) {
         if (this.__callbacks === null) {
             this.__callbacks = {};
         }
@@ -298,7 +284,7 @@ var Base = Class.$extend({
      * @param {String} wEvent The widget event.
      * @param {Array} params Parametters that will be sent to the callbacks.
      */
-    _callCallbacks: function(wEvent, params) {
+    _callCallbacks: function (wEvent, params) {
         params = params || [];
         for (var id in this.__callbacks[wEvent]) {
             this.__callbacks[wEvent][id].callback.apply(

@@ -28,7 +28,6 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -55,7 +54,7 @@ var SpriteSheet = require("../nonvisual/spritesheet.js");
 var SpriteIcon = BaseIcon.$extend({
 
     // Constructor
-    __init__: function(params1, params2) {
+    __init__: function (params1, params2) {
         var params = {};
         if (params1 && typeof(params1) == "string") {
             params.icon = params1;
@@ -64,21 +63,17 @@ var SpriteIcon = BaseIcon.$extend({
                     params[i] = params2[i];
                 }
             }
-        }
-        else if (params1) {
+        } else if (params1) {
             params = params1;
         }
         this.$super(params);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The sprite sheet name.
@@ -89,11 +84,11 @@ var SpriteIcon = BaseIcon.$extend({
      */
     _spriteSheetName: "",
 
-    getSpriteSheetName: function() {
+    getSpriteSheetName: function () {
         return this._spriteSheetName;
     },
 
-    setSpriteSheetName: function(spriteSheetName) {
+    setSpriteSheetName: function (spriteSheetName) {
         this._spriteSheetName = spriteSheetName || "";
         this._update();
     },
@@ -107,11 +102,11 @@ var SpriteIcon = BaseIcon.$extend({
      */
     _iconName: "",
 
-    getIconName: function() {
+    getIconName: function () {
         return this._iconName;
     },
 
-    setIconName: function(iconName) {
+    setIconName: function (iconName) {
         this._iconName = iconName || "";
         this._update();
     },
@@ -125,11 +120,11 @@ var SpriteIcon = BaseIcon.$extend({
      * @type String
      * @default "/"
      */
-    getIcon: function() {
+    getIcon: function () {
         return this.spriteSheetName + "/" + this.iconName;
     },
 
-    setIcon: function(icon) {
+    setIcon: function (icon) {
         var names = icon.split("/");
         this.spriteSheetName = names[0];
         this.iconName = names[1];
@@ -143,15 +138,13 @@ var SpriteIcon = BaseIcon.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Private methods ======
 
@@ -161,7 +154,7 @@ var SpriteIcon = BaseIcon.$extend({
      * @method _update
      * @private
      */
-    _update: function() {
+    _update: function () {
         var style = "";
         if (this.spriteSheetName && this.iconName) {
             style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName);
@@ -175,7 +168,7 @@ var SpriteIcon = BaseIcon.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("span");
         this.__html.outer.className = "photonui-widget photonui-icon photonui-spriteicon";
 

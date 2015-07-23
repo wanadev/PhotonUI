@@ -48,19 +48,16 @@ var Field = require("./field.js");
 var TextAreaField = Field.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._bindFieldEvents();
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Number of columns.
@@ -69,11 +66,11 @@ var TextAreaField = Field.$extend({
      * @type Number
      * @default 20
      */
-    getCols: function() {
+    getCols: function () {
         return parseInt(this.__html.field.cols);
     },
 
-    setCols: function(cols) {
+    setCols: function (cols) {
         this.__html.field.cols = cols;
     },
 
@@ -84,22 +81,19 @@ var TextAreaField = Field.$extend({
      * @type Number
      * @default 3
      */
-    getRows: function() {
+    getRows: function () {
         return parseInt(this.__html.field.rows);
     },
 
-    setRows: function(rows) {
+    setRows: function (rows) {
         this.__html.field.rows = rows;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -107,7 +101,7 @@ var TextAreaField = Field.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.field = document.createElement("textarea");
         this.__html.field.className = "photonui-widget photonui-field photonui-field-textarea";
         this.__html.field.cols = 20;

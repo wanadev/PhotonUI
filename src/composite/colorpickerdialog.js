@@ -65,7 +65,7 @@ var FAIcon = require("../visual/faicon.js");
 var ColorPickerDialog = Dialog.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.__widgets = {};
         this._color = new Color();
 
@@ -80,16 +80,13 @@ var ColorPickerDialog = Dialog.$extend({
         this._updateProperties(["color"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
 
     _padding: 10,
-
 
     /**
      * The color.
@@ -99,11 +96,11 @@ var ColorPickerDialog = Dialog.$extend({
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             if (this._color) {
                 this._color.removeCallback("photonui.colorpickerdialog.value-changed::" + this.name);
@@ -116,28 +113,23 @@ var ColorPickerDialog = Dialog.$extend({
 
     //
 
-    setVisible: function(visible) {
+    setVisible: function (visible) {
         this.$super(visible);
         if (this._color && visible && this.__widgets.labelRed) this._updateUi();
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
 
-
-    destroy: function() {
+    destroy: function () {
         this._color.removeCallback("photonui.colorpickerdialog.value-changed::" + this.name);
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Make the UI.
@@ -145,7 +137,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @method _buildUi
      * @private
      */
-    _buildUi: function() {
+    _buildUi: function () {
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
@@ -276,27 +268,27 @@ var ColorPickerDialog = Dialog.$extend({
 
         this.__widgets.colorPicker.color.registerCallback("colorpickerdialog.colorPicker.value-changed", "value-changed", this._updateUi, this);
 
-        this.__widgets.fieldRed.registerCallback("colorpickerdialog.fieldRed.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldRed.registerCallback("colorpickerdialog.fieldRed.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.red = value;
         }, this);
 
-        this.__widgets.fieldGreen.registerCallback("colorpickerdialog.fieldGreen.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldGreen.registerCallback("colorpickerdialog.fieldGreen.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.green = value;
         }, this);
 
-        this.__widgets.fieldBlue.registerCallback("colorpickerdialog.fieldBlue.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldBlue.registerCallback("colorpickerdialog.fieldBlue.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.blue = value;
         }, this);
 
-        this.__widgets.fieldHue.registerCallback("colorpickerdialog.fieldHue.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldHue.registerCallback("colorpickerdialog.fieldHue.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.hue = value;
         }, this);
 
-        this.__widgets.fieldSaturation.registerCallback("colorpickerdialog.fieldSaturation.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldSaturation.registerCallback("colorpickerdialog.fieldSaturation.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.saturation = value;
         }, this);
 
-        this.__widgets.fieldBrightness.registerCallback("colorpickerdialog.fieldBrightness.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldBrightness.registerCallback("colorpickerdialog.fieldBrightness.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.brightness = value;
         }, this);
 
@@ -311,7 +303,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @method _updateUi
      * @private
      */
-    _updateUi: function(color) {
+    _updateUi: function (color) {
         color = color || this.color;
         this.__widgets.fieldRed.value = color.red;
         this.__widgets.fieldGreen.value = color.green;
@@ -321,17 +313,15 @@ var ColorPickerDialog = Dialog.$extend({
         this.__widgets.fieldBrightness.value = color.brightness;
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onCancel
      * @private
      */
-    __onCancel: function() {
+    __onCancel: function () {
         this.__widgets.colorPicker.color.setHSB(
                 this._color.hue,
                 this._color.saturation,
@@ -344,7 +334,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @method __onValidate
      * @private
      */
-    __onValidate: function() {
+    __onValidate: function () {
         this._color.setHSB(
                 this.__widgets.colorPicker.color.hue,
                 this.__widgets.colorPicker.color.saturation,
@@ -358,7 +348,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @method __onColorChanged
      * @private
      */
-    __onColorChanged: function() {
+    __onColorChanged: function () {
         this.__widgets.colorPicker.color.setHSB(
                 this._color.hue,
                 this._color.saturation,

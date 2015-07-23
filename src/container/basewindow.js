@@ -55,7 +55,7 @@ var Widget = require("../widget.js");
 var BaseWindow = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["position-changed"]);
         this.$super(params);
 
@@ -75,14 +75,11 @@ var BaseWindow = Container.$extend({
         ]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Window position.
@@ -93,21 +90,20 @@ var BaseWindow = Container.$extend({
      * @type Object
      * @default {x: 0, y: 0}
      */
-    getPosition: function() {
+    getPosition: function () {
         if (this.visible && this.html.parentNode) {
             return this.absolutePosition;
         }
         return {x: this._x, y: this._y};
     },
 
-    setPosition: function(x, y) {
+    setPosition: function (x, y) {
         if (typeof(x) == "object" && y === undefined) {
             this.html.style.left = x.x + "px";
             this.html.style.top = x.y + "px";
             this._x = x.x;
             this._y = x.y;
-        }
-        else {
+        } else {
             if (typeof(x) == "number") {
                 this.html.style.left = x + "px";
                 this._x = x;
@@ -129,11 +125,11 @@ var BaseWindow = Container.$extend({
      */
     _x: 0,
 
-    getX: function() {
+    getX: function () {
         return this.position.x;
     },
 
-    setX: function(x) {
+    setX: function (x) {
         this.setPosition(x, null);
     },
 
@@ -146,11 +142,11 @@ var BaseWindow = Container.$extend({
      */
     _y: 0,
 
-    getY: function() {
+    getY: function () {
         return this.position.y;
     },
 
-    setY: function(y) {
+    setY: function (y) {
         this.setPosition(null, y);
     },
 
@@ -163,19 +159,18 @@ var BaseWindow = Container.$extend({
      */
     _width: null,
 
-    getWidth: function() {
+    getWidth: function () {
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetWidth;
         }
         return this._width || 0;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         this._width = width || null;
         if (this._width) {
             this.containerNode.style.width = width + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.width = "auto";
         }
     },
@@ -189,19 +184,18 @@ var BaseWindow = Container.$extend({
      */
     _height: null,
 
-    getHeight: function() {
+    getHeight: function () {
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetHeight;
         }
         return this._height || 0;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         this._height = height || null;
         if (this._height) {
             this.containerNode.style.height = height + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.height = "auto";
         }
     },
@@ -215,16 +209,15 @@ var BaseWindow = Container.$extend({
      */
     _minWidth: null,
 
-    getMinWidth: function() {
+    getMinWidth: function () {
         return this._minWidth;
     },
 
-    setMinWidth: function(minWidth) {
+    setMinWidth: function (minWidth) {
         this._minWidth = minWidth || null;
         if (this._minWidth) {
             this.containerNode.style.minWidth = minWidth + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.minWidth = "0";
         }
     },
@@ -238,16 +231,15 @@ var BaseWindow = Container.$extend({
      */
     _minHeight: null,
 
-    getMinHeight: function() {
+    getMinHeight: function () {
         return this._minHeight;
     },
 
-    setMinHeight: function(minHeight) {
+    setMinHeight: function (minHeight) {
         this._minHeight = minHeight || null;
         if (this._minHeight) {
             this.containerNode.style.minHeight = minHeight + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.minHeight = "0";
         }
     },
@@ -261,16 +253,15 @@ var BaseWindow = Container.$extend({
      */
     _maxWidth: null,
 
-    getMaxWidth: function() {
+    getMaxWidth: function () {
         return this._maxWidth;
     },
 
-    setMaxWidth: function(maxWidth) {
+    setMaxWidth: function (maxWidth) {
         this._maxWidth = maxWidth || null;
         if (this._maxWidth) {
             this.containerNode.style.maxWidth = maxWidth + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.maxWidth = "auto";
         }
     },
@@ -284,16 +275,15 @@ var BaseWindow = Container.$extend({
      */
     _maxHeight: null,
 
-    getMaxHeight: function() {
+    getMaxHeight: function () {
         return this._maxHeight;
     },
 
-    setMaxHeight: function(maxHeight) {
+    setMaxHeight: function (maxHeight) {
         this._maxHeight = maxHeight || null;
         if (this._maxHeight) {
             this.containerNode.style.maxHeight = maxHeight + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.maxHeight = "auto";
         }
     },
@@ -307,11 +297,11 @@ var BaseWindow = Container.$extend({
      */
     _padding: 0,
 
-    getPadding: function() {
+    getPadding: function () {
         return this._padding;
     },
 
-    setPadding: function(padding) {
+    setPadding: function (padding) {
         this._padding = padding;
         this.containerNode.style.padding = padding + "px";
     },
@@ -324,7 +314,7 @@ var BaseWindow = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.window;
     },
 
@@ -335,36 +325,31 @@ var BaseWindow = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.html;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Center the window.
      *
      * @method center
      */
-    center: function() {
+    center: function () {
         var node = Widget.e_parent || document.getElementsByTagName("body")[0];
         if (!node) return;
         this.setPosition(
-                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0)|0,
-                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0)|0
+                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0) | 0,
+                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0) | 0
         );
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -372,7 +357,7 @@ var BaseWindow = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.window = document.createElement("div");
         this.__html.window.className = "photonui-widget photonui-basewindow";
     }

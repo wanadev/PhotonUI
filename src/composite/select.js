@@ -58,7 +58,7 @@ var MenuItem = require("../container/menuitem.js");
 var Select = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         params = params || {};
 
         // Attach popup & special mixin
@@ -77,14 +77,11 @@ var Select = Widget.$extend({
         this.setValue(params.value || this.value, true);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The field value.
@@ -95,16 +92,16 @@ var Select = Widget.$extend({
      */
     _value: "",
 
-    getValue: function() {
+    getValue: function () {
         return this._value;
     },
 
-    setValue: function(value, force) {
+    setValue: function (value, force) {
         if (this.value == value && !force) return;
 
         var items = this.__popupMenu.children;
 
-        for (var i=0 ; i<items.length ; i++) {
+        for (var i = 0 ; i < items.length ; i++) {
             if (items[i] instanceof MenuItem && items[i].value == value) {
                 this._value = value;
                 Helpers.cleanNode(this.__html.select);
@@ -128,11 +125,11 @@ var Select = Widget.$extend({
      */
     _placeholder: Stone.lazyGettext("Select..."),
 
-    getPlaceholder: function() {
+    getPlaceholder: function () {
         return this._placeholder;
     },
 
-    setPlaceholder: function(placeholder) {
+    setPlaceholder: function (placeholder) {
         this._placeholder = placeholder;
     },
 
@@ -160,7 +157,7 @@ var Select = Widget.$extend({
     setChildrenNames: function (p) {
         this.__popupMenu.setChildrenNames(p);
         this._updateItemsBinding();
-     },
+    },
 
     /**
      * Width of the container node.
@@ -262,8 +259,7 @@ var Select = Widget.$extend({
     setIconVisible: function (p) {
         if (!p) {
             this.addClass("photonui-select-noicon");
-        }
-        else {
+        } else {
             this.removeClass("photonui-select-noicon");
         }
         this.__popupMenu.setIconVisible(p);
@@ -277,7 +273,7 @@ var Select = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.select;
     },
 
@@ -290,14 +286,11 @@ var Select = Widget.$extend({
      */
     __popupMenu: null,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a widget to the layout.
@@ -306,7 +299,7 @@ var Select = Widget.$extend({
      * @param {photonui.Widget} widget The widget to add.
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
-    addChild: function(w, l) {
+    addChild: function (w, l) {
         this.__popupMenu.addChild(w, l);
         this._updateItemsBinding();
     },
@@ -316,14 +309,12 @@ var Select = Widget.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this.__popupMenu.destroy();
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -331,7 +322,7 @@ var Select = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.select = document.createElement("div");
         this.__html.select.className = "photonui-widget photonui-select";
         this.__html.select.tabIndex = "0";
@@ -343,10 +334,10 @@ var Select = Widget.$extend({
      * @method _updateItemsBinding
      * @private
      */
-    _updateItemsBinding: function() {
+    _updateItemsBinding: function () {
         var items = this.__popupMenu.children;
 
-        for (var i=0 ; i<items.length ; i++) {
+        for (var i = 0 ; i < items.length ; i++) {
             if (items[i] instanceof MenuItem) {
                 items[i].registerCallback(this.name + "-click",
                         "click", this.__onItemClicked, this);
@@ -354,18 +345,16 @@ var Select = Widget.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onClick
      * @private
      * @param event
      */
-    __onClick: function(event) {
+    __onClick: function (event) {
         if (!this._minWidthDefined) {
             this.popupMinWidth = this.offsetWidth;
         }
@@ -377,7 +366,7 @@ var Select = Widget.$extend({
      * @private
      * @param {photonui.MenuItem} widget
      */
-    __onItemClicked: function(widget) {
+    __onItemClicked: function (widget) {
         this.value = widget.value;
         this._callCallbacks("value-changed", [this.value]);
     }

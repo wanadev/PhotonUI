@@ -64,7 +64,7 @@ var _widgets = {};
 var Widget = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         // New instances for object properties
         this.__html = {};
         this._layoutOptions = {};
@@ -101,14 +101,11 @@ var Widget = Base.$extend({
         _widgets[this.name] = this;
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The unique name of the widget.
@@ -119,11 +116,11 @@ var Widget = Base.$extend({
      */
     _name: null,
 
-    getName: function() {
+    getName: function () {
         return this._name;
     },
 
-    setName: function(name) {
+    setName: function (name) {
         delete _widgets[this.name];
         this._name = name;
         _widgets[name] = this;
@@ -142,7 +139,7 @@ var Widget = Base.$extend({
      */
     _parentName: null,
 
-    getParentName: function() {
+    getParentName: function () {
         return this._parentName;
     },
 
@@ -154,7 +151,7 @@ var Widget = Base.$extend({
      * @readOnly
      * @default null (no parent)
      */
-    getParent: function() {
+    getParent: function () {
         return Widget.getWidget(this.parentName);
     },
 
@@ -167,19 +164,18 @@ var Widget = Base.$extend({
      */
     _visible: true,
 
-    isVisible: function() {
+    isVisible: function () {
         return this._visible;
     },
 
-    setVisible: function(visible) {
+    setVisible: function (visible) {
         this._visible = !!visible;
         if (!this.html) {
             return;
         }
         if (visible) {
             this.html.style.display = "";
-        }
-        else {
+        } else {
             this.html.style.display = "none";
         }
         this._visibilityChanged();
@@ -194,16 +190,15 @@ var Widget = Base.$extend({
      */
     _tooltip: null,
 
-    getTooltip: function() {
+    getTooltip: function () {
         return this._tooltip;
     },
 
-    setTooltip: function(tooltip) {
+    setTooltip: function (tooltip) {
         this._tooltip = tooltip;
         if (tooltip) {
             this.html.title = tooltip;
-        }
-        else {
+        } else {
             this.html.removeAttribute("title");
         }
     },
@@ -217,11 +212,11 @@ var Widget = Base.$extend({
      */
     _contextMenuName: null,
 
-    getContextMenuName: function() {
+    getContextMenuName: function () {
         return this._contextMenuName;
     },
 
-    setContextMenuName: function(contextMenuName) {
+    setContextMenuName: function (contextMenuName) {
         this._contextMenuName = contextMenuName;
     },
 
@@ -232,16 +227,15 @@ var Widget = Base.$extend({
      * @type photonui.PopupWindow
      * @default null (= no context menu)
      */
-    getContextMenu: function() {
+    getContextMenu: function () {
         return Widget.getWidget(this.contextMenuName);
     },
 
-    setContextMenu: function(contextMenu) {
+    setContextMenu: function (contextMenu) {
         var PopupWindow = require("./container/popupwindow.js");
         if (contextMenu instanceof PopupWindow) {
             this.contextMenuName = contextMenu.name;
-        }
-        else {
+        } else {
             this.contextMenuName = null;
         }
     },
@@ -255,11 +249,11 @@ var Widget = Base.$extend({
      */
     _layoutOptions: {},
 
-    getLayoutOptions: function() {
+    getLayoutOptions: function () {
         return this._layoutOptions;
     },
 
-    setLayoutOptions: function(layoutOptions) {
+    setLayoutOptions: function (layoutOptions) {
         for (var option in layoutOptions) {
             this._layoutOptions[option] = layoutOptions[option];
         }
@@ -273,7 +267,7 @@ var Widget = Base.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         Helpers.log("debug", "getHtml() method is not implemented on this widget.");
         return null;
     },
@@ -287,7 +281,7 @@ var Widget = Base.$extend({
      * @type Object
      * @readOnly
      */
-    getAbsolutePosition: function() {
+    getAbsolutePosition: function () {
         if (!this.html) {
             return {x: 0, y: 0};
         }
@@ -301,7 +295,7 @@ var Widget = Base.$extend({
      * @type Number
      * @readOnly
      */
-    getOffsetWidth: function() {
+    getOffsetWidth: function () {
         if (!this.html) {
             return 0;
         }
@@ -315,16 +309,14 @@ var Widget = Base.$extend({
      * @type Number
      * @readOnly
      */
-    getOffsetHeight: function() {
+    getOffsetHeight: function () {
         if (!this.html) {
             return 0;
         }
         return this.html.offsetHeight;
     },
 
-
     // ====== Private properties ======
-
 
     /**
      * Object containing references to the widget HTML elements
@@ -335,21 +327,18 @@ var Widget = Base.$extend({
      */
     __html: {},      // HTML Elements
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Display the widget (equivalent to widget.visible = true).
      *
      * @method show
      */
-    show: function() {
+    show: function () {
         this.visible = true;
     },
 
@@ -358,7 +347,7 @@ var Widget = Base.$extend({
      *
      * @method hide
      */
-    hide: function() {
+    hide: function () {
         this.visible = false;
     },
 
@@ -367,11 +356,10 @@ var Widget = Base.$extend({
      *
      * @method unparent
      */
-    unparent: function() {
+    unparent: function () {
         if (this.parent) {
             this.parent.removeChild(this);
-        }
-        else if (this.html && this.html.parentNode) {
+        } else if (this.html && this.html.parentNode) {
             this.html.parentNode.removeChild(this.html);
         }
     },
@@ -381,7 +369,7 @@ var Widget = Base.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this.$super();
         this.unparent();
         delete _widgets[this.name];
@@ -393,7 +381,7 @@ var Widget = Base.$extend({
      * @method addClass
      * @param {String} className The class to add.
      */
-    addClass: function(className) {
+    addClass: function (className) {
         if (!this.html) {
             return;
         }
@@ -410,7 +398,7 @@ var Widget = Base.$extend({
      * @method removeClass
      * @param {String} className The class to remove.
      */
-    removeClass: function(className) {
+    removeClass: function (className) {
         if (!this.html) {
             return;
         }
@@ -422,9 +410,7 @@ var Widget = Base.$extend({
         this.html.className = classes.join(" ");
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -432,7 +418,7 @@ var Widget = Base.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         Helpers.log("debug", "_buildHtml() method not implemented on this widget.");
     },
 
@@ -443,21 +429,18 @@ var Widget = Base.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility && this.visible) {
             this._callCallbacks("show");
-        }
-        else {
+        } else {
             this._callCallbacks("hide");
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the context menu should be displayed.
@@ -466,7 +449,7 @@ var Widget = Base.$extend({
      * @private
      * @param event
      */
-    __onContextMenu: function(event) {
+    __onContextMenu: function (event) {
         event.stopPropagation();
         event.preventDefault();
         if (this.contextMenuName) {
@@ -480,7 +463,7 @@ var Widget = Base.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // Update lazy strings...
         for (var prop in this) {
             if (this[prop] instanceof Stone.LazyString) {
@@ -498,7 +481,7 @@ var Widget = Base.$extend({
  *
  * @return {Widget} The widget or null.
  */
-Widget.getWidget = function(name) {
+Widget.getWidget = function (name) {
     if (_widgets[name] !== undefined) {
         return _widgets[name];
     }
@@ -514,7 +497,7 @@ Widget.e_parent = null;
  * @param {photonui.Widget} widget The widget to insert.
  * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
  */
-Widget.domInsert = function(widget, element) {
+Widget.domInsert = function (widget, element) {
     element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
     if (typeof(element) == "string") {
         element = document.getElementById(element);

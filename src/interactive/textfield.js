@@ -48,19 +48,16 @@ var Field = require("./field.js");
 var TextField = Field.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._bindFieldEvents();
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Type of the field.
@@ -76,25 +73,22 @@ var TextField = Field.$extend({
      * @type String
      * @default text
      */
-    getType: function() {
+    getType: function () {
         return this.__html.field.type;
     },
 
-    setType: function(type) {
+    setType: function (type) {
         if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
             throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
         }
         this.__html.field.type = type;
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -102,7 +96,7 @@ var TextField = Field.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.field = document.createElement("input");
         this.__html.field.className = "photonui-widget photonui-field photonui-field-text";
         this.__html.field.type = "text";

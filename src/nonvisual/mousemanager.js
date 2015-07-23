@@ -119,7 +119,7 @@ var Widget = require("../widget.js");
 var MouseManager = Base.$extend({
 
     // Constructor
-    __init__: function(element, params) {
+    __init__: function (element, params) {
         this._registerWEvents([
             "mouse-event", "mouse-down", "mouse-up", "click", "double-click",
             "drag-start", "dragging", "drag-end", "mouse-move", "scroll-up",
@@ -128,20 +128,16 @@ var MouseManager = Base.$extend({
         if (element && (element instanceof Widget || element instanceof HTMLElement)) {
             this.$super(params);
             this.element = element;
-        }
-        else {
+        } else {
             this.$super(element);
         }
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The HTML Element on which the events are binded.
@@ -155,18 +151,16 @@ var MouseManager = Base.$extend({
      */
     _element: null,
 
-    getElement: function() {
+    getElement: function () {
         return this._element || document;
     },
 
-    setElement: function(element) {
+    setElement: function (element) {
         if (element instanceof Widget) {
             this._element = element.interactiveNode || element.html;
-        }
-        else if (element instanceof HTMLElement) {
+        } else if (element instanceof HTMLElement) {
             this._element = element;
-        }
-        else {
+        } else {
             this._element = null;
         }
         this._updateEvents();
@@ -182,11 +176,11 @@ var MouseManager = Base.$extend({
      */
     _threshold: 5,
 
-    getThreshold: function() {
+    getThreshold: function () {
         return this._threshold;
     },
 
-    setThreshold: function(threshold) {
+    setThreshold: function (threshold) {
         this._threshold = threshold;
     },
 
@@ -198,7 +192,7 @@ var MouseManager = Base.$extend({
      * @type Number
      * @default 0
      */
-    getPageX: function() {
+    getPageX: function () {
         return this.__event.pageX || 0;
     },
 
@@ -210,7 +204,7 @@ var MouseManager = Base.$extend({
      * @type Number
      * @default 0
      */
-    getPageY: function() {
+    getPageY: function () {
         return this.__event.pageY || 0;
     },
 
@@ -221,7 +215,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getX: function() {
+    getX: function () {
         var ex = Helpers.getAbsolutePosition(this.element).x;
         return this.pageX - ex;
     },
@@ -233,7 +227,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getY: function() {
+    getY: function () {
         var ey = Helpers.getAbsolutePosition(this.element).y;
         return this.pageY - ey;
     },
@@ -245,7 +239,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getDeltaX: function() {
+    getDeltaX: function () {
         return this.pageX - ((this.__prevState.pageX !== undefined) ? this.__prevState.pageX : this.pageX);
     },
 
@@ -256,7 +250,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getDeltaY: function() {
+    getDeltaY: function () {
         return this.pageY - ((this.__prevState.pageY !== undefined) ? this.__prevState.pageY : this.pageY);
     },
 
@@ -280,7 +274,7 @@ var MouseManager = Base.$extend({
      */
     _action: "",
 
-    getAction: function() {
+    getAction: function () {
         return this._action;
     },
 
@@ -293,7 +287,7 @@ var MouseManager = Base.$extend({
      */
     _btnLeft: false,
 
-    getBtnLeft: function() {
+    getBtnLeft: function () {
         return this._btnLeft;
     },
 
@@ -306,7 +300,7 @@ var MouseManager = Base.$extend({
      */
     _btnMiddle: false,
 
-    getBtnMiddle: function() {
+    getBtnMiddle: function () {
         return this._btnMiddle;
     },
 
@@ -319,7 +313,7 @@ var MouseManager = Base.$extend({
      */
     _btnRight: false,
 
-    getBtnRight: function() {
+    getBtnRight: function () {
         return this._btnRight;
     },
 
@@ -337,13 +331,11 @@ var MouseManager = Base.$extend({
      */
     _button: null,
 
-    getButton: function() {
+    getButton: function () {
         return this._button;
     },
 
-
     // ====== Private properties ======
-
 
     /**
      * Previous state.
@@ -373,11 +365,9 @@ var MouseManager = Base.$extend({
      */
     __event: {},
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     /**
      * Bind events on the HTML Element.
@@ -385,7 +375,7 @@ var MouseManager = Base.$extend({
      * @method _updateEvents
      * @private
      */
-    _updateEvents: function() {
+    _updateEvents: function () {
         // Unbind all existing events
         for (var id in this.__events) {
             this._unbindEvent(id);
@@ -413,7 +403,7 @@ var MouseManager = Base.$extend({
      * @private
      * @return {Object}
      */
-    _dump: function() {
+    _dump: function () {
         return {
             event: this.__event,
             action: this.action,
@@ -438,7 +428,7 @@ var MouseManager = Base.$extend({
      * @param {String} action The action name (e.g. "mouse-up").
      * @param {Object} event The js event.
      */
-    _stateMachine: function(action, event) {
+    _stateMachine: function (action, event) {
         // Save the previous state
         this.__prevState = this._dump();
 
@@ -462,16 +452,14 @@ var MouseManager = Base.$extend({
 
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
-        }
-        else if (action == "mouse-up") {
+        } else if (action == "mouse-up") {
             if (event.button === 0) this._btnLeft = false;
             if (event.button === 1) this._btnMiddle = false;
             if (event.button === 2) this._btnRight = false;
 
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
-        }
-        else if (action == "drag-end") {
+        } else if (action == "drag-end") {
             if (event.button === 0) this._btnLeft = false;
             if (event.button === 1) this._btnMiddle = false;
             if (event.button === 2) this._btnRight = false;
@@ -540,18 +528,16 @@ var MouseManager = Base.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onMouseDown
      * @private
      * @param event
      */
-    __onMouseDown: function(event) {
+    __onMouseDown: function (event) {
         this._stateMachine("mouse-down", event);
     },
 
@@ -560,7 +546,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onMouseUp: function(event) {
+    __onMouseUp: function (event) {
         this._stateMachine("mouse-up", event);
     },
 
@@ -569,7 +555,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onDoubleClick: function(event) {
+    __onDoubleClick: function (event) {
         this._stateMachine("double-click", event);
     },
 
@@ -578,7 +564,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onMouseMove: function(event) {
+    __onMouseMove: function (event) {
         this._stateMachine("mouse-move", event);
     },
 
@@ -589,7 +575,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onDocumentMouseUp: function(event) {
+    __onDocumentMouseUp: function (event) {
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("drag-end", event);
         }
@@ -602,7 +588,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onDocumentMouseMove: function(event) {
+    __onDocumentMouseMove: function (event) {
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("dragging", event);
         }
@@ -613,7 +599,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onMouseWheel: function(event) {
+    __onMouseWheel: function (event) {
         var wheelDelta = null;
 
         // Webkit
@@ -627,15 +613,14 @@ var MouseManager = Base.$extend({
         // Firefox
         if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
-                wheelDelta = - event.detail;
+                wheelDelta = -event.detail;
             }
         }
 
         if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this._stateMachine("scroll-up", event);
-            }
-            else {
+            } else {
                 this._stateMachine("scroll-down", event);
             }
         }

@@ -50,7 +50,7 @@ var NumericField = require("./numericfield.js");
 var Slider = NumericField.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
 
         this.inputId = this.name + "-field";
@@ -65,20 +65,16 @@ var Slider = NumericField.$extend({
         this._bindEvent("field-contextmenu", this.__html.field, "contextmenu", this.__onFieldContextMenu.bind(this));
     },
 
-
     // Default value (!= NumericField)
     _min: 0,
     _max: 100,
     _decimalDigits: 0,
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Define if the numeric field should be displayed.
@@ -89,18 +85,17 @@ var Slider = NumericField.$extend({
      */
     _fieldVisible: true,
 
-    isFieldVisible: function() {
+    isFieldVisible: function () {
         return this._fieldVisible;
     },
 
-    setFieldVisible: function(fieldVisible) {
+    setFieldVisible: function (fieldVisible) {
         this._fieldVisible = fieldVisible;
 
         if (fieldVisible) {
             this.__html.field.style.display = "";
             this.removeClass("photonui-slider-nofield");
-        }
-        else {
+        } else {
             this.__html.field.style.display = "none";
             this.addClass("photonui-slider-nofield");
         }
@@ -114,23 +109,20 @@ var Slider = NumericField.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         // Hack: force grip position after insertion into the DOM...
-        setTimeout(function() {
+        setTimeout(function () {
             this.value = this.value;
         }.bind(this), 10);
 
         return this.__html.outer;
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Update the value in the html field.
@@ -138,12 +130,12 @@ var Slider = NumericField.$extend({
      * @method _updateFieldValue
      * @private
      */
-    _updateFieldValue: function() {
+    _updateFieldValue: function () {
         this.$super();
         var v = this.value - this.min;
         var m = this.max - this.min;
-        var p = Math.min(Math.max(v/m, 0), 1);
-        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
+        var p = Math.min(Math.max(v / m, 0), 1);
+        this.__html.grip.style.left = "calc(" + Math.floor(p * 100) + "% - " + Math.floor(this.__html.grip.offsetWidth * p) + "px)";
     },
 
     /**
@@ -152,7 +144,7 @@ var Slider = NumericField.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
 
         this.__html.outer = document.createElement("div");
@@ -177,28 +169,26 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    _updateFromMouseEvent: function(event) {
+    _updateFromMouseEvent: function (event) {
         var wx = Helpers.getAbsolutePosition(this.__html.slider).x;
         var gw = this.__html.grip.offsetWidth;
-        var x = Math.round(event.pageX - wx - gw/2);
+        var x = Math.round(event.pageX - wx - gw / 2);
         var w = this.__html.slider.offsetWidth - gw - 3;
         var v = (this.max - this.min) * x / w + this.min;
-        this.value = Math.round(v/this.step) * this.step;
+        this.value = Math.round(v / this.step) * this.step;
         this._callCallbacks("value-changed", [this.value]);
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onSliderMouseDown
      * @private
      * @param event
      */
-    __onSliderMouseDown: function(event) {
+    __onSliderMouseDown: function (event) {
         this._updateFromMouseEvent(event);
         this._bindEvent("slider-mousemove", document, "mousemove", this.__onSliderMouseMove.bind(this));
         this._bindEvent("slider-mouseup", document, "mouseup", this.__onSliderMouseUp.bind(this));
@@ -209,7 +199,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderMouseMove: function(event) {
+    __onSliderMouseMove: function (event) {
         this._updateFromMouseEvent(event);
     },
 
@@ -218,7 +208,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderMouseUp: function(event) {
+    __onSliderMouseUp: function (event) {
         this._unbindEvent("slider-mousemove");
         this._unbindEvent("slider-mouseup");
         this._updateFromMouseEvent(event);
@@ -229,12 +219,11 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderKeyDown: function(event) {
+    __onSliderKeyDown: function (event) {
         if (event.keyCode == 38 || event.keyCode == 39) {  // Up, Right
             this.value += this.step;
             this._callCallbacks("value-changed", [this.value]);
-        }
-        else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
+        } else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
             this.value -= this.step;
             this._callCallbacks("value-changed", [this.value]);
         }
@@ -245,7 +234,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderMouseWheel: function(event) {
+    __onSliderMouseWheel: function (event) {
         var wheelDelta = null;
 
         // Webkit
@@ -259,15 +248,14 @@ var Slider = NumericField.$extend({
         // Firefox
         if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
-                wheelDelta = - event.detail;
+                wheelDelta = -event.detail;
             }
         }
 
         if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this.value += this.step;
-            }
-            else {
+            } else {
                 this.value -= this.step;
             }
             event.preventDefault();
@@ -283,7 +271,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onContextMenu: function(event) {
+    __onContextMenu: function (event) {
         event.stopPropagation();
         event.preventDefault();
         if (this.contextMenuName) {
@@ -296,7 +284,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onFieldContextMenu: function(event) {
+    __onFieldContextMenu: function (event) {
         event.stopPropagation();
     }
 });

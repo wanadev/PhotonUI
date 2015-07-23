@@ -28,7 +28,6 @@
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -52,14 +51,13 @@ var BaseIcon = Widget.$extend({
     // Internal Events Callbacks            //
     //////////////////////////////////////////
 
-
     /**
      * Called when the locale is changed.
      *
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 
