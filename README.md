@@ -107,16 +107,15 @@ You can automatically check your code follows the conventions by using this comm
 
 ### Testing
 
-To run the PhotonUI tests, you can use the following command:
+~~To run the PhotonUI tests, you can use the following command:~~
 
-    grunt test
+~~grunt test~~
 
-**BUT** some tests will fail because [PhantomJS][phantomjs], the browser used to run the tests, embedded a very old Webkit version. So you currently have to launch the tests manually in your browser:
+As [PhantomJS][phantomjs], the browser used to run the tests, embedded a very old Webkit version, the tests cannot be automatically ; you have to run them manually in you browser:
 
-1. Check that the javascript is well formed: `grunt jshint`
-2. Check that the code follows our coding style: `grunt jscs`
-3. Build PhotonUI: `grunt`
-4. Run the tests: open `test/index.html` in your browser.
+1. Check that the javascript is well formed and that it follows the coding style: `grunt jshint jscs`
+2. Build PhotonUI: `grunt`
+3. Run the tests: open `test/index.html` in your browser.
 
 
 ### Creating Your Own widgets
