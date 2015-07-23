@@ -56,7 +56,8 @@ module.exports = function(grunt) {
                 undef: true,
                 globals: {"File": false},
                 browser: true,
-                browserify: true
+                browserify: true,
+                curly: true
             }
         },
 
