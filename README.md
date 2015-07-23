@@ -1,9 +1,11 @@
 # PhotonUI - A javascript framework to create user interfaces
 
-[ ![NPM Version](http://img.shields.io/npm/v/photonui.svg?style=flat) ](https://www.npmjs.com/package/photonui)
-[ ![License](http://img.shields.io/npm/l/photonui.svg?style=flat) ](https://github.com/wanadev/PhotonUI/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/wanadev/PhotonUI.svg?branch=master)](https://travis-ci.org/wanadev/PhotonUI)
+[![NPM Version](http://img.shields.io/npm/v/photonui.svg?style=flat)](https://www.npmjs.com/package/photonui)
+[![License](http://img.shields.io/npm/l/photonui.svg?style=flat)](https://github.com/wanadev/PhotonUI/blob/master/LICENSE)
 
-PhotonUI is a work in progress javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
+
+PhotonUI javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
 
 * **Website:** http://wanadev.github.io/PhotonUI/
 * **Quick start:** http://wanadev.github.io/PhotonUI/doc/quick-start.html
