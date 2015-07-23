@@ -2280,6 +2280,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     _buildUi: function () {
+        this.html.className += " photonui-colorpickerdialog";
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
@@ -7455,7 +7456,7 @@ var NumericField = Field.$extend({
      */
     _buildHtml: function () {
         this.__html.field = document.createElement("input");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-numeric";
+        this.__html.field.className = "photonui-widget photonui-field photonui-numericfield";
         this.__html.field.type = "text";
     },
 
@@ -8033,7 +8034,7 @@ var TextAreaField = Field.$extend({
      */
     _buildHtml: function () {
         this.__html.field = document.createElement("textarea");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-textarea";
+        this.__html.field.className = "photonui-widget photonui-field photonui-textareafield";
         this.__html.field.cols = 20;
         this.__html.field.rows = 3;
     }
@@ -8148,7 +8149,7 @@ var TextField = Field.$extend({
      */
     _buildHtml: function () {
         this.__html.field = document.createElement("input");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-text";
+        this.__html.field.className = "photonui-widget photonui-field photonui-textfield";
         this.__html.field.type = "text";
     }
 });
