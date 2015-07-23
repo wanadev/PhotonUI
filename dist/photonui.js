@@ -2280,6 +2280,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     _buildUi: function () {
+        this.html.className += " photonui-colorpickerdialog";
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
