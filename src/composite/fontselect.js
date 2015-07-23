@@ -56,7 +56,9 @@ var FontSelect = Select.$extend({
         params = params || {};
         this._fonts = [];
         this.$super(params);
-        if (this.fonts.length === 0) this.fonts = ["sans-serif", "serif", "monospace"];
+        if (this.fonts.length === 0) {
+            this.fonts = ["sans-serif", "serif", "monospace"];
+        }
         this.value = (params.value !== undefined) ? params.value : "sans-serif";
     },
 

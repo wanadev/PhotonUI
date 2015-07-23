@@ -70,7 +70,9 @@ var ColorPickerDialog = Dialog.$extend({
         this._color = new Color();
 
         params = params || {};
-        if (params.title === undefined) params.title = _("Select a color...");
+        if (params.title === undefined) {
+            params.title = _("Select a color...");
+        }
 
         this._registerWEvents(["value-changed"]);
 
@@ -115,7 +117,9 @@ var ColorPickerDialog = Dialog.$extend({
 
     setVisible: function (visible) {
         this.$super(visible);
-        if (this._color && visible && this.__widgets.labelRed) this._updateUi();
+        if (this._color && visible && this.__widgets.labelRed) {
+            this._updateUi();
+        }
     },
 
     //////////////////////////////////////////
@@ -256,12 +260,16 @@ var ColorPickerDialog = Dialog.$extend({
 
         // == Dialog Buttons ==
         this.__widgets.buttonOk = new Button({text: _("Ok")});
-        if (FAIcon) this.__widgets.buttonOk.leftIcon = new FAIcon("fa-check");
+        if (FAIcon) {
+            this.__widgets.buttonOk.leftIcon = new FAIcon("fa-check");
+        }
 
         this.__widgets.buttonCancel = new Button({text: _("Cancel")});
         this.buttons = [this.__widgets.buttonOk, this.__widgets.buttonCancel];
 
-        if (FAIcon) this.__widgets.buttonCancel.leftIcon = new FAIcon("fa-times");
+        if (FAIcon) {
+            this.__widgets.buttonCancel.leftIcon = new FAIcon("fa-times");
+        }
 
         // == Bindings ==
         this.__widgets.colorPalette.color = this.__widgets.colorPicker.color;

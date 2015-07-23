@@ -436,9 +436,15 @@ var MouseManager = Base.$extend({
         this._action = action;
         this.__event = event;
         this._button = null;
-        if (event.button === 0) this._button = "left";
-        if (event.button === 1) this._button = "middle";
-        if (event.button === 2) this._button = "right";
+        if (event.button === 0) {
+            this._button = "left";
+        }
+        if (event.button === 1) {
+            this._button = "middle";
+        }
+        if (event.button === 2) {
+            this._button = "right";
+        }
 
         // Analyze the event
 
@@ -446,23 +452,41 @@ var MouseManager = Base.$extend({
         if (action == "mouse-down") {
             this.__mouseDownEvent = event;
 
-            if (event.button === 0) this._btnLeft = true;
-            if (event.button === 1) this._btnMiddle = true;
-            if (event.button === 2) this._btnRight = true;
+            if (event.button === 0) {
+                this._btnLeft = true;
+            }
+            if (event.button === 1) {
+                this._btnMiddle = true;
+            }
+            if (event.button === 2) {
+                this._btnRight = true;
+            }
 
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         } else if (action == "mouse-up") {
-            if (event.button === 0) this._btnLeft = false;
-            if (event.button === 1) this._btnMiddle = false;
-            if (event.button === 2) this._btnRight = false;
+            if (event.button === 0) {
+                this._btnLeft = false;
+            }
+            if (event.button === 1) {
+                this._btnMiddle = false;
+            }
+            if (event.button === 2) {
+                this._btnRight = false;
+            }
 
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         } else if (action == "drag-end") {
-            if (event.button === 0) this._btnLeft = false;
-            if (event.button === 1) this._btnMiddle = false;
-            if (event.button === 2) this._btnRight = false;
+            if (event.button === 0) {
+                this._btnLeft = false;
+            }
+            if (event.button === 1) {
+                this._btnMiddle = false;
+            }
+            if (event.button === 2) {
+                this._btnRight = false;
+            }
         }
 
         // Click

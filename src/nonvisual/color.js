@@ -85,11 +85,17 @@ var Color = Base.$extend({
      */
     getHexString: function () {
         var r = this.red.toString(16).toUpperCase();
-        if (r.length == 1) r = "0" + r;
+        if (r.length == 1) {
+            r = "0" + r;
+        }
         var g = this.green.toString(16).toUpperCase();
-        if (g.length == 1) g = "0" + g;
+        if (g.length == 1) {
+            g = "0" + g;
+        }
         var b = this.blue.toString(16).toUpperCase();
-        if (b.length == 1) b = "0" + b;
+        if (b.length == 1) {
+            b = "0" + b;
+        }
         return "#" + r + g + b;
     },
 
@@ -310,13 +316,19 @@ var Color = Base.$extend({
      */
     setRGBA: function () {
         var args = arguments;
-        if (arguments.length == 1 && Array.isArray(arguments[0])) args = arguments[0];
-        if (args.length < 3) return;
+        if (arguments.length == 1 && Array.isArray(arguments[0])) {
+            args = arguments[0];
+        }
+        if (args.length < 3) {
+            return;
+        }
 
         this._red = Math.max(0, Math.min(255, args[0] | 0));
         this._green = Math.max(0, Math.min(255, args[1] | 0));
         this._blue = Math.max(0, Math.min(255, args[2] | 0));
-        if (args[3] !== undefined) this._alpha = Math.max(0, Math.min(255, args[3] | 0));
+        if (args[3] !== undefined) {
+            this._alpha = Math.max(0, Math.min(255, args[3] | 0));
+        }
 
         this._updateHSB();
     },
@@ -353,8 +365,12 @@ var Color = Base.$extend({
      */
     setHSB: function () {
         var args = arguments;
-        if (arguments.length == 1 && Array.isArray(arguments[0])) args = arguments[0];
-        if (args.length != 3) return;
+        if (arguments.length == 1 && Array.isArray(arguments[0])) {
+            args = arguments[0];
+        }
+        if (args.length != 3) {
+            return;
+        }
 
         this._hue = Math.max(0, Math.min(360, args[0] | 0));
         this._saturation = Math.max(0, Math.min(100, args[1] | 0));

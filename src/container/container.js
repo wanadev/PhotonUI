@@ -80,7 +80,9 @@ var Container = Widget.$extend({
 
     setHorizontalChildExpansion: function (expansion) {
         this._horizontalChildExpansion = !!expansion;
-        if (!this.containerNode) return;
+        if (!this.containerNode) {
+            return;
+        }
         if (expansion) {
             this.containerNode.classList.add("photonui-container-expand-child-horizontal");
         } else {
@@ -103,7 +105,9 @@ var Container = Widget.$extend({
 
     setVerticalChildExpansion: function (expansion) {
         this._verticalChildExpansion = !!expansion;
-        if (!this.containerNode) return;
+        if (!this.containerNode) {
+            return;
+        }
         if (expansion) {
             this.containerNode.classList.add("photonui-container-expand-child-vertical");
         } else {

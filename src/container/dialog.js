@@ -117,7 +117,9 @@ var Dialog = Window.$extend({
         var widget;
         for (var i = 0 ; i < this._buttonsNames.length ; i++) {
             widget = Widget.getWidget(this._buttonsNames[i]);
-            if (widget instanceof Widget) buttons.push(widget);
+            if (widget instanceof Widget) {
+                buttons.push(widget);
+            }
         }
         return buttons;
     },
@@ -234,7 +236,9 @@ var Dialog = Window.$extend({
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var buttons = this.buttons;
         for (var i = 0 ; i < buttons.length ; i++) {
-            if (!(this.child instanceof Widget)) continue;
+            if (!(this.child instanceof Widget)) {
+                continue;
+            }
             buttons[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);

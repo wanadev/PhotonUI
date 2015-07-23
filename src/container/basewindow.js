@@ -342,7 +342,9 @@ var BaseWindow = Container.$extend({
      */
     center: function () {
         var node = Widget.e_parent || document.getElementsByTagName("body")[0];
-        if (!node) return;
+        if (!node) {
+            return;
+        }
         this.setPosition(
                 Math.max((node.offsetWidth - this.offsetWidth) / 2, 0) | 0,
                 Math.max((node.offsetHeight - this.offsetHeight) / 2, 0) | 0

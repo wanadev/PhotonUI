@@ -133,9 +133,15 @@ var TabItem = Container.$extend({
             if (this.parent) {
                 var children = this.parent.children;
                 for (var i = 0 ; i < children.length ; i++) {
-                    if (!(children[i] instanceof TabItem)) continue;
-                    if (children[i] === this) continue;
-                    if (children[i].visible) children[i].setVisible(false, true);
+                    if (!(children[i] instanceof TabItem)) {
+                        continue;
+                    }
+                    if (children[i] === this) {
+                        continue;
+                    }
+                    if (children[i].visible) {
+                        children[i].setVisible(false, true);
+                    }
                 }
                 this.parent._activeTabName = this.name;
             }

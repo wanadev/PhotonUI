@@ -293,11 +293,13 @@ var ColorPicker = Widget.$extend({
      * @private
      */
     _updateSB: function () {
-        if (this.__disableSBUpdate) return;
+        if (this.__disableSBUpdate) {
+            return;
+        }
 
         var canvas = this.__buffSB;
         var ctx = canvas.getContext("2d");
-        
+
         var color = new Color({
             hue: this.color.hue,
             saturation: 100,
@@ -399,9 +401,13 @@ var ColorPicker = Widget.$extend({
         var dy = Math.abs(100 - mstate.y);
         var angle = Math.atan(dy / dx) * 180 / Math.PI;
 
-        if (mstate.x < 100 && mstate.y < 100) angle = 180 - angle;
-        else if (mstate.x < 100 && mstate.y >= 100) angle += 180;
-        else if (mstate.x >= 100 && mstate.y > 100) angle = 360 - angle;
+        if (mstate.x < 100 && mstate.y < 100) {
+            angle = 180 - angle;
+        } else if (mstate.x < 100 && mstate.y >= 100) {
+            angle += 180;
+        } else if (mstate.x >= 100 && mstate.y > 100) {
+            angle = 360 - angle;
+        }
 
         return angle | 0;
     },

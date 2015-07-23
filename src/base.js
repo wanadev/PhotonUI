@@ -248,7 +248,9 @@ var Base = Class.$extend({
      * @param {String} id The id of the event.
      */
     _unbindEvent: function (id) {
-        if (!this.__events[id]) return;
+        if (!this.__events[id]) {
+            return;
+        }
         this.__events[id].element.removeEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,

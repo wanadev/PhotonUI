@@ -111,7 +111,9 @@ var AccelManager = Base.$extend({
      * @param {String} id the accelerator id.
      */
     removeAccel: function (id) {
-        if (!this.__kbd[id]) return;
+        if (!this.__kbd[id]) {
+            return;
+        }
         this.__kbd[id].binding.clear();
         delete this.__kbd[id];
     },
@@ -136,7 +138,9 @@ var AccelManager = Base.$extend({
      */
     __onAccell: function (event, keys, combo) {
         for (var id in this.__kbd) {
-            if (this.__kbd[id].keys != combo) continue;
+            if (this.__kbd[id].keys != combo) {
+                continue;
+            }
 
             if (this.__kbd[id].safe) {
                 if (document.activeElement instanceof HTMLInputElement ||

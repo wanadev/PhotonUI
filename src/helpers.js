@@ -100,15 +100,21 @@ Helpers.cleanNode = function (node) {
  * @return {Object} `{x: <Number>, y: <Number>}
  */
 Helpers.getAbsolutePosition = function (element) {
-    if (typeof(element) == "string") element = document.getElementById(element);
-    if (!(element instanceof Element)) return {x: 0, y: 0};
+    if (typeof(element) == "string") {
+        element = document.getElementById(element);
+    }
+    if (!(element instanceof Element)) {
+        return {x: 0, y: 0};
+    }
     var css;
     try {
         css = getComputedStyle(element);
     } catch (e) {
         return {x: 0, y: 0};
     }
-    if (!css) return {x: 0, y: 0};
+    if (!css) {
+        return {x: 0, y: 0};
+    }
 
     var x = -parseInt(css.borderLeftWidth);
     var y = -parseInt(css.borderTopWidth);
@@ -170,9 +176,15 @@ Helpers.numberToCssSize = function (value, defaultValue, nullValue) {
  */
 Helpers.log = function (level, message) {
     try {
-        if (!window.console) return;
-        if (!window.console.log) return;
-        if (!window.console[level]) level = "log";
+        if (!window.console) {
+            return;
+        }
+        if (!window.console.log) {
+            return;
+        }
+        if (!window.console[level]) {
+            level = "log";
+        }
         window.console[level]("PhotonUI: " + message);
     } catch (e) {
     }

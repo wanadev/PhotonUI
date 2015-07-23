@@ -320,7 +320,9 @@ var Viewport = Container.$extend({
      */
     _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
-        if (visibility) this._sizingHack();
+        if (visibility) {
+            this._sizingHack();
+        }
         this.$super(visibility);
     },
 
@@ -341,7 +343,9 @@ var Viewport = Container.$extend({
             this.__html.viewport.style.display = "none";
 
             while (node = node.parentNode) {  // jshint ignore:line
-                if (!node) break;
+                if (!node) {
+                    break;
+                }
                 if (node.offsetHeight > 0) {
                     height = node.offsetHeight;
                     var style = getComputedStyle(node);
@@ -353,8 +357,12 @@ var Viewport = Container.$extend({
                 }
             }
 
-            if (this.maxHeight !== null) height = Math.min(this.maxHeight, height);
-            if (this.minHeight !== null) height = Math.max(this.minHeight, height);
+            if (this.maxHeight !== null) {
+                height = Math.min(this.maxHeight, height);
+            }
+            if (this.minHeight !== null) {
+                height = Math.max(this.minHeight, height);
+            }
             this.__html.viewport.style.height = height + "px";
             this.__html.viewport.style.display = "";
         }

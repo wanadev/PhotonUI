@@ -563,8 +563,12 @@ var GridLayout = Layout.$extend({
             return;
         } else if (_sizingHackEnabled === null) {
             var isWebkit = false;
-            if ("WebkitAppearance" in document.documentElement.style) isWebkit = true;
-            if ("WebKitCSSMatrix" in window) isWebkit = true;
+            if ("WebkitAppearance" in document.documentElement.style) {
+                isWebkit = true;
+            }
+            if ("WebKitCSSMatrix" in window) {
+                isWebkit = true;
+            }
             if (isWebkit) {
                 _sizingHackEnabled = false;
                 return;
@@ -600,13 +604,17 @@ var GridLayout = Layout.$extend({
 
             // 2nd pass -> fixed height for all td where rowspan = 1
             for (i = 0 ; i < nodes.length ; i++) {
-                if (nodes[i].rowSpan && nodes[i].rowSpan > 1) continue;
+                if (nodes[i].rowSpan && nodes[i].rowSpan > 1) {
+                    continue;
+                }
                 _size(nodes[i]);
             }
 
             // 3rd pass -> fixed height for all td where rowspan > 1
             for (i = 0 ; i < nodes.length ; i++) {
-                if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) continue;
+                if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) {
+                    continue;
+                }
                 _size(nodes[i]);
             }
 

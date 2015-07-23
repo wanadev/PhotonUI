@@ -97,7 +97,9 @@ var Select = Widget.$extend({
     },
 
     setValue: function (value, force) {
-        if (this.value == value && !force) return;
+        if (this.value == value && !force) {
+            return;
+        }
 
         var items = this.__popupMenu.children;
 

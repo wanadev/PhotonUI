@@ -239,17 +239,31 @@ var BoxLayout = Layout.$extend({
             container.className += " photonui-layout-align-" + options.align;
 
             // layout options: order
-            if (options.order !== null) container.style.order = options.order;
+            if (options.order !== null) {
+                container.style.order = options.order;
+            }
 
             // layout options: *width
-            if (options.minWidth !== null) container.style.minWidth = options.minWidth + "px";
-            if (options.maxWidth !== null) container.style.maxWidth = options.maxWidth + "px";
-            if (options.width !== null) container.style.width = options.width + "px";
+            if (options.minWidth !== null) {
+                container.style.minWidth = options.minWidth + "px";
+            }
+            if (options.maxWidth !== null) {
+                container.style.maxWidth = options.maxWidth + "px";
+            }
+            if (options.width !== null) {
+                container.style.width = options.width + "px";
+            }
 
             // layout options: *height
-            if (options.minHeight !== null) container.style.minHeight = options.minHeight + "px";
-            if (options.maxHeight !== null) container.style.maxHeight = options.maxHeight + "px";
-            if (options.height !== null) container.style.height = options.height + "px";
+            if (options.minHeight !== null) {
+                container.style.minHeight = options.minHeight + "px";
+            }
+            if (options.maxHeight !== null) {
+                container.style.maxHeight = options.maxHeight + "px";
+            }
+            if (options.height !== null) {
+                container.style.height = options.height + "px";
+            }
 
             container.appendChild(children[i].html);
             fragment.appendChild(container);

@@ -114,7 +114,9 @@ var Layout = Container.$extend({
         var widget;
         for (var i = 0 ; i < this._childrenNames.length ; i++) {
             widget = Widget.getWidget(this._childrenNames[i]);
-            if (widget instanceof Widget) children.push(widget);
+            if (widget instanceof Widget) {
+                children.push(widget);
+            }
         }
         return children;
     },
@@ -255,7 +257,9 @@ var Layout = Container.$extend({
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var children = this.children;
         for (var i = 0 ; i < children.length ; i++) {
-            if (!(this.child instanceof Widget)) continue;
+            if (!(this.child instanceof Widget)) {
+                continue;
+            }
             children[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);

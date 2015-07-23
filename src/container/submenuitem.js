@@ -80,7 +80,9 @@ var SubMenuItem = MenuItem.$extend({
         var that = this;
 
         function _init() {
-            if (!that.menu) return;
+            if (!that.menu) {
+                return;
+            }
             that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
             that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
             that.active = that.menu.visible;
