@@ -3,7 +3,7 @@ node_js:
   - "stable"
 before_install:
   - sudo apt-get update -qq
-    sudo apt-get install chromium-browser firefox
+  - sudo apt-get install chromium-browser firefox
 install:
   - npm install -g grunt-cli
   - npm install karma karma-firefox-launcher karma-chrome-launcher karma-jasmine
