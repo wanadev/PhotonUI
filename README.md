@@ -120,6 +120,13 @@ As [PhantomJS][phantomjs], the browser used to run the tests, embedded a very ol
 3. Run the tests: open `test/index.html` in your browser.
 
 
+### Git Hooks
+
+To avoid committing bad stuff, you can install a git pre-commit hook that will abort the commit if the code contains errors. To install the hooks you just have to run the following command:
+
+    grunt githooks
+
+
 ### Creating Your Own widgets
 
 If you want to create you own PhotonUI widgets, first read this:
