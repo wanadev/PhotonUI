@@ -76,7 +76,7 @@ To build PhotonUI, you will first have to install [Node.js][nodejs] (or [io.js][
 
 **NOTE:** If you are on Ubuntu / Debian Linux you must install the `nodejs-legacy` package.
 
-Next, install globaly the `grunt-cli` npm package:
+Next, install globally the `grunt-cli` npm package:
 
     npm install -g grunt-cli
 
@@ -102,7 +102,7 @@ All generated files are in the `dist` folder.
 
 PhotonUI follows the [Yandex Javascript CodeStyle][codestyle-yandex] **EXCEPT** for the quote marks where we use **double quotes** (`"`).
 
-You can automatically check your code follows the conventions by using this command:
+You can automatically check that your code follows the conventions by using this command:
 
     grunt jscs
 
