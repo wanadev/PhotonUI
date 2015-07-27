@@ -28,6 +28,7 @@
   "dependencies": {
     "classyjs": ">=0.9.0",
     "keyboardjs": "flozz/KeyboardJS",
+    "sprintf-js": "^1.0.3",
     "stonejs": ">=2.0.0",
     "uuid": "^2.0.1"
   },

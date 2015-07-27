@@ -1164,6 +1164,216 @@
 
 
 },{}],3:[function(require,module,exports){
+(function(window) {
+    var re = {
+        not_string: /[^s]/,
+        number: /[diefg]/,
+        json: /[j]/,
+        not_json: /[^j]/,
+        text: /^[^\x25]+/,
+        modulo: /^\x25{2}/,
+        placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijosuxX])/,
+        key: /^([a-z_][a-z_\d]*)/i,
+        key_access: /^\.([a-z_][a-z_\d]*)/i,
+        index_access: /^\[(\d+)\]/,
+        sign: /^[\+\-]/
+    }
+
+    function sprintf() {
+        var key = arguments[0], cache = sprintf.cache
+        if (!(cache[key] && cache.hasOwnProperty(key))) {
+            cache[key] = sprintf.parse(key)
+        }
+        return sprintf.format.call(null, cache[key], arguments)
+    }
+
+    sprintf.format = function(parse_tree, argv) {
+        var cursor = 1, tree_length = parse_tree.length, node_type = "", arg, output = [], i, k, match, pad, pad_character, pad_length, is_positive = true, sign = ""
+        for (i = 0; i < tree_length; i++) {
+            node_type = get_type(parse_tree[i])
+            if (node_type === "string") {
+                output[output.length] = parse_tree[i]
+            }
+            else if (node_type === "array") {
+                match = parse_tree[i] // convenience purposes only
+                if (match[2]) { // keyword argument
+                    arg = argv[cursor]
+                    for (k = 0; k < match[2].length; k++) {
+                        if (!arg.hasOwnProperty(match[2][k])) {
+                            throw new Error(sprintf("[sprintf] property '%s' does not exist", match[2][k]))
+                        }
+                        arg = arg[match[2][k]]
+                    }
+                }
+                else if (match[1]) { // positional argument (explicit)
+                    arg = argv[match[1]]
+                }
+                else { // positional argument (implicit)
+                    arg = argv[cursor++]
+                }
+
+                if (get_type(arg) == "function") {
+                    arg = arg()
+                }
+
+                if (re.not_string.test(match[8]) && re.not_json.test(match[8]) && (get_type(arg) != "number" && isNaN(arg))) {
+                    throw new TypeError(sprintf("[sprintf] expecting number but found %s", get_type(arg)))
+                }
+
+                if (re.number.test(match[8])) {
+                    is_positive = arg >= 0
+                }
+
+                switch (match[8]) {
+                    case "b":
+                        arg = arg.toString(2)
+                    break
+                    case "c":
+                        arg = String.fromCharCode(arg)
+                    break
+                    case "d":
+                    case "i":
+                        arg = parseInt(arg, 10)
+                    break
+                    case "j":
+                        arg = JSON.stringify(arg, null, match[6] ? parseInt(match[6]) : 0)
+                    break
+                    case "e":
+                        arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential()
+                    break
+                    case "f":
+                        arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg)
+                    break
+                    case "g":
+                        arg = match[7] ? parseFloat(arg).toPrecision(match[7]) : parseFloat(arg)
+                    break
+                    case "o":
+                        arg = arg.toString(8)
+                    break
+                    case "s":
+                        arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg)
+                    break
+                    case "u":
+                        arg = arg >>> 0
+                    break
+                    case "x":
+                        arg = arg.toString(16)
+                    break
+                    case "X":
+                        arg = arg.toString(16).toUpperCase()
+                    break
+                }
+                if (re.json.test(match[8])) {
+                    output[output.length] = arg
+                }
+                else {
+                    if (re.number.test(match[8]) && (!is_positive || match[3])) {
+                        sign = is_positive ? "+" : "-"
+                        arg = arg.toString().replace(re.sign, "")
+                    }
+                    else {
+                        sign = ""
+                    }
+                    pad_character = match[4] ? match[4] === "0" ? "0" : match[4].charAt(1) : " "
+                    pad_length = match[6] - (sign + arg).length
+                    pad = match[6] ? (pad_length > 0 ? str_repeat(pad_character, pad_length) : "") : ""
+                    output[output.length] = match[5] ? sign + arg + pad : (pad_character === "0" ? sign + pad + arg : pad + sign + arg)
+                }
+            }
+        }
+        return output.join("")
+    }
+
+    sprintf.cache = {}
+
+    sprintf.parse = function(fmt) {
+        var _fmt = fmt, match = [], parse_tree = [], arg_names = 0
+        while (_fmt) {
+            if ((match = re.text.exec(_fmt)) !== null) {
+                parse_tree[parse_tree.length] = match[0]
+            }
+            else if ((match = re.modulo.exec(_fmt)) !== null) {
+                parse_tree[parse_tree.length] = "%"
+            }
+            else if ((match = re.placeholder.exec(_fmt)) !== null) {
+                if (match[2]) {
+                    arg_names |= 1
+                    var field_list = [], replacement_field = match[2], field_match = []
+                    if ((field_match = re.key.exec(replacement_field)) !== null) {
+                        field_list[field_list.length] = field_match[1]
+                        while ((replacement_field = replacement_field.substring(field_match[0].length)) !== "") {
+                            if ((field_match = re.key_access.exec(replacement_field)) !== null) {
+                                field_list[field_list.length] = field_match[1]
+                            }
+                            else if ((field_match = re.index_access.exec(replacement_field)) !== null) {
+                                field_list[field_list.length] = field_match[1]
+                            }
+                            else {
+                                throw new SyntaxError("[sprintf] failed to parse named argument key")
+                            }
+                        }
+                    }
+                    else {
+                        throw new SyntaxError("[sprintf] failed to parse named argument key")
+                    }
+                    match[2] = field_list
+                }
+                else {
+                    arg_names |= 2
+                }
+                if (arg_names === 3) {
+                    throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported")
+                }
+                parse_tree[parse_tree.length] = match
+            }
+            else {
+                throw new SyntaxError("[sprintf] unexpected placeholder")
+            }
+            _fmt = _fmt.substring(match[0].length)
+        }
+        return parse_tree
+    }
+
+    var vsprintf = function(fmt, argv, _argv) {
+        _argv = (argv || []).slice(0)
+        _argv.splice(0, 0, fmt)
+        return sprintf.apply(null, _argv)
+    }
+
+    /**
+     * helpers
+     */
+    function get_type(variable) {
+        return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase()
+    }
+
+    function str_repeat(input, multiplier) {
+        return Array(multiplier + 1).join(input)
+    }
+
+    /**
+     * export to either browser or node.js
+     */
+    if (typeof exports !== "undefined") {
+        exports.sprintf = sprintf
+        exports.vsprintf = vsprintf
+    }
+    else {
+        window.sprintf = sprintf
+        window.vsprintf = vsprintf
+
+        if (typeof define === "function" && define.amd) {
+            define(function() {
+                return {
+                    sprintf: sprintf,
+                    vsprintf: vsprintf
+                }
+            })
+        }
+    }
+})(typeof window === "undefined" ? this : window);
+
+},{}],4:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
@@ -1350,7 +1560,7 @@ module.exports = {
     updateDomTranslation: updateDomTranslation
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -1385,7 +1595,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -1570,7 +1780,7 @@ uuid.unparse = unparse;
 
 module.exports = uuid;
 
-},{"./rng":4}],6:[function(require,module,exports){
+},{"./rng":5}],7:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -1872,7 +2082,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":21,"classyjs":1,"uuid":5}],7:[function(require,module,exports){
+},{"./helpers.js":22,"classyjs":1,"uuid":6}],8:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2134,7 +2344,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":16,"../interactive/button.js":22,"../interactive/colorpalette.js":24,"../layout/boxlayout.js":33,"../nonvisual/color.js":40,"./colorpickerdialog.js":8,"stonejs":3}],8:[function(require,module,exports){
+},{"../container/popupwindow.js":17,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../layout/boxlayout.js":34,"../nonvisual/color.js":41,"./colorpickerdialog.js":9,"stonejs":4}],9:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2520,7 +2730,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":14,"../interactive/button.js":22,"../interactive/colorpalette.js":24,"../interactive/colorpicker.js":25,"../interactive/slider.js":28,"../layout/boxlayout.js":33,"../layout/gridlayout.js":35,"../nonvisual/color.js":40,"../visual/faicon.js":48,"../visual/label.js":50,"../visual/separator.js":52,"stonejs":3}],9:[function(require,module,exports){
+},{"../container/dialog.js":15,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../interactive/colorpicker.js":26,"../interactive/slider.js":29,"../layout/boxlayout.js":34,"../layout/gridlayout.js":36,"../nonvisual/color.js":41,"../visual/faicon.js":50,"../visual/label.js":52,"../visual/separator.js":54,"stonejs":4}],10:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2655,7 +2865,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":15,"./select.js":11,"stonejs":3}],10:[function(require,module,exports){
+},{"../container/menuitem.js":16,"./select.js":12,"stonejs":4}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2773,7 +2983,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":16,"../layout/menu.js":37}],11:[function(require,module,exports){
+},{"../container/popupwindow.js":17,"../layout/menu.js":38}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3152,7 +3362,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":15,"../helpers.js":21,"../widget.js":55,"./popupmenu.js":10,"stonejs":3}],12:[function(require,module,exports){
+},{"../container/menuitem.js":16,"../helpers.js":22,"../widget.js":57,"./popupmenu.js":11,"stonejs":4}],13:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3522,7 +3732,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":55,"./container.js":13}],13:[function(require,module,exports){
+},{"../widget.js":57,"./container.js":14}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3746,7 +3956,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":55}],14:[function(require,module,exports){
+},{"../widget.js":57}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3997,7 +4207,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":21,"../widget.js":55,"./window.js":20}],15:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":57,"./window.js":21}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4227,7 +4437,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":21,"../visual/baseicon.js":46,"../widget.js":55,"./container.js":13}],16:[function(require,module,exports){
+},{"../helpers.js":22,"../visual/baseicon.js":48,"../widget.js":57,"./container.js":14}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4400,7 +4610,7 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":12}],17:[function(require,module,exports){
+},{"./basewindow.js":13}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4549,7 +4759,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":37,"../widget.js":55,"./menuitem.js":15}],18:[function(require,module,exports){
+},{"../layout/menu.js":38,"../widget.js":57,"./menuitem.js":16}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4733,7 +4943,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":21,"./container.js":13}],19:[function(require,module,exports){
+},{"../helpers.js":22,"./container.js":14}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5121,7 +5331,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":21,"./container.js":13}],20:[function(require,module,exports){
+},{"../helpers.js":22,"./container.js":14}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5500,7 +5710,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":21,"../widget.js":55,"./basewindow.js":12,"stonejs":3}],21:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":57,"./basewindow.js":13,"stonejs":4}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5695,7 +5905,7 @@ Helpers.log = function (level, message) {
 
 module.exports = Helpers;
 
-},{"uuid":5}],22:[function(require,module,exports){
+},{"uuid":6}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6112,7 +6322,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":21,"../visual/baseicon.js":46,"../widget.js":55}],23:[function(require,module,exports){
+},{"../helpers.js":22,"../visual/baseicon.js":48,"../widget.js":57}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6294,7 +6504,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":55}],24:[function(require,module,exports){
+},{"../widget.js":57}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6498,7 +6708,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":21,"../nonvisual/color.js":40,"../widget.js":55}],25:[function(require,module,exports){
+},{"../helpers.js":22,"../nonvisual/color.js":41,"../widget.js":57}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7016,7 +7226,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":21,"../nonvisual/color.js":40,"../nonvisual/mousemanager.js":42,"../widget.js":55}],26:[function(require,module,exports){
+},{"../helpers.js":22,"../nonvisual/color.js":41,"../nonvisual/mousemanager.js":44,"../widget.js":57}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7206,7 +7416,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":55}],27:[function(require,module,exports){
+},{"../widget.js":57}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7572,7 +7782,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":26}],28:[function(require,module,exports){
+},{"./field.js":27}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7868,7 +8078,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":21,"./numericfield.js":27}],29:[function(require,module,exports){
+},{"../helpers.js":22,"./numericfield.js":28}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7928,7 +8138,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":23}],30:[function(require,module,exports){
+},{"./checkbox.js":24}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8042,7 +8252,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":26}],31:[function(require,module,exports){
+},{"./field.js":27}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8156,7 +8366,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":26}],32:[function(require,module,exports){
+},{"./field.js":27}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8255,7 +8465,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":22,"./checkbox.js":23}],33:[function(require,module,exports){
+},{"./button.js":23,"./checkbox.js":24}],34:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8603,7 +8813,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":21,"./layout.js":36}],34:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8751,7 +8961,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":21,"./layout.js":36}],35:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9387,7 +9597,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":21,"./layout.js":36}],36:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9673,7 +9883,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":13,"../widget.js":55}],37:[function(require,module,exports){
+},{"../container/container.js":14,"../widget.js":57}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9813,7 +10023,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":21,"./layout.js":36}],38:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10113,7 +10323,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":18,"../helpers.js":21,"../widget.js":55,"./layout.js":36}],39:[function(require,module,exports){
+},{"../container/tabitem.js":19,"../helpers.js":22,"../widget.js":57,"./layout.js":37}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10276,7 +10486,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":6,"keyboardjs":2}],40:[function(require,module,exports){
+},{"../base.js":7,"keyboardjs":2}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10763,7 +10973,80 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":6}],41:[function(require,module,exports){
+},{"../base.js":7}],42:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule NonVisual
+ * @namespace photonui
+ */
+
+var sprintf = require("sprintf-js").sprintf;
+
+/**
+ * A set of functions to format data for DataView widgets.
+ *
+ * @class DataFormatter
+ * @constructor
+ */
+var DataFormatter = {
+
+    /**
+     * Format strings using a sprintf like syntax.
+     *
+     * available options:
+     *
+     *     {
+     *         format: "%s"  // The string format (optional, default = "%s")
+     *     }
+     *
+     * @method stringFormatter
+     * @static
+     * @param value The value to format.
+     * @param row The data row (usually an object).
+     * @param {photonui.DataField} options The DataField with all available options.
+     * @return {String} the formated string.
+     */
+    stringFormatter: function (value, row, options) {
+        var format = (options && options.format) ? options.format : "%s";
+        return sprintf(format, value);
+    }
+};
+
+module.exports = DataFormatter;
+
+},{"sprintf-js":3}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11079,7 +11362,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":6}],42:[function(require,module,exports){
+},{"../base.js":7}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11734,7 +12017,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":6,"../helpers.js":21,"../widget.js":55}],43:[function(require,module,exports){
+},{"../base.js":7,"../helpers.js":22,"../widget.js":57}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11960,7 +12243,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":6}],44:[function(require,module,exports){
+},{"../base.js":7}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12127,7 +12410,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":6,"stonejs":3}],45:[function(require,module,exports){
+},{"../base.js":7,"stonejs":4}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12169,11 +12452,59 @@ module.exports = Translation;
 var photonui = {};
 
 // Include libraries in module.
+
+/**
+ * Third party libraries.
+ *
+ * @class lib
+ * @constructor
+ */
 photonui.lib = {};
+
+/**
+ * Classy - A classy JavaScript class library.
+ *
+ * DOC: http://web.archive.org/web/20140331110526/http://classy.pocoo.org/
+ *
+ * @property Class
+ */
 photonui.lib.Class = require("classyjs");
+
+/**
+ * KeyboardJS - A JavaScript library for binding keyboard combos.
+ *
+ * DOC: https://github.com/RobertWHurst/KeyboardJS
+ *
+ * @property KeyboardJS
+ */
 photonui.lib.KeyboardJS = require("keyboardjs");
+
+/**
+ * Stone.js - gettext-like client-side Javascript Internationalization Library.
+ *
+ * DOC: https://github.com/flozz/stone.js
+ *
+ * @property KeyboardJS
+ */
 photonui.lib.Stone = require("stonejs");
+
+/**
+ * node-uuid - Generate RFC-compliant UUIDs in JavaScript.
+ *
+ * DOC: https://github.com/broofa/node-uuid
+ *
+ * @property uuid
+ */
 photonui.lib.uuid = require("uuid");
+
+/**
+ * sprintf.js - a complete open source JavaScript sprintf implementation.
+ *
+ * DOC: https://github.com/alexei/sprintf.js
+ *
+ * @property sprintf
+ */
+photonui.lib.sprintf = require("sprintf-js");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -12231,12 +12562,13 @@ photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
 photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
+photonui.DataFormatter = require("./nonvisual/dataformatter.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
 module.exports = photonui;
 
-},{"./base.js":6,"./composite/colorbutton.js":7,"./composite/colorpickerdialog.js":8,"./composite/fontselect.js":9,"./composite/popupmenu.js":10,"./composite/select.js":11,"./container/basewindow.js":12,"./container/container.js":13,"./container/dialog.js":14,"./container/menuitem.js":15,"./container/popupwindow.js":16,"./container/submenuitem.js":17,"./container/tabitem.js":18,"./container/viewport.js":19,"./container/window.js":20,"./helpers.js":21,"./interactive/button.js":22,"./interactive/checkbox.js":23,"./interactive/colorpalette.js":24,"./interactive/colorpicker.js":25,"./interactive/field.js":26,"./interactive/numericfield.js":27,"./interactive/slider.js":28,"./interactive/switch.js":29,"./interactive/textareafield.js":30,"./interactive/textfield.js":31,"./interactive/togglebutton.js":32,"./layout/boxlayout.js":33,"./layout/fluidlayout.js":34,"./layout/gridlayout.js":35,"./layout/layout.js":36,"./layout/menu.js":37,"./layout/tablayout.js":38,"./nonvisual/accelmanager.js":39,"./nonvisual/color.js":40,"./nonvisual/filemanager.js":41,"./nonvisual/mousemanager.js":42,"./nonvisual/spritesheet.js":43,"./nonvisual/translation.js":44,"./visual/baseicon.js":46,"./visual/canvas.js":47,"./visual/faicon.js":48,"./visual/image.js":49,"./visual/label.js":50,"./visual/progressbar.js":51,"./visual/separator.js":52,"./visual/spriteicon.js":53,"./visual/text.js":54,"./widget.js":55,"classyjs":1,"keyboardjs":2,"stonejs":3,"uuid":5}],46:[function(require,module,exports){
+},{"./base.js":7,"./composite/colorbutton.js":8,"./composite/colorpickerdialog.js":9,"./composite/fontselect.js":10,"./composite/popupmenu.js":11,"./composite/select.js":12,"./container/basewindow.js":13,"./container/container.js":14,"./container/dialog.js":15,"./container/menuitem.js":16,"./container/popupwindow.js":17,"./container/submenuitem.js":18,"./container/tabitem.js":19,"./container/viewport.js":20,"./container/window.js":21,"./helpers.js":22,"./interactive/button.js":23,"./interactive/checkbox.js":24,"./interactive/colorpalette.js":25,"./interactive/colorpicker.js":26,"./interactive/field.js":27,"./interactive/numericfield.js":28,"./interactive/slider.js":29,"./interactive/switch.js":30,"./interactive/textareafield.js":31,"./interactive/textfield.js":32,"./interactive/togglebutton.js":33,"./layout/boxlayout.js":34,"./layout/fluidlayout.js":35,"./layout/gridlayout.js":36,"./layout/layout.js":37,"./layout/menu.js":38,"./layout/tablayout.js":39,"./nonvisual/accelmanager.js":40,"./nonvisual/color.js":41,"./nonvisual/dataformatter.js":42,"./nonvisual/filemanager.js":43,"./nonvisual/mousemanager.js":44,"./nonvisual/spritesheet.js":45,"./nonvisual/translation.js":46,"./visual/baseicon.js":48,"./visual/canvas.js":49,"./visual/faicon.js":50,"./visual/image.js":51,"./visual/label.js":52,"./visual/progressbar.js":53,"./visual/separator.js":54,"./visual/spriteicon.js":55,"./visual/text.js":56,"./widget.js":57,"classyjs":1,"keyboardjs":2,"sprintf-js":3,"stonejs":4,"uuid":6}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12304,7 +12636,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":55}],47:[function(require,module,exports){
+},{"../widget.js":57}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12584,7 +12916,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":55}],48:[function(require,module,exports){
+},{"../widget.js":57}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12755,7 +13087,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":46}],49:[function(require,module,exports){
+},{"./baseicon.js":48}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12910,7 +13242,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":55}],50:[function(require,module,exports){
+},{"../widget.js":57}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13118,7 +13450,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":21,"../widget.js":55}],51:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":57}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13346,7 +13678,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":55}],52:[function(require,module,exports){
+},{"../widget.js":57}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13487,7 +13819,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":55}],53:[function(require,module,exports){
+},{"../widget.js":57}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13669,7 +14001,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":43,"./baseicon.js":46}],54:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":45,"./baseicon.js":48}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13815,7 +14147,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":21,"../widget.js":55,"stonejs":3}],55:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":57,"stonejs":4}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14327,5 +14659,5 @@ Widget.domInsert = function (widget, element) {
 
 module.exports = Widget;
 
-},{"./base.js":6,"./container/popupwindow.js":16,"./helpers.js":21,"stonejs":3,"uuid":5}]},{},[45])(45)
+},{"./base.js":7,"./container/popupwindow.js":17,"./helpers.js":22,"stonejs":4,"uuid":6}]},{},[47])(47)
 });

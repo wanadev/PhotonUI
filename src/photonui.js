@@ -39,11 +39,59 @@
 var photonui = {};
 
 // Include libraries in module.
+
+/**
+ * Third party libraries.
+ *
+ * @class lib
+ * @constructor
+ */
 photonui.lib = {};
+
+/**
+ * Classy - A classy JavaScript class library.
+ *
+ * DOC: http://web.archive.org/web/20140331110526/http://classy.pocoo.org/
+ *
+ * @property Class
+ */
 photonui.lib.Class = require("classyjs");
+
+/**
+ * KeyboardJS - A JavaScript library for binding keyboard combos.
+ *
+ * DOC: https://github.com/RobertWHurst/KeyboardJS
+ *
+ * @property KeyboardJS
+ */
 photonui.lib.KeyboardJS = require("keyboardjs");
+
+/**
+ * Stone.js - gettext-like client-side Javascript Internationalization Library.
+ *
+ * DOC: https://github.com/flozz/stone.js
+ *
+ * @property KeyboardJS
+ */
 photonui.lib.Stone = require("stonejs");
+
+/**
+ * node-uuid - Generate RFC-compliant UUIDs in JavaScript.
+ *
+ * DOC: https://github.com/broofa/node-uuid
+ *
+ * @property uuid
+ */
 photonui.lib.uuid = require("uuid");
+
+/**
+ * sprintf.js - a complete open source JavaScript sprintf implementation.
+ *
+ * DOC: https://github.com/alexei/sprintf.js
+ *
+ * @property sprintf
+ */
+photonui.lib.sprintf = require("sprintf-js");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -101,6 +149,7 @@ photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
 photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
+photonui.DataFormatter = require("./nonvisual/dataformatter.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
