@@ -1,35 +1,50 @@
 PhotonUI:
 
     Copyright (c) 2014-2015 Wanadev
-    License: BSD 3-Clause <https://github.com/wanadev/PhotonUI/blob/master/COPYING>
+    License: BSD-3-Clause <https://github.com/wanadev/PhotonUI/blob/master/COPYING>
     Web site: http://wanadev.github.io/PhotonUI/
 
 
 Classy:
 
     Copyright (c) 2010 by Armin Ronacher
-    License: BSD 3-Clause <https://github.com/mitsuhiko/classy/blob/master/LICENSE>
+    License: BSD-3-Clause <https://github.com/mitsuhiko/classy/blob/master/LICENSE>
     Web site: http://classy.pocoo.org/
 
 
 KeyboardJS:
 
     Copyright 2015 Robert Hurst
-    License: BSD 2-Clause <https://github.com/RobertWHurst/KeyboardJS/blob/master/license.txt>
+    License: BSD-2-Clause <https://github.com/RobertWHurst/KeyboardJS/blob/master/license.txt>
     Web site: http://robertwhurst.github.io/KeyboardJS/
 
 
 Stone.js:
 
     Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
-    License: BSD 3-Clause <https://github.com/flozz/stone.js/blob/master/COPYING>
+    License: BSD-3-Clause <https://github.com/flozz/stone.js/blob/master/COPYING>
     Web site: https://github.com/flozz/stone.js
 
 
 node-uuid:
+
     Copyright (c) 2010-2012 Robert Kieffer
     License: MIT <https://github.com/defunctzombie/node-uuid/blob/master/LICENSE.md>
     web site: https://github.com/defunctzombie/node-uuid
+
+
+sprintf.js:
+
+    Copyright (c) 2007-2014, Alexandru Marasteanu <hello [at) alexei (dot] ro>
+    License: BSD-3-Clause <https://github.com/alexei/sprintf.js/blob/master/LICENSE>
+    Web site: https://github.com/alexei/sprintf.js
+
+
+date-and-time:
+
+    Copyright (c) 2015 KNOWLEDGECODE
+    License: MIT <https://github.com/knowledgecode/date-and-time/blob/master/LICENSE>
+    Web site: https://github.com/knowledgecode/date-and-time
 
 
 Font Awesome:

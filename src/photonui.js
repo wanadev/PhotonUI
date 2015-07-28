@@ -38,14 +38,8 @@
 
 var photonui = {};
 
-// Include libraries in module.
-photonui.lib = {};
-photonui.lib.Class = require("classyjs");
-photonui.lib.KeyboardJS = require("keyboardjs");
-photonui.lib.Stone = require("stonejs");
-photonui.lib.uuid = require("uuid");
-
 // Base
+photonui.lib = require("./lib.js");
 photonui.Helpers = require("./helpers.js");
 photonui.Base = require("./base.js");
 photonui.Widget = require("./widget.js");
@@ -101,6 +95,7 @@ photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
 photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
+photonui.DataFormatter = require("./nonvisual/dataformatter.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
