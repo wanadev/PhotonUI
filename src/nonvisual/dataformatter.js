@@ -65,7 +65,7 @@ var DataFormatter = {
      * @static
      * @param value The value to format.
      * @param row The data row (usually an object).
-     * @param {photonui.DataField} options The DataField with all available options.
+     * @param {Object} options The formatter options.
      * @return {String} the formated string.
      */
     stringFormatter: function (value, row, options) {
@@ -88,7 +88,7 @@ var DataFormatter = {
      * @static
      * @param date The date to format.
      * @param row The data row (usually an object).
-     * @param {photonui.DataField} options The DataField with all available options.
+     * @param {Object} options The formatter options.
      * @return {String} the formated date.
      */
     dateFormatter: function (date, row, options) {
@@ -114,7 +114,7 @@ var DataFormatter = {
      * @static
      * @param value The value to display.
      * @param row The data row (usually an object).
-     * @param {photonui.DataField} options The DataField with all available options.
+     * @param {Object} options The formatter options.
      * @return {photonui.widget} the widget.
      */
     widgetFormatter: function (value, row, options) {

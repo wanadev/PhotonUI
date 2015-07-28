@@ -3023,7 +3023,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":16,"../interactive/button.js":24,"../interactive/colorpalette.js":26,"../interactive/colorpicker.js":27,"../interactive/slider.js":30,"../layout/boxlayout.js":35,"../layout/gridlayout.js":37,"../nonvisual/color.js":43,"../visual/faicon.js":52,"../visual/label.js":54,"../visual/separator.js":56,"stonejs":5}],11:[function(require,module,exports){
+},{"../container/dialog.js":16,"../interactive/button.js":24,"../interactive/colorpalette.js":26,"../interactive/colorpicker.js":27,"../interactive/slider.js":30,"../layout/boxlayout.js":35,"../layout/gridlayout.js":37,"../nonvisual/color.js":43,"../visual/faicon.js":53,"../visual/label.js":55,"../visual/separator.js":57,"stonejs":5}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3655,7 +3655,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":17,"../helpers.js":23,"../widget.js":59,"./popupmenu.js":12,"stonejs":5}],14:[function(require,module,exports){
+},{"../container/menuitem.js":17,"../helpers.js":23,"../widget.js":60,"./popupmenu.js":12,"stonejs":5}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4025,7 +4025,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":59,"./container.js":15}],15:[function(require,module,exports){
+},{"../widget.js":60,"./container.js":15}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4249,7 +4249,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":59}],16:[function(require,module,exports){
+},{"../widget.js":60}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4500,7 +4500,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":23,"../widget.js":59,"./window.js":22}],17:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":60,"./window.js":22}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4730,7 +4730,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":23,"../visual/baseicon.js":50,"../widget.js":59,"./container.js":15}],18:[function(require,module,exports){
+},{"../helpers.js":23,"../visual/baseicon.js":51,"../widget.js":60,"./container.js":15}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5052,7 +5052,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":39,"../widget.js":59,"./menuitem.js":17}],20:[function(require,module,exports){
+},{"../layout/menu.js":39,"../widget.js":60,"./menuitem.js":17}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6003,7 +6003,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":23,"../widget.js":59,"./basewindow.js":14,"stonejs":5}],23:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":60,"./basewindow.js":14,"stonejs":5}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6615,7 +6615,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":23,"../visual/baseicon.js":50,"../widget.js":59}],25:[function(require,module,exports){
+},{"../helpers.js":23,"../visual/baseicon.js":51,"../widget.js":60}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6797,7 +6797,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":59}],26:[function(require,module,exports){
+},{"../widget.js":60}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7001,7 +7001,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":23,"../nonvisual/color.js":43,"../widget.js":59}],27:[function(require,module,exports){
+},{"../helpers.js":23,"../nonvisual/color.js":43,"../widget.js":60}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7519,7 +7519,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":23,"../nonvisual/color.js":43,"../nonvisual/mousemanager.js":46,"../widget.js":59}],28:[function(require,module,exports){
+},{"../helpers.js":23,"../nonvisual/color.js":43,"../nonvisual/mousemanager.js":47,"../widget.js":60}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7709,7 +7709,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":59}],29:[function(require,module,exports){
+},{"../widget.js":60}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10176,7 +10176,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":15,"../widget.js":59}],39:[function(require,module,exports){
+},{"../container/container.js":15,"../widget.js":60}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10616,7 +10616,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":20,"../helpers.js":23,"../widget.js":59,"./layout.js":38}],41:[function(require,module,exports){
+},{"../container/tabitem.js":20,"../helpers.js":23,"../widget.js":60,"./layout.js":38}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11406,6 +11406,208 @@ module.exports = Color;
  * @namespace photonui
  */
 
+var Base = require("../base.js");
+var DataFormatter = require("./dataformatter.js");
+
+/**
+ * Indicates to DataView widgets how accessing and displaying your data.
+ *
+ * @class DataField
+ * @constructor
+ * @extends photonui.Base
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var DataField = Base.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        this._formatterOptions = {};
+        this.$super(params);
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * Title of the data field. Displayed in some DataView widget (like GridView).
+     *
+     * if set to null, it will be equal to the `key` property.
+     *
+     * @property title
+     * @type String
+     * @default null
+     */
+    _title: null,
+
+    getTitle: function () {
+        return (this._title !== null && this._title !== undefined) ? this._title : this.key;
+    },
+
+    setTitle: function (title) {
+        this._title = title;
+    },
+
+    /**
+     * The data key binded to this field.
+     *
+     *  * if setted to an empty string (`""`), this means that the entire row is the data.
+     *  * you can access to sub keys using dots¹: (e.g. `user.firstName`, `profile.photo-url`).
+     *
+     *  ¹ the separator can be configured with the `keySeparator` property.
+     *
+     * @property key
+     * @type string
+     * @default ""
+     */
+    _key: "",
+
+    getKey: function () {
+        return this._key;
+    },
+
+    setKey: function (key) {
+        this._key = key;
+    },
+
+    /**
+     * Key separator used to separate neested object keys in the `key` property.
+     *
+     * @property keySeparator
+     * @type string
+     * @default "."
+     */
+    _keySeparator: ".",
+
+    getKeySeparator: function () {
+        return this._keySeparator;
+    },
+
+    setKeySeparator: function (separator) {
+        this._keySeparator = separator;
+    },
+
+    /**
+     * The formatter to use to format the data.
+     *
+     * This can be set to one of the following built-in formatters or to a custom formatter (function):
+     *
+     *   * stringFormatter
+     *   * dateFormatter
+     *   * widgetFormatter
+     *
+     * @property formatter
+     * @type {String|Function}
+     * @default "stringFormatter"
+     */
+    _formatter: DataFormatter.stringFormatter,
+
+    getFormatter: function () {
+        return this._formatter;
+    },
+
+    setFormatter: function (formatter) {
+        if (typeof formatter == "string") {
+            if (DataFormatter[formatter]) {
+                this._formatter = DataFormatter[formatter];
+            } else {
+                throw new Error("Unknown built-in formatter " + formatter);
+            }
+        } else {
+            this._formatter = formatter;
+        }
+    },
+
+    /**
+     * Options for the formatter (properties depends on the selected formatter).
+     *
+     * @property formatterOptions
+     * @type Object
+     * @default {}
+     */
+    _formatterOptions: {},
+
+    getFormatterOptions: function () {
+        return this._formatterOptions;
+    },
+
+    setFormatterOptions: function (options) {
+        this._formatterOptions = options;
+    },
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Format the given data row.
+     *
+     * @method format
+     * @param row The data row from which the field will be extracted and formatted.
+     * @return {String|photonui.Widget} The formatted string or widget.
+     */
+    format: function (row) {
+        var value = row;
+        if (this.key !== "") {
+            var keys = this.key.split(this.keySeparator);
+            for (var i = 0 ; i < keys.length ; i++) {
+                if (value[keys[i]]) {
+                    value = value[keys[i]];
+                } else {
+                    break;
+                }
+            }
+        }
+        return this.formatter(value, row, this.formatterOptions);
+    }
+
+});
+
+module.exports = DataField;
+
+},{"../base.js":8,"./dataformatter.js":45}],45:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule NonVisual
+ * @namespace photonui
+ */
+
 var sprintf = require("sprintf-js").sprintf;
 var datetime = require("date-and-time");
 
@@ -11435,7 +11637,7 @@ var DataFormatter = {
      * @static
      * @param value The value to format.
      * @param row The data row (usually an object).
-     * @param {photonui.DataField} options The DataField with all available options.
+     * @param {Object} options The formatter options.
      * @return {String} the formated string.
      */
     stringFormatter: function (value, row, options) {
@@ -11458,7 +11660,7 @@ var DataFormatter = {
      * @static
      * @param date The date to format.
      * @param row The data row (usually an object).
-     * @param {photonui.DataField} options The DataField with all available options.
+     * @param {Object} options The formatter options.
      * @return {String} the formated date.
      */
     dateFormatter: function (date, row, options) {
@@ -11484,7 +11686,7 @@ var DataFormatter = {
      * @static
      * @param value The value to display.
      * @param row The data row (usually an object).
-     * @param {photonui.DataField} options The DataField with all available options.
+     * @param {Object} options The formatter options.
      * @return {photonui.widget} the widget.
      */
     widgetFormatter: function (value, row, options) {
@@ -11501,7 +11703,7 @@ var DataFormatter = {
 
 module.exports = DataFormatter;
 
-},{"../interactive/field.js":28,"../visual/label.js":54,"date-and-time":2,"sprintf-js":4}],45:[function(require,module,exports){
+},{"../interactive/field.js":28,"../visual/label.js":55,"date-and-time":2,"sprintf-js":4}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11817,7 +12019,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":8}],46:[function(require,module,exports){
+},{"../base.js":8}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12472,7 +12674,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":8,"../helpers.js":23,"../widget.js":59}],47:[function(require,module,exports){
+},{"../base.js":8,"../helpers.js":23,"../widget.js":60}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12698,7 +12900,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":8}],48:[function(require,module,exports){
+},{"../base.js":8}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12865,7 +13067,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":8,"stonejs":5}],49:[function(require,module,exports){
+},{"../base.js":8,"stonejs":5}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12964,12 +13166,13 @@ photonui.PopupMenu = require("./composite/popupmenu.js");
 photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
 photonui.DataFormatter = require("./nonvisual/dataformatter.js");
+photonui.DataField = require("./nonvisual/datafield.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
 module.exports = photonui;
 
-},{"./base.js":8,"./composite/colorbutton.js":9,"./composite/colorpickerdialog.js":10,"./composite/fontselect.js":11,"./composite/popupmenu.js":12,"./composite/select.js":13,"./container/basewindow.js":14,"./container/container.js":15,"./container/dialog.js":16,"./container/menuitem.js":17,"./container/popupwindow.js":18,"./container/submenuitem.js":19,"./container/tabitem.js":20,"./container/viewport.js":21,"./container/window.js":22,"./helpers.js":23,"./interactive/button.js":24,"./interactive/checkbox.js":25,"./interactive/colorpalette.js":26,"./interactive/colorpicker.js":27,"./interactive/field.js":28,"./interactive/numericfield.js":29,"./interactive/slider.js":30,"./interactive/switch.js":31,"./interactive/textareafield.js":32,"./interactive/textfield.js":33,"./interactive/togglebutton.js":34,"./layout/boxlayout.js":35,"./layout/fluidlayout.js":36,"./layout/gridlayout.js":37,"./layout/layout.js":38,"./layout/menu.js":39,"./layout/tablayout.js":40,"./lib.js":41,"./nonvisual/accelmanager.js":42,"./nonvisual/color.js":43,"./nonvisual/dataformatter.js":44,"./nonvisual/filemanager.js":45,"./nonvisual/mousemanager.js":46,"./nonvisual/spritesheet.js":47,"./nonvisual/translation.js":48,"./visual/baseicon.js":50,"./visual/canvas.js":51,"./visual/faicon.js":52,"./visual/image.js":53,"./visual/label.js":54,"./visual/progressbar.js":55,"./visual/separator.js":56,"./visual/spriteicon.js":57,"./visual/text.js":58,"./widget.js":59}],50:[function(require,module,exports){
+},{"./base.js":8,"./composite/colorbutton.js":9,"./composite/colorpickerdialog.js":10,"./composite/fontselect.js":11,"./composite/popupmenu.js":12,"./composite/select.js":13,"./container/basewindow.js":14,"./container/container.js":15,"./container/dialog.js":16,"./container/menuitem.js":17,"./container/popupwindow.js":18,"./container/submenuitem.js":19,"./container/tabitem.js":20,"./container/viewport.js":21,"./container/window.js":22,"./helpers.js":23,"./interactive/button.js":24,"./interactive/checkbox.js":25,"./interactive/colorpalette.js":26,"./interactive/colorpicker.js":27,"./interactive/field.js":28,"./interactive/numericfield.js":29,"./interactive/slider.js":30,"./interactive/switch.js":31,"./interactive/textareafield.js":32,"./interactive/textfield.js":33,"./interactive/togglebutton.js":34,"./layout/boxlayout.js":35,"./layout/fluidlayout.js":36,"./layout/gridlayout.js":37,"./layout/layout.js":38,"./layout/menu.js":39,"./layout/tablayout.js":40,"./lib.js":41,"./nonvisual/accelmanager.js":42,"./nonvisual/color.js":43,"./nonvisual/datafield.js":44,"./nonvisual/dataformatter.js":45,"./nonvisual/filemanager.js":46,"./nonvisual/mousemanager.js":47,"./nonvisual/spritesheet.js":48,"./nonvisual/translation.js":49,"./visual/baseicon.js":51,"./visual/canvas.js":52,"./visual/faicon.js":53,"./visual/image.js":54,"./visual/label.js":55,"./visual/progressbar.js":56,"./visual/separator.js":57,"./visual/spriteicon.js":58,"./visual/text.js":59,"./widget.js":60}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13037,7 +13240,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":59}],51:[function(require,module,exports){
+},{"../widget.js":60}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13317,7 +13520,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":59}],52:[function(require,module,exports){
+},{"../widget.js":60}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13488,7 +13691,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":50}],53:[function(require,module,exports){
+},{"./baseicon.js":51}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13643,7 +13846,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":59}],54:[function(require,module,exports){
+},{"../widget.js":60}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13851,7 +14054,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":23,"../widget.js":59}],55:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":60}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14079,7 +14282,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":59}],56:[function(require,module,exports){
+},{"../widget.js":60}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14220,7 +14423,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":59}],57:[function(require,module,exports){
+},{"../widget.js":60}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14402,7 +14605,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":47,"./baseicon.js":50}],58:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":48,"./baseicon.js":51}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14548,7 +14751,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":23,"../widget.js":59,"stonejs":5}],59:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":60,"stonejs":5}],60:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -15060,5 +15263,5 @@ Widget.domInsert = function (widget, element) {
 
 module.exports = Widget;
 
-},{"./base.js":8,"./container/popupwindow.js":18,"./helpers.js":23,"stonejs":5,"uuid":7}]},{},[49])(49)
+},{"./base.js":8,"./container/popupwindow.js":18,"./helpers.js":23,"stonejs":5,"uuid":7}]},{},[50])(50)
 });
