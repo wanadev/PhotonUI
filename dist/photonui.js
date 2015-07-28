@@ -11409,6 +11409,9 @@ module.exports = Color;
 var sprintf = require("sprintf-js").sprintf;
 var datetime = require("date-and-time");
 
+var Label = require("../visual/label.js");
+var Field = require("../interactive/field.js");
+
 /**
  * A set of functions to format data for DataView widgets.
  *
@@ -11422,10 +11425,10 @@ var DataFormatter = {
      *
      * DOC: https://github.com/alexei/sprintf.js
      *
-     * available options:
+     * Available options with default values:
      *
      *     {
-     *         format: "%s"  // The string format (optional, default = "%s")
+     *         format: "%s"  // The string format
      *     }
      *
      * @method stringFormatter
@@ -11445,10 +11448,10 @@ var DataFormatter = {
      *
      * DOC: https://github.com/knowledgecode/date-and-time/blob/master/LICENSE
      *
-     * available options:
+     * Available options with default values:
      *
      *     {
-     *         format: "YYYY-MM-DD HH:mm:ss",  // The date format (optional, default = "YYYY-MM-DD HH:mm:ss")
+     *         format: "YYYY-MM-DD HH:mm:ss"  // The date format
      *     }
      *
      * @method dateFormatter
@@ -11461,12 +11464,44 @@ var DataFormatter = {
     dateFormatter: function (date, row, options) {
         var format = (options && options.format) ? options.format : "YYYY-MM-DD HH:mm:ss";
         return datetime.format(date, format);
+    },
+
+    /**
+     * Displays the value inside a PhotonUI widget.
+     *
+     * NOTE: This is not supported by all DataViews!
+     *
+     * Available options with default values:
+     *
+     *     {
+     *         widget: photonui.Label,    // The PhotonUI widget to use
+     *         propertyName: "text",      // The name of the widget property to set
+     *         widgetParams: {},          // Additional parameters passed to the widget constructor
+     *         additionalFormatter: null  // Format the value with an other formatter before setting it to the widget
+     *     }
+     *
+     * @method widgetFormatter
+     * @static
+     * @param value The value to display.
+     * @param row The data row (usually an object).
+     * @param {photonui.DataField} options The DataField with all available options.
+     * @return {photonui.widget} the widget.
+     */
+    widgetFormatter: function (value, row, options) {
+        var widget = (options && options.widget) ? options.widget : Label;
+        var propertyName = (options && options.propertyName) ? options.propertyName : "text";
+        var params = (options && options.widgetParams) ? Object.create(options.widgetParams) : {};
+        if (options && typeof options.additionalFormatter == "function") {
+            value = options.additionalFormatter(value, row, options);
+        }
+        params[propertyName] = value;
+        return new widget(params);
     }
 };
 
 module.exports = DataFormatter;
 
-},{"date-and-time":2,"sprintf-js":4}],45:[function(require,module,exports){
+},{"../interactive/field.js":28,"../visual/label.js":54,"date-and-time":2,"sprintf-js":4}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.

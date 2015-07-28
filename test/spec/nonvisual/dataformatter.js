@@ -55,5 +55,64 @@ describe("photonui.DataFormatter", function () {
 
     });
 
+    describe("widgetFormatter", function () {
+
+        it("returns a photonui.Label with the given value by default", function () {
+            var widget = photonui.DataFormatter.widgetFormatter("hello", {}, {});
+
+            expect(widget instanceof photonui.Label).toBeTruthy();
+            expect(widget.text).toEqual("hello");
+
+            widget.destroy();
+        });
+
+        it("returns the requested widget with the requested field setted to the given value", function () {
+            var options = {
+                widget: photonui.TextField,
+                propertyName: "value"
+            };
+            var widget = photonui.DataFormatter.widgetFormatter("hello", {}, options);
+
+            expect(widget instanceof photonui.TextField).toBeTruthy();
+            expect(widget.value).toEqual("hello");
+
+            widget.destroy();
+        });
+
+        it("can pass additional parameters to the widget", function () {
+            var options = {
+                widget: photonui.NumericField,
+                propertyName: "value",
+                widgetParams: {
+                    min: 10,
+                    max: 20
+                }
+            };
+            var widget = photonui.DataFormatter.widgetFormatter(42, {}, options);
+
+            expect(widget instanceof photonui.NumericField).toBeTruthy();
+            expect(widget.value).toEqual(20);
+            expect(widget.min).toEqual(10);
+            expect(widget.max).toEqual(20);
+
+            widget.destroy();
+        });
+
+        it("can call an additional formatter", function () {
+            var options = {
+                widget: photonui.Text,
+                additionalFormatter: photonui.DataFormatter.stringFormatter,
+                format: "hello %s"
+            };
+            var widget = photonui.DataFormatter.widgetFormatter("world", {}, options);
+
+            expect(widget instanceof photonui.Text).toBeTruthy();
+            expect(widget.text).toEqual("hello world");
+
+            widget.destroy();
+        });
+
+    });
+
 });
 
