@@ -27,15 +27,24 @@ Stone.js:
 
 
 node-uuid:
+
     Copyright (c) 2010-2012 Robert Kieffer
     License: MIT <https://github.com/defunctzombie/node-uuid/blob/master/LICENSE.md>
     web site: https://github.com/defunctzombie/node-uuid
 
 
 sprintf.js:
+
     Copyright (c) 2007-2014, Alexandru Marasteanu <hello [at) alexei (dot] ro>
     License: BSD-3-Clause <https://github.com/alexei/sprintf.js/blob/master/LICENSE>
     Web site: https://github.com/alexei/sprintf.js
+
+
+date-and-time:
+
+    Copyright (c) 2015 KNOWLEDGECODE
+    License: MIT <https://github.com/knowledgecode/date-and-time/blob/master/LICENSE>
+    Web site: https://github.com/knowledgecode/date-and-time
 
 
 Font Awesome:

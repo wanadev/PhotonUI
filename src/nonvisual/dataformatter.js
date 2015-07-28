@@ -37,6 +37,7 @@
  */
 
 var sprintf = require("sprintf-js").sprintf;
+var datetime = require("date-and-time");
 
 /**
  * A set of functions to format data for DataView widgets.
@@ -48,6 +49,8 @@ var DataFormatter = {
 
     /**
      * Format strings using a sprintf like syntax.
+     *
+     * DOC: https://github.com/alexei/sprintf.js
      *
      * available options:
      *
@@ -65,6 +68,29 @@ var DataFormatter = {
     stringFormatter: function (value, row, options) {
         var format = (options && options.format) ? options.format : "%s";
         return sprintf(format, value);
+    },
+
+    /**
+     * Simple date formatter
+     *
+     * DOC: https://github.com/knowledgecode/date-and-time/blob/master/LICENSE
+     *
+     * available options:
+     *
+     *     {
+     *         format: "YYYY-MM-DD HH:mm:ss",  // The date format (optional, default = "YYYY-MM-DD HH:mm:ss")
+     *     }
+     *
+     * @method dateFormatter
+     * @static
+     * @param date The date to format.
+     * @param row The data row (usually an object).
+     * @param {photonui.DataField} options The DataField with all available options.
+     * @return {String} the formated date.
+     */
+    dateFormatter: function (date, row, options) {
+        var format = (options && options.format) ? options.format : "YYYY-MM-DD HH:mm:ss";
+        return datetime.format(date, format);
     }
 };
 

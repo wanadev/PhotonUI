@@ -162,6 +162,299 @@
 });
 },{}],2:[function(require,module,exports){
 /**
+ * @preserve date-and-time.js (c) 2015 KNOWLEDGECODE | MIT
+ */
+/*global define */
+(function (global) {
+    'use strict';
+
+    var date = {
+            month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            dayOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            hour12: {
+                meridian: ['a.m.', 'p.m.'],
+                h: function (d) {
+                    var h = d.getHours() || 12;
+
+                    return h > 12 ? h - 12 : h;
+                },
+                A: function (d) {
+                    return this.meridian[d.getHours() > 11 | 0];
+                }
+            }
+        },
+        formats = {
+            YYYY: function (d) {
+                return ('000' + d.getFullYear()).slice(-4);
+            },
+            YY: function (d) {
+                return formats.YYYY(d).slice(2);
+            },
+            MMM: function (d) {
+                return date.month[d.getMonth()];
+            },
+            M: function (d) {
+                return String(d.getMonth() + 1);
+            },
+            MM: function (d) {
+                return ('0' + formats.M(d)).slice(-2);
+            },
+            D: function (d) {
+                return String(d.getDate());
+            },
+            DD: function (d) {
+                return ('0' + formats.D(d)).slice(-2);
+            },
+            H: function (d) {
+                return String(d.getHours());
+            },
+            HH: function (d) {
+                return ('0' + formats.H(d)).slice(-2);
+            },
+            h: function (d) {
+                return date.hour12.h(d);
+            },
+            hh: function (d) {
+                return ('0' + formats.h(d)).slice(-2);
+            },
+            A: function (d) {
+                return date.hour12.A(d);
+            },
+            m: function (d) {
+                return String(d.getMinutes());
+            },
+            mm: function (d) {
+                return ('0' + formats.m(d)).slice(-2);
+            },
+            s: function (d) {
+                return String(d.getSeconds());
+            },
+            ss: function (d) {
+                return ('0' + formats.s(d)).slice(-2);
+            },
+            SSS: function (d) {
+                return ('00' + d.getMilliseconds()).slice(-3);
+            },
+            SS: function (d) {
+                return formats.SSS(d).slice(0, 2);
+            },
+            S: function (d) {
+                return formats.SSS(d).slice(0, 1);
+            },
+            E: function (d) {
+                return date.dayOfWeek[d.getDay()];
+            }
+        },
+        parse = function (dateString, formatString) {
+            var i, j, tokens, token, len, len2, index,
+                vals = dateString.split(/[^\d+]/g),
+                keys = formatString.split(/[^YYYY|YY|MM?|DD?|HH?|mm?|ss?|SS?S?]/g),
+                dt = { Y: 0, M: 1, D: 1, H: 0, m: 0, s: 0, S: 0 };
+
+            for (i = 0, len = keys.length; i < len; i++) {
+                tokens = keys[i].match(/YYYY|YY|MM?|DD?|HH?|mm?|ss?|SS?S?/g) || [];
+                for (j = 0, len2 = tokens.length; j < len2; j++) {
+                    token = tokens[j];
+                    index = keys[i].indexOf(token);
+                    if (index >= 0) {
+                        token = token.replace(/^(M|D|H|m|s)$/, '$1$1');
+                        dt[token.charAt(0)] = (vals[i] || '').slice(index, index + token.length) | 0;
+                        if (token === 'YY') {
+                            dt[token.charAt(0)] += (dt[token.charAt(0)] < 70) ? 2000 : 1900;
+                        }
+                    }
+                }
+            }
+            return dt;
+        };
+
+    /**
+     * formatting strings
+     * @param {Object} dateObj - the target
+     * @param {String} formatString - the format string
+     */
+    date.format = function (dateObj, formatString) {
+        var i, len,
+            tokens = formatString.match(/(YYYY|YY|MMM|MM?|DD?|HH?|hh?|A|mm?|ss?|SS?S?|E|.)/g) || [],
+            noop = function () {
+                return null;
+            };
+
+        for (i = 0, len = tokens.length; i < len; i++) {
+            tokens[i] = (formats[tokens[i]] || noop)(dateObj) || tokens[i];
+        }
+        return tokens.join('');
+    };
+
+    /**
+     * parsing date strings
+     * @param {String} dateString - the date string
+     * @param {String} formatString - the format string
+     * @returns {Object} the parsed date
+     */
+    date.parse = function (dateString, formatString) {
+        var dt = parse(dateString, formatString);
+        return new Date(dt.Y, dt.M - 1, dt.D, dt.H, dt.m, dt.s, dt.S);
+    };
+
+    /**
+     * addition ( years )
+     * @param {Object} dateObj - the augend
+     * @param {Number} years - the addend
+     * @returns {Object} the date after addition
+     */
+    date.addYears = function (dateObj, years) {
+        var d = new Date(dateObj.getTime());
+
+        d.setFullYear(d.getFullYear() + years);
+        return d;
+    };
+
+    /**
+     * addition ( months )
+     * @param {Object} dateObj - the augend
+     * @param {Number} months - the addend
+     * @returns {Object} the date after addition
+     */
+    date.addMonths = function (dateObj, months) {
+        var d = new Date(dateObj.getTime());
+
+        d.setMonth(d.getMonth() + months);
+        return d;
+    };
+
+    /**
+     * addition ( days )
+     * @param {Object} dateObj - the augend
+     * @param {Number} days - the addend
+     * @returns {Object} the date after addition
+     */
+    date.addDays = function (dateObj, days) {
+        var d = new Date(dateObj.getTime());
+
+        d.setDate(d.getDate() + days);
+        return d;
+    };
+
+    /**
+     * addition ( hours )
+     * @param {Object} dateObj - the augend
+     * @param {Number} hours - the addend
+     * @returns {Object} the date after addition
+     */
+    date.addHours = function (dateObj, hours) {
+        var d = new Date(dateObj.getTime());
+
+        d.setHours(d.getHours() + hours);
+        return d;
+    };
+
+    /**
+     * addition ( minutes )
+     * @param {Object} dateObj - the augend
+     * @param {Number} minutes - the addend
+     * @returns {Object} the date after addition
+     */
+    date.addMinutes = function (dateObj, minutes) {
+        var d = new Date(dateObj.getTime());
+
+        d.setMinutes(d.getMinutes() + minutes);
+        return d;
+    };
+
+    /**
+     * addition ( seconds )
+     * @param {Object} dateObj - the augend
+     * @param {Number} seconds - the addend
+     * @returns {Object} the date after addition
+     */
+    date.addSeconds = function (dateObj, seconds) {
+        var d = new Date(dateObj.getTime());
+
+        d.setSeconds(d.getSeconds() + seconds);
+        return d;
+    };
+
+    /**
+     * addition ( milliseconds )
+     * @param {Object} dateObj - the augend
+     * @param {Number} milliseconds - the addend
+     * @returns {Object} the date after addition
+     */
+    date.addMilliseconds = function (dateObj, milliseconds) {
+        var d = new Date(dateObj.getTime());
+
+        d.setMilliseconds(d.getMilliseconds() + milliseconds);
+        return d;
+    };
+
+    /**
+     * subtraction
+     * @param {Object} date1 - the minuend
+     * @param {Object} date2 - the subtrahend
+     * @returns {Object} the date after subtraction
+     */
+    date.subtract = function (date1, date2) {
+        var delta = date1.getTime() - date2.getTime();
+
+        return {
+            toMilliseconds: function () {
+                return delta;
+            },
+            toSeconds: function () {
+                return delta / 1000 | 0;
+            },
+            toMinutes: function () {
+                return delta / 60000 | 0;
+            },
+            toHours: function () {
+                return delta / 3600000 | 0;
+            },
+            toDays: function () {
+                return delta / 86400000 | 0;
+            }
+        };
+    };
+
+    /**
+     * validation
+     * @param {String} dateString - the date string
+     * @param {String} formatString - the format string
+     * @returns {Boolean} whether valid date
+     */
+    date.isValid = function (dateString, formatString) {
+        var dt = parse(dateString, formatString),
+            d = new Date(dt.Y, dt.M - 1, dt.D, dt.H, dt.m, dt.s, dt.S);
+
+        return dt.Y === d.getFullYear() && dt.M - 1 === d.getMonth() && dt.D === d.getDate()
+            && dt.H === d.getHours() && dt.m === d.getMinutes() && dt.s === d.getSeconds()
+            && dt.S === d.getMilliseconds();
+    };
+
+    /**
+     * leap year
+     * @param {Object} dateObj - the target
+     * @returns {Boolean} whether leap year
+     */
+    date.isLeapYear = function (dateObj) {
+        var y = dateObj.getFullYear();
+        return (!(y % 4) && !!(y % 100)) || !(y % 400);
+    };
+
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        module.exports = date;
+    } else if (typeof define === 'function' && define.amd) {
+        define([], function () {
+            return date;
+        });
+    } else {
+        global.date = date;
+    }
+
+}(this));
+
+},{}],3:[function(require,module,exports){
+/**
  * Title: KeyboardJS
  * Version: v0.4.1
  * Description: KeyboardJS is a flexible and easy to use keyboard binding
@@ -1163,7 +1456,7 @@
 
 
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function(window) {
     var re = {
         not_string: /[^s]/,
@@ -1373,7 +1666,7 @@
     }
 })(typeof window === "undefined" ? this : window);
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
@@ -1560,7 +1853,7 @@ module.exports = {
     updateDomTranslation: updateDomTranslation
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -1595,7 +1888,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -1780,7 +2073,7 @@ uuid.unparse = unparse;
 
 module.exports = uuid;
 
-},{"./rng":5}],7:[function(require,module,exports){
+},{"./rng":6}],8:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2082,7 +2375,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":22,"classyjs":1,"uuid":6}],8:[function(require,module,exports){
+},{"./helpers.js":23,"classyjs":1,"uuid":7}],9:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2344,7 +2637,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":17,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../layout/boxlayout.js":34,"../nonvisual/color.js":41,"./colorpickerdialog.js":9,"stonejs":4}],9:[function(require,module,exports){
+},{"../container/popupwindow.js":18,"../interactive/button.js":24,"../interactive/colorpalette.js":26,"../layout/boxlayout.js":35,"../nonvisual/color.js":43,"./colorpickerdialog.js":10,"stonejs":5}],10:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2730,7 +3023,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":15,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../interactive/colorpicker.js":26,"../interactive/slider.js":29,"../layout/boxlayout.js":34,"../layout/gridlayout.js":36,"../nonvisual/color.js":41,"../visual/faicon.js":50,"../visual/label.js":52,"../visual/separator.js":54,"stonejs":4}],10:[function(require,module,exports){
+},{"../container/dialog.js":16,"../interactive/button.js":24,"../interactive/colorpalette.js":26,"../interactive/colorpicker.js":27,"../interactive/slider.js":30,"../layout/boxlayout.js":35,"../layout/gridlayout.js":37,"../nonvisual/color.js":43,"../visual/faicon.js":52,"../visual/label.js":54,"../visual/separator.js":56,"stonejs":5}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2865,7 +3158,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":16,"./select.js":12,"stonejs":4}],11:[function(require,module,exports){
+},{"../container/menuitem.js":17,"./select.js":13,"stonejs":5}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2983,7 +3276,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":17,"../layout/menu.js":38}],12:[function(require,module,exports){
+},{"../container/popupwindow.js":18,"../layout/menu.js":39}],13:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3362,7 +3655,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":16,"../helpers.js":22,"../widget.js":57,"./popupmenu.js":11,"stonejs":4}],13:[function(require,module,exports){
+},{"../container/menuitem.js":17,"../helpers.js":23,"../widget.js":59,"./popupmenu.js":12,"stonejs":5}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3732,7 +4025,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":57,"./container.js":14}],14:[function(require,module,exports){
+},{"../widget.js":59,"./container.js":15}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3956,7 +4249,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":57}],15:[function(require,module,exports){
+},{"../widget.js":59}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4207,7 +4500,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":22,"../widget.js":57,"./window.js":21}],16:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":59,"./window.js":22}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4437,7 +4730,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":22,"../visual/baseicon.js":48,"../widget.js":57,"./container.js":14}],17:[function(require,module,exports){
+},{"../helpers.js":23,"../visual/baseicon.js":50,"../widget.js":59,"./container.js":15}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4610,7 +4903,7 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":13}],18:[function(require,module,exports){
+},{"./basewindow.js":14}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4759,7 +5052,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":38,"../widget.js":57,"./menuitem.js":16}],19:[function(require,module,exports){
+},{"../layout/menu.js":39,"../widget.js":59,"./menuitem.js":17}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4943,7 +5236,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":22,"./container.js":14}],20:[function(require,module,exports){
+},{"../helpers.js":23,"./container.js":15}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5331,7 +5624,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":22,"./container.js":14}],21:[function(require,module,exports){
+},{"../helpers.js":23,"./container.js":15}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5710,7 +6003,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":22,"../widget.js":57,"./basewindow.js":13,"stonejs":4}],22:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":59,"./basewindow.js":14,"stonejs":5}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5905,7 +6198,7 @@ Helpers.log = function (level, message) {
 
 module.exports = Helpers;
 
-},{"uuid":6}],23:[function(require,module,exports){
+},{"uuid":7}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6322,7 +6615,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":22,"../visual/baseicon.js":48,"../widget.js":57}],24:[function(require,module,exports){
+},{"../helpers.js":23,"../visual/baseicon.js":50,"../widget.js":59}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6504,7 +6797,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":57}],25:[function(require,module,exports){
+},{"../widget.js":59}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6708,7 +7001,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":22,"../nonvisual/color.js":41,"../widget.js":57}],26:[function(require,module,exports){
+},{"../helpers.js":23,"../nonvisual/color.js":43,"../widget.js":59}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7226,7 +7519,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":22,"../nonvisual/color.js":41,"../nonvisual/mousemanager.js":44,"../widget.js":57}],27:[function(require,module,exports){
+},{"../helpers.js":23,"../nonvisual/color.js":43,"../nonvisual/mousemanager.js":46,"../widget.js":59}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7416,7 +7709,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":57}],28:[function(require,module,exports){
+},{"../widget.js":59}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7782,7 +8075,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":27}],29:[function(require,module,exports){
+},{"./field.js":28}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8078,7 +8371,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":22,"./numericfield.js":28}],30:[function(require,module,exports){
+},{"../helpers.js":23,"./numericfield.js":29}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8138,7 +8431,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":24}],31:[function(require,module,exports){
+},{"./checkbox.js":25}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8252,7 +8545,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":27}],32:[function(require,module,exports){
+},{"./field.js":28}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8366,7 +8659,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":27}],33:[function(require,module,exports){
+},{"./field.js":28}],34:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8465,7 +8758,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":23,"./checkbox.js":24}],34:[function(require,module,exports){
+},{"./button.js":24,"./checkbox.js":25}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8813,7 +9106,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":22,"./layout.js":37}],35:[function(require,module,exports){
+},{"../helpers.js":23,"./layout.js":38}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8961,7 +9254,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":22,"./layout.js":37}],36:[function(require,module,exports){
+},{"../helpers.js":23,"./layout.js":38}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9597,7 +9890,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":22,"./layout.js":37}],37:[function(require,module,exports){
+},{"../helpers.js":23,"./layout.js":38}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9883,7 +10176,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":14,"../widget.js":57}],38:[function(require,module,exports){
+},{"../container/container.js":15,"../widget.js":59}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10023,7 +10316,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":22,"./layout.js":37}],39:[function(require,module,exports){
+},{"../helpers.js":23,"./layout.js":38}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10323,7 +10616,108 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":19,"../helpers.js":22,"../widget.js":57,"./layout.js":37}],40:[function(require,module,exports){
+},{"../container/tabitem.js":20,"../helpers.js":23,"../widget.js":59,"./layout.js":38}],41:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <http://flozz.fr/>
+ */
+
+/**
+ * Third party libraries.
+ *
+ * @class lib
+ * @constructor
+ */
+var lib = {
+    /**
+     * Classy - A classy JavaScript class library.
+     *
+     * DOC: http://web.archive.org/web/20140331110526/http://classy.pocoo.org/
+     *
+     * @property Class
+     * @static
+     */
+    Class: require("classyjs"),
+
+    /**
+     * KeyboardJS - A JavaScript library for binding keyboard combos.
+     *
+     * DOC: https://github.com/RobertWHurst/KeyboardJS
+     *
+     * @property KeyboardJS
+     * @static
+     */
+    KeyboardJS: require("keyboardjs"),
+
+    /**
+     * Stone.js - gettext-like client-side Javascript Internationalization Library.
+     *
+     * DOC: https://github.com/flozz/stone.js
+     *
+     * @property Stone
+     * @static
+     */
+    Stone: require("stonejs"),
+
+    /**
+     * node-uuid - Generate RFC-compliant UUIDs in JavaScript.
+     *
+     * DOC: https://github.com/broofa/node-uuid
+     *
+     * @property uuid
+     * @static
+     */
+    uuid: require("uuid"),
+
+    /**
+     * sprintf.js - A complete open source JavaScript sprintf implementation.
+     *
+     * DOC: https://github.com/alexei/sprintf.js
+     *
+     * @property sprintf
+     * @static
+     */
+    sprintf: require("sprintf-js"),
+
+    /**
+     * date-and-time - Date and time utilities.
+     *
+     * DOC: https://github.com/knowledgecode/date-and-time
+     *
+     * @property datetime
+     * @static
+     */
+    datetime: require("date-and-time")
+};
+
+module.exports = lib;
+
+},{"classyjs":1,"date-and-time":2,"keyboardjs":3,"sprintf-js":4,"stonejs":5,"uuid":7}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10486,7 +10880,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":7,"keyboardjs":2}],41:[function(require,module,exports){
+},{"../base.js":8,"keyboardjs":3}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10973,7 +11367,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":7}],42:[function(require,module,exports){
+},{"../base.js":8}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11013,6 +11407,7 @@ module.exports = Color;
  */
 
 var sprintf = require("sprintf-js").sprintf;
+var datetime = require("date-and-time");
 
 /**
  * A set of functions to format data for DataView widgets.
@@ -11024,6 +11419,8 @@ var DataFormatter = {
 
     /**
      * Format strings using a sprintf like syntax.
+     *
+     * DOC: https://github.com/alexei/sprintf.js
      *
      * available options:
      *
@@ -11041,12 +11438,35 @@ var DataFormatter = {
     stringFormatter: function (value, row, options) {
         var format = (options && options.format) ? options.format : "%s";
         return sprintf(format, value);
+    },
+
+    /**
+     * Simple date formatter
+     *
+     * DOC: https://github.com/knowledgecode/date-and-time/blob/master/LICENSE
+     *
+     * available options:
+     *
+     *     {
+     *         format: "YYYY-MM-DD HH:mm:ss",  // The date format (optional, default = "YYYY-MM-DD HH:mm:ss")
+     *     }
+     *
+     * @method dateFormatter
+     * @static
+     * @param date The date to format.
+     * @param row The data row (usually an object).
+     * @param {photonui.DataField} options The DataField with all available options.
+     * @return {String} the formated date.
+     */
+    dateFormatter: function (date, row, options) {
+        var format = (options && options.format) ? options.format : "YYYY-MM-DD HH:mm:ss";
+        return datetime.format(date, format);
     }
 };
 
 module.exports = DataFormatter;
 
-},{"sprintf-js":3}],43:[function(require,module,exports){
+},{"date-and-time":2,"sprintf-js":4}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11362,7 +11782,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":7}],44:[function(require,module,exports){
+},{"../base.js":8}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12017,7 +12437,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":7,"../helpers.js":22,"../widget.js":57}],45:[function(require,module,exports){
+},{"../base.js":8,"../helpers.js":23,"../widget.js":59}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12243,7 +12663,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":7}],46:[function(require,module,exports){
+},{"../base.js":8}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12410,7 +12830,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":7,"stonejs":4}],47:[function(require,module,exports){
+},{"../base.js":8,"stonejs":5}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12451,62 +12871,8 @@ module.exports = Translation;
 
 var photonui = {};
 
-// Include libraries in module.
-
-/**
- * Third party libraries.
- *
- * @class lib
- * @constructor
- */
-photonui.lib = {};
-
-/**
- * Classy - A classy JavaScript class library.
- *
- * DOC: http://web.archive.org/web/20140331110526/http://classy.pocoo.org/
- *
- * @property Class
- */
-photonui.lib.Class = require("classyjs");
-
-/**
- * KeyboardJS - A JavaScript library for binding keyboard combos.
- *
- * DOC: https://github.com/RobertWHurst/KeyboardJS
- *
- * @property KeyboardJS
- */
-photonui.lib.KeyboardJS = require("keyboardjs");
-
-/**
- * Stone.js - gettext-like client-side Javascript Internationalization Library.
- *
- * DOC: https://github.com/flozz/stone.js
- *
- * @property KeyboardJS
- */
-photonui.lib.Stone = require("stonejs");
-
-/**
- * node-uuid - Generate RFC-compliant UUIDs in JavaScript.
- *
- * DOC: https://github.com/broofa/node-uuid
- *
- * @property uuid
- */
-photonui.lib.uuid = require("uuid");
-
-/**
- * sprintf.js - a complete open source JavaScript sprintf implementation.
- *
- * DOC: https://github.com/alexei/sprintf.js
- *
- * @property sprintf
- */
-photonui.lib.sprintf = require("sprintf-js");
-
 // Base
+photonui.lib = require("./lib.js");
 photonui.Helpers = require("./helpers.js");
 photonui.Base = require("./base.js");
 photonui.Widget = require("./widget.js");
@@ -12568,7 +12934,7 @@ photonui.DataFormatter = require("./nonvisual/dataformatter.js");
 
 module.exports = photonui;
 
-},{"./base.js":7,"./composite/colorbutton.js":8,"./composite/colorpickerdialog.js":9,"./composite/fontselect.js":10,"./composite/popupmenu.js":11,"./composite/select.js":12,"./container/basewindow.js":13,"./container/container.js":14,"./container/dialog.js":15,"./container/menuitem.js":16,"./container/popupwindow.js":17,"./container/submenuitem.js":18,"./container/tabitem.js":19,"./container/viewport.js":20,"./container/window.js":21,"./helpers.js":22,"./interactive/button.js":23,"./interactive/checkbox.js":24,"./interactive/colorpalette.js":25,"./interactive/colorpicker.js":26,"./interactive/field.js":27,"./interactive/numericfield.js":28,"./interactive/slider.js":29,"./interactive/switch.js":30,"./interactive/textareafield.js":31,"./interactive/textfield.js":32,"./interactive/togglebutton.js":33,"./layout/boxlayout.js":34,"./layout/fluidlayout.js":35,"./layout/gridlayout.js":36,"./layout/layout.js":37,"./layout/menu.js":38,"./layout/tablayout.js":39,"./nonvisual/accelmanager.js":40,"./nonvisual/color.js":41,"./nonvisual/dataformatter.js":42,"./nonvisual/filemanager.js":43,"./nonvisual/mousemanager.js":44,"./nonvisual/spritesheet.js":45,"./nonvisual/translation.js":46,"./visual/baseicon.js":48,"./visual/canvas.js":49,"./visual/faicon.js":50,"./visual/image.js":51,"./visual/label.js":52,"./visual/progressbar.js":53,"./visual/separator.js":54,"./visual/spriteicon.js":55,"./visual/text.js":56,"./widget.js":57,"classyjs":1,"keyboardjs":2,"sprintf-js":3,"stonejs":4,"uuid":6}],48:[function(require,module,exports){
+},{"./base.js":8,"./composite/colorbutton.js":9,"./composite/colorpickerdialog.js":10,"./composite/fontselect.js":11,"./composite/popupmenu.js":12,"./composite/select.js":13,"./container/basewindow.js":14,"./container/container.js":15,"./container/dialog.js":16,"./container/menuitem.js":17,"./container/popupwindow.js":18,"./container/submenuitem.js":19,"./container/tabitem.js":20,"./container/viewport.js":21,"./container/window.js":22,"./helpers.js":23,"./interactive/button.js":24,"./interactive/checkbox.js":25,"./interactive/colorpalette.js":26,"./interactive/colorpicker.js":27,"./interactive/field.js":28,"./interactive/numericfield.js":29,"./interactive/slider.js":30,"./interactive/switch.js":31,"./interactive/textareafield.js":32,"./interactive/textfield.js":33,"./interactive/togglebutton.js":34,"./layout/boxlayout.js":35,"./layout/fluidlayout.js":36,"./layout/gridlayout.js":37,"./layout/layout.js":38,"./layout/menu.js":39,"./layout/tablayout.js":40,"./lib.js":41,"./nonvisual/accelmanager.js":42,"./nonvisual/color.js":43,"./nonvisual/dataformatter.js":44,"./nonvisual/filemanager.js":45,"./nonvisual/mousemanager.js":46,"./nonvisual/spritesheet.js":47,"./nonvisual/translation.js":48,"./visual/baseicon.js":50,"./visual/canvas.js":51,"./visual/faicon.js":52,"./visual/image.js":53,"./visual/label.js":54,"./visual/progressbar.js":55,"./visual/separator.js":56,"./visual/spriteicon.js":57,"./visual/text.js":58,"./widget.js":59}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12636,7 +13002,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":57}],49:[function(require,module,exports){
+},{"../widget.js":59}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12916,7 +13282,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":57}],50:[function(require,module,exports){
+},{"../widget.js":59}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13087,7 +13453,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":48}],51:[function(require,module,exports){
+},{"./baseicon.js":50}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13242,7 +13608,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":57}],52:[function(require,module,exports){
+},{"../widget.js":59}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13450,7 +13816,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":22,"../widget.js":57}],53:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":59}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13678,7 +14044,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":57}],54:[function(require,module,exports){
+},{"../widget.js":59}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13819,7 +14185,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":57}],55:[function(require,module,exports){
+},{"../widget.js":59}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14001,7 +14367,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":45,"./baseicon.js":48}],56:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":47,"./baseicon.js":50}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14147,7 +14513,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":22,"../widget.js":57,"stonejs":4}],57:[function(require,module,exports){
+},{"../helpers.js":23,"../widget.js":59,"stonejs":5}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14659,5 +15025,5 @@ Widget.domInsert = function (widget, element) {
 
 module.exports = Widget;
 
-},{"./base.js":7,"./container/popupwindow.js":17,"./helpers.js":22,"stonejs":4,"uuid":6}]},{},[47])(47)
+},{"./base.js":8,"./container/popupwindow.js":18,"./helpers.js":23,"stonejs":5,"uuid":7}]},{},[49])(49)
 });
