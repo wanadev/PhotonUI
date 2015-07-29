@@ -1,5 +1,5 @@
 module.exports = function(config) {
-    var obj = {
+    var cfg = {
         //basePath: './',
         frameworks: ['jasmine'],
         files: [
@@ -28,12 +28,12 @@ module.exports = function(config) {
                 base: 'Chrome',
                 flags: ['--no-sandbox']
             }
-        },
+        }
     };
 
     if (process.env.TRAVIS) {
         cfg.browsers = ['Firefox', 'Chrome_travis_ci'];
     }
 
-    config.set(obj);
+    config.set(cfg);
 };
