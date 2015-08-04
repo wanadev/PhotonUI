@@ -5,6 +5,7 @@ describe("photonui.GridLayout (layoutOptons)", function() {
 
         // Patch the GridLayout's _sizingHack method to be able to spy it...
         // Yes I know, it is dirty...
+        window._sizingHackEnabled = null;
         var hackString = photonui.GridLayout.prototype._sizingHack.toString();
         hackString = hackString.replace(/^function\s*\(.*\)\s*\{/, "");
         hackString = hackString.replace(/\}$/, "");

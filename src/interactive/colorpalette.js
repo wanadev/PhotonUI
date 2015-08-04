@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,21 +57,18 @@ var Color = require("../nonvisual/color.js");
 var ColorPalette = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._color = new Color(ColorPalette.palette[0][0]);
         this._registerWEvents(["value-changed"]);
         this.$super(params);
         this._updateProperties(["palette", "value"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The value (color in rgb hexadecimal format (e.g. "#ff0000")).
@@ -79,11 +76,11 @@ var ColorPalette = Widget.$extend({
      * @property value
      * @type String
      */
-    getValue: function() {
+    getValue: function () {
         return this.color.hexString;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.color.hexString = value;
     },
 
@@ -95,11 +92,11 @@ var ColorPalette = Widget.$extend({
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             this._color = color;
         }
@@ -114,11 +111,11 @@ var ColorPalette = Widget.$extend({
      */
     _palette: null,
 
-    getPalette: function() {
+    getPalette: function () {
         return this._palette || ColorPalette.palette;
     },
 
-    setPalette: function(palette) {
+    setPalette: function (palette) {
         this._palette = palette;
 
         if (!palette) {
@@ -129,10 +126,13 @@ var ColorPalette = Widget.$extend({
         this.__html.palette.removeChild(this.__html.tbody);
         Helpers.cleanNode(this.__html.tbody);
 
-        var e_tr, e_td, x, y;
-        for (y=0 ; y<palette.length ; y++) {
+        var e_tr;
+        var e_td;
+        var x;
+        var y;
+        for (y = 0 ; y < palette.length ; y++) {
             e_tr = document.createElement("tr");
-            for (x=0 ; x<palette[y].length ; x++) {
+            for (x = 0 ; x < palette[y].length ; x++) {
                 e_td = document.createElement("td");
                 e_td.style.backgroundColor = palette[y][x];
                 e_td.onclick = this.__onColorClicked.bind(this, palette[y][x]);
@@ -152,15 +152,13 @@ var ColorPalette = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.palette;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Private methods ======
 
@@ -170,20 +168,18 @@ var ColorPalette = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.palette = document.createElement("table");
         this.__html.palette.className = "photonui-widget photonui-colorpalette";
         this.__html.tbody = document.createElement("tbody");
         this.__html.palette.appendChild(this.__html.tbody);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
 
-
-    __onColorClicked: function(color, event) {
+    __onColorClicked: function (color, event) {
         this.value = color;
         this._callCallbacks("value-changed", [this.color]);
     }

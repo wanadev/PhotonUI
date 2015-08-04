@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,21 +50,18 @@ var Menu = require("../layout/menu.js");
 var SubMenuItem = MenuItem.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this.addClass("photonui-submenuitem");
         this.registerCallback("toggle-folding", "click", this.__onItemClicked, this);
         this._updateProperties(["menuName"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The submenu widget name.
@@ -75,15 +72,17 @@ var SubMenuItem = MenuItem.$extend({
      */
     _menuName: null,
 
-    getMenuName: function() {
+    getMenuName: function () {
         return this._menuName;
     },
 
-    setMenuName: function(menuName) {
+    setMenuName: function (menuName) {
         var that = this;
 
         function _init() {
-            if (!that.menu) return;
+            if (!that.menu) {
+                return;
+            }
             that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
             that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
             that.active = that.menu.visible;
@@ -99,8 +98,7 @@ var SubMenuItem = MenuItem.$extend({
         if (this.menuName) {
             if (this.menu) {
                 _init();
-            }
-            else {
+            } else {
                 setTimeout(_init, 10);
             }
         }
@@ -113,30 +111,27 @@ var SubMenuItem = MenuItem.$extend({
      * @type photonui.Menu
      * @default null
      */
-    getMenu: function() {
+    getMenu: function () {
         return Widget.getWidget(this.menuName);
     },
 
-    setMenu: function(menu) {
+    setMenu: function (menu) {
         if (menu instanceof Menu) {
             this.menuName = menu.name;
-        }
-        else {
+        } else {
             this.menuName = null;
         }
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
 
-
     /**
      * @method __onToggleFold
      * @private
      */
-    __onToggleFold: function(widget) {
+    __onToggleFold: function (widget) {
         this.active = widget.visible;
     },
 
@@ -144,7 +139,7 @@ var SubMenuItem = MenuItem.$extend({
      * @method __onItemClicked
      * @private
      */
-    __onItemClicked: function(widget) {
+    __onItemClicked: function (widget) {
         this.menu.visible = !this.menu.visible;
     }
 });

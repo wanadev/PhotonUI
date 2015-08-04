@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@
  * @namespace photonui
  */
 
-
 var photonui = {};
 
 // Include libraries in module.
@@ -44,6 +43,7 @@ photonui.lib = {};
 photonui.lib.Class = require("classyjs");
 photonui.lib.KeyboardJS = require("keyboardjs");
 photonui.lib.Stone = require("stonejs");
+photonui.lib.uuid = require("uuid");
 
 // Base
 photonui.Helpers = require("./helpers.js");

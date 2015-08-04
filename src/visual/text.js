@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,11 +49,9 @@ var Helpers = require("../helpers.js");
  */
 var Text_ = Widget.$extend({
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -68,11 +66,11 @@ var Text_ = Widget.$extend({
      * @type String
      * @default ""
      */
-    getText: function() {
+    getText: function () {
         return this.__html.outer.textContent;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._lastSet = "text";
         this._raw = text;
         Helpers.cleanNode(this.__html.outer);
@@ -86,11 +84,11 @@ var Text_ = Widget.$extend({
      * @type String
      * @default ""
      */
-    getRawHtml: function() {
+    getRawHtml: function () {
         return this.__html.outer.innerHTML;
     },
 
-    setRawHtml: function(html) {
+    setRawHtml: function (html) {
         this._lastSet = "rawHtml";
         this._raw = html;
         this.__html.outer.innerHTML = html;
@@ -104,18 +102,15 @@ var Text_ = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -123,16 +118,14 @@ var Text_ = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-text";
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -140,7 +133,7 @@ var Text_ = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         this.$super();
         if (this._raw instanceof Stone.LazyString) {
             this[this._lastSet] = this._raw;

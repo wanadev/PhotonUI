@@ -1351,8 +1351,228 @@ module.exports = {
 };
 
 },{}],4:[function(require,module,exports){
+(function (global){
+
+var rng;
+
+if (global.crypto && crypto.getRandomValues) {
+  // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
+  // Moderately fast, high quality
+  var _rnds8 = new Uint8Array(16);
+  rng = function whatwgRNG() {
+    crypto.getRandomValues(_rnds8);
+    return _rnds8;
+  };
+}
+
+if (!rng) {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var  _rnds = new Array(16);
+  rng = function() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      _rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return _rnds;
+  };
+}
+
+module.exports = rng;
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],5:[function(require,module,exports){
+//     uuid.js
+//
+//     Copyright (c) 2010-2012 Robert Kieffer
+//     MIT License - http://opensource.org/licenses/mit-license.php
+
+// Unique ID creation requires a high quality random # generator.  We feature
+// detect to determine the best RNG source, normalizing to a function that
+// returns 128-bits of randomness, since that's what's usually required
+var _rng = require('./rng');
+
+// Maps for number <-> hex string conversion
+var _byteToHex = [];
+var _hexToByte = {};
+for (var i = 0; i < 256; i++) {
+  _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+  _hexToByte[_byteToHex[i]] = i;
+}
+
+// **`parse()` - Parse a UUID into it's component bytes**
+function parse(s, buf, offset) {
+  var i = (buf && offset) || 0, ii = 0;
+
+  buf = buf || [];
+  s.toLowerCase().replace(/[0-9a-f]{2}/g, function(oct) {
+    if (ii < 16) { // Don't overflow!
+      buf[i + ii++] = _hexToByte[oct];
+    }
+  });
+
+  // Zero out remaining bytes if string was short
+  while (ii < 16) {
+    buf[i + ii++] = 0;
+  }
+
+  return buf;
+}
+
+// **`unparse()` - Convert UUID byte array (ala parse()) into a string**
+function unparse(buf, offset) {
+  var i = offset || 0, bth = _byteToHex;
+  return  bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]];
+}
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+// random #'s we need to init node and clockseq
+var _seedBytes = _rng();
+
+// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+var _nodeId = [
+  _seedBytes[0] | 0x01,
+  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
+];
+
+// Per 4.2.2, randomize (14 bit) clockseq
+var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
+
+// Previous uuid creation time
+var _lastMSecs = 0, _lastNSecs = 0;
+
+// See https://github.com/broofa/node-uuid for API details
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+
+  options = options || {};
+
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+
+  // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+
+  // Time since last uuid creation (in msecs)
+  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+
+  // Per 4.2.1.2, Bump clockseq on clock regression
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  }
+
+  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  }
+
+  // Per 4.2.1.2 Throw error if too many uuids are requested
+  if (nsecs >= 10000) {
+    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+
+  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+  msecs += 12219292800000;
+
+  // `time_low`
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff;
+
+  // `time_mid`
+  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff;
+
+  // `time_high_and_version`
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+  b[i++] = tmh >>> 16 & 0xff;
+
+  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+  b[i++] = clockseq >>> 8 | 0x80;
+
+  // `clock_seq_low`
+  b[i++] = clockseq & 0xff;
+
+  // `node`
+  var node = options.node || _nodeId;
+  for (var n = 0; n < 6; n++) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : unparse(b);
+}
+
+// **`v4()` - Generate random UUID**
+
+// See https://github.com/broofa/node-uuid for API details
+function v4(options, buf, offset) {
+  // Deprecated - 'format' argument, as supported in v1.2
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options == 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || _rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ii++) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || unparse(rnds);
+}
+
+// Export public API
+var uuid = v4;
+uuid.v1 = v1;
+uuid.v4 = v4;
+uuid.parse = parse;
+uuid.unparse = unparse;
+
+module.exports = uuid;
+
+},{"./rng":4}],6:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1388,10 +1608,10 @@ module.exports = {
  * @namespace photonui
  */
 
-
 var Class = require("classyjs");
-var Helpers = require("./helpers.js");
+var uuid = require("uuid");
 
+var Helpers = require("./helpers.js");
 
 /**
  * Base class for all PhotonUI Classes.
@@ -1409,7 +1629,7 @@ var Helpers = require("./helpers.js");
 var Base = Class.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         // New instances for object properties
         this.__events = {};
 
@@ -1426,16 +1646,14 @@ var Base = Class.$extend({
                     enumerable: true,
                     configurable: true
                 });
-            }
-            else if (prop.indexOf("set") === 0) {
+            } else if (prop.indexOf("set") === 0) {
                 propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
                 Object.defineProperty(this, propName, {
                     set: this[prop],
                     enumerable: true,
                     configurable: true
                 });
-            }
-            else if (prop.indexOf("is") === 0) {
+            } else if (prop.indexOf("is") === 0) {
                 propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
                 Object.defineProperty(this, propName, {
                     get: this[prop],
@@ -1461,14 +1679,12 @@ var Base = Class.$extend({
             for (var wEvent in params.callbacks) {
                 ev = params.callbacks[wEvent];
                 if (typeof(ev) == "function") {
-                    this.registerCallback(Helpers.uuid4(), wEvent, ev);
-                }
-                else if (ev instanceof Array) {
-                    for (i=0 ; i<ev.length ; i++) {
-                        this.registerCallback(Helpers.uuid4(), wEvent, ev[i]);
+                    this.registerCallback(uuid.v4(), wEvent, ev);
+                } else if (ev instanceof Array) {
+                    for (i = 0 ; i < ev.length ; i++) {
+                        this.registerCallback(uuid.v4(), wEvent, ev[i]);
                     }
-                }
-                else {
+                } else {
                     for (evId in ev) {
                         this.registerCallback(evId, wEvent, ev[evId]);
                     }
@@ -1477,14 +1693,11 @@ var Base = Class.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Private properties ======
-
 
     /**
      * Object containing references javascript events binding (for widget
@@ -1505,21 +1718,18 @@ var Base = Class.$extend({
      */
     __callbacks: null,  // Registered callback
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Destroy the class.
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this._callCallbacks("destroy");
         for (var id in this.__events) {
             this._unbindEvent(id);
@@ -1539,9 +1749,9 @@ var Base = Class.$extend({
      * @param {Function} callback The callback function.
      * @param {Object} thisArg The value of this (optionnal, default = current widget).
      */
-    registerCallback: function(id, wEvent, callback, thisArg) {
+    registerCallback: function (id, wEvent, callback, thisArg) {
         if (!this.__callbacks[wEvent]) {
-            console.error("This widget have no '" + wEvent + "' event.");
+            Helpers.log("error", "This widget has no '" + wEvent + "' wEvent.");
             return;
         }
         this.__callbacks[wEvent][id] = {
@@ -1556,7 +1766,7 @@ var Base = Class.$extend({
      * @method removeCallback
      * @param {String} id The id of the callback.
      */
-    removeCallback: function(id) {
+    removeCallback: function (id) {
         for (var wEvent in this.__callbacks) {
             if (this.__callbacks[wEvent][id]) {
                 delete this.__callbacks[wEvent][id];
@@ -1564,9 +1774,7 @@ var Base = Class.$extend({
         }
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Force the update of the given properties.
@@ -1575,8 +1783,8 @@ var Base = Class.$extend({
      * @private
      * @param {Array} properties The properties to update.
      */
-    _updateProperties: function(properties) {
-        for (var i=0 ; i<properties.length ; i++) {
+    _updateProperties: function (properties) {
+        for (var i = 0 ; i < properties.length ; i++) {
             this[properties[i]] = this[properties[i]];
         }
     },
@@ -1591,7 +1799,7 @@ var Base = Class.$extend({
      * @param {String} evName The event name (e.g. "mousemove", "click",...).
      * @param {Function} callback The function that will be called when the event occured.
      */
-    _bindEvent: function(id, element, evName, callback) {
+    _bindEvent: function (id, element, evName, callback) {
         this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
@@ -1612,8 +1820,10 @@ var Base = Class.$extend({
      * @private
      * @param {String} id The id of the event.
      */
-    _unbindEvent: function(id) {
-        if (!this.__events[id]) return;
+    _unbindEvent: function (id) {
+        if (!this.__events[id]) {
+            return;
+        }
         this.__events[id].element.removeEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,
@@ -1629,7 +1839,7 @@ var Base = Class.$extend({
      * @private
      * @param {Array} wEvents
      */
-    _registerWEvents: function(wEvents) {
+    _registerWEvents: function (wEvents) {
         if (this.__callbacks === null) {
             this.__callbacks = {};
         }
@@ -1649,7 +1859,7 @@ var Base = Class.$extend({
      * @param {String} wEvent The widget event.
      * @param {Array} params Parametters that will be sent to the callbacks.
      */
-    _callCallbacks: function(wEvent, params) {
+    _callCallbacks: function (wEvent, params) {
         params = params || [];
         for (var id in this.__callbacks[wEvent]) {
             this.__callbacks[wEvent][id].callback.apply(
@@ -1662,9 +1872,9 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":19,"classyjs":1}],5:[function(require,module,exports){
+},{"./helpers.js":21,"classyjs":1,"uuid":5}],7:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1725,7 +1935,7 @@ var ColorPickerDialog = require("./colorpickerdialog.js");
 var ColorButton = Button.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.__widgets = {};
         this._color = new Color();
         this._registerWEvents(["value-changed"]);
@@ -1734,11 +1944,9 @@ var ColorButton = Button.$extend({
         this._updateProperties(["color"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -1748,11 +1956,11 @@ var ColorButton = Button.$extend({
      * @property value
      * @type String
      */
-    getValue: function() {
+    getValue: function () {
         return this.color.hexString;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.color.hexString = value;
     },
 
@@ -1764,24 +1972,24 @@ var ColorButton = Button.$extend({
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             if (this._color) {
                 this._color.removeCallback("photonui.colorbutton.value-changed::" + this.name);
             }
             this._color = color;
-            this._color.registerCallback("photonui.colorbutton.value-changed::" + this.name, "value-changed", this.__onColorChanged, this);
+            this._color.registerCallback("photonui.colorbutton.value-changed::" +
+                                         this.name, "value-changed", this.__onColorChanged, this);
         }
         this.__onColorChanged();
         if (color instanceof Color) {
             this._color = color;
         }
     },
-
 
     /**
      * Display only the color picker dialog instead of showing the palette first.
@@ -1792,31 +2000,26 @@ var ColorButton = Button.$extend({
      */
     _dialogOnly: false,
 
-    isDialogOnly: function() {
+    isDialogOnly: function () {
         return this._dialogOnly;
     },
 
-    setDialogOnly: function(dialogOnly) {
-        this._dialogOnly = !!dialogOnly;
+    setDialogOnly: function (dialogOnly) {
+        this._dialogOnly = Boolean(dialogOnly);
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
 
-
-    destroy: function() {
+    destroy: function () {
         this._color.removeCallback("photonui.colorbutton.value-changed::" + this.name);
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Update the button content
@@ -1824,7 +2027,7 @@ var ColorButton = Button.$extend({
      * @method _update
      * @private
      */
-    _update: function() {
+    _update: function () {
         // Do nothing
     },
 
@@ -1834,7 +2037,7 @@ var ColorButton = Button.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.button = document.createElement("button");
         this.__html.button.className = "photonui-widget photonui-button";
@@ -1851,8 +2054,8 @@ var ColorButton = Button.$extend({
      * @method _buildUi
      * @private
      */
-     //TODO: Build UI
-    _buildUi: function() {
+    //TODO: Build UI
+    _buildUi: function () {
         this.__widgets.popup = new PopupWindow();
         this.__widgets.vbox = new BoxLayout({verticalSpacing: 0, horizontalSpacing: 0});
         this.__widgets.popup.child = this.__widgets.vbox;
@@ -1868,7 +2071,8 @@ var ColorButton = Button.$extend({
 
         // Callbacks
         this.__widgets.palette.registerCallback("value-changed", "value-changed", this.__onValueChanged, this);
-        this.__widgets.colorPickerDialog.registerCallback("value-changed", "value-changed", this.__onValueChanged, this);
+        this.__widgets.colorPickerDialog.registerCallback("value-changed", "value-changed",
+                                                          this.__onValueChanged, this);
         this.__widgets.custom.registerCallback("click", "click", this.__onCustomButtonClicked, this);
 
         // Color
@@ -1876,11 +2080,9 @@ var ColorButton = Button.$extend({
         this.__widgets.colorPickerDialog.color = this.color;
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the button is clicked.
@@ -1889,13 +2091,12 @@ var ColorButton = Button.$extend({
      * @private
      * @param event
      */
-    __onButtonClicked: function(event) {
+    __onButtonClicked: function (event) {
         this._callCallbacks("click", [event]);
         if (this.dialogOnly) {
             this.__widgets.colorPickerDialog.show();
             this.__widgets.colorPickerDialog.center();
-        }
-        else {
+        } else {
             this.__widgets.popup.popupWidget(this);
         }
     },
@@ -1908,7 +2109,7 @@ var ColorButton = Button.$extend({
      * @param {photonui.Widget} widget
      * @param {String} color
      */
-    __onValueChanged: function(widget, color) {
+    __onValueChanged: function (widget, color) {
         this._callCallbacks("value-changed", [this.color]);
     },
 
@@ -1917,7 +2118,7 @@ var ColorButton = Button.$extend({
      * @method __onColorChanged
      * @private
      */
-    __onColorChanged: function() {
+    __onColorChanged: function () {
         this.__html.color.style.backgroundColor = this.color.hexString;
     },
 
@@ -1925,7 +2126,7 @@ var ColorButton = Button.$extend({
      * @method __onCustomButtonClicked
      * @private
      */
-    __onCustomButtonClicked: function() {
+    __onCustomButtonClicked: function () {
         this.__widgets.colorPickerDialog.show();
         this.__widgets.colorPickerDialog.center();
     }
@@ -1933,9 +2134,9 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":14,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../layout/boxlayout.js":31,"../nonvisual/color.js":38,"./colorpickerdialog.js":6,"stonejs":3}],6:[function(require,module,exports){
+},{"../container/popupwindow.js":16,"../interactive/button.js":22,"../interactive/colorpalette.js":24,"../layout/boxlayout.js":33,"../nonvisual/color.js":40,"./colorpickerdialog.js":8,"stonejs":3}],8:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2001,12 +2202,14 @@ var FAIcon = require("../visual/faicon.js");
 var ColorPickerDialog = Dialog.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.__widgets = {};
         this._color = new Color();
 
         params = params || {};
-        if (params.title === undefined) params.title = _("Select a color...");
+        if (params.title === undefined) {
+            params.title = _("Select a color...");
+        }
 
         this._registerWEvents(["value-changed"]);
 
@@ -2016,16 +2219,13 @@ var ColorPickerDialog = Dialog.$extend({
         this._updateProperties(["color"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
 
     _padding: 10,
-
 
     /**
      * The color.
@@ -2035,45 +2235,43 @@ var ColorPickerDialog = Dialog.$extend({
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             if (this._color) {
                 this._color.removeCallback("photonui.colorpickerdialog.value-changed::" + this.name);
             }
             this._color = color;
-            this._color.registerCallback("photonui.colorpickerdialog.value-changed::" + this.name, "value-changed", this.__onColorChanged, this);
+            this._color.registerCallback("photonui.colorpickerdialog.value-changed::" + this.name, "value-changed",
+                                         this.__onColorChanged, this);
         }
         this.__onColorChanged();
     },
 
     //
 
-    setVisible: function(visible) {
+    setVisible: function (visible) {
         this.$super(visible);
-        if (this._color && visible && this.__widgets.labelRed) this._updateUi();
+        if (this._color && visible && this.__widgets.labelRed) {
+            this._updateUi();
+        }
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
 
-
-    destroy: function() {
+    destroy: function () {
         this._color.removeCallback("photonui.colorpickerdialog.value-changed::" + this.name);
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Make the UI.
@@ -2081,7 +2279,8 @@ var ColorPickerDialog = Dialog.$extend({
      * @method _buildUi
      * @private
      */
-    _buildUi: function() {
+    _buildUi: function () {
+        this.html.className += " photonui-colorpickerdialog";
 
         // == Main UI ==
         this.__widgets.hbox = new BoxLayout({
@@ -2151,7 +2350,12 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Separator
         this.__widgets.separator2 = new Separator();
-        this.__widgets.grid.addChild(this.__widgets.separator2, {gridX: 0, gridY: 3, verticalExpansion: false, gridWidth: 2});
+        this.__widgets.grid.addChild(this.__widgets.separator2, {
+            gridX: 0,
+            gridY: 3,
+            verticalExpansion: false,
+            gridWidth: 2
+        });
 
         // Hue field + label
         this.__widgets.fieldHue = new Slider({
@@ -2200,44 +2404,57 @@ var ColorPickerDialog = Dialog.$extend({
 
         // == Dialog Buttons ==
         this.__widgets.buttonOk = new Button({text: _("Ok")});
-        if (FAIcon) this.__widgets.buttonOk.leftIcon = new FAIcon("fa-check");
+        if (FAIcon) {
+            this.__widgets.buttonOk.leftIcon = new FAIcon("fa-check");
+        }
 
         this.__widgets.buttonCancel = new Button({text: _("Cancel")});
         this.buttons = [this.__widgets.buttonOk, this.__widgets.buttonCancel];
 
-        if (FAIcon) this.__widgets.buttonCancel.leftIcon = new FAIcon("fa-times");
+        if (FAIcon) {
+            this.__widgets.buttonCancel.leftIcon = new FAIcon("fa-times");
+        }
 
         // == Bindings ==
         this.__widgets.colorPalette.color = this.__widgets.colorPicker.color;
 
-        this.__widgets.colorPicker.color.registerCallback("colorpickerdialog.colorPicker.value-changed", "value-changed", this._updateUi, this);
+        this.__widgets.colorPicker.color.registerCallback(
+            "colorpickerdialog.colorPicker.value-changed", "value-changed", this._updateUi, this);
 
-        this.__widgets.fieldRed.registerCallback("colorpickerdialog.fieldRed.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldRed.registerCallback(
+            "colorpickerdialog.fieldRed.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.red = value;
         }, this);
 
-        this.__widgets.fieldGreen.registerCallback("colorpickerdialog.fieldGreen.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldGreen.registerCallback(
+            "colorpickerdialog.fieldGreen.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.green = value;
         }, this);
 
-        this.__widgets.fieldBlue.registerCallback("colorpickerdialog.fieldBlue.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldBlue.registerCallback(
+            "colorpickerdialog.fieldBlue.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.blue = value;
         }, this);
 
-        this.__widgets.fieldHue.registerCallback("colorpickerdialog.fieldHue.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldHue.registerCallback(
+            "colorpickerdialog.fieldHue.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.hue = value;
         }, this);
 
-        this.__widgets.fieldSaturation.registerCallback("colorpickerdialog.fieldSaturation.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldSaturation.registerCallback(
+            "colorpickerdialog.fieldSaturation.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.saturation = value;
         }, this);
 
-        this.__widgets.fieldBrightness.registerCallback("colorpickerdialog.fieldBrightness.value-changed", "value-changed", function(widget, value) {
+        this.__widgets.fieldBrightness.registerCallback(
+            "colorpickerdialog.fieldBrightness.value-changed", "value-changed", function (widget, value) {
             this.__widgets.colorPicker.color.brightness = value;
         }, this);
 
-        this.__widgets.buttonOk.registerCallback("colorpickerdialog.buttonOk.click", "click", this.__onValidate, this);
-        this.__widgets.buttonCancel.registerCallback("colorpickerdialog.buttonCancel.click", "click", this.__onCancel, this);
+        this.__widgets.buttonOk.registerCallback(
+            "colorpickerdialog.buttonOk.click", "click", this.__onValidate, this);
+        this.__widgets.buttonCancel.registerCallback(
+            "colorpickerdialog.buttonCancel.click", "click", this.__onCancel, this);
         this.registerCallback("colorpickerdialog.close", "close-button-clicked", this.__onCancel, this);
     },
 
@@ -2247,7 +2464,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @method _updateUi
      * @private
      */
-    _updateUi: function(color) {
+    _updateUi: function (color) {
         color = color || this.color;
         this.__widgets.fieldRed.value = color.red;
         this.__widgets.fieldGreen.value = color.green;
@@ -2257,17 +2474,15 @@ var ColorPickerDialog = Dialog.$extend({
         this.__widgets.fieldBrightness.value = color.brightness;
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onCancel
      * @private
      */
-    __onCancel: function() {
+    __onCancel: function () {
         this.__widgets.colorPicker.color.setHSB(
                 this._color.hue,
                 this._color.saturation,
@@ -2280,7 +2495,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @method __onValidate
      * @private
      */
-    __onValidate: function() {
+    __onValidate: function () {
         this._color.setHSB(
                 this.__widgets.colorPicker.color.hue,
                 this.__widgets.colorPicker.color.saturation,
@@ -2294,7 +2509,7 @@ var ColorPickerDialog = Dialog.$extend({
      * @method __onColorChanged
      * @private
      */
-    __onColorChanged: function() {
+    __onColorChanged: function () {
         this.__widgets.colorPicker.color.setHSB(
                 this._color.hue,
                 this._color.saturation,
@@ -2305,9 +2520,9 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":12,"../interactive/button.js":20,"../interactive/colorpalette.js":22,"../interactive/colorpicker.js":23,"../interactive/slider.js":26,"../layout/boxlayout.js":31,"../layout/gridlayout.js":33,"../nonvisual/color.js":38,"../visual/faicon.js":46,"../visual/label.js":48,"../visual/separator.js":50,"stonejs":3}],7:[function(require,module,exports){
+},{"../container/dialog.js":14,"../interactive/button.js":22,"../interactive/colorpalette.js":24,"../interactive/colorpicker.js":25,"../interactive/slider.js":28,"../layout/boxlayout.js":33,"../layout/gridlayout.js":35,"../nonvisual/color.js":40,"../visual/faicon.js":48,"../visual/label.js":50,"../visual/separator.js":52,"stonejs":3}],9:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2360,22 +2575,21 @@ var MenuItem = require("../container/menuitem.js");
 var FontSelect = Select.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         params = params || {};
         this._fonts = [];
         this.$super(params);
-        if (this.fonts.length === 0) this.fonts = ["sans-serif", "serif", "monospace"];
+        if (this.fonts.length === 0) {
+            this.fonts = ["sans-serif", "serif", "monospace"];
+        }
         this.value = (params.value !== undefined) ? params.value : "sans-serif";
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The font list
@@ -2386,13 +2600,13 @@ var FontSelect = Select.$extend({
      */
     _fonts: null,
 
-    getFonts: function() {
+    getFonts: function () {
         return this._fonts;
     },
 
-    setFonts: function(fonts) {
+    setFonts: function (fonts) {
         this._fonts = [];
-        for (var i=0 ; i<fonts.length ; i++) {
+        for (var i = 0 ; i < fonts.length ; i++) {
             this.addFont(fonts[i]);
         }
     },
@@ -2406,14 +2620,11 @@ var FontSelect = Select.$extend({
      */
     _placeholder: Stone.lazyGettext("Select a font..."),
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a widget to the layout.
@@ -2421,16 +2632,14 @@ var FontSelect = Select.$extend({
      * @method addChild
      * @param {String} fontName
      */
-    addFont: function(fontName) {
+    addFont: function (fontName) {
         var item = new MenuItem({value: fontName, text: fontName});
         item.html.style.fontFamily = fontName;
         this.addChild(item);
         this._fonts.push(fontName);
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -2438,7 +2647,7 @@ var FontSelect = Select.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.select.className += " photonui-fontselect";
     }
@@ -2446,9 +2655,9 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":13,"./select.js":9,"stonejs":3}],8:[function(require,module,exports){
+},{"../container/menuitem.js":15,"./select.js":11,"stonejs":3}],10:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2500,7 +2709,7 @@ var Menu = require("../layout/menu.js");
 var PopupMenu = PopupWindow.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
     },
@@ -2522,17 +2731,15 @@ var PopupMenu = PopupWindow.$extend({
         removeChild:      Menu.prototype.removeChild,
         empty:            Menu.prototype.empty,
         destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
+        _updateLayout:    Menu.prototype._updateLayout,
+        _lockUpdate:      Menu.prototype._lockUpdate
     }],
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -2540,7 +2747,7 @@ var PopupMenu = PopupWindow.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         Menu.prototype._buildHtml.call(this);
 
@@ -2549,11 +2756,9 @@ var PopupMenu = PopupWindow.$extend({
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -2561,16 +2766,16 @@ var PopupMenu = PopupWindow.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":14,"../layout/menu.js":35}],9:[function(require,module,exports){
+},{"../container/popupwindow.js":16,"../layout/menu.js":37}],11:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2629,7 +2834,7 @@ var MenuItem = require("../container/menuitem.js");
 var Select = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         params = params || {};
 
         // Attach popup & special mixin
@@ -2648,14 +2853,11 @@ var Select = Widget.$extend({
         this.setValue(params.value || this.value, true);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The field value.
@@ -2666,16 +2868,18 @@ var Select = Widget.$extend({
      */
     _value: "",
 
-    getValue: function() {
+    getValue: function () {
         return this._value;
     },
 
-    setValue: function(value, force) {
-        if (this.value == value && !force) return;
+    setValue: function (value, force) {
+        if (this.value == value && !force) {
+            return;
+        }
 
         var items = this.__popupMenu.children;
 
-        for (var i=0 ; i<items.length ; i++) {
+        for (var i = 0 ; i < items.length ; i++) {
             if (items[i] instanceof MenuItem && items[i].value == value) {
                 this._value = value;
                 Helpers.cleanNode(this.__html.select);
@@ -2699,11 +2903,11 @@ var Select = Widget.$extend({
      */
     _placeholder: Stone.lazyGettext("Select..."),
 
-    getPlaceholder: function() {
+    getPlaceholder: function () {
         return this._placeholder;
     },
 
-    setPlaceholder: function(placeholder) {
+    setPlaceholder: function (placeholder) {
         this._placeholder = placeholder;
     },
 
@@ -2731,7 +2935,7 @@ var Select = Widget.$extend({
     setChildrenNames: function (p) {
         this.__popupMenu.setChildrenNames(p);
         this._updateItemsBinding();
-     },
+    },
 
     /**
      * Width of the container node.
@@ -2833,8 +3037,7 @@ var Select = Widget.$extend({
     setIconVisible: function (p) {
         if (!p) {
             this.addClass("photonui-select-noicon");
-        }
-        else {
+        } else {
             this.removeClass("photonui-select-noicon");
         }
         this.__popupMenu.setIconVisible(p);
@@ -2848,7 +3051,7 @@ var Select = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.select;
     },
 
@@ -2861,14 +3064,11 @@ var Select = Widget.$extend({
      */
     __popupMenu: null,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a widget to the layout.
@@ -2877,7 +3077,7 @@ var Select = Widget.$extend({
      * @param {photonui.Widget} widget The widget to add.
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
-    addChild: function(w, l) {
+    addChild: function (w, l) {
         this.__popupMenu.addChild(w, l);
         this._updateItemsBinding();
     },
@@ -2887,14 +3087,12 @@ var Select = Widget.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this.__popupMenu.destroy();
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -2902,7 +3100,7 @@ var Select = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.select = document.createElement("div");
         this.__html.select.className = "photonui-widget photonui-select";
         this.__html.select.tabIndex = "0";
@@ -2914,10 +3112,10 @@ var Select = Widget.$extend({
      * @method _updateItemsBinding
      * @private
      */
-    _updateItemsBinding: function() {
+    _updateItemsBinding: function () {
         var items = this.__popupMenu.children;
 
-        for (var i=0 ; i<items.length ; i++) {
+        for (var i = 0 ; i < items.length ; i++) {
             if (items[i] instanceof MenuItem) {
                 items[i].registerCallback(this.name + "-click",
                         "click", this.__onItemClicked, this);
@@ -2925,18 +3123,16 @@ var Select = Widget.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onClick
      * @private
      * @param event
      */
-    __onClick: function(event) {
+    __onClick: function (event) {
         if (!this._minWidthDefined) {
             this.popupMinWidth = this.offsetWidth;
         }
@@ -2948,7 +3144,7 @@ var Select = Widget.$extend({
      * @private
      * @param {photonui.MenuItem} widget
      */
-    __onItemClicked: function(widget) {
+    __onItemClicked: function (widget) {
         this.value = widget.value;
         this._callCallbacks("value-changed", [this.value]);
     }
@@ -2956,9 +3152,9 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":13,"../helpers.js":19,"../widget.js":53,"./popupmenu.js":8,"stonejs":3}],10:[function(require,module,exports){
+},{"../container/menuitem.js":15,"../helpers.js":21,"../widget.js":55,"./popupmenu.js":10,"stonejs":3}],12:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3014,7 +3210,7 @@ var Widget = require("../widget.js");
 var BaseWindow = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["position-changed"]);
         this.$super(params);
 
@@ -3034,14 +3230,11 @@ var BaseWindow = Container.$extend({
         ]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Window position.
@@ -3052,21 +3245,20 @@ var BaseWindow = Container.$extend({
      * @type Object
      * @default {x: 0, y: 0}
      */
-    getPosition: function() {
+    getPosition: function () {
         if (this.visible && this.html.parentNode) {
             return this.absolutePosition;
         }
         return {x: this._x, y: this._y};
     },
 
-    setPosition: function(x, y) {
+    setPosition: function (x, y) {
         if (typeof(x) == "object" && y === undefined) {
             this.html.style.left = x.x + "px";
             this.html.style.top = x.y + "px";
             this._x = x.x;
             this._y = x.y;
-        }
-        else {
+        } else {
             if (typeof(x) == "number") {
                 this.html.style.left = x + "px";
                 this._x = x;
@@ -3088,11 +3280,11 @@ var BaseWindow = Container.$extend({
      */
     _x: 0,
 
-    getX: function() {
+    getX: function () {
         return this.position.x;
     },
 
-    setX: function(x) {
+    setX: function (x) {
         this.setPosition(x, null);
     },
 
@@ -3105,11 +3297,11 @@ var BaseWindow = Container.$extend({
      */
     _y: 0,
 
-    getY: function() {
+    getY: function () {
         return this.position.y;
     },
 
-    setY: function(y) {
+    setY: function (y) {
         this.setPosition(null, y);
     },
 
@@ -3122,19 +3314,18 @@ var BaseWindow = Container.$extend({
      */
     _width: null,
 
-    getWidth: function() {
+    getWidth: function () {
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetWidth;
         }
         return this._width || 0;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         this._width = width || null;
         if (this._width) {
             this.containerNode.style.width = width + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.width = "auto";
         }
     },
@@ -3148,19 +3339,18 @@ var BaseWindow = Container.$extend({
      */
     _height: null,
 
-    getHeight: function() {
+    getHeight: function () {
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetHeight;
         }
         return this._height || 0;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         this._height = height || null;
         if (this._height) {
             this.containerNode.style.height = height + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.height = "auto";
         }
     },
@@ -3174,16 +3364,15 @@ var BaseWindow = Container.$extend({
      */
     _minWidth: null,
 
-    getMinWidth: function() {
+    getMinWidth: function () {
         return this._minWidth;
     },
 
-    setMinWidth: function(minWidth) {
+    setMinWidth: function (minWidth) {
         this._minWidth = minWidth || null;
         if (this._minWidth) {
             this.containerNode.style.minWidth = minWidth + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.minWidth = "0";
         }
     },
@@ -3197,16 +3386,15 @@ var BaseWindow = Container.$extend({
      */
     _minHeight: null,
 
-    getMinHeight: function() {
+    getMinHeight: function () {
         return this._minHeight;
     },
 
-    setMinHeight: function(minHeight) {
+    setMinHeight: function (minHeight) {
         this._minHeight = minHeight || null;
         if (this._minHeight) {
             this.containerNode.style.minHeight = minHeight + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.minHeight = "0";
         }
     },
@@ -3220,16 +3408,15 @@ var BaseWindow = Container.$extend({
      */
     _maxWidth: null,
 
-    getMaxWidth: function() {
+    getMaxWidth: function () {
         return this._maxWidth;
     },
 
-    setMaxWidth: function(maxWidth) {
+    setMaxWidth: function (maxWidth) {
         this._maxWidth = maxWidth || null;
         if (this._maxWidth) {
             this.containerNode.style.maxWidth = maxWidth + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.maxWidth = "auto";
         }
     },
@@ -3243,16 +3430,15 @@ var BaseWindow = Container.$extend({
      */
     _maxHeight: null,
 
-    getMaxHeight: function() {
+    getMaxHeight: function () {
         return this._maxHeight;
     },
 
-    setMaxHeight: function(maxHeight) {
+    setMaxHeight: function (maxHeight) {
         this._maxHeight = maxHeight || null;
         if (this._maxHeight) {
             this.containerNode.style.maxHeight = maxHeight + "px";
-        }
-        else {
+        } else {
             this.containerNode.style.maxHeight = "auto";
         }
     },
@@ -3266,11 +3452,11 @@ var BaseWindow = Container.$extend({
      */
     _padding: 0,
 
-    getPadding: function() {
+    getPadding: function () {
         return this._padding;
     },
 
-    setPadding: function(padding) {
+    setPadding: function (padding) {
         this._padding = padding;
         this.containerNode.style.padding = padding + "px";
     },
@@ -3283,7 +3469,7 @@ var BaseWindow = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.window;
     },
 
@@ -3294,36 +3480,33 @@ var BaseWindow = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.html;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Center the window.
      *
      * @method center
      */
-    center: function() {
+    center: function () {
         var node = Widget.e_parent || document.getElementsByTagName("body")[0];
-        if (!node) return;
+        if (!node) {
+            return;
+        }
         this.setPosition(
-                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0)|0,
-                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0)|0
+                Math.max((node.offsetWidth - this.offsetWidth) / 2, 0) | 0,
+                Math.max((node.offsetHeight - this.offsetHeight) / 2, 0) | 0
         );
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -3331,7 +3514,7 @@ var BaseWindow = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.window = document.createElement("div");
         this.__html.window.className = "photonui-widget photonui-basewindow";
     }
@@ -3339,9 +3522,9 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":53,"./container.js":11}],11:[function(require,module,exports){
+},{"../widget.js":55,"./container.js":13}],13:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3390,7 +3573,7 @@ var Widget = require("../widget.js");
 var Container = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
 
         this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
@@ -3405,9 +3588,7 @@ var Container = Widget.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Horizontaly expand the container's child widget.
@@ -3418,17 +3599,18 @@ var Container = Widget.$extend({
      */
     _horizontalChildExpansion: true,
 
-    getHorizontalChildExpansion: function() {
+    getHorizontalChildExpansion: function () {
         return this._horizontalChildExpansion;
     },
 
-    setHorizontalChildExpansion: function(expansion) {
-        this._horizontalChildExpansion = !!expansion;
-        if (!this.containerNode) return;
+    setHorizontalChildExpansion: function (expansion) {
+        this._horizontalChildExpansion = Boolean(expansion);
+        if (!this.containerNode) {
+            return;
+        }
         if (expansion) {
             this.containerNode.classList.add("photonui-container-expand-child-horizontal");
-        }
-        else {
+        } else {
             this.containerNode.classList.remove("photonui-container-expand-child-horizontal");
         }
     },
@@ -3442,17 +3624,18 @@ var Container = Widget.$extend({
      */
     _verticalChildExpansion: false,
 
-    getVerticalChildExpansion: function() {
+    getVerticalChildExpansion: function () {
         return this._verticalChildExpansion;
     },
 
-    setVerticalChildExpansion: function(expansion) {
-        this._verticalChildExpansion = !!expansion;
-        if (!this.containerNode) return;
+    setVerticalChildExpansion: function (expansion) {
+        this._verticalChildExpansion = Boolean(expansion);
+        if (!this.containerNode) {
+            return;
+        }
         if (expansion) {
             this.containerNode.classList.add("photonui-container-expand-child-vertical");
-        }
-        else {
+        } else {
             this.containerNode.classList.remove("photonui-container-expand-child-vertical");
         }
     },
@@ -3466,11 +3649,11 @@ var Container = Widget.$extend({
      */
     _childName: null,
 
-    getChildName: function() {
+    getChildName: function () {
         return this._childName;
     },
 
-    setChildName: function(childName) {
+    setChildName: function (childName) {
         if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.removeChild(this.child.html);
             this.child._parentName = null;
@@ -3492,11 +3675,11 @@ var Container = Widget.$extend({
      * @type photonui.Widget
      * @default null (no child)
      */
-    getChild: function() {
+    getChild: function () {
         return Widget.getWidget(this.childName);
     },
 
-    setChild: function(child) {
+    setChild: function (child) {
         if ((!child) || (!(child instanceof Widget))) {
             this.childName = null;
             return;
@@ -3511,7 +3694,7 @@ var Container = Widget.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return null;
     },
 
@@ -3522,7 +3705,7 @@ var Container = Widget.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         if (this.child instanceof Widget) {
             this.child._visibilityChanged(visibility);
@@ -3530,11 +3713,9 @@ var Container = Widget.$extend({
         this.$super(visibility);
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Public methods ======
 
@@ -3544,7 +3725,7 @@ var Container = Widget.$extend({
      * @method removeChild
      * @param {photonui.Widget} widget The widget to remove/
      */
-    removeChild: function(widget) {
+    removeChild: function (widget) {
         if (this.child == widget) {
             this.child = null;
         }
@@ -3555,7 +3736,7 @@ var Container = Widget.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         if (this.childName && this.child) {
             this.child.destroy();
         }
@@ -3565,9 +3746,9 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":53}],12:[function(require,module,exports){
+},{"../widget.js":55}],14:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3620,25 +3801,22 @@ var _windowList = [];
 var Dialog = Window.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._buttonsNames = [];
         this.$super(params);
 
         // Force to update the parent of the buttons
         var buttons = this.buttons;
-        for (var i=0 ; i<buttons.length ; i++) {
+        for (var i = 0 ; i < buttons.length ; i++) {
             buttons[i]._parentName = this.name;
         }
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Dialog button widgets name.
@@ -3649,13 +3827,14 @@ var Dialog = Window.$extend({
      */
     _buttonsNames: [],
 
-    getButtonsNames: function() {
+    getButtonsNames: function () {
         return this._buttonsNames;
     },
 
-    setButtonsNames: function(buttonsNames) {
-        var i, widget;
-        for (i=0 ; i<this._buttonsNames.length ; i++) {
+    setButtonsNames: function (buttonsNames) {
+        var i;
+        var widget;
+        for (i = 0 ; i < this._buttonsNames.length ; i++) {
             widget = Widget.getWidget(this._buttonsNames[i]);
             var index = this._buttonsNames.indexOf(widget.name);
             if (index >= 0) {
@@ -3663,7 +3842,7 @@ var Dialog = Window.$extend({
             }
         }
         this._buttonsNames = [];
-        for (i=0 ; i<buttonsNames.length ; i++) {
+        for (i = 0 ; i < buttonsNames.length ; i++) {
             widget = Widget.getWidget(buttonsNames[i]);
             if (widget) {
                 if (widget.parent) {
@@ -3683,19 +3862,21 @@ var Dialog = Window.$extend({
      * @type Array
      * @default []
      */
-    getButtons: function() {
+    getButtons: function () {
         var buttons = [];
         var widget;
-        for (var i=0 ; i<this._buttonsNames.length ; i++) {
+        for (var i = 0 ; i < this._buttonsNames.length ; i++) {
             widget = Widget.getWidget(this._buttonsNames[i]);
-            if (widget instanceof Widget) buttons.push(widget);
+            if (widget instanceof Widget) {
+                buttons.push(widget);
+            }
         }
         return buttons;
     },
 
-    setButtons: function(buttons) {
+    setButtons: function (buttons) {
         var buttonsNames = [];
-        for (var i=0 ; i<buttons.length ; i++) {
+        for (var i = 0 ; i < buttons.length ; i++) {
             if (buttons[i] instanceof Widget) {
                 buttonsNames.push(buttons[i].name);
             }
@@ -3703,14 +3884,11 @@ var Dialog = Window.$extend({
         this.buttonsNames = buttonsNames;
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a button to the dialog.
@@ -3718,7 +3896,7 @@ var Dialog = Window.$extend({
      * @method addButton
      * @param {photonui.Widget} widget The button to add.
      */
-    addButton: function(widget, layoutOptions) {
+    addButton: function (widget, layoutOptions) {
         if (widget.parent) {
             widget.unparent();
         }
@@ -3736,7 +3914,7 @@ var Dialog = Window.$extend({
      * @method removeButton
      * @param {photonui.Widget} widget The button to remove.
      */
-    removeButton: function(widget) {
+    removeButton: function (widget) {
         var index = this._buttonsNames.indexOf(widget.name);
         if (index >= 0) {
             this._buttonsNames.splice(index, 1);
@@ -3746,7 +3924,7 @@ var Dialog = Window.$extend({
     },
 
     // Alias needed for photonui.Widget.unparent()
-    removeChild: function() {
+    removeChild: function () {
         this.$super.apply(this, arguments);
         this.removeButton.apply(this, arguments);
     },
@@ -3756,9 +3934,9 @@ var Dialog = Window.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         var buttons = this.buttons;
-        for (var i=0 ; i<buttons.length ; i++) {
+        for (var i = 0 ; i < buttons.length ; i++) {
             if (buttons[i]) {
                 buttons[i].destroy();
             }
@@ -3766,9 +3944,7 @@ var Dialog = Window.$extend({
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Update dialog buttons.
@@ -3776,10 +3952,10 @@ var Dialog = Window.$extend({
      * @method _updateButtons
      * @private
      */
-    _updateButtons: function() {
+    _updateButtons: function () {
         Helpers.cleanNode(this.__html.buttons);
         var buttons = this.buttons;
-        for (var i=buttons.length-1 ; i>=0 ; i--) {
+        for (var i = buttons.length - 1 ; i >= 0 ; i--) {
             this.__html.buttons.appendChild(buttons[i].html);
         }
     },
@@ -3790,7 +3966,7 @@ var Dialog = Window.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.window.className += " photonui-dialog";
 
@@ -3806,11 +3982,13 @@ var Dialog = Window.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var buttons = this.buttons;
-        for (var i=0 ; i<buttons.length ; i++) {
-            if (!(this.child instanceof Widget)) continue;
+        for (var i = 0 ; i < buttons.length ; i++) {
+            if (!(this.child instanceof Widget)) {
+                continue;
+            }
             buttons[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);
@@ -3819,9 +3997,9 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":19,"../widget.js":53,"./window.js":18}],13:[function(require,module,exports){
+},{"../helpers.js":21,"../widget.js":55,"./window.js":20}],15:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3873,24 +4051,21 @@ var BaseIcon = require("../visual/baseicon.js");
 var MenuItem = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
         this._updateProperties(["text", "icon", "active"]);
 
-        this._bindEvent("click", this.__html.outer, "click", function(event) {
+        this._bindEvent("click", this.__html.outer, "click", function (event) {
             this._callCallbacks("click", [event]);
         }.bind(this));
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * An optional value for the item (can be used in select).
@@ -3901,11 +4076,11 @@ var MenuItem = Container.$extend({
      */
     _value: "",
 
-    getValue: function() {
+    getValue: function () {
         return this._value;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this._value = value;
     },
 
@@ -3918,11 +4093,11 @@ var MenuItem = Container.$extend({
      */
     _text: "Menu Item",
 
-    getText: function() {
+    getText: function () {
         return this._text;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._text = text;
         Helpers.cleanNode(this.__html.text);
         this.__html.text.appendChild(document.createTextNode(text));
@@ -3937,11 +4112,11 @@ var MenuItem = Container.$extend({
      */
     _iconName: null,
 
-    getIconName: function() {
+    getIconName: function () {
         return this._iconName;
     },
 
-    setIconName: function(iconName) {
+    setIconName: function (iconName) {
         this._iconName = iconName;
         Helpers.cleanNode(this.__html.icon);
         if (this._iconName) {
@@ -3956,11 +4131,11 @@ var MenuItem = Container.$extend({
      * @type photonui.BaseIcon
      * @default: null
      */
-    getIcon: function() {
+    getIcon: function () {
         return Widget.getWidget(this._iconName);
     },
 
-    setIcon: function(icon) {
+    setIcon: function (icon) {
         if (icon instanceof BaseIcon) {
             this.iconName = icon.name;
             return;
@@ -3977,17 +4152,16 @@ var MenuItem = Container.$extend({
      */
     _active: false,
 
-    getActive: function() {
+    getActive: function () {
         return this._active;
     },
 
-    setActive: function(active) {
+    setActive: function (active) {
         this._active = active;
 
         if (active) {
             this.addClass("photonui-menuitem-active");
-        }
-        else {
+        } else {
             this.removeClass("photonui-menuitem-active");
         }
     },
@@ -4000,7 +4174,7 @@ var MenuItem = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -4011,18 +4185,15 @@ var MenuItem = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.widget;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -4030,7 +4201,7 @@ var MenuItem = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-menuitem";
 
@@ -4047,20 +4218,18 @@ var MenuItem = Container.$extend({
         this.__html.outer.appendChild(this.__html.widget);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     // TODO Internal events callback here
 });
 
 module.exports = MenuItem;
 
-},{"../helpers.js":19,"../visual/baseicon.js":44,"../widget.js":53,"./container.js":11}],14:[function(require,module,exports){
+},{"../helpers.js":21,"../visual/baseicon.js":46,"../widget.js":55,"./container.js":13}],16:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4109,15 +4278,14 @@ var BaseWindow = require("./basewindow.js");
 var PopupWindow = BaseWindow.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._bindEvent("document-mousedown-close", document, "mousedown", this.hide.bind(this));
         this._bindEvent("popup-click-close", this.html, "click", this.hide.bind(this));
-        this._bindEvent("mousedown-preventclose", this.html, "mousedown", function(event) {
+        this._bindEvent("mousedown-preventclose", this.html, "mousedown", function (event) {
             event.stopPropagation();
         }.bind(this));
     },
-
 
     /**
      * HTML Element that contain the child widget HTML.
@@ -4126,18 +4294,15 @@ var PopupWindow = BaseWindow.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.inner;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Pop the window at the given position.
@@ -4146,7 +4311,7 @@ var PopupWindow = BaseWindow.$extend({
      * @param {Number} x
      * @param {Number} y
      */
-    popupXY: function(x, y) {
+    popupXY: function (x, y) {
         this.setPosition(-1337, -1337);
         this.show();
 
@@ -4179,7 +4344,7 @@ var PopupWindow = BaseWindow.$extend({
      * @method popupWidget
      * @param {photonui.Widget} widget
      */
-    popupWidget: function(widget) {
+    popupWidget: function (widget) {
         this.setPosition(-1337, -1337);
         this.show();
 
@@ -4194,18 +4359,15 @@ var PopupWindow = BaseWindow.$extend({
 
         if (wpos.x + pw < e_body.offsetWidth) {
             x = wpos.x;
-        }
-        else if (wpos.x + ww < e_body.offsetWidth) {
+        } else if (wpos.x + ww < e_body.offsetWidth) {
             x = wpos.x + ww - pw;
-        }
-        else {
+        } else {
             x = e_body.offsetWidth - pw;
         }
 
         if (wpos.y + wh + ph < e_body.offsetHeight) {
             y = wpos.y + wh + 1;
-        }
-        else if (wpos.y - ph >= 0) {
+        } else if (wpos.y - ph >= 0) {
             y = wpos.y - ph - 1;
         }
 
@@ -4219,9 +4381,7 @@ var PopupWindow = BaseWindow.$extend({
         this.setPosition(x, y);
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -4229,7 +4389,7 @@ var PopupWindow = BaseWindow.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this.__html.window.className += " photonui-popupwindow";
 
@@ -4240,9 +4400,9 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":10}],15:[function(require,module,exports){
+},{"./basewindow.js":12}],17:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4293,21 +4453,18 @@ var Menu = require("../layout/menu.js");
 var SubMenuItem = MenuItem.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this.addClass("photonui-submenuitem");
         this.registerCallback("toggle-folding", "click", this.__onItemClicked, this);
         this._updateProperties(["menuName"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The submenu widget name.
@@ -4318,15 +4475,17 @@ var SubMenuItem = MenuItem.$extend({
      */
     _menuName: null,
 
-    getMenuName: function() {
+    getMenuName: function () {
         return this._menuName;
     },
 
-    setMenuName: function(menuName) {
+    setMenuName: function (menuName) {
         var that = this;
 
         function _init() {
-            if (!that.menu) return;
+            if (!that.menu) {
+                return;
+            }
             that.menu.registerCallback("fold", "hide", that.__onToggleFold, that);
             that.menu.registerCallback("unfold", "show", that.__onToggleFold, that);
             that.active = that.menu.visible;
@@ -4342,8 +4501,7 @@ var SubMenuItem = MenuItem.$extend({
         if (this.menuName) {
             if (this.menu) {
                 _init();
-            }
-            else {
+            } else {
                 setTimeout(_init, 10);
             }
         }
@@ -4356,30 +4514,27 @@ var SubMenuItem = MenuItem.$extend({
      * @type photonui.Menu
      * @default null
      */
-    getMenu: function() {
+    getMenu: function () {
         return Widget.getWidget(this.menuName);
     },
 
-    setMenu: function(menu) {
+    setMenu: function (menu) {
         if (menu instanceof Menu) {
             this.menuName = menu.name;
-        }
-        else {
+        } else {
             this.menuName = null;
         }
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
 
-
     /**
      * @method __onToggleFold
      * @private
      */
-    __onToggleFold: function(widget) {
+    __onToggleFold: function (widget) {
         this.active = widget.visible;
     },
 
@@ -4387,14 +4542,14 @@ var SubMenuItem = MenuItem.$extend({
      * @method __onItemClicked
      * @private
      */
-    __onItemClicked: function(widget) {
+    __onItemClicked: function (widget) {
         this.menu.visible = !this.menu.visible;
     }
 });
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":35,"../widget.js":53,"./menuitem.js":13}],16:[function(require,module,exports){
+},{"../layout/menu.js":37,"../widget.js":55,"./menuitem.js":15}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4433,10 +4588,8 @@ module.exports = SubMenuItem;
  * @namespace photonui
  */
 
-
 var Helpers = require("../helpers.js");
 var Container = require("./container.js");
-
 
 /**
  * Tab Item.
@@ -4449,21 +4602,18 @@ var Container = require("./container.js");
 var TabItem = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["title"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.show.bind(this));
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Tab title.
@@ -4474,11 +4624,11 @@ var TabItem = Container.$extend({
      */
     _title: "Tab",
 
-    getTitle: function() {
+    getTitle: function () {
         return this._title;
     },
 
-    setTitle: function(title) {
+    setTitle: function (title) {
         this._title = title;
         Helpers.cleanNode(this.__html.tab);
         this.__html.tab.appendChild(document.createTextNode(title));
@@ -4492,7 +4642,7 @@ var TabItem = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.div;
     },
 
@@ -4504,7 +4654,7 @@ var TabItem = Container.$extend({
      * @default null
      * @readOnly
      */
-    getTabHtml: function() {
+    getTabHtml: function () {
         return this.__html.tab;
     },
 
@@ -4515,7 +4665,7 @@ var TabItem = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.div;
     },
 
@@ -4528,24 +4678,29 @@ var TabItem = Container.$extend({
      */
     _visible: false,
 
-    setVisible: function(visible, noParent) {
+    setVisible: function (visible, noParent) {
         this.$super(visible);
 
         if (visible) {
             if (this.parent) {
                 var children = this.parent.children;
-                for (var i=0 ; i<children.length ; i++) {
-                    if (!(children[i] instanceof TabItem)) continue;
-                    if (children[i] === this) continue;
-                    if (children[i].visible) children[i].setVisible(false, true);
+                for (var i = 0 ; i < children.length ; i++) {
+                    if (!(children[i] instanceof TabItem)) {
+                        continue;
+                    }
+                    if (children[i] === this) {
+                        continue;
+                    }
+                    if (children[i].visible) {
+                        children[i].setVisible(false, true);
+                    }
                 }
                 this.parent._activeTabName = this.name;
             }
 
             this.addClass("photonui-tabitem-active");
             this.__html.tab.className = "photonui-tabitem-tab photonui-tabitem-active";
-        }
-        else {
+        } else {
             if (this.parent && !noParent) {
                 this.parent.activeTab = null;
             }
@@ -4554,14 +4709,11 @@ var TabItem = Container.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -4569,7 +4721,7 @@ var TabItem = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
         this.__html.tab = document.createElement("div");
@@ -4578,13 +4730,12 @@ var TabItem = Container.$extend({
 
 });
 
-
 module.exports = TabItem;
 
 
-},{"../helpers.js":19,"./container.js":11}],17:[function(require,module,exports){
+},{"../helpers.js":21,"./container.js":13}],19:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4634,7 +4785,7 @@ var numberToCssSize = require("../helpers.js").numberToCssSize;
 var Viewport = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties([
             "padding", "verticalScrollbar", "horizontalScrollbar",
@@ -4643,11 +4794,9 @@ var Viewport = Container.$extend({
         ]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -4660,11 +4809,11 @@ var Viewport = Container.$extend({
      */
     _padding: 0,
 
-    getPadding: function() {
+    getPadding: function () {
         return this._padding;
     },
 
-    setPadding: function(padding) {
+    setPadding: function (padding) {
         this._padding = padding;
         this.containerNode.style.padding = padding + "px";
     },
@@ -4682,19 +4831,17 @@ var Viewport = Container.$extend({
      */
     _verticalScrollbar: null,
 
-    getVerticalScrollbar: function() {
+    getVerticalScrollbar: function () {
         return this._verticalScrollbar;
     },
 
-    setVerticalScrollbar: function(visibility) {
+    setVerticalScrollbar: function (visibility) {
         this._verticalScrollbar = visibility;
         if (visibility === true) {
             this.__html.viewport.style.overflowY = "scroll";
-        }
-        else if (visibility === false) {
+        } else if (visibility === false) {
             this.__html.viewport.style.overflowY = "hidden";
-        }
-        else {
+        } else {
             this.__html.viewport.style.overflowY = "auto";
         }
     },
@@ -4712,19 +4859,17 @@ var Viewport = Container.$extend({
      */
     _horizontalScrollbar: null,
 
-    getHorizontalScrollbar: function() {
+    getHorizontalScrollbar: function () {
         return this._horizontalScrollbar;
     },
 
-    setHorizontalScrollbar: function(visibility) {
+    setHorizontalScrollbar: function (visibility) {
         this._horizontalScrollbar = visibility;
         if (visibility === true) {
             this.__html.viewport.style.overflowX = "scroll";
-        }
-        else if (visibility === false) {
+        } else if (visibility === false) {
             this.__html.viewport.style.overflowX = "hidden";
-        }
-        else {
+        } else {
             this.__html.viewport.style.overflowX = "auto";
         }
     },
@@ -4742,11 +4887,11 @@ var Viewport = Container.$extend({
      */
     _minWidth: null,
 
-    getMinWidth: function() {
+    getMinWidth: function () {
         return this._minWidth;
     },
 
-    setMinWidth: function(minWidth) {
+    setMinWidth: function (minWidth) {
         this._minWidth = minWidth;
         this.__html.viewport.style.minWidth = numberToCssSize(minWidth, null, 0);
     },
@@ -4764,11 +4909,11 @@ var Viewport = Container.$extend({
      */
     _maxWidth: null,
 
-    getMaxWidth: function() {
+    getMaxWidth: function () {
         return this._maxWidth;
     },
 
-    setMaxWidth: function(maxWidth) {
+    setMaxWidth: function (maxWidth) {
         this._maxWidth = maxWidth;
         this.__html.viewport.style.maxWidth = numberToCssSize(maxWidth, null, Infinity);
     },
@@ -4786,11 +4931,11 @@ var Viewport = Container.$extend({
      */
     _width: Infinity,
 
-    getWidth: function() {
+    getWidth: function () {
         return this._width;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         this._width = width;
         this.__html.viewport.style.width = numberToCssSize(width, null);
     },
@@ -4808,11 +4953,11 @@ var Viewport = Container.$extend({
      */
     _minHeight: null,
 
-    getMinHeight: function() {
+    getMinHeight: function () {
         return this._minHeight;
     },
 
-    setMinHeight: function(minHeight) {
+    setMinHeight: function (minHeight) {
         this._minHeight = minHeight;
         this.__html.viewport.style.minHeight = numberToCssSize(minHeight, null, 0);
     },
@@ -4830,11 +4975,11 @@ var Viewport = Container.$extend({
      */
     _maxHeight: null,
 
-    getMaxHeight: function() {
+    getMaxHeight: function () {
         return this._maxHeight;
     },
 
-    setMaxHeight: function(maxHeight) {
+    setMaxHeight: function (maxHeight) {
         this._maxHeight = maxHeight;
         this.__html.viewport.style.maxHeight = numberToCssSize(maxHeight, null, Infinity);
     },
@@ -4852,11 +4997,11 @@ var Viewport = Container.$extend({
      */
     _height: Infinity,
 
-    getHeight: function() {
+    getHeight: function () {
         return this._height;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         this._height = height;
         this.__html.viewport.style.height = numberToCssSize(height, null);
     },
@@ -4869,7 +5014,7 @@ var Viewport = Container.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         setTimeout(this._sizingHack.bind(this), 10);
         return this.__html.viewport;
     },
@@ -4881,18 +5026,15 @@ var Viewport = Container.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.viewport;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -4900,7 +5042,7 @@ var Viewport = Container.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.viewport = document.createElement("div");
         this.__html.viewport.className = "photonui-widget photonui-viewport photonui-container";
     },
@@ -4912,9 +5054,11 @@ var Viewport = Container.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
-        if (visibility) this._sizingHack();
+        if (visibility) {
+            this._sizingHack();
+        }
         this.$super(visibility);
     },
 
@@ -4924,7 +5068,7 @@ var Viewport = Container.$extend({
      * @method _sizingHack
      * @private
      */
-    _sizingHack: function() {
+    _sizingHack: function () {
         if (this.height !== Infinity) {
             return;
         }
@@ -4935,7 +5079,9 @@ var Viewport = Container.$extend({
             this.__html.viewport.style.display = "none";
 
             while (node = node.parentNode) {  // jshint ignore:line
-                if (!node) break;
+                if (!node) {
+                    break;
+                }
                 if (node.offsetHeight > 0) {
                     height = node.offsetHeight;
                     var style = getComputedStyle(node);
@@ -4947,18 +5093,20 @@ var Viewport = Container.$extend({
                 }
             }
 
-            if (this.maxHeight !== null) height = Math.min(this.maxHeight, height);
-            if (this.minHeight !== null) height = Math.max(this.minHeight, height);
+            if (this.maxHeight !== null) {
+                height = Math.min(this.maxHeight, height);
+            }
+            if (this.minHeight !== null) {
+                height = Math.max(this.minHeight, height);
+            }
             this.__html.viewport.style.height = height + "px";
             this.__html.viewport.style.display = "";
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -4966,16 +5114,16 @@ var Viewport = Container.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
 
 module.exports = Viewport;
 
-},{"../helpers.js":19,"./container.js":11}],18:[function(require,module,exports){
+},{"../helpers.js":21,"./container.js":13}],20:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5035,15 +5183,17 @@ var _windowList = [];
 var Window = BaseWindow.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["close-button-clicked"]);
         this.$super(params);
 
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
-        this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click", this.__closeButtonClicked.bind(this));
+        this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click",
+                        this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
-        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown", function (event) { event.stopPropagation(); });
+        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
+                        function (event) { event.stopPropagation(); });
 
         // Update Properties
         this._updateProperties(["title", "closeButtonVisible"]);
@@ -5054,9 +5204,7 @@ var Window = BaseWindow.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The window title.
@@ -5067,11 +5215,11 @@ var Window = BaseWindow.$extend({
      */
     _title: "Window",
 
-    getTitle: function() {
+    getTitle: function () {
         return this._title;
     },
 
-    setTitle: function(title) {
+    setTitle: function (title) {
         this._title = title;
         Helpers.cleanNode(this.__html.windowTitleText);
         this.__html.windowTitleText.appendChild(document.createTextNode(title));
@@ -5086,11 +5234,11 @@ var Window = BaseWindow.$extend({
      */
     _movable: true,
 
-    isMovable: function() {
+    isMovable: function () {
         return this._movable;
     },
 
-    setMovable: function(movable) {
+    setMovable: function (movable) {
         this._movable = movable;
     },
 
@@ -5103,18 +5251,17 @@ var Window = BaseWindow.$extend({
      */
     _closeButtonVisible: true,
 
-    getCloseButtonVisible: function() {
+    getCloseButtonVisible: function () {
         return this._closeButtonVisible;
     },
 
-    setCloseButtonVisible: function(closeButtonVisible) {
+    setCloseButtonVisible: function (closeButtonVisible) {
         this._closeButtonVisible = closeButtonVisible;
 
         if (closeButtonVisible) {
             this.addClass("photonui-window-have-button");
             this.__html.windowTitleCloseButton.style.display = "block";
-        }
-        else {
+        } else {
             this.removeClass("photonui-window-have-button");
             this.__html.windowTitleCloseButton.style.display = "none";
         }
@@ -5129,11 +5276,11 @@ var Window = BaseWindow.$extend({
      */
     _modal: false,
 
-    isModal: function() {
+    isModal: function () {
         return this._modal;
     },
 
-    setModal: function(modal) {
+    setModal: function (modal) {
         this._modal = modal;
         if (modal) {
             this.__html.modalBox = document.createElement("div");
@@ -5141,8 +5288,7 @@ var Window = BaseWindow.$extend({
             var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
-        }
-        else if (this.__html.modalBox) {
+        } else if (this.__html.modalBox) {
             this.__html.modalBox.parentNode.removeChild(this.__html.modalBox);
             delete this.__html.modalBox;
         }
@@ -5155,19 +5301,18 @@ var Window = BaseWindow.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getContainerNode: function() {
+    getContainerNode: function () {
         return this.__html.windowContent;
     },
 
-    setVisible: function(visible) {
+    setVisible: function (visible) {
         this.$super(visible);
         if (this.visible) {
             this.moveToFront();
             if (this.modal) {
                 this.__html.modalBox.style.display = "block";
             }
-        }
-        else {
+        } else {
             this.moveToBack();
             if (this.modal) {
                 this.__html.modalBox.style.display = "none";
@@ -5175,21 +5320,18 @@ var Window = BaseWindow.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Bring the window to front.
      *
      * @method moveToFront
      */
-    moveToFront: function() {
+    moveToFront: function () {
         var index = _windowList.indexOf(this);
         if (index >= 0) {
             _windowList.splice(index, 1);
@@ -5203,7 +5345,7 @@ var Window = BaseWindow.$extend({
      *
      * @method moveToBack
      */
-    moveToBack: function() {
+    moveToBack: function () {
         var index = _windowList.indexOf(this);
         if (index >= 0) {
             _windowList.splice(index, 1);
@@ -5217,7 +5359,7 @@ var Window = BaseWindow.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this.modal = false;
         var index = _windowList.indexOf(this);
         if (index >= 0) {
@@ -5226,9 +5368,7 @@ var Window = BaseWindow.$extend({
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -5236,7 +5376,7 @@ var Window = BaseWindow.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         var _ = Stone.lazyGettext;
 
         this.$super();
@@ -5266,14 +5406,13 @@ var Window = BaseWindow.$extend({
      * @method _updateWindowList
      * @private
      */
-    _updateWindowList: function() {
-        for (var i=_windowList.length-1, z=0 ; i>=0 ; i--, z++) {   // jshint ignore:line
+    _updateWindowList: function () {
+        for (var i = _windowList.length - 1, z = 0 ; i >= 0 ; i--, z++) {   // jshint ignore:line
             if (i === 0) {
                 _windowList[i].html.style.zIndex = 2001;
                 _windowList[i].addClass("photonui-active");
-            }
-            else {
-                _windowList[i].html.style.zIndex = 1000+z;
+            } else {
+                _windowList[i].html.style.zIndex = 1000 + z;
                 _windowList[i].removeClass("photonui-active");
             }
             if (_windowList[i].modal) {
@@ -5282,11 +5421,9 @@ var Window = BaseWindow.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Start moving the window.
@@ -5295,7 +5432,7 @@ var Window = BaseWindow.$extend({
      * @private
      * @param {Object} event
      */
-    __moveDragStart: function(event) {
+    __moveDragStart: function (event) {
         if (!this.movable || event.button > 0) {
             return;
         }
@@ -5315,7 +5452,7 @@ var Window = BaseWindow.$extend({
      * @param {Number} offsetY
      * @param {Object} event
      */
-    __moveDragging: function(offsetX, offsetY, event) {
+    __moveDragging: function (offsetX, offsetY, event) {
         var e_body = document.getElementsByTagName("body")[0];
         var x = Math.min(Math.max(event.pageX - offsetX, 40 - this.offsetWidth), e_body.offsetWidth - 40);
         var y = Math.max(event.pageY - offsetY, 0);
@@ -5332,7 +5469,7 @@ var Window = BaseWindow.$extend({
      * @private
      * @param {Object} event
      */
-    __moveDragEnd: function(event) {
+    __moveDragEnd: function (event) {
         this.__html.windowTitle.style.cursor = "default";
         this._unbindEvent("move.dragging");
         this._unbindEvent("move.dragend");
@@ -5345,7 +5482,7 @@ var Window = BaseWindow.$extend({
      * @private
      * @param {Object} event
      */
-    __closeButtonClicked: function(event) {
+    __closeButtonClicked: function (event) {
         this._callCallbacks("close-button-clicked");
     },
 
@@ -5355,7 +5492,7 @@ var Window = BaseWindow.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         this.$super();
         this.__html.windowTitleCloseButton.title = Stone.lazyGettext("Close");
     }
@@ -5363,9 +5500,9 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":19,"../widget.js":53,"./basewindow.js":10,"stonejs":3}],19:[function(require,module,exports){
+},{"../helpers.js":21,"../widget.js":55,"./basewindow.js":12,"stonejs":3}],21:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5403,9 +5540,7 @@ module.exports = Window;
  * @namespace photonui
  */
 
-
-var photonui = require("./photonui.js");
-
+var uuid = require("uuid");
 
 /**
  * Helpers.
@@ -5413,7 +5548,7 @@ var photonui = require("./photonui.js");
  * @class Helpers
  * @constructor
  */
-var Helpers = function() {
+var Helpers = function () {
 };
 
 /**
@@ -5424,7 +5559,7 @@ var Helpers = function() {
  * @param {String} string
  * @return {String}
  */
-Helpers.escapeHtml = function(string) {
+Helpers.escapeHtml = function (string) {
     return string
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -5432,20 +5567,18 @@ Helpers.escapeHtml = function(string) {
 };
 
 /**
- * Generate an UUID version 4 (RFC 4122)
+ * Generate an UUID version 4 (RFC 4122).
  *
- * From:
- * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+ * This method is deprecated, please use `photonui.lib.uuid.v4()` instead.
  *
  * @method uuid4
  * @static
+ * @deprecated
  * @return {String} The generated UUID
  */
-Helpers.uuid4 = function() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-        var r = Math.random()*16|0, v = c == "x" ? r : (r&0x3|0x8);
-        return v.toString(16);
-    });
+Helpers.uuid4 = function () {
+    Helpers.log("warn", "'photonui.Helpers.uuid4()' is deprecated. Use 'photonui.lib.uuid.v4()' instead.");
+    return uuid.v4();
 };
 
 /**
@@ -5455,7 +5588,7 @@ Helpers.uuid4 = function() {
  * @static
  * @param {HTMLElement} node
  */
-Helpers.cleanNode = function(node) {
+Helpers.cleanNode = function (node) {
     while (node.hasChildNodes()) {
         node.removeChild(node.lastChild);
     }
@@ -5469,20 +5602,25 @@ Helpers.cleanNode = function(node) {
  * @param {HTMLElement} element The HTML element (or its id)
  * @return {Object} `{x: <Number>, y: <Number>}
  */
-Helpers.getAbsolutePosition = function(element) {
-    if (typeof(element) == "string") element = document.getElementById(element);
-    if (!(element instanceof Element)) return {x: 0, y: 0};
+Helpers.getAbsolutePosition = function (element) {
+    if (typeof(element) == "string") {
+        element = document.getElementById(element);
+    }
+    if (!(element instanceof Element)) {
+        return {x: 0, y: 0};
+    }
     var css;
     try {
         css = getComputedStyle(element);
-    }
-    catch (e) {
+    } catch (e) {
         return {x: 0, y: 0};
     }
-    if (!css) return {x: 0, y: 0};
+    if (!css) {
+        return {x: 0, y: 0};
+    }
 
-    var x = - parseInt(css.borderLeftWidth);
-    var y = - parseInt(css.borderTopWidth);
+    var x = -parseInt(css.borderLeftWidth);
+    var y = -parseInt(css.borderTopWidth);
 
     while (element.offsetParent) {
         css = getComputedStyle(element);
@@ -5509,35 +5647,57 @@ Helpers.getAbsolutePosition = function(element) {
  *     Number     -> "<Number>px"
  *
  * @method numberToCssSize
+ * @static
  * @param {Number} value
  * @param {Number} defaultValue (opt, default=nullValue)
  * @param {String} nullValue (opt, default="auto")
  * @return {String} sanitized version of the size.
  */
-Helpers.numberToCssSize = function(value, defaultValue, nullValue) {
+Helpers.numberToCssSize = function (value, defaultValue, nullValue) {
     nullValue = (nullValue === undefined) ? "auto" : nullValue;
     defaultValue = (nullValue === undefined) ? null : defaultValue;
     value = (value === undefined) ? defaultValue : value;
 
     if (value === Infinity) {
         return "100%";
-    }
-    else if (!isNaN(parseFloat(value))) {
-        return Math.max(0, parseFloat(value)|0) + "px";
-    }
-    else if (value !== defaultValue) {
+    } else if (!isNaN(parseFloat(value))) {
+        return Math.max(0, parseFloat(value) | 0) + "px";
+    } else if (value !== defaultValue) {
         return Helpers.numberToCssSize(defaultValue, defaultValue, nullValue);
-    }
-    else {
+    } else {
         return nullValue;
+    }
+};
+
+/**
+ * Write log into the terminal.
+ *
+ * @method log
+ * @static
+ * @param {String} level The log level ("info", "warn", "error", ...)
+ * @param {String} message The message to log
+ */
+Helpers.log = function (level, message) {
+    try {
+        if (!window.console) {
+            return;
+        }
+        if (!window.console.log) {
+            return;
+        }
+        if (!window.console[level]) {
+            level = "log";
+        }
+        window.console[level]("PhotonUI: " + message);
+    } catch (e) {
     }
 };
 
 module.exports = Helpers;
 
-},{"./photonui.js":43}],20:[function(require,module,exports){
+},{"uuid":5}],22:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5594,7 +5754,7 @@ var BaseIcon = require("../visual/baseicon.js");
 var Button = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
 
@@ -5606,14 +5766,11 @@ var Button = Widget.$extend({
         this._update();
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The button text.
@@ -5624,11 +5781,11 @@ var Button = Widget.$extend({
      */
     _text: "Button",
 
-    getText: function() {
-       return this._text;
+    getText: function () {
+        return this._text;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._text = text;
         Helpers.cleanNode(this.__html.text);
         this.__html.text.appendChild(document.createTextNode(text));
@@ -5643,11 +5800,11 @@ var Button = Widget.$extend({
      */
     _textVisible: true,
 
-    isTextVisible: function() {
+    isTextVisible: function () {
         return this._textVisible;
     },
 
-    setTextVisible: function(textVisible) {
+    setTextVisible: function (textVisible) {
         this._textVisible = textVisible;
         this._update();
     },
@@ -5661,11 +5818,11 @@ var Button = Widget.$extend({
      */
     _leftIconName: null,
 
-    getLeftIconName: function() {
+    getLeftIconName: function () {
         return this._leftIconName;
     },
 
-    setLeftIconName: function(leftIconName) {
+    setLeftIconName: function (leftIconName) {
         this._leftIconName = leftIconName;
         Helpers.cleanNode(this.__html.leftIcon);
         if (this._leftIconName) {
@@ -5681,11 +5838,11 @@ var Button = Widget.$extend({
      * @type BaseIcon
      * @default: null
      */
-    getLeftIcon: function() {
+    getLeftIcon: function () {
         return Widget.getWidget(this._leftIconName);
     },
 
-    setLeftIcon: function(leftIcon) {
+    setLeftIcon: function (leftIcon) {
         if (leftIcon instanceof BaseIcon) {
             this.leftIconName = leftIcon.name;
             return;
@@ -5702,11 +5859,11 @@ var Button = Widget.$extend({
      */
     _leftIconVisible: true,
 
-    isLeftIconVisible: function() {
+    isLeftIconVisible: function () {
         return this._leftIconVisible;
     },
 
-    setLeftIconVisible: function(leftIconVisible) {
+    setLeftIconVisible: function (leftIconVisible) {
         this._leftIconVisible = leftIconVisible;
         this._update();
     },
@@ -5720,11 +5877,11 @@ var Button = Widget.$extend({
      */
     _rightIconName: null,
 
-    getRightIconName: function() {
+    getRightIconName: function () {
         return this._rightIconName;
     },
 
-    setRightIconName: function(rightIconName) {
+    setRightIconName: function (rightIconName) {
         this._rightIconName = rightIconName;
         Helpers.cleanNode(this.__html.rightIcon);
         if (this._rightIconName) {
@@ -5740,11 +5897,11 @@ var Button = Widget.$extend({
      * @type BaseIcon
      * @default: null
      */
-    getRightIcon: function() {
+    getRightIcon: function () {
         return Widget.getWidget(this._rightIconName);
     },
 
-    setRightIcon: function(rightIcon) {
+    setRightIcon: function (rightIcon) {
         if (rightIcon instanceof BaseIcon) {
             this.rightIconName = rightIcon.name;
             return;
@@ -5761,11 +5918,11 @@ var Button = Widget.$extend({
      */
     _rightIconVisible: true,
 
-    isRightIconVisible: function() {
+    isRightIconVisible: function () {
         return this._rightIconVisible;
     },
 
-    setRightIconVisible: function(rightIconVisible) {
+    setRightIconVisible: function (rightIconVisible) {
         this._rightIconVisible = rightIconVisible;
         this._update();
     },
@@ -5782,17 +5939,16 @@ var Button = Widget.$extend({
      */
     _appearance: "normal",
 
-    getAppearance: function() {
+    getAppearance: function () {
         return this._appearance;
     },
 
-    setAppearance: function(appearance) {
+    setAppearance: function (appearance) {
         this._appearance = appearance;
 
         if (appearance == "flat") {
             this.addClass("photonui-button-appearance-flat");
-        }
-        else {
+        } else {
             this.removeClass("photonui-button-appearance-flat");
         }
     },
@@ -5815,11 +5971,11 @@ var Button = Widget.$extend({
      */
     _buttonColor: null,
 
-    getButtonColor: function() {
+    getButtonColor: function () {
         return this._buttonColor;
     },
 
-    setButtonColor: function(buttonColor) {
+    setButtonColor: function (buttonColor) {
         if (this._buttonColor) {
             this.__html.button.classList.remove("photonui-button-color-" + this._buttonColor);
         }
@@ -5837,18 +5993,15 @@ var Button = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.button;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Update the button content
@@ -5856,7 +6009,7 @@ var Button = Widget.$extend({
      * @method _update
      * @private
      */
-    _update: function() {
+    _update: function () {
         if (this.__html.leftIcon.parentNode == this.__html.button) {
             this.__html.button.removeChild(this.__html.leftIcon);
         }
@@ -5886,7 +6039,7 @@ var Button = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.button = document.createElement("button");
         this.__html.button.className = "photonui-widget photonui-button";
 
@@ -5903,11 +6056,9 @@ var Button = Widget.$extend({
         this.__html.button.appendChild(this.__html.rightIcon);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the button is clicked.
@@ -5916,11 +6067,10 @@ var Button = Widget.$extend({
      * @private
      * @param event
      */
-    __onButtonClicked: function(event) {
+    __onButtonClicked: function (event) {
         this._callCallbacks("click", [event]);
     }
 });
-
 
 // Button mixin for ToggleButton
 Button._buttonMixin = {
@@ -5962,9 +6112,9 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":19,"../visual/baseicon.js":44,"../widget.js":53}],21:[function(require,module,exports){
+},{"../helpers.js":21,"../visual/baseicon.js":46,"../widget.js":55}],23:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6019,7 +6169,7 @@ var Widget = require("../widget.js");
 var CheckBox = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["value-changed", "click"]);
         this.$super(params);
         this.inputId = this.name + "-input";
@@ -6031,14 +6181,11 @@ var CheckBox = Widget.$extend({
         this.__html.checkbox.id = this.inputId;
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The input value.
@@ -6047,11 +6194,11 @@ var CheckBox = Widget.$extend({
      * @type Boolean
      * @default false
      */
-    getValue: function() {
+    getValue: function () {
         return this.__html.checkbox.checked;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.__html.checkbox.checked = value;
     },
 
@@ -6063,18 +6210,15 @@ var CheckBox = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -6082,9 +6226,12 @@ var CheckBox = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-checkbox photonui-widget-fixed-width photonui-widget-fixed-height";
+        this.__html.outer.className = "photonui-widget";
+        this.__html.outer.className += " photonui-checkbox";
+        this.__html.outer.className += " photonui-widget-fixed-width";
+        this.__html.outer.className += " photonui-widget-fixed-height";
 
         this.__html.checkbox = document.createElement("input");
         this.__html.checkbox.type = "checkbox";
@@ -6095,18 +6242,16 @@ var CheckBox = Widget.$extend({
         this.__html.outer.appendChild(this.__html.span);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onChange
      * @private
      * @param event
      */
-    __onChange: function(event) {
+    __onChange: function (event) {
         this._callCallbacks("value-changed", [this.value]);
         // Focus the span if the real checkbox is hidden (happen when a label is clicked).
         if (window.getComputedStyle(this.__html.checkbox).display == "none") {
@@ -6119,7 +6264,7 @@ var CheckBox = Widget.$extend({
      * @private
      * @param event
      */
-    __onSpanClick: function(event) {
+    __onSpanClick: function (event) {
         this.value = !this.value;
         this._callCallbacks("value-changed", [this.value]);
         this._callCallbacks("click", [event]);
@@ -6130,7 +6275,7 @@ var CheckBox = Widget.$extend({
      * @private
      * @param event
      */
-    __onCheckboxClick: function(event) {
+    __onCheckboxClick: function (event) {
         this._callCallbacks("click", [event]);
     },
 
@@ -6139,7 +6284,7 @@ var CheckBox = Widget.$extend({
      * @private
      * @param event
      */
-    __onSpanKeypress: function(event) {
+    __onSpanKeypress: function (event) {
         if (event.charCode == 32 || event.keyCode == 13) {
             this.value = !this.value;
             this._callCallbacks("value-changed", [this.value]);
@@ -6149,9 +6294,9 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":53}],22:[function(require,module,exports){
+},{"../widget.js":55}],24:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6209,21 +6354,18 @@ var Color = require("../nonvisual/color.js");
 var ColorPalette = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._color = new Color(ColorPalette.palette[0][0]);
         this._registerWEvents(["value-changed"]);
         this.$super(params);
         this._updateProperties(["palette", "value"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The value (color in rgb hexadecimal format (e.g. "#ff0000")).
@@ -6231,11 +6373,11 @@ var ColorPalette = Widget.$extend({
      * @property value
      * @type String
      */
-    getValue: function() {
+    getValue: function () {
         return this.color.hexString;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.color.hexString = value;
     },
 
@@ -6247,11 +6389,11 @@ var ColorPalette = Widget.$extend({
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             this._color = color;
         }
@@ -6266,11 +6408,11 @@ var ColorPalette = Widget.$extend({
      */
     _palette: null,
 
-    getPalette: function() {
+    getPalette: function () {
         return this._palette || ColorPalette.palette;
     },
 
-    setPalette: function(palette) {
+    setPalette: function (palette) {
         this._palette = palette;
 
         if (!palette) {
@@ -6281,10 +6423,13 @@ var ColorPalette = Widget.$extend({
         this.__html.palette.removeChild(this.__html.tbody);
         Helpers.cleanNode(this.__html.tbody);
 
-        var e_tr, e_td, x, y;
-        for (y=0 ; y<palette.length ; y++) {
+        var e_tr;
+        var e_td;
+        var x;
+        var y;
+        for (y = 0 ; y < palette.length ; y++) {
             e_tr = document.createElement("tr");
-            for (x=0 ; x<palette[y].length ; x++) {
+            for (x = 0 ; x < palette[y].length ; x++) {
                 e_td = document.createElement("td");
                 e_td.style.backgroundColor = palette[y][x];
                 e_td.onclick = this.__onColorClicked.bind(this, palette[y][x]);
@@ -6304,15 +6449,13 @@ var ColorPalette = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.palette;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Private methods ======
 
@@ -6322,20 +6465,18 @@ var ColorPalette = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.palette = document.createElement("table");
         this.__html.palette.className = "photonui-widget photonui-colorpalette";
         this.__html.tbody = document.createElement("tbody");
         this.__html.palette.appendChild(this.__html.tbody);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
 
-
-    __onColorClicked: function(color, event) {
+    __onColorClicked: function (color, event) {
         this.value = color;
         this._callCallbacks("value-changed", [this.color]);
     }
@@ -6357,9 +6498,9 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":19,"../nonvisual/color.js":38,"../widget.js":53}],23:[function(require,module,exports){
+},{"../helpers.js":21,"../nonvisual/color.js":40,"../widget.js":55}],25:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6415,10 +6556,10 @@ var MouseManager = require("../nonvisual/mousemanager.js");
  * @extends photonui.Widget
  * @param {Object} params An object that can contain any property of the widget (optional).
  */
- var ColorPicker = Widget.$extend({
+var ColorPicker = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["value-changed"]);
         this._color = new Color();
         this.__buffH = document.createElement("canvas");
@@ -6447,11 +6588,9 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         this._bindEvent("value-changed", this.__html.preview, "change", this.__onValueChanged.bind(this));
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -6461,11 +6600,11 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @property value
      * @type String
      */
-    getValue: function() {
+    getValue: function () {
         return this.color.hexString;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.color.hexString = value;
         this._updateSB();
         this._updateCanvas();
@@ -6479,17 +6618,18 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             if (this._color) {
                 this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
             }
             this._color = color;
-            this._color.registerCallback("photonui.colorpicker.value-changed::" + this.name, "value-changed", function() {
+            this._color.registerCallback("photonui.colorpicker.value-changed::" +
+                                         this.name, "value-changed", function () {
                 this._updateSB();
                 this._updateCanvas();
             }.bind(this));
@@ -6506,7 +6646,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -6549,13 +6689,11 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      */
     __disableSBUpdate: false,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
-    destroy: function() {
+    destroy: function () {
         this.__mouseManager.destroy();
         this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
         this.$super();
@@ -6567,14 +6705,13 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-colorpicker";
         this.__html.canvas = document.createElement("canvas");
         this.__html.canvas.width = 200;
         this.__html.canvas.height = 200;
         this.__html.outer.appendChild(this.__html.canvas);
-
 
         this.__html.previewOuter = document.createElement("span");
         this.__html.previewOuter.className = "photonui-colorpicker-previewouter";
@@ -6594,25 +6731,25 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateH
      * @private
      */
-    _updateH: function() {
+    _updateH: function () {
         var canvas = this.__buffH;
         var ctx = canvas.getContext("2d");
         var color = new Color();
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        for (var i=0 ; i<360 ; i++) {
+        for (var i = 0 ; i < 360 ; i++) {
             color.hue = 360 - i;
             ctx.beginPath();
             ctx.fillStyle = color.hexString;
-            ctx.arc(100, 100, 90, Math.PI*i/180, Math.PI*((i+2)%360)/180, false);
+            ctx.arc(100, 100, 90, Math.PI * i / 180, Math.PI * ((i + 2) % 360) / 180, false);
             ctx.lineTo(100, 100);
             ctx.fill();
         }
 
         ctx.beginPath();
         ctx.fillStyle = "#000";
-        ctx.arc(100, 100, 73, 2*Math.PI, false);
+        ctx.arc(100, 100, 73, 2 * Math.PI, false);
         ctx.globalCompositeOperation = "destination-out";
         ctx.fill();
     },
@@ -6623,8 +6760,8 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateSBmask
      * @private
      */
-    _updateSBmask: function() {
-       var canvas = this.__buffSBmask;
+    _updateSBmask: function () {
+        var canvas = this.__buffSBmask;
         var ctx = canvas.getContext("2d");
         var pix = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -6632,19 +6769,19 @@ var MouseManager = require("../nonvisual/mousemanager.js");
         var saturation = 0;
         var b = 0;
         var s = 0;
-        for (b=0 ; b<100 ; b++) {
-            for (s=0 ; s<100 ; s++) {
+        for (b = 0 ; b < 100 ; b++) {
+            for (s = 0 ; s < 100 ; s++) {
                 i = 400 * b + 4 * s;
 
                 // some magic here
-                saturation = (  (  0.5 * (  1-s/100  ) +0.5) * (1-b/100) *255)<<0;
+                saturation = ((0.5 * (1 - s / 100) + 0.5) * (1 - b / 100) * 255) << 0;
 
-                pix.data[i+0] = saturation;
-                pix.data[i+1] = saturation;
-                pix.data[i+2] = saturation;
+                pix.data[i + 0] = saturation;
+                pix.data[i + 1] = saturation;
+                pix.data[i + 2] = saturation;
 
                 // more magic
-                pix.data[i+3] = ( ( 1- (  ((s/100)) * (1-(b/100))  ) ) *255)<<0;
+                pix.data[i + 3] = ((1 - (((s / 100)) * (1 - (b / 100)))) * 255) << 0;
             }
         }
 
@@ -6657,12 +6794,14 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateSB
      * @private
      */
-    _updateSB: function() {
-        if (this.__disableSBUpdate) return;
+    _updateSB: function () {
+        if (this.__disableSBUpdate) {
+            return;
+        }
 
         var canvas = this.__buffSB;
         var ctx = canvas.getContext("2d");
-        
+
         var color = new Color({
             hue: this.color.hue,
             saturation: 100,
@@ -6690,7 +6829,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method _updateCanvas
      * @private
      */
-    _updateCanvas: function() {
+    _updateCanvas: function () {
         var canvas = this.__html.canvas;
         var ctx = canvas.getContext("2d");
 
@@ -6707,14 +6846,14 @@ var MouseManager = require("../nonvisual/mousemanager.js");
 
         // Square cursor
         ctx.beginPath();
-        ctx.arc(this.color.saturation + 50, 100 - this.color.brightness + 50, 6, 2*Math.PI, false);
+        ctx.arc(this.color.saturation + 50, 100 - this.color.brightness + 50, 6, 2 * Math.PI, false);
         ctx.stroke();
 
         // Square cursor
         ctx.translate(100, 100);
-        ctx.rotate(-this.color.hue*Math.PI/180);
+        ctx.rotate(-this.color.hue * Math.PI / 180);
         ctx.beginPath();
-        ctx.arc(81, 0, 6, 2*Math.PI, false);
+        ctx.arc(81, 0, 6, 2 * Math.PI, false);
         ctx.stroke();
 
         ctx.restore();
@@ -6732,7 +6871,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param mstate
      * @return {Boolean}
      */
-    _pointerOnSquare: function(mstate) {
+    _pointerOnSquare: function (mstate) {
         return (mstate.x >= 50 && mstate.x <= 150 && mstate.y >= 50 && mstate.y <= 150);
     },
 
@@ -6744,10 +6883,10 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param mstate
      * @return {Boolean}
      */
-    _pointerOnCircle: function(mstate) {
+    _pointerOnCircle: function (mstate) {
         var dx = Math.abs(100 - mstate.x);
         var dy = Math.abs(100 - mstate.y);
-        var h = Math.sqrt(dx*dx + dy*dy);
+        var h = Math.sqrt(dx * dx + dy * dy);
         return (h >= 74 && h <= 90);
     },
 
@@ -6759,23 +6898,25 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param mstate
      * @return {Number} the angle in degree.
      */
-    _pointerAngle: function(mstate) {
+    _pointerAngle: function (mstate) {
         var dx = Math.abs(100 - mstate.x);
         var dy = Math.abs(100 - mstate.y);
-        var angle = Math.atan(dy/dx)*180/Math.PI;
+        var angle = Math.atan(dy / dx) * 180 / Math.PI;
 
-        if (mstate.x < 100 && mstate.y < 100) angle = 180 - angle;
-        else if (mstate.x < 100 && mstate.y >= 100) angle += 180;
-        else if (mstate.x >= 100 && mstate.y > 100) angle = 360 - angle;
+        if (mstate.x < 100 && mstate.y < 100) {
+            angle = 180 - angle;
+        } else if (mstate.x < 100 && mstate.y >= 100) {
+            angle += 180;
+        } else if (mstate.x >= 100 && mstate.y > 100) {
+            angle = 360 - angle;
+        }
 
-        return angle|0;
+        return angle | 0;
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onMouseMove
@@ -6783,11 +6924,10 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onMouseMove: function(manager, mstate) {
+    __onMouseMove: function (manager, mstate) {
         if (this._pointerOnSquare(mstate) || this._pointerOnCircle(mstate)) {
             this.__html.canvas.style.cursor = "crosshair";
-        }
-        else {
+        } else {
             this.__html.canvas.style.cursor = "default";
         }
     },
@@ -6798,15 +6938,14 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onMouseDown: function(manager, mstate) {
+    __onMouseDown: function (manager, mstate) {
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.color.saturation = mstate.x - 50;
             this.color.brightness = 150 - mstate.y;
             this.__disableSBUpdate = false;
             this._callCallbacks("value-changed", this.color);
-        }
-        else if (this._pointerOnCircle(mstate)) {
+        } else if (this._pointerOnCircle(mstate)) {
             this.color.hue = this._pointerAngle(mstate);
             this._callCallbacks("value-changed", this.color);
         }
@@ -6818,13 +6957,12 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDragStart: function(manager, mstate) {
+    __onDragStart: function (manager, mstate) {
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingSquare.bind(this));
             this.__mouseManager.registerCallback("drag-end", "drag-end", this.__onDragEnd.bind(this));
-        }
-        else if (this._pointerOnCircle(mstate)) {
+        } else if (this._pointerOnCircle(mstate)) {
             this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingCircle.bind(this));
             this.__mouseManager.registerCallback("drag-end", "drag-end", this.__onDragEnd.bind(this));
         }
@@ -6836,7 +6974,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDraggingSquare: function(manager, mstate) {
+    __onDraggingSquare: function (manager, mstate) {
         this.color.saturation = mstate.x - 50;
         this.color.brightness = 150 - mstate.y;
         this._callCallbacks("value-changed", this.color);
@@ -6848,7 +6986,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDraggingCircle: function(manager, mstate) {
+    __onDraggingCircle: function (manager, mstate) {
         this.color.hue = this._pointerAngle(mstate);
         this._callCallbacks("value-changed", this.color);
     },
@@ -6859,7 +6997,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDragEnd: function(manager, mstate) {
+    __onDragEnd: function (manager, mstate) {
         this.__mouseManager.removeCallback("dragging");
         this.__mouseManager.removeCallback("drag-end");
         this.__disableSBUpdate = false;
@@ -6869,7 +7007,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
      * @method __onValueChanged
      * @private
      */
-    __onValueChanged: function() {
+    __onValueChanged: function () {
         this.color.hexString = this.__html.preview.value;
         this.__html.preview.value = this.color.hexString;
         this._callCallbacks("value-changed", this.color);
@@ -6878,9 +7016,9 @@ var MouseManager = require("../nonvisual/mousemanager.js");
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":19,"../nonvisual/color.js":38,"../nonvisual/mousemanager.js":40,"../widget.js":53}],24:[function(require,module,exports){
+},{"../helpers.js":21,"../nonvisual/color.js":40,"../nonvisual/mousemanager.js":42,"../widget.js":55}],26:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -6951,7 +7089,7 @@ var Widget = require("../widget.js");
 var Field = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents([
             "value-changed", "keydown", "keyup", "keypress",
             "selection-changed"
@@ -6961,14 +7099,11 @@ var Field = Widget.$extend({
         this.__html.field.name = this.name;
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The field value.
@@ -6977,11 +7112,11 @@ var Field = Widget.$extend({
      * @type String (maybe)
      * @default ""
      */
-    getValue: function() {
+    getValue: function () {
         return this.__html.field.value;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.__html.field.value = value;
     },
 
@@ -6994,11 +7129,11 @@ var Field = Widget.$extend({
      */
     _placeholder: "",
 
-    getPlaceholder: function() {
+    getPlaceholder: function () {
         return this._placeholder;
     },
 
-    setPlaceholder: function(placeholder) {
+    setPlaceholder: function (placeholder) {
         this._placeholder = placeholder;
         this.__html.field.placeholder = placeholder;
     },
@@ -7011,18 +7146,15 @@ var Field = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.field;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Bind Field events.
@@ -7030,37 +7162,35 @@ var Field = Widget.$extend({
      * @method _bindFieldEvents
      * @private
      */
-    _bindFieldEvents: function() {
-        this._bindEvent("value-changed", this.__html.field, "change", function(event) {
+    _bindFieldEvents: function () {
+        this._bindEvent("value-changed", this.__html.field, "change", function (event) {
             this._callCallbacks("value-changed", [this.getValue()]);
         }.bind(this));
 
-        this._bindEvent("keydown", this.__html.field, "keydown", function(event) {
+        this._bindEvent("keydown", this.__html.field, "keydown", function (event) {
             this._callCallbacks("keydown", [event]);
         }.bind(this));
 
-        this._bindEvent("keyup", this.__html.field, "keyup", function(event) {
+        this._bindEvent("keyup", this.__html.field, "keyup", function (event) {
             this._callCallbacks("keyup", [event]);
         }.bind(this));
 
-        this._bindEvent("keypress", this.__html.field, "keypress", function(event) {
+        this._bindEvent("keypress", this.__html.field, "keypress", function (event) {
             this._callCallbacks("keypress", [event]);
         }.bind(this));
 
-        this._bindEvent("selection-changed", this.__html.field, "select", function(event) {
+        this._bindEvent("selection-changed", this.__html.field, "select", function (event) {
             this._callCallbacks("selection-changed", [
                 this.__html.field.selectionStart,
                 this.__html.field.selectionEnd,
-                ("" + this.getValue()).substring(this.__html.field.selectionStart, this.__html.field.selectionEnd),
+                String(this.getValue()).substring(this.__html.field.selectionStart, this.__html.field.selectionEnd),
                 event]);
         }.bind(this));
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the context menu should be displayed.
@@ -7069,16 +7199,16 @@ var Field = Widget.$extend({
      * @private
      * @param event
      */
-    __onContextMenu: function(event) {
+    __onContextMenu: function (event) {
         event.stopPropagation();  // Enable context menu on fields
     }
 });
 
 module.exports = Field;
 
-},{"../widget.js":53}],25:[function(require,module,exports){
+},{"../widget.js":55}],27:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7127,7 +7257,7 @@ var Field = require("./field.js");
 var NumericField = Field.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["value"]);
         this._bindFieldEvents();
@@ -7140,14 +7270,11 @@ var NumericField = Field.$extend({
         this._bindEvent("mousewheel-firefox", this.__html.field, "DOMMouseScroll", this.__onMouseWheel.bind(this));
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The minimum value of the field.
@@ -7158,11 +7285,11 @@ var NumericField = Field.$extend({
      */
     _min: null,
 
-    getMin: function() {
+    getMin: function () {
         return this._min;
     },
 
-    setMin: function(min) {
+    setMin: function (min) {
         this._min = min;
     },
 
@@ -7175,11 +7302,11 @@ var NumericField = Field.$extend({
      */
     _max: null,
 
-    getMax: function() {
+    getMax: function () {
         return this._max;
     },
 
-    setMax: function(max) {
+    setMax: function (max) {
         this._max = max;
     },
 
@@ -7192,11 +7319,11 @@ var NumericField = Field.$extend({
      */
     _step: 1,
 
-    getStep: function() {
+    getStep: function () {
         return this._step;
     },
 
-    setStep: function(step) {
+    setStep: function (step) {
         this._step = Math.abs(step);
     },
 
@@ -7209,11 +7336,11 @@ var NumericField = Field.$extend({
      */
     _decimalDigits: null,
 
-    getDecimalDigits: function() {
+    getDecimalDigits: function () {
         return this._decimalDigits;
     },
 
-    setDecimalDigits: function(decimalDigits) {
+    setDecimalDigits: function (decimalDigits) {
         this._decimalDigits = decimalDigits;
     },
 
@@ -7226,11 +7353,11 @@ var NumericField = Field.$extend({
      */
     _decimalSymbol: ".",
 
-    getDecimalSymbol: function() {
+    getDecimalSymbol: function () {
         return this._decimalSymbol;
     },
 
-    setDecimalSymbol: function(decimalSymbol) {
+    setDecimalSymbol: function (decimalSymbol) {
         this._decimalSymbol = decimalSymbol;
     },
 
@@ -7243,23 +7370,20 @@ var NumericField = Field.$extend({
      */
     _value: 0,
 
-    getValue: function() {
+    getValue: function () {
         return parseFloat(this._value);
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this._updateValue(value);
         this._updateFieldValue();
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Update the value (in the widget).
@@ -7268,8 +7392,8 @@ var NumericField = Field.$extend({
      * @private
      * @param {String|Number} value The raw value.
      */
-    _updateValue: function(value) {
-        value = ("" + value).replace(",", "."); // ","
+    _updateValue: function (value) {
+        value = String(value).replace(",", "."); // ","
         value = value.replace(/ /g, "");  // remove spaces
         value = parseFloat(value);
         if (isNaN(value)) {
@@ -7297,8 +7421,8 @@ var NumericField = Field.$extend({
      * @method _updateFieldValue
      * @private
      */
-    _updateFieldValue: function() {
-        this.__html.field.value = ("" + this._value).replace(".", this.decimalSymbol);
+    _updateFieldValue: function () {
+        this.__html.field.value = String(this._value).replace(".", this.decimalSymbol);
     },
 
     /**
@@ -7309,8 +7433,8 @@ var NumericField = Field.$extend({
      * @param {String} value
      * @return {Boolean}
      */
-    _validateInput: function(value) {
-        value = "" + value;
+    _validateInput: function (value) {
+        value = String(value);
         value = value.replace(/ /g, "");  // remove spaces
         if (/^-?[0-9]*(\.|,)?[0-9]*$/.test(value)) {
             if (this.decimalDigits === 0 && !/^-?[0-9]*$/.test(value)) {
@@ -7330,32 +7454,33 @@ var NumericField = Field.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.field = document.createElement("input");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-numeric";
+        this.__html.field.className = "photonui-widget photonui-field photonui-numericfield";
         this.__html.field.type = "text";
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onKeypress
      * @private
      * @param event
      */
-    __onKeypress: function(event) {
-        if (event.ctrlKey || event.key == "ArrowLeft" || event.key == "ArrowRight" || event.key == "Backspace" || event.key == "Delete") {
+    __onKeypress: function (event) {
+        if (event.ctrlKey ||
+            event.key == "ArrowLeft" ||
+            event.key == "ArrowRight" ||
+            event.key == "Backspace" ||
+            event.key == "Delete"
+        ) {
             return;
-        }
-        else if (event.keyCode == 13) {  // Enter
+        } else if (event.keyCode == 13) {  // Enter
             this._updateFieldValue();
             this._callCallbacks("value-changed", [this.value]);
-        }
-        else {
+        } else {
             var field = this.__html.field;
             var value = field.value.slice(0, field.selectionStart) +
                         String.fromCharCode(event.charCode) +
@@ -7371,7 +7496,7 @@ var NumericField = Field.$extend({
      * @private
      * @param event
      */
-    __onKeyup: function(event) {
+    __onKeyup: function (event) {
         var value = this.__html.field.value.replace(/[^0-9.,-]*/g, "");
         if (value != this.__html.field.value) {
             this.__html.field.value = value;
@@ -7384,7 +7509,7 @@ var NumericField = Field.$extend({
      * @private
      * @param event
      */
-    __onChange: function(event) {
+    __onChange: function (event) {
         this._updateFieldValue();
         this._callCallbacks("value-changed", [this.value]);
     },
@@ -7394,7 +7519,7 @@ var NumericField = Field.$extend({
      * @private
      * @param event
      */
-    __onMouseWheel: function(event) {
+    __onMouseWheel: function (event) {
         if (document.activeElement != this.__html.field) {
             return;
         }
@@ -7412,15 +7537,14 @@ var NumericField = Field.$extend({
         // Firefox
         if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
-                wheelDelta = - event.detail;
+                wheelDelta = -event.detail;
             }
         }
 
         if (wheelDelta !== null) {
-           if (wheelDelta >= 0) {
+            if (wheelDelta >= 0) {
                 this.value += this.step;
-            }
-            else {
+            } else {
                 this.value -= this.step;
             }
             event.preventDefault();
@@ -7433,13 +7557,12 @@ var NumericField = Field.$extend({
      * @private
      * @param event
      */
-    __onKeydown: function(event) {
+    __onKeydown: function (event) {
         if (event.keyCode == 38) {
             this.setValue(this.getValue() + this.step);
             event.preventDefault();
             this._callCallbacks("value-changed", [this.value]);
-        }
-        else if (event.keyCode == 40) {
+        } else if (event.keyCode == 40) {
             this.setValue(this.getValue() - this.step);
             event.preventDefault();
             this._callCallbacks("value-changed", [this.value]);
@@ -7449,9 +7572,9 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":24}],26:[function(require,module,exports){
+},{"./field.js":26}],28:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7502,7 +7625,7 @@ var NumericField = require("./numericfield.js");
 var Slider = NumericField.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
 
         this.inputId = this.name + "-field";
@@ -7513,24 +7636,21 @@ var Slider = NumericField.$extend({
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
         this._bindEvent("slider-keydown", this.__html.slider, "keydown", this.__onSliderKeyDown.bind(this));
         this._bindEvent("slider-mousewheel", this.__html.slider, "mousewheel", this.__onSliderMouseWheel.bind(this));
-        this._bindEvent("slider-mousewheel-firefox", this.__html.slider, "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
+        this._bindEvent("slider-mousewheel-firefox", this.__html.slider,
+                        "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("field-contextmenu", this.__html.field, "contextmenu", this.__onFieldContextMenu.bind(this));
     },
-
 
     // Default value (!= NumericField)
     _min: 0,
     _max: 100,
     _decimalDigits: 0,
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Define if the numeric field should be displayed.
@@ -7541,18 +7661,17 @@ var Slider = NumericField.$extend({
      */
     _fieldVisible: true,
 
-    isFieldVisible: function() {
+    isFieldVisible: function () {
         return this._fieldVisible;
     },
 
-    setFieldVisible: function(fieldVisible) {
+    setFieldVisible: function (fieldVisible) {
         this._fieldVisible = fieldVisible;
 
         if (fieldVisible) {
             this.__html.field.style.display = "";
             this.removeClass("photonui-slider-nofield");
-        }
-        else {
+        } else {
             this.__html.field.style.display = "none";
             this.addClass("photonui-slider-nofield");
         }
@@ -7566,23 +7685,20 @@ var Slider = NumericField.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         // Hack: force grip position after insertion into the DOM...
-        setTimeout(function() {
+        setTimeout(function () {
             this.value = this.value;
         }.bind(this), 10);
 
         return this.__html.outer;
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Update the value in the html field.
@@ -7590,12 +7706,13 @@ var Slider = NumericField.$extend({
      * @method _updateFieldValue
      * @private
      */
-    _updateFieldValue: function() {
+    _updateFieldValue: function () {
         this.$super();
         var v = this.value - this.min;
         var m = this.max - this.min;
-        var p = Math.min(Math.max(v/m, 0), 1);
-        this.__html.grip.style.left = "calc(" + Math.floor(p*100) + "% - " + Math.floor(this.__html.grip.offsetWidth*p) + "px)";
+        var p = Math.min(Math.max(v / m, 0), 1);
+        this.__html.grip.style.left = "calc(" + Math.floor(p * 100) + "% - " +
+                                      Math.floor(this.__html.grip.offsetWidth * p) + "px)";
     },
 
     /**
@@ -7604,7 +7721,7 @@ var Slider = NumericField.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
 
         this.__html.outer = document.createElement("div");
@@ -7629,28 +7746,26 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    _updateFromMouseEvent: function(event) {
+    _updateFromMouseEvent: function (event) {
         var wx = Helpers.getAbsolutePosition(this.__html.slider).x;
         var gw = this.__html.grip.offsetWidth;
-        var x = Math.round(event.pageX - wx - gw/2);
+        var x = Math.round(event.pageX - wx - gw / 2);
         var w = this.__html.slider.offsetWidth - gw - 3;
         var v = (this.max - this.min) * x / w + this.min;
-        this.value = Math.round(v/this.step) * this.step;
+        this.value = Math.round(v / this.step) * this.step;
         this._callCallbacks("value-changed", [this.value]);
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onSliderMouseDown
      * @private
      * @param event
      */
-    __onSliderMouseDown: function(event) {
+    __onSliderMouseDown: function (event) {
         this._updateFromMouseEvent(event);
         this._bindEvent("slider-mousemove", document, "mousemove", this.__onSliderMouseMove.bind(this));
         this._bindEvent("slider-mouseup", document, "mouseup", this.__onSliderMouseUp.bind(this));
@@ -7661,7 +7776,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderMouseMove: function(event) {
+    __onSliderMouseMove: function (event) {
         this._updateFromMouseEvent(event);
     },
 
@@ -7670,7 +7785,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderMouseUp: function(event) {
+    __onSliderMouseUp: function (event) {
         this._unbindEvent("slider-mousemove");
         this._unbindEvent("slider-mouseup");
         this._updateFromMouseEvent(event);
@@ -7681,12 +7796,11 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderKeyDown: function(event) {
+    __onSliderKeyDown: function (event) {
         if (event.keyCode == 38 || event.keyCode == 39) {  // Up, Right
             this.value += this.step;
             this._callCallbacks("value-changed", [this.value]);
-        }
-        else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
+        } else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
             this.value -= this.step;
             this._callCallbacks("value-changed", [this.value]);
         }
@@ -7697,7 +7811,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onSliderMouseWheel: function(event) {
+    __onSliderMouseWheel: function (event) {
         var wheelDelta = null;
 
         // Webkit
@@ -7711,15 +7825,14 @@ var Slider = NumericField.$extend({
         // Firefox
         if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
-                wheelDelta = - event.detail;
+                wheelDelta = -event.detail;
             }
         }
 
         if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this.value += this.step;
-            }
-            else {
+            } else {
                 this.value -= this.step;
             }
             event.preventDefault();
@@ -7735,7 +7848,7 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onContextMenu: function(event) {
+    __onContextMenu: function (event) {
         event.stopPropagation();
         event.preventDefault();
         if (this.contextMenuName) {
@@ -7748,16 +7861,16 @@ var Slider = NumericField.$extend({
      * @private
      * @param event
      */
-    __onFieldContextMenu: function(event) {
+    __onFieldContextMenu: function (event) {
         event.stopPropagation();
     }
 });
 
 module.exports = Slider;
 
-},{"../helpers.js":19,"./numericfield.js":25}],27:[function(require,module,exports){
+},{"../helpers.js":21,"./numericfield.js":27}],29:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7806,7 +7919,7 @@ var CheckBox = require("./checkbox.js");
 var Switch = CheckBox.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this.removeClass("photonui-checkbox");
         this.addClass("photonui-switch");
@@ -7815,9 +7928,9 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":21}],28:[function(require,module,exports){
+},{"./checkbox.js":23}],30:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7866,19 +7979,16 @@ var Field = require("./field.js");
 var TextAreaField = Field.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._bindFieldEvents();
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Number of columns.
@@ -7887,11 +7997,11 @@ var TextAreaField = Field.$extend({
      * @type Number
      * @default 20
      */
-    getCols: function() {
+    getCols: function () {
         return parseInt(this.__html.field.cols);
     },
 
-    setCols: function(cols) {
+    setCols: function (cols) {
         this.__html.field.cols = cols;
     },
 
@@ -7902,22 +8012,19 @@ var TextAreaField = Field.$extend({
      * @type Number
      * @default 3
      */
-    getRows: function() {
+    getRows: function () {
         return parseInt(this.__html.field.rows);
     },
 
-    setRows: function(rows) {
+    setRows: function (rows) {
         this.__html.field.rows = rows;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -7925,9 +8032,9 @@ var TextAreaField = Field.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.field = document.createElement("textarea");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-textarea";
+        this.__html.field.className = "photonui-widget photonui-field photonui-textareafield";
         this.__html.field.cols = 20;
         this.__html.field.rows = 3;
     }
@@ -7935,9 +8042,9 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":24}],29:[function(require,module,exports){
+},{"./field.js":26}],31:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7986,19 +8093,16 @@ var Field = require("./field.js");
 var TextField = Field.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._bindFieldEvents();
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Type of the field.
@@ -8014,25 +8118,28 @@ var TextField = Field.$extend({
      * @type String
      * @default text
      */
-    getType: function() {
+    getType: function () {
         return this.__html.field.type;
     },
 
-    setType: function(type) {
-        if (type != "text" && type != "password" && type != "email" && type != "search" && type != "tel" && type != "url") {
-            throw 'Error: The type should be "text", "password", "email", "search", "tel" or "url".';
+    setType: function (type) {
+        if (type != "text" &&
+            type != "password" &&
+            type != "email" &&
+            type != "search" &&
+            type != "tel" &&
+            type != "url"
+        ) {
+            throw new Error("The type should be \"text\", \"password\", \"email\", \"search\", \"tel\" or \"url\".");
         }
         this.__html.field.type = type;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -8040,18 +8147,18 @@ var TextField = Field.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.field = document.createElement("input");
-        this.__html.field.className = "photonui-widget photonui-field photonui-field-text";
+        this.__html.field.className = "photonui-widget photonui-field photonui-textfield";
         this.__html.field.type = "text";
     }
 });
 
 module.exports = TextField;
 
-},{"./field.js":24}],30:[function(require,module,exports){
+},{"./field.js":26}],32:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8102,7 +8209,7 @@ var Button = require("./button.js");
 var ToggleButton = CheckBox.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
         this.__buttonInit();
@@ -8113,7 +8220,7 @@ var ToggleButton = CheckBox.$extend({
     },
 
     // photonui.Button constructor (without the call to $super)
-    __buttonInit: function() {
+    __buttonInit: function () {
         // Bind js events
         this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
 
@@ -8125,14 +8232,11 @@ var ToggleButton = CheckBox.$extend({
     // Mixin
     __include__: [Button._buttonMixin],
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -8140,7 +8244,7 @@ var ToggleButton = CheckBox.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         this._buildButtonHtml();
         this.__html.outer.appendChild(this.__html.button);
@@ -8151,9 +8255,9 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":20,"./checkbox.js":21}],31:[function(require,module,exports){
+},{"./button.js":22,"./checkbox.js":23}],33:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8219,19 +8323,16 @@ var Layout = require("./layout.js");
 var BoxLayout = Layout.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["orientation"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The layout orientation ("vertical" or "horizontal").
@@ -8242,13 +8343,13 @@ var BoxLayout = Layout.$extend({
      */
     _orientation: "vertical",
 
-    getOrientation: function() {
+    getOrientation: function () {
         return this._orientation;
     },
 
-    setOrientation: function(orientation) {
+    setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-layout-orientation-vertical");
@@ -8266,12 +8367,12 @@ var BoxLayout = Layout.$extend({
      */
     _verticalPadding: 0,
 
-    getVerticalPadding: function() {
+    getVerticalPadding: function () {
         return this._verticalPadding;
     },
 
-    setVerticalPadding: function(padding) {
-        this._verticalPadding = padding|0;
+    setVerticalPadding: function (padding) {
+        this._verticalPadding = padding | 0;
         this.__html.outerbox.style.paddingLeft = this._verticalPadding + "px";
         this.__html.outerbox.style.paddingRight = this._verticalPadding + "px";
     },
@@ -8285,12 +8386,12 @@ var BoxLayout = Layout.$extend({
      */
     _horizontalPadding: 0,
 
-    getHorizontalPadding: function() {
+    getHorizontalPadding: function () {
         return this._horizontalPadding;
     },
 
-    setHorizontalPadding: function(padding) {
-        this._horizontalPadding = padding|0;
+    setHorizontalPadding: function (padding) {
+        this._horizontalPadding = padding | 0;
         this.__html.outerbox.style.paddingTop = this._horizontalPadding + "px";
         this.__html.outerbox.style.paddingBottom = this._horizontalPadding + "px";
     },
@@ -8304,25 +8405,26 @@ var BoxLayout = Layout.$extend({
      */
     _spacing: 5,
 
-    getSpacing: function() {
+    getSpacing: function () {
         return this._spacing;
     },
 
-    setSpacing: function(spacing) {
-        this._spacing = spacing|0;
+    setSpacing: function (spacing) {
+        this._spacing = spacing | 0;
 
         var children = this.children;
         var nodes = this.__html.outerbox.childNodes;
         var last = 0;
-        var lastOrder, currentOrder;
-        for (var i=0 ; i<nodes.length ; i++) {
+        var lastOrder;
+        var currentOrder;
+        for (var i = 0 ; i < nodes.length ; i++) {
             lastOrder = 0;
             currentOrder = 0;
             if (children[last] && children[last].layoutOptions && children[last].layoutOptions.order) {
-                lastOrder = children[last].layoutOptions.order|0;
+                lastOrder = children[last].layoutOptions.order | 0;
             }
             if (children[i] && children[i].layoutOptions && children[i].layoutOptions.order) {
-                currentOrder = children[i].layoutOptions.order|0;
+                currentOrder = children[i].layoutOptions.order | 0;
             }
 
             if (currentOrder >= lastOrder) {
@@ -8332,8 +8434,7 @@ var BoxLayout = Layout.$extend({
             if (this.orientation == "horizontal") {
                 nodes[i].style.marginRight = this._spacing + "px";
                 nodes[i].style.marginBottom = "";
-            }
-            else {
+            } else {
                 nodes[i].style.marginRight = "";
                 nodes[i].style.marginBottom = this._spacing + "px";
             }
@@ -8353,18 +8454,15 @@ var BoxLayout = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outerbox;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -8372,7 +8470,7 @@ var BoxLayout = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-boxlayout";
     },
@@ -8383,14 +8481,14 @@ var BoxLayout = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         Helpers.cleanNode(this.__html.outerbox);
 
         var fragment = document.createDocumentFragment();
         var children = this.children;
 
         var container = null;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             var options = this._computeLayoutOptions(children[i]);
 
             container = document.createElement("div");
@@ -8400,17 +8498,31 @@ var BoxLayout = Layout.$extend({
             container.className += " photonui-layout-align-" + options.align;
 
             // layout options: order
-            if (options.order !== null) container.style.order = options.order;
+            if (options.order !== null) {
+                container.style.order = options.order;
+            }
 
             // layout options: *width
-            if (options.minWidth !== null) container.style.minWidth = options.minWidth + "px";
-            if (options.maxWidth !== null) container.style.maxWidth = options.maxWidth + "px";
-            if (options.width !== null) container.style.width = options.width + "px";
+            if (options.minWidth !== null) {
+                container.style.minWidth = options.minWidth + "px";
+            }
+            if (options.maxWidth !== null) {
+                container.style.maxWidth = options.maxWidth + "px";
+            }
+            if (options.width !== null) {
+                container.style.width = options.width + "px";
+            }
 
             // layout options: *height
-            if (options.minHeight !== null) container.style.minHeight = options.minHeight + "px";
-            if (options.maxHeight !== null) container.style.maxHeight = options.maxHeight + "px";
-            if (options.height !== null) container.style.height = options.height + "px";
+            if (options.minHeight !== null) {
+                container.style.minHeight = options.minHeight + "px";
+            }
+            if (options.maxHeight !== null) {
+                container.style.maxHeight = options.maxHeight + "px";
+            }
+            if (options.height !== null) {
+                container.style.height = options.height + "px";
+            }
 
             container.appendChild(children[i].html);
             fragment.appendChild(container);
@@ -8429,7 +8541,7 @@ var BoxLayout = Layout.$extend({
      * @param {photonui.Widget} widget
      * @return {Object} the layout options
      */
-    _computeLayoutOptions: function(widget) {
+    _computeLayoutOptions: function (widget) {
         var woptions = widget.layoutOptions || {};
 
         var options = {
@@ -8446,46 +8558,43 @@ var BoxLayout = Layout.$extend({
         // align
         if (["stretch", "expand"].indexOf(woptions.align) > -1) {
             options.align = "stretch";
-        }
-        else if (["center", "middle"].indexOf(woptions.align) > -1) {
+        } else if (["center", "middle"].indexOf(woptions.align) > -1) {
             options.align = "center";
-        }
-        else if (["start", "begin", "top", "left"].indexOf(woptions.align) > -1) {
+        } else if (["start", "begin", "top", "left"].indexOf(woptions.align) > -1) {
             options.align = "start";
-        }
-        else if (["end", "bottom", "right"].indexOf(woptions.align) > -1) {
+        } else if (["end", "bottom", "right"].indexOf(woptions.align) > -1) {
             options.align = "end";
         }
 
         // order
         if (woptions.order !== undefined && woptions.order !== null) {
-            options.order = woptions.order|0;
+            options.order = woptions.order | 0;
         }
 
         // *width
         if (woptions.minWidth !== undefined && woptions.minWidth !== null) {
-            options.minWidth = woptions.minWidth|0;
+            options.minWidth = woptions.minWidth | 0;
         }
         if (woptions.maxWidth !== undefined && woptions.maxWidth !== null) {
-            options.maxWidth = woptions.maxWidth|0;
+            options.maxWidth = woptions.maxWidth | 0;
         }
         if (woptions.width !== undefined && woptions.width !== null) {
-            options.width = woptions.width|0;
-            options.minWidth = woptions.width|0;
-            options.maxWidth = woptions.width|0;
+            options.width = woptions.width | 0;
+            options.minWidth = woptions.width | 0;
+            options.maxWidth = woptions.width | 0;
         }
 
         // *height
         if (woptions.minHeight !== undefined && woptions.minHeight !== null) {
-            options.minHeight = woptions.minHeight|0;
+            options.minHeight = woptions.minHeight | 0;
         }
         if (woptions.maxHeight !== undefined && woptions.maxHeight !== null) {
-            options.maxHeight = woptions.maxHeight|0;
+            options.maxHeight = woptions.maxHeight | 0;
         }
         if (woptions.height !== undefined && woptions.height !== null) {
-            options.height = woptions.height|0;
-            options.minHeight = woptions.height|0;
-            options.maxHeight = woptions.height|0;
+            options.height = woptions.height | 0;
+            options.minHeight = woptions.height | 0;
+            options.maxHeight = woptions.height | 0;
         }
 
         return options;
@@ -8494,9 +8603,9 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":19,"./layout.js":34}],32:[function(require,module,exports){
+},{"../helpers.js":21,"./layout.js":36}],34:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8532,7 +8641,7 @@ module.exports = BoxLayout;
  * @submodule Layout
  * @namespace photonui
  */
- 
+
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 
@@ -8549,9 +8658,7 @@ var FluidLayout = Layout.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The vertical spacing between children widgets.
@@ -8562,11 +8669,11 @@ var FluidLayout = Layout.$extend({
      */
     _verticalSpacing: 0,
 
-    getVerticalSpacing: function() {
+    getVerticalSpacing: function () {
         return this._verticalSpacing;
     },
 
-    setVerticalSpacing: function(verticalSpacing) {
+    setVerticalSpacing: function (verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
         this._updateLayout();
     },
@@ -8580,11 +8687,11 @@ var FluidLayout = Layout.$extend({
      */
     _horizontalSpacing: 2,
 
-    getHorizontalSpacing: function() {
+    getHorizontalSpacing: function () {
         return this._horizontalSpacing;
     },
 
-    setHorizontalSpacing: function(horizontalSpacing) {
+    setHorizontalSpacing: function (horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
         this._updateLayout();
     },
@@ -8597,18 +8704,15 @@ var FluidLayout = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outerbox;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -8616,7 +8720,7 @@ var FluidLayout = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-fluidlayout";
     },
@@ -8627,12 +8731,12 @@ var FluidLayout = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         var children = this.children;
         var fragment = document.createDocumentFragment();
 
         var div = null;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             div = document.createElement("div");
             div.className = "photonui-container";
             div.style.padding = "0 " + this.horizontalSpacing + "px " + this.verticalSpacing + "px 0";
@@ -8647,9 +8751,9 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":19,"./layout.js":34}],33:[function(require,module,exports){
+},{"../helpers.js":21,"./layout.js":36}],35:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -8688,6 +8792,8 @@ module.exports = FluidLayout;
 
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
+
+var _sizingHackEnabled = null;
 
 /**
  * Grid layout.
@@ -8719,7 +8825,7 @@ var Layout = require("./layout.js");
 var GridLayout = Layout.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["verticalSpacing"]);
 
@@ -8731,11 +8837,9 @@ var GridLayout = Layout.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -8748,12 +8852,12 @@ var GridLayout = Layout.$extend({
      */
     _verticalPadding: 0,
 
-    getVerticalPadding: function() {
+    getVerticalPadding: function () {
         return this._verticalPadding;
     },
 
-    setVerticalPadding: function(padding) {
-        this._verticalPadding = padding|0;
+    setVerticalPadding: function (padding) {
+        this._verticalPadding = padding | 0;
         this._updatingLayout = true;
         this.__html.outerbox.style.paddingLeft = this._verticalPadding + "px";
         this.__html.outerbox.style.paddingRight = this._verticalPadding + "px";
@@ -8770,12 +8874,12 @@ var GridLayout = Layout.$extend({
      */
     _horizontalPadding: 0,
 
-    getHorizontalPadding: function() {
+    getHorizontalPadding: function () {
         return this._horizontalPadding;
     },
 
-    setHorizontalPadding: function(padding) {
-        this._horizontalPadding = padding|0;
+    setHorizontalPadding: function (padding) {
+        this._horizontalPadding = padding | 0;
         this._updatingLayout = true;
         this.__html.outerbox.style.paddingTop = this._horizontalPadding + "px";
         this.__html.outerbox.style.paddingBottom = this._horizontalPadding + "px";
@@ -8792,11 +8896,11 @@ var GridLayout = Layout.$extend({
      */
     _verticalSpacing: 5,
 
-    getVerticalSpacing: function() {
+    getVerticalSpacing: function () {
         return this._verticalSpacing;
     },
 
-    setVerticalSpacing: function(verticalSpacing) {
+    setVerticalSpacing: function (verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
         //this._updatingLayout = true;
         //this._updateSpacing();
@@ -8814,11 +8918,11 @@ var GridLayout = Layout.$extend({
      */
     _horizontalSpacing: 5,
 
-    getHorizontalSpacing: function() {
+    getHorizontalSpacing: function () {
         return this._horizontalSpacing;
     },
 
-    setHorizontalSpacing: function(horizontalSpacing) {
+    setHorizontalSpacing: function (horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
         //this._updatingLayout = true;
         //this._updateSpacing();
@@ -8835,7 +8939,7 @@ var GridLayout = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outerbox;
     },
 
@@ -8855,9 +8959,7 @@ var GridLayout = Layout.$extend({
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Called when the visibility changes.
@@ -8866,7 +8968,7 @@ var GridLayout = Layout.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility) {
             this._sizingHack();
@@ -8880,7 +8982,7 @@ var GridLayout = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-gridlayout";
 
@@ -8897,7 +8999,7 @@ var GridLayout = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         this._updatingLayout = true;
         if (this.__sizinghack_observer) {  // XXX
             this.__sizinghack_observer.disconnect();
@@ -8906,13 +9008,13 @@ var GridLayout = Layout.$extend({
         var children = this.children;
 
         // Determine the grid geometry (min x, min y, max x, max y)
-        var minX = + Infinity;
-        var minY = + Infinity;
-        var maxX = - Infinity;
-        var maxY = - Infinity;
+        var minX = Infinity;
+        var minY = Infinity;
+        var maxX = -Infinity;
+        var maxY = -Infinity;
 
         var options;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             options = this._computeLayoutOptions(children[i]);
             minX = Math.min(options.x, minX);
             minY = Math.min(options.y, minY);
@@ -8933,7 +9035,7 @@ var GridLayout = Layout.$extend({
         var that = this;
         function _findWidgetAt(x, y) {
             var options;
-            for (var i=0 ; i<children.length ; i++) {
+            for (var i = 0 ; i < children.length ; i++) {
                 options = that._computeLayoutOptions(children[i]);
                 if (options.x == x && options.y == y) {
                     return {w: children[i], o: options};
@@ -8943,17 +9045,20 @@ var GridLayout = Layout.$extend({
         }
 
         var map = [];
-        for (var y=0 ; y<gridHeight ; y++) {
+        for (var y = 0 ; y < gridHeight ; y++) {
             map[y] = [];
             map[y].length = gridWidth;
         }
 
         var child;
-        var tr, td, div;
-        var cellX, cellY;
-        for (y=0 ; y<gridHeight ; y++) {
+        var tr;
+        var td;
+        var div;
+        var cellX;
+        var cellY;
+        for (y = 0 ; y < gridHeight ; y++) {
             tr = document.createElement("tr");
-            for (var x=0 ; x<gridWidth ; x++) {
+            for (var x = 0 ; x < gridWidth ; x++) {
                 if (map[y][x]) {
                     continue;
                 }
@@ -8972,11 +9077,11 @@ var GridLayout = Layout.$extend({
                     // Spacing exceptions
                     var horizontalSpacing = this.horizontalSpacing;
                     var verticalSpacing = this.verticalSpacing;
-                    if (x+child.o.cols >= gridWidth) {
+                    if (x + child.o.cols >= gridWidth) {
                         td.className += " photonui-gridlayout-lastcol";
                         verticalSpacing = 0;
                     }
-                    if (y+child.o.rows >= gridHeight) {
+                    if (y + child.o.rows >= gridHeight) {
                         td.className += " photonui-gridlayout-lastrow";
                         horizontalSpacing = 0;
                     }
@@ -9018,8 +9123,8 @@ var GridLayout = Layout.$extend({
                         td.colSpan = child.o.cols;
                         td.rowSpan = child.o.rows;
 
-                        for (cellY=y ; cellY<y+child.o.rows ; cellY++) {
-                            for (cellX=x ; cellX<x+child.o.cols ; cellX++) {
+                        for (cellY = y ; cellY < y + child.o.rows ; cellY++) {
+                            for (cellX = x ; cellX < x + child.o.cols ; cellX++) {
                                 map[cellY][cellX] = true;
                             }
                         }
@@ -9050,7 +9155,7 @@ var GridLayout = Layout.$extend({
      * @param {photonui.Widget} widget
      * @return {Object} the layout options
      */
-    _computeLayoutOptions: function(widget) {
+    _computeLayoutOptions: function (widget) {
         var woptions = widget.layoutOptions || {};
 
         var options = {
@@ -9079,73 +9184,65 @@ var GridLayout = Layout.$extend({
 
         // [Compatibility with old GridLayout] position / place
         if (woptions.gridX !== undefined && woptions.gridX !== null) {
-            options.x = woptions.gridX|0;
+            options.x = woptions.gridX | 0;
         }
         if (woptions.gridY !== undefined && woptions.gridY !== null) {
-            options.y = woptions.gridY|0;
+            options.y = woptions.gridY | 0;
         }
         if (woptions.gridWidth !== undefined && woptions.gridWidth !== null) {
-            options.cols = woptions.gridWidth|0;
+            options.cols = woptions.gridWidth | 0;
         }
         if (woptions.gridHeight !== undefined && woptions.gridHeight !== null) {
-            options.rows = woptions.gridHeight|0;
+            options.rows = woptions.gridHeight | 0;
         }
 
         // position / place
         if (woptions.x !== undefined && woptions.x !== null) {
-            options.x = woptions.x|0;
+            options.x = woptions.x | 0;
         }
         if (woptions.y !== undefined && woptions.y !== null) {
-            options.y = woptions.y|0;
+            options.y = woptions.y | 0;
         }
         if (woptions.cols !== undefined && woptions.cols !== null) {
-            options.cols = woptions.cols|0;
+            options.cols = woptions.cols | 0;
         }
         if (woptions.rows !== undefined && woptions.rows !== null) {
-            options.rows = woptions.rows|0;
+            options.rows = woptions.rows | 0;
         }
 
         // verticalAlign
         if (["stretch", "expand"].indexOf(woptions.verticalAlign) > -1) {
             options.verticalAlign = "stretch";
-        }
-        else if (["center", "middle"].indexOf(woptions.verticalAlign) > -1) {
+        } else if (["center", "middle"].indexOf(woptions.verticalAlign) > -1) {
             options.verticalAlign = "center";
-        }
-        else if (["start", "begin", "top"].indexOf(woptions.verticalAlign) > -1) {
+        } else if (["start", "begin", "top"].indexOf(woptions.verticalAlign) > -1) {
             options.verticalAlign = "start";
-        }
-        else if (["end", "bottom"].indexOf(woptions.verticalAlign) > -1) {
+        } else if (["end", "bottom"].indexOf(woptions.verticalAlign) > -1) {
             options.verticalAlign = "end";
         }
 
         // horizontalAlign
         if (["stretch", "expand"].indexOf(woptions.horizontalAlign) > -1) {
             options.horizontalAlign = "stretch";
-        }
-        else if (["center", "middle"].indexOf(woptions.horizontalAlign) > -1) {
+        } else if (["center", "middle"].indexOf(woptions.horizontalAlign) > -1) {
             options.horizontalAlign = "center";
-        }
-        else if (["start", "begin", "left"].indexOf(woptions.horizontalAlign) > -1) {
+        } else if (["start", "begin", "left"].indexOf(woptions.horizontalAlign) > -1) {
             options.horizontalAlign = "start";
-        }
-        else if (["end", "right"].indexOf(woptions.horizontalAlign) > -1) {
+        } else if (["end", "right"].indexOf(woptions.horizontalAlign) > -1) {
             options.horizontalAlign = "end";
         }
 
         // [Compatibility with old GridLayout] horizontalAlign / verticalAlign
         if (woptions.verticalExpansion === true) {
             options.verticalAlign = "stretch";
-        }
-        else if (woptions.verticalExpansion === false) {
+        } else if (woptions.verticalExpansion === false) {
             if (woptions.verticalAlign === undefined) {
                 options.verticalAlign = "center";
             }
         }
         if (woptions.horizontalExpansion === true) {
             options.horizontalAlign = "stretch";
-        }
-        else if (woptions.horizontalExpansion === false) {
+        } else if (woptions.horizontalExpansion === false) {
             if (woptions.horizontalAlign === undefined) {
                 options.horizontalAlign = "center";
             }
@@ -9153,28 +9250,28 @@ var GridLayout = Layout.$extend({
 
         // *width
         if (woptions.minWidth !== undefined && woptions.minWidth !== null) {
-            options.minWidth = woptions.minWidth|0;
+            options.minWidth = woptions.minWidth | 0;
         }
         if (woptions.maxWidth !== undefined && woptions.maxWidth !== null) {
-            options.maxWidth = woptions.maxWidth|0;
+            options.maxWidth = woptions.maxWidth | 0;
         }
         if (woptions.width !== undefined && woptions.width !== null) {
-            options.width = woptions.width|0;
-            options.minWidth = woptions.width|0;
-            options.maxWidth = woptions.width|0;
+            options.width = woptions.width | 0;
+            options.minWidth = woptions.width | 0;
+            options.maxWidth = woptions.width | 0;
         }
 
         // *height
         if (woptions.minHeight !== undefined && woptions.minHeight !== null) {
-            options.minHeight = woptions.minHeight|0;
+            options.minHeight = woptions.minHeight | 0;
         }
         if (woptions.maxHeight !== undefined && woptions.maxHeight !== null) {
-            options.maxHeight = woptions.maxHeight|0;
+            options.maxHeight = woptions.maxHeight | 0;
         }
         if (woptions.height !== undefined && woptions.height !== null) {
-            options.height = woptions.height|0;
-            options.minHeight = woptions.height|0;
-            options.maxHeight = woptions.height|0;
+            options.height = woptions.height | 0;
+            options.minHeight = woptions.height | 0;
+            options.maxHeight = woptions.height | 0;
         }
 
         return options;
@@ -9186,9 +9283,9 @@ var GridLayout = Layout.$extend({
      * @method _updateSpacing
      * @private
      */
-    _updateSpacing: function() {
+    _updateSpacing: function () {
         var nodes = this.__html.outerbox.querySelectorAll("#" + this.name + " > table > tbody > tr > td");
-        for (var i=0 ; i<nodes.length ; i++) {
+        for (var i = 0 ; i < nodes.length ; i++) {
             nodes[i].style.paddingRight = this._verticalSpacing + "px";
             nodes[i].style.paddingBottom = this._horizontalSpacing + "px";
         }
@@ -9213,25 +9310,27 @@ var GridLayout = Layout.$extend({
      * @method _sizingHack
      * @private
      */
-    _sizingHack: function() {
+    _sizingHack: function () {
         if (this._updatingLayout) {
             return;
         }
 
         // Automatically disable the hack for webkit browsers
-        if (localStorage._photonui_gridlayout_sizinghack == "disabled") {
+        if (_sizingHackEnabled === false) {
             return;
-        }
-        else if (localStorage._photonui_gridlayout_sizinghack === undefined) {
+        } else if (_sizingHackEnabled === null) {
             var isWebkit = false;
-            if ("WebkitAppearance" in document.documentElement.style) isWebkit = true;
-            if ("WebKitCSSMatrix" in window) isWebkit = true;
-            if (isWebkit) {
-                localStorage._photonui_gridlayout_sizinghack = "disabled";
-                return;
+            if ("WebkitAppearance" in document.documentElement.style) {
+                isWebkit = true;
             }
-            else {
-                localStorage._photonui_gridlayout_sizinghack = "enabled";
+            if ("WebKitCSSMatrix" in window) {
+                isWebkit = true;
+            }
+            if (isWebkit) {
+                _sizingHackEnabled = false;
+                return;
+            } else {
+                _sizingHackEnabled = true;
             }
         }
 
@@ -9245,11 +9344,9 @@ var GridLayout = Layout.$extend({
                 var tdHeight;
                 if (node.style.minHeight && node.style.minHeight == node.style.maxHeight) {
                     tdHeight = parseFloat(node.style.minHeight);
-                }
-                else if (node.classList.contains("photonui-gridlayout-lastrow")) {
+                } else if (node.classList.contains("photonui-gridlayout-lastrow")) {
                     tdHeight = node.offsetHeight;
-                }
-                else {
+                } else {
                     tdHeight = node.offsetHeight;
                 }
                 node.style.height = tdHeight + "px";
@@ -9258,19 +9355,23 @@ var GridLayout = Layout.$extend({
             var nodes = this.__html.outerbox.querySelectorAll("#" + this.name + " > table > tbody > tr > td");
 
             // 1st pass -> height: auto
-            for (var i=0 ; i<nodes.length ; i++) {
+            for (var i = 0 ; i < nodes.length ; i++) {
                 nodes[i].style.height = "auto";
             }
 
             // 2nd pass -> fixed height for all td where rowspan = 1
-            for (i=0 ; i<nodes.length ; i++) {
-                if (nodes[i].rowSpan && nodes[i].rowSpan > 1) continue;
+            for (i = 0 ; i < nodes.length ; i++) {
+                if (nodes[i].rowSpan && nodes[i].rowSpan > 1) {
+                    continue;
+                }
                 _size(nodes[i]);
             }
 
             // 3rd pass -> fixed height for all td where rowspan > 1
-            for (i=0 ; i<nodes.length ; i++) {
-                if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) continue;
+            for (i = 0 ; i < nodes.length ; i++) {
+                if ((!nodes[i].rowSpan) || nodes[i].rowSpan <= 1) {
+                    continue;
+                }
                 _size(nodes[i]);
             }
 
@@ -9286,9 +9387,9 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":19,"./layout.js":34}],34:[function(require,module,exports){
+},{"../helpers.js":21,"./layout.js":36}],36:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9338,25 +9439,22 @@ var Container = require("../container/container.js");
 var Layout = Container.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
 
         // Force to update the parent of the children
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             children[i]._parentName = this.name;
         }
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Layout children widgets name.
@@ -9367,13 +9465,14 @@ var Layout = Container.$extend({
      */
     _childrenNames: [],
 
-    getChildrenNames: function() {
+    getChildrenNames: function () {
         return this._childrenNames;
     },
 
-    setChildrenNames: function(childrenNames) {
-        var i, widget;
-        for (i=0 ; i<this._childrenNames.length ; i++) {
+    setChildrenNames: function (childrenNames) {
+        var i;
+        var widget;
+        for (i = 0 ; i < this._childrenNames.length ; i++) {
             widget = Widget.getWidget(this._childrenNames[i]);
             var index = this._childrenNames.indexOf(widget.name);
             if (index >= 0) {
@@ -9381,7 +9480,7 @@ var Layout = Container.$extend({
             }
         }
         this._childrenNames = [];
-        for (i=0 ; i<childrenNames.length ; i++) {
+        for (i = 0 ; i < childrenNames.length ; i++) {
             widget = Widget.getWidget(childrenNames[i]);
             if (widget) {
                 if (widget.parent) {
@@ -9401,19 +9500,21 @@ var Layout = Container.$extend({
      * @type Array
      * @default []
      */
-    getChildren: function() {
+    getChildren: function () {
         var children = [];
         var widget;
-        for (var i=0 ; i<this._childrenNames.length ; i++) {
+        for (var i = 0 ; i < this._childrenNames.length ; i++) {
             widget = Widget.getWidget(this._childrenNames[i]);
-            if (widget instanceof Widget) children.push(widget);
+            if (widget instanceof Widget) {
+                children.push(widget);
+            }
         }
         return children;
     },
 
-    setChildren: function(children) {
+    setChildren: function (children) {
         var childrenNames = [];
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             if (children[i] instanceof Widget) {
                 childrenNames.push(children[i].name);
             }
@@ -9423,30 +9524,27 @@ var Layout = Container.$extend({
 
     // Override getChildName / setChildName / getChild / setChild
 
-    getChildName: function() {
+    getChildName: function () {
         return null;
     },
 
-    setChildName: function(childName) {
+    setChildName: function (childName) {
         this.childrenNames = [childName];
     },
 
-    getChild: function() {
+    getChild: function () {
         return null;
     },
 
-    setChild: function(child) {
+    setChild: function (child) {
         this.children = [child];
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add a widget to the layout.
@@ -9455,7 +9553,7 @@ var Layout = Container.$extend({
      * @param {photonui.Widget} widget The widget to add.
      * @param {Object} layoutOption Specific option for the layout (optional).
      */
-    addChild: function(widget, layoutOptions) {
+    addChild: function (widget, layoutOptions) {
         if (widget.parent) {
             widget.unparent();
         }
@@ -9473,7 +9571,7 @@ var Layout = Container.$extend({
      * @method removeChild
      * @param {photonui.Widget} widget The widget to remove.
      */
-    removeChild: function(widget) {
+    removeChild: function (widget) {
         var index = this._childrenNames.indexOf(widget.name);
         if (index >= 0) {
             this._childrenNames.splice(index, 1);
@@ -9487,13 +9585,17 @@ var Layout = Container.$extend({
      *
      * @method empty
      */
-    empty: function() {
+    empty: function () {
+        this._lockUpdate(true);
+
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             if (children[i]) {
                 children[i].destroy();
             }
         }
+
+        this._lockUpdate(false);
     },
 
     /**
@@ -9501,14 +9603,29 @@ var Layout = Container.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this.empty();
         this.$super();
     },
 
-
     // ====== Private methods ======
 
+    /**
+     * Lock the update of the layout.
+     *
+     * @method _lockUpdate
+     * @private
+     */
+    _lockUpdate: function (lock) {
+        if (lock) {
+            this.__lockedUpdateLayout = this._updateLayout;
+            this._updateLayout = function () {};
+        } else {
+            this._updateLayout = this.__lockedUpdateLayout;
+            delete this.__lockedUpdateLayout;
+            this._updateLayout();
+        }
+    },
 
     /**
      * Update the layout.
@@ -9516,8 +9633,8 @@ var Layout = Container.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
-        throw "Error: you should define the _updateLayout() method when you extend a layout widget.";
+    _updateLayout: function () {
+        throw new Error("you should define the _updateLayout() method when you extend a layout widget.");
     },
 
     /**
@@ -9527,21 +9644,21 @@ var Layout = Container.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
-            if (!(this.child instanceof Widget)) continue;
+        for (var i = 0 ; i < children.length ; i++) {
+            if (!(this.child instanceof Widget)) {
+                continue;
+            }
             children[i]._visibilityChanged(visibility);
         }
         this.$super(visibility);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -9549,16 +9666,16 @@ var Layout = Container.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
 
 module.exports = Layout;
 
-},{"../container/container.js":11,"../widget.js":53}],35:[function(require,module,exports){
+},{"../container/container.js":13,"../widget.js":55}],37:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9608,19 +9725,16 @@ var Layout = require("./layout.js");
 var Menu = Layout.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["iconVisible"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Define if icon on menu items are visible.
@@ -9631,16 +9745,15 @@ var Menu = Layout.$extend({
      */
     _iconVisible: true,
 
-    isIconVisible: function() {
+    isIconVisible: function () {
         return this._iconVisible;
     },
 
-    setIconVisible: function(iconVisible) {
+    setIconVisible: function (iconVisible) {
         this._iconVisible = iconVisible;
         if (iconVisible) {
             this.__html.outer.classList.remove("photonui-menu-noicon");
-        }
-        else {
+        } else {
             this.__html.outer.classList.add("photonui-menu-noicon");
         }
     },
@@ -9653,18 +9766,15 @@ var Menu = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -9672,7 +9782,7 @@ var Menu = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-default";
     },
@@ -9683,7 +9793,7 @@ var Menu = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         // Detache the outer element from the document tree
         //TODO
 
@@ -9692,7 +9802,7 @@ var Menu = Layout.$extend({
 
         // Append children
         var children = this.children;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             this.__html.outer.appendChild(children[i].html);
         }
 
@@ -9703,7 +9813,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":19,"./layout.js":34}],36:[function(require,module,exports){
+},{"../helpers.js":21,"./layout.js":36}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9742,12 +9852,10 @@ module.exports = Menu;
  * @namespace photonui
  */
 
-
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 var TabItem = require("../container/tabitem.js");
 var Widget = require("../widget.js");
-
 
 /**
  * Tab Layout
@@ -9760,17 +9868,15 @@ var Widget = require("../widget.js");
 var TabLayout = Layout.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
         this._updateProperties(["activeTab", "tabsPosition", "padding"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -9788,13 +9894,13 @@ var TabLayout = Layout.$extend({
      */
     _tabsPosition: "top",
 
-    getTabsPosition: function() {
+    getTabsPosition: function () {
         return this._tabsPosition;
     },
 
-    setTabsPosition: function(position) {
-        if (["top", "bottom", "left", "right"].indexOf(position) < 0 ) {
-            throw "Error: The tabs position should be \"top\", \"bottom\", \"left\" or \"right\".";
+    setTabsPosition: function (position) {
+        if (["top", "bottom", "left", "right"].indexOf(position) < 0) {
+            throw new Error("The tabs position should be \"top\", \"bottom\", \"left\" or \"right\".");
         }
         this._tabsPosition = position;
         this.removeClass("photonui-tablayout-tabposition-top");
@@ -9812,7 +9918,7 @@ var TabLayout = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -9825,11 +9931,11 @@ var TabLayout = Layout.$extend({
      */
     _activeTabName: null,
 
-    getActiveTabName: function() {
+    getActiveTabName: function () {
         return this._activeTabName;
     },
 
-    setActiveTabName: function(tabName) {
+    setActiveTabName: function (tabName) {
         var activeTab = Widget.getWidget(tabName);
         if (activeTab instanceof TabItem) {
             activeTab.show();
@@ -9838,7 +9944,7 @@ var TabLayout = Layout.$extend({
 
         if (!this._activeTab) {
             var children = this.children;
-            for (var i=0 ; i<children.length ; i++) {
+            for (var i = 0 ; i < children.length ; i++) {
                 if (!(children[i] instanceof TabItem)) {
                     continue;
                 }
@@ -9857,11 +9963,11 @@ var TabLayout = Layout.$extend({
      */
     _padding: 10,
 
-    getPadding: function() {
+    getPadding: function () {
         return this._padding;
     },
 
-    setPadding: function(padding) {
+    setPadding: function (padding) {
         this._padding = padding;
         this.__html.content.style.padding = padding + "px";
     },
@@ -9873,37 +9979,33 @@ var TabLayout = Layout.$extend({
      * @type photonui.Widget
      * @default null
      */
-    getActiveTab: function() {
+    getActiveTab: function () {
         return Widget.getWidget(this.activeTabName);
     },
 
-    setActiveTab: function(tab) {
+    setActiveTab: function (tab) {
         if (tab instanceof Widget) {
             this.activeTabName = tab.name;
-        }
-        else {
+        } else {
             this.activeTabName = null;
         }
     },
 
     //
-    setChildrenNames: function(childrenNames) {
+    setChildrenNames: function (childrenNames) {
         this.$super(childrenNames);
         if (!this.activeTabName) {
             this.activeTabName = null;
         }
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
 
-
-    addChild: function(widget, layoutOptions) {
+    addChild: function (widget, layoutOptions) {
         this.$super(widget, layoutOptions);
         if (!this.activeTabName && widget instanceof TabItem) {
             this.activeTabName = widget.name;
@@ -9916,16 +10018,14 @@ var TabLayout = Layout.$extend({
      * @method removeChild
      * @param {photonui.Widget} widget The widget to remove.
      */
-    removeChild: function(widget) {
+    removeChild: function (widget) {
         this.$super(widget);
         if (widget === this.activeTab) {
             this.activeTabName = null;
         }
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -9933,7 +10033,7 @@ var TabLayout = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-tablayout";
 
@@ -9956,7 +10056,7 @@ var TabLayout = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         Helpers.cleanNode(this.__html.tabs);
         Helpers.cleanNode(this.__html.content);
 
@@ -9965,7 +10065,7 @@ var TabLayout = Layout.$extend({
         var contentFragment = document.createDocumentFragment();
 
         var options;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             if (!(children[i] instanceof TabItem)) {
                 continue;
             }
@@ -9974,8 +10074,7 @@ var TabLayout = Layout.$extend({
 
             if (options.order !== null) {
                 children[i].tabHtml.style.order = options.order;
-            }
-            else {
+            } else {
                 children[i].tabHtml.style.order = 0;
             }
 
@@ -9995,7 +10094,7 @@ var TabLayout = Layout.$extend({
      * @param {photonui.Widget} widget
      * @return {Object} the layout options
      */
-    _computeLayoutOptions: function(widget) {
+    _computeLayoutOptions: function (widget) {
         var woptions = widget.layoutOptions || {};
 
         var options = {
@@ -10003,7 +10102,7 @@ var TabLayout = Layout.$extend({
         };
 
         if (woptions.order !== undefined && woptions.order !== null) {
-            options.order = woptions.order|0;
+            options.order = woptions.order | 0;
         }
 
         return options;
@@ -10011,13 +10110,12 @@ var TabLayout = Layout.$extend({
 
 });
 
-
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":16,"../helpers.js":19,"../widget.js":53,"./layout.js":34}],37:[function(require,module,exports){
+},{"../container/tabitem.js":18,"../helpers.js":21,"../widget.js":55,"./layout.js":36}],39:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10068,19 +10166,16 @@ var KeyboardJS = require("keyboardjs");
 var AccelManager = Base.$extend({
 
     // Constructor
-    __init__: function() {
+    __init__: function () {
         this.__kbd = {};
         this.$super();
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Private properties ======
-
 
     /**
      * Keyboard bindings.
@@ -10099,14 +10194,11 @@ var AccelManager = Base.$extend({
      */
     __kbd: null,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add an accelerator.
@@ -10117,7 +10209,7 @@ var AccelManager = Base.$extend({
      * @param {Function} callback
      * @param {Boolean} safe If true, the accelerator is disable if a field/textArea is focused (optional, default=true)
      */
-    addAccel: function(id, keys, callback, safe) {
+    addAccel: function (id, keys, callback, safe) {
         keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
         this.removeAccel(id);
         this.__kbd[id] = {
@@ -10134,24 +10226,24 @@ var AccelManager = Base.$extend({
      * @method removeAccel
      * @param {String} id the accelerator id.
      */
-    removeAccel: function(id) {
-        if (!this.__kbd[id]) return;
+    removeAccel: function (id) {
+        if (!this.__kbd[id]) {
+            return;
+        }
         this.__kbd[id].binding.clear();
         delete this.__kbd[id];
     },
 
-    destroy: function() {
+    destroy: function () {
         for (var id in this.__kbd) {
             this.removeAccel(id);
         }
         this.$super();
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onAccell
@@ -10160,9 +10252,11 @@ var AccelManager = Base.$extend({
      * @param keys
      * @param combo
      */
-    __onAccell: function(event, keys, combo) {
+    __onAccell: function (event, keys, combo) {
         for (var id in this.__kbd) {
-            if (this.__kbd[id].keys != combo) continue;
+            if (this.__kbd[id].keys != combo) {
+                continue;
+            }
 
             if (this.__kbd[id].safe) {
                 if (document.activeElement instanceof HTMLInputElement ||
@@ -10182,9 +10276,9 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":4,"keyboardjs":2}],38:[function(require,module,exports){
+},{"../base.js":6,"keyboardjs":2}],40:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10240,30 +10334,25 @@ var Base = require("../base.js");
 var Color = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["value-changed"]);
         if (typeof(params) == "object" && !Array.isArray(params)) {
             this.$super(params);
-        }
-        else {
+        } else {
             this.$super();
             if (typeof(params) == "string") {
                 this.hexString = params;
-            }
-            else if (Array.isArray(params)) {
+            } else if (Array.isArray(params)) {
                 this.setRGBA(params);
-            }
-            else if (arguments.length >= 3) {
+            } else if (arguments.length >= 3) {
                 this.setRGBA.apply(this, arguments);
             }
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -10273,34 +10362,40 @@ var Color = Base.$extend({
      * @property hexString
      * @type String
      */
-    getHexString: function() {
+    getHexString: function () {
         var r = this.red.toString(16).toUpperCase();
-        if (r.length == 1) r = "0" + r;
+        if (r.length == 1) {
+            r = "0" + r;
+        }
         var g = this.green.toString(16).toUpperCase();
-        if (g.length == 1) g = "0" + g;
+        if (g.length == 1) {
+            g = "0" + g;
+        }
         var b = this.blue.toString(16).toUpperCase();
-        if (b.length == 1) b = "0" + b;
+        if (b.length == 1) {
+            b = "0" + b;
+        }
         return "#" + r + g + b;
     },
 
-    setHexString: function(value) {
+    setHexString: function (value) {
         value = value.replace(" ", "");
         // #FF0000
         if (value.match(/^#[0-9a-f]{6}$/i)) {
-            this._red = parseInt(value[1]+value[2], 16);
-            this._green = parseInt(value[3]+value[4], 16);
-            this._blue = parseInt(value[5]+value[6], 16);
+            this._red = parseInt(value[1] + value[2], 16);
+            this._green = parseInt(value[3] + value[4], 16);
+            this._blue = parseInt(value[5] + value[6], 16);
             this._updateHSB();
-        }
+
         // #F00
-        else if (value.match(/^#[0-9a-f]{3}$/i)) {
-            this._red = parseInt(value[1]+value[1], 16);
-            this._green = parseInt(value[2]+value[2], 16);
-            this._blue = parseInt(value[3]+value[3], 16);
+        } else if (value.match(/^#[0-9a-f]{3}$/i)) {
+            this._red = parseInt(value[1] + value[1], 16);
+            this._green = parseInt(value[2] + value[2], 16);
+            this._blue = parseInt(value[3] + value[3], 16);
             this._updateHSB();
-        }
+
         // Named colors
-        else {
+        } else {
             var colors = {
                 white:   [0xFF, 0xFF, 0xFF],
                 silver:  [0xC0, 0xC0, 0xC0],
@@ -10333,7 +10428,7 @@ var Color = Base.$extend({
      * @type String
      * @readOnly
      */
-    getRgbString: function() {
+    getRgbString: function () {
         return "rgb(" + this._red + ", " + this._green + ", " + this._blue + ")";
     },
 
@@ -10344,7 +10439,7 @@ var Color = Base.$extend({
      * @type String
      * @readOnly
      */
-    getRgbaString: function() {
+    getRgbaString: function () {
         return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + (this._alpha / 255) + ")";
     },
 
@@ -10356,12 +10451,12 @@ var Color = Base.$extend({
      */
     _red: 255,
 
-    getRed: function() {
+    getRed: function () {
         return this._red;
     },
 
-    setRed: function(red) {
-        this._red = Math.max(0, Math.min(255, red|0));
+    setRed: function (red) {
+        this._red = Math.max(0, Math.min(255, red | 0));
         this._updateHSB();
     },
 
@@ -10373,12 +10468,12 @@ var Color = Base.$extend({
      */
     _green: 0,
 
-    getGreen: function() {
+    getGreen: function () {
         return this._green;
     },
 
-    setGreen: function(green) {
-        this._green = Math.max(0, Math.min(255, green|0));
+    setGreen: function (green) {
+        this._green = Math.max(0, Math.min(255, green | 0));
         this._updateHSB();
     },
 
@@ -10390,12 +10485,12 @@ var Color = Base.$extend({
      */
     _blue: 0,
 
-    getBlue: function() {
+    getBlue: function () {
         return this._blue;
     },
 
-    setBlue: function(blue) {
-        this._blue = Math.max(0, Math.min(255, blue|0));
+    setBlue: function (blue) {
+        this._blue = Math.max(0, Math.min(255, blue | 0));
         this._updateHSB();
     },
 
@@ -10407,12 +10502,12 @@ var Color = Base.$extend({
      */
     _alpha: 255,
 
-    getAlpha: function() {
+    getAlpha: function () {
         return this._alpha;
     },
 
-    setAlpha: function(alpha) {
-        this._alpha = Math.max(0, Math.min(255, alpha|0));
+    setAlpha: function (alpha) {
+        this._alpha = Math.max(0, Math.min(255, alpha | 0));
         this._callCallbacks("value-changed");
     },
 
@@ -10424,12 +10519,12 @@ var Color = Base.$extend({
      */
     _hue: 0,
 
-    getHue: function() {
+    getHue: function () {
         return this._hue;
     },
 
-    setHue: function(hue) {
-        this._hue = Math.max(0, Math.min(360, hue|0));
+    setHue: function (hue) {
+        this._hue = Math.max(0, Math.min(360, hue | 0));
         this._updateRGB();
     },
 
@@ -10441,12 +10536,12 @@ var Color = Base.$extend({
      */
     _saturation: 100,
 
-    getSaturation: function() {
+    getSaturation: function () {
         return this._saturation;
     },
 
-    setSaturation: function(saturation) {
-        this._saturation = Math.max(0, Math.min(100, saturation|0));
+    setSaturation: function (saturation) {
+        this._saturation = Math.max(0, Math.min(100, saturation | 0));
         this._updateRGB();
     },
 
@@ -10458,20 +10553,18 @@ var Color = Base.$extend({
      */
     _brightness: 100,
 
-    getBrightness: function() {
+    getBrightness: function () {
         return this._brightness;
     },
 
-    setBrightness: function(brightness) {
-        this._brightness = Math.max(0, Math.min(100, brightness|0));
+    setBrightness: function (brightness) {
+        this._brightness = Math.max(0, Math.min(100, brightness | 0));
         this._updateRGB();
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Public methods ======
 
@@ -10485,7 +10578,7 @@ var Color = Base.$extend({
      * @param {Number} green (0-255)
      * @param {Number} blue (0-255)
      */
-    setRGB: function() {
+    setRGB: function () {
         this.setRGBA.apply(this, arguments);
     },
 
@@ -10500,15 +10593,21 @@ var Color = Base.$extend({
      * @param {Number} blue (0-255)
      * @param {Number} alpha (optional, 0-255)
      */
-    setRGBA: function() {
+    setRGBA: function () {
         var args = arguments;
-        if (arguments.length == 1 && Array.isArray(arguments[0])) args = arguments[0];
-        if (args.length < 3) return;
+        if (arguments.length == 1 && Array.isArray(arguments[0])) {
+            args = arguments[0];
+        }
+        if (args.length < 3) {
+            return;
+        }
 
-        this._red = Math.max(0, Math.min(255, args[0]|0));
-        this._green = Math.max(0, Math.min(255, args[1]|0));
-        this._blue = Math.max(0, Math.min(255, args[2]|0));
-        if (args[3] !== undefined) this._alpha = Math.max(0, Math.min(255, args[3]|0));
+        this._red = Math.max(0, Math.min(255, args[0] | 0));
+        this._green = Math.max(0, Math.min(255, args[1] | 0));
+        this._blue = Math.max(0, Math.min(255, args[2] | 0));
+        if (args[3] !== undefined) {
+            this._alpha = Math.max(0, Math.min(255, args[3] | 0));
+        }
 
         this._updateHSB();
     },
@@ -10519,7 +10618,7 @@ var Color = Base.$extend({
      * @method getRGB
      * @return {Array} [red(0-255), green(0-255), blue(0-255)]
      */
-    getRGB: function() {
+    getRGB: function () {
         return [this._red, this._green, this._blue];
     },
 
@@ -10529,7 +10628,7 @@ var Color = Base.$extend({
      * @method getRGBA
      * @return {Array} [red(0-255), green(0-255), blue(0-255), alpha(0-255)]
      */
-    getRGBA: function() {
+    getRGBA: function () {
         return [this._red, this._green, this._blue, this._alpha];
     },
 
@@ -10543,19 +10642,23 @@ var Color = Base.$extend({
      * @param {Number} saturation (0-100)
      * @param {Number} brightness (0-100)
      */
-    setHSB: function() {
+    setHSB: function () {
         var args = arguments;
-        if (arguments.length == 1 && Array.isArray(arguments[0])) args = arguments[0];
-        if (args.length != 3) return;
+        if (arguments.length == 1 && Array.isArray(arguments[0])) {
+            args = arguments[0];
+        }
+        if (args.length != 3) {
+            return;
+        }
 
-        this._hue = Math.max(0, Math.min(360, args[0]|0));
-        this._saturation = Math.max(0, Math.min(100, args[1]|0));
-        this._brightness = Math.max(0, Math.min(100, args[2]|0));
+        this._hue = Math.max(0, Math.min(360, args[0] | 0));
+        this._saturation = Math.max(0, Math.min(100, args[1] | 0));
+        this._brightness = Math.max(0, Math.min(100, args[2] | 0));
 
         this._updateRGB();
     },
 
-    toString: function() {
+    toString: function () {
         return this.hexString;
     },
 
@@ -10567,7 +10670,7 @@ var Color = Base.$extend({
      * @method _updateHSB
      * @private
      */
-    _updateHSB: function() {
+    _updateHSB: function () {
         // http://fr.wikipedia.org/wiki/Teinte_Saturation_Valeur#Conversion_de_RVB_vers_TSV
 
         var r = this._red / 255;
@@ -10580,23 +10683,19 @@ var Color = Base.$extend({
         // Hue
         if (max == min) {
             this._hue = 0;
-        }
-        else if (max == r) {
+        } else if (max == r) {
             this._hue = Math.round((60 * (g - b) / (max - min) + 360) % 360);
-        }
-        else if (max == g) {
+        } else if (max == g) {
             this._hue = Math.round(60 * (b - r) / (max - min) + 120);
-        }
-        else if (max == b) {
+        } else if (max == b) {
             this._hue = Math.round(60 * (r - g) / (max - min) + 240);
         }
 
         // Saturation
         if (max === 0) {
             this._saturation = 0;
-        }
-        else {
-            this._saturation = Math.round((1 - min/max) * 100);
+        } else {
+            this._saturation = Math.round((1 - min / max) * 100);
         }
 
         // Brightness
@@ -10612,14 +10711,14 @@ var Color = Base.$extend({
      * @method _updateRGB
      * @private
      */
-    _updateRGB: function() {
+    _updateRGB: function () {
         // http://fr.wikipedia.org/wiki/Teinte_Saturation_Valeur#Conversion_de_TSV_vers_RVB
 
         var h = this.hue % 360;
         var s = this.saturation / 100;
         var b = this.brightness / 100;
 
-        var ti = ((h / 60)|0) % 6;
+        var ti = ((h / 60) | 0) % 6;
         var f = h / 60 - ti;
         var l = b * (1 - s);
         var m = b * (1 - f * s);
@@ -10627,34 +10726,34 @@ var Color = Base.$extend({
 
         switch (ti) {
             case 0:
-                this._red = (b * 255)|0;
-                this._green = (n * 255)|0;
-                this._blue = (l * 255)|0;
+                this._red = (b * 255) | 0;
+                this._green = (n * 255) | 0;
+                this._blue = (l * 255) | 0;
                 break;
             case 1:
-                this._red = (m * 255)|0;
-                this._green = (b * 255)|0;
-                this._blue = (l * 255)|0;
+                this._red = (m * 255) | 0;
+                this._green = (b * 255) | 0;
+                this._blue = (l * 255) | 0;
                 break;
             case 2:
-                this._red = (l * 255)|0;
-                this._green = (b * 255)|0;
-                this._blue = (n * 255)|0;
+                this._red = (l * 255) | 0;
+                this._green = (b * 255) | 0;
+                this._blue = (n * 255) | 0;
                 break;
             case 3:
-                this._red = (l * 255)|0;
-                this._green = (m * 255)|0;
-                this._blue = (b * 255)|0;
+                this._red = (l * 255) | 0;
+                this._green = (m * 255) | 0;
+                this._blue = (b * 255) | 0;
                 break;
             case 4:
-                this._red = (n * 255)|0;
-                this._green = (l * 255)|0;
-                this._blue = (b * 255)|0;
+                this._red = (n * 255) | 0;
+                this._green = (l * 255) | 0;
+                this._blue = (b * 255) | 0;
                 break;
             case 5:
-                this._red = (b * 255)|0;
-                this._green = (l * 255)|0;
-                this._blue = (m * 255)|0;
+                this._red = (b * 255) | 0;
+                this._green = (l * 255) | 0;
+                this._blue = (m * 255) | 0;
                 break;
         }
 
@@ -10664,9 +10763,9 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":4}],39:[function(require,module,exports){
+},{"../base.js":6}],41:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10722,7 +10821,7 @@ var Base = require("../base.js");
 var FileManager = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.__fileField = document.createElement("input");
         this.__fileField.type = "file";
         this.__fileField.addEventListener("change", this.__onFileSelected.bind(this), false);
@@ -10738,14 +10837,11 @@ var FileManager = Base.$extend({
         this.$super(params);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * List of the accepted mime types.
@@ -10756,11 +10852,11 @@ var FileManager = Base.$extend({
      */
     _acceptedMimes: [],
 
-    getAcceptedMimes: function() {
+    getAcceptedMimes: function () {
         return this._acceptedMimes;
     },
 
-    setAcceptedMimes: function(mimes) {
+    setAcceptedMimes: function (mimes) {
         this._acceptedMimes = mimes;
         this._updateAccepted();
     },
@@ -10774,11 +10870,11 @@ var FileManager = Base.$extend({
      */
     _acceptedExts: [],
 
-    getAcceptedExts: function() {
+    getAcceptedExts: function () {
         return this._acceptedExts;
     },
 
-    setAcceptedExts: function(exts) {
+    setAcceptedExts: function (exts) {
         this._acceptedExts = exts;
         this._updateAccepted();
     },
@@ -10792,11 +10888,11 @@ var FileManager = Base.$extend({
      */
     _dropZone: null,
 
-    getDropZone: function() {
+    getDropZone: function () {
         return this._dropZone;
     },
 
-    setDropZone: function(element) {
+    setDropZone: function (element) {
         // Unbind
         if (this._dropZone) {
             this._unbindEvent("document-dragover");
@@ -10809,13 +10905,13 @@ var FileManager = Base.$extend({
 
         // Bind
         if (element) {
-            this._bindEvent("document-dragover", document, "dragover", function(event) {
+            this._bindEvent("document-dragover", document, "dragover", function (event) {
                 event.preventDefault();
             });
-            this._bindEvent("document-drop", document, "drop", function(event) {
+            this._bindEvent("document-drop", document, "drop", function (event) {
                 event.preventDefault();
             });
-            this._bindEvent("element-dragover", document, "dragover", function(event) {});
+            this._bindEvent("element-dragover", document, "dragover", function (event) {});
             this._bindEvent("element-drop", document, "drop", this.__onFileDropped.bind(this));
         }
     },
@@ -10829,24 +10925,21 @@ var FileManager = Base.$extend({
      */
     _multiselect: false,
 
-    getMultiselect: function() {
+    getMultiselect: function () {
         return this._multiselect;
     },
 
-    setMultiselect: function(multiselect) {
+    setMultiselect: function (multiselect) {
         this._multiselect = multiselect;
 
         if (multiselect) {
             this.__fileField.multiple = "true";
-        }
-        else {
+        } else {
             delete this.__fileField.multiple;
         }
     },
 
-
     // ====== Private properties ======
-
 
     /**
      * The file field for opening the file dialog.
@@ -10857,21 +10950,18 @@ var FileManager = Base.$extend({
      */
     __fileField: null,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Open the FileOpen dialog to allow user to browse its HDD for a file.
      *
      * @method open
      */
-    open: function() {
+    open: function () {
         this.__fileField.style.display = "inline-block";
         this.__fileField.focus();
         this.__fileField.click();
@@ -10883,14 +10973,12 @@ var FileManager = Base.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         document.getElementsByTagName("body")[0].removeChild(this.__fileField);
         this.$super();
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Update accepted mimes/extentions.
@@ -10898,10 +10986,10 @@ var FileManager = Base.$extend({
      * @method _updateAccepted
      * @private
      */
-    _updateAccepted: function() {
+    _updateAccepted: function () {
         var result = [];
 
-        for (var i=0 ; i<this.acceptedExts.length ; i++) {
+        for (var i = 0 ; i < this.acceptedExts.length ; i++) {
             result.push("." + this.acceptedExts[i].toLocaleLowerCase());
         }
 
@@ -10919,11 +11007,11 @@ var FileManager = Base.$extend({
      * @param {Number} x The x postition of the mouse (d&d only).
      * @param {Number} y The y postition of the mouse (d&d only).
      */
-    _openFile: function(file, x, y) {
+    _openFile: function (file, x, y) {
         var match = false;
 
         // Validate mime
-        for (var m=0 ; m<this.acceptedMimes.length ; m++) {
+        for (var m = 0 ; m < this.acceptedMimes.length ; m++) {
             if (file.type == this.acceptedMimes[m]) {
                 match = true;
                 break;
@@ -10933,7 +11021,7 @@ var FileManager = Base.$extend({
         // Validate ext
         if (!match) {
             var ext = file.name.split(".").splice(-1);
-            for (var e=0 ; e<this.acceptedExts.length ; e++) {
+            for (var e = 0 ; e < this.acceptedExts.length ; e++) {
                 if (ext == this.acceptedExts[e]) {
                     match = true;
                     break;
@@ -10946,21 +11034,19 @@ var FileManager = Base.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onFileDropped
      * @private
      * @param event
      */
-    __onFileDropped: function(event) {
+    __onFileDropped: function (event) {
         for (var i in event.dataTransfer.files) {
             var file = event.dataTransfer.files[i];
-            if(file instanceof File) {
+            if (file instanceof File) {
                 this._openFile(file, event.pageX, event.pageY);
             }
         }
@@ -10971,10 +11057,10 @@ var FileManager = Base.$extend({
      * @private
      * @param event
      */
-    __onFileSelected: function(event) {
+    __onFileSelected: function (event) {
         for (var i in this.__fileField.files) {
             var file = this.__fileField.files[i];
-            if(file instanceof File) {
+            if (file instanceof File) {
                 this._openFile(file);
             }
         }
@@ -10986,16 +11072,16 @@ var FileManager = Base.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
 
 module.exports = FileManager;
 
-},{"../base.js":4}],40:[function(require,module,exports){
+},{"../base.js":6}],42:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11092,7 +11178,8 @@ var Widget = require("../widget.js");
  *
  *     {
  *         event: <Object>,       // The original js event
- *         action: <String>,      // The event name (mouse-down/up/move, click, double-click, drag-start/end, dragging, scroll-up/down)
+ *         action: <String>,      // The event name (mouse-down/up/move, click, double-click,
+ *                                //    drag-start/end, dragging, scroll-up/down)
  *         pageX: <Number>,       // X position, relative to page top-left corner.
  *         pageY: <Number>,       // Y position, relative to page top-left corner.
  *         x: <Number>,           // X position, relative to the HTML element.
@@ -11115,7 +11202,7 @@ var Widget = require("../widget.js");
 var MouseManager = Base.$extend({
 
     // Constructor
-    __init__: function(element, params) {
+    __init__: function (element, params) {
         this._registerWEvents([
             "mouse-event", "mouse-down", "mouse-up", "click", "double-click",
             "drag-start", "dragging", "drag-end", "mouse-move", "scroll-up",
@@ -11124,20 +11211,16 @@ var MouseManager = Base.$extend({
         if (element && (element instanceof Widget || element instanceof HTMLElement)) {
             this.$super(params);
             this.element = element;
-        }
-        else {
+        } else {
             this.$super(element);
         }
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The HTML Element on which the events are binded.
@@ -11151,18 +11234,16 @@ var MouseManager = Base.$extend({
      */
     _element: null,
 
-    getElement: function() {
+    getElement: function () {
         return this._element || document;
     },
 
-    setElement: function(element) {
+    setElement: function (element) {
         if (element instanceof Widget) {
             this._element = element.interactiveNode || element.html;
-        }
-        else if (element instanceof HTMLElement) {
+        } else if (element instanceof HTMLElement) {
             this._element = element;
-        }
-        else {
+        } else {
             this._element = null;
         }
         this._updateEvents();
@@ -11178,11 +11259,11 @@ var MouseManager = Base.$extend({
      */
     _threshold: 5,
 
-    getThreshold: function() {
+    getThreshold: function () {
         return this._threshold;
     },
 
-    setThreshold: function(threshold) {
+    setThreshold: function (threshold) {
         this._threshold = threshold;
     },
 
@@ -11228,7 +11309,7 @@ var MouseManager = Base.$extend({
      * @type Number
      * @default 0
      */
-    getPageX: function() {
+    getPageX: function () {
         return this.__event.pageX || 0;
     },
 
@@ -11240,7 +11321,7 @@ var MouseManager = Base.$extend({
      * @type Number
      * @default 0
      */
-    getPageY: function() {
+    getPageY: function () {
         return this.__event.pageY || 0;
     },
 
@@ -11251,7 +11332,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getX: function() {
+    getX: function () {
         var ex = Helpers.getAbsolutePosition(this.element).x;
         return (this.pageX - ex) * this.scaleX;
     },
@@ -11263,7 +11344,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getY: function() {
+    getY: function () {
         var ey = Helpers.getAbsolutePosition(this.element).y;
         return (this.pageY - ey) * this.scaleY;
     },
@@ -11275,7 +11356,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getDeltaX: function() {
+    getDeltaX: function () {
         return (this.pageX - ((this.__prevState.pageX !== undefined) ? this.__prevState.pageX : this.pageX)) * this.scaleX;
     },
 
@@ -11286,7 +11367,7 @@ var MouseManager = Base.$extend({
      * @readOnly
      * @type Number
      */
-    getDeltaY: function() {
+    getDeltaY: function () {
         return (this.pageY - ((this.__prevState.pageY !== undefined) ? this.__prevState.pageY : this.pageY)) * this.scaleY;
     },
 
@@ -11310,7 +11391,7 @@ var MouseManager = Base.$extend({
      */
     _action: "",
 
-    getAction: function() {
+    getAction: function () {
         return this._action;
     },
 
@@ -11323,7 +11404,7 @@ var MouseManager = Base.$extend({
      */
     _btnLeft: false,
 
-    getBtnLeft: function() {
+    getBtnLeft: function () {
         return this._btnLeft;
     },
 
@@ -11336,7 +11417,7 @@ var MouseManager = Base.$extend({
      */
     _btnMiddle: false,
 
-    getBtnMiddle: function() {
+    getBtnMiddle: function () {
         return this._btnMiddle;
     },
 
@@ -11349,7 +11430,7 @@ var MouseManager = Base.$extend({
      */
     _btnRight: false,
 
-    getBtnRight: function() {
+    getBtnRight: function () {
         return this._btnRight;
     },
 
@@ -11367,13 +11448,11 @@ var MouseManager = Base.$extend({
      */
     _button: null,
 
-    getButton: function() {
+    getButton: function () {
         return this._button;
     },
 
-
     // ====== Private properties ======
-
 
     /**
      * Previous state.
@@ -11403,11 +11482,9 @@ var MouseManager = Base.$extend({
      */
     __event: {},
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     /**
      * Bind events on the HTML Element.
@@ -11415,7 +11492,7 @@ var MouseManager = Base.$extend({
      * @method _updateEvents
      * @private
      */
-    _updateEvents: function() {
+    _updateEvents: function () {
         // Unbind all existing events
         for (var id in this.__events) {
             this._unbindEvent(id);
@@ -11443,7 +11520,7 @@ var MouseManager = Base.$extend({
      * @private
      * @return {Object}
      */
-    _dump: function() {
+    _dump: function () {
         return {
             event: this.__event,
             action: this.action,
@@ -11468,7 +11545,7 @@ var MouseManager = Base.$extend({
      * @param {String} action The action name (e.g. "mouse-up").
      * @param {Object} event The js event.
      */
-    _stateMachine: function(action, event) {
+    _stateMachine: function (action, event) {
         // Save the previous state
         this.__prevState = this._dump();
 
@@ -11476,9 +11553,15 @@ var MouseManager = Base.$extend({
         this._action = action;
         this.__event = event;
         this._button = null;
-        if (event.button === 0) this._button = "left";
-        if (event.button === 1) this._button = "middle";
-        if (event.button === 2) this._button = "right";
+        if (event.button === 0) {
+            this._button = "left";
+        }
+        if (event.button === 1) {
+            this._button = "middle";
+        }
+        if (event.button === 2) {
+            this._button = "right";
+        }
 
         // Analyze the event
 
@@ -11486,25 +11569,41 @@ var MouseManager = Base.$extend({
         if (action == "mouse-down") {
             this.__mouseDownEvent = event;
 
-            if (event.button === 0) this._btnLeft = true;
-            if (event.button === 1) this._btnMiddle = true;
-            if (event.button === 2) this._btnRight = true;
+            if (event.button === 0) {
+                this._btnLeft = true;
+            }
+            if (event.button === 1) {
+                this._btnMiddle = true;
+            }
+            if (event.button === 2) {
+                this._btnRight = true;
+            }
 
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
-        }
-        else if (action == "mouse-up") {
-            if (event.button === 0) this._btnLeft = false;
-            if (event.button === 1) this._btnMiddle = false;
-            if (event.button === 2) this._btnRight = false;
+        } else if (action == "mouse-up") {
+            if (event.button === 0) {
+                this._btnLeft = false;
+            }
+            if (event.button === 1) {
+                this._btnMiddle = false;
+            }
+            if (event.button === 2) {
+                this._btnRight = false;
+            }
 
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
-        }
-        else if (action == "drag-end") {
-            if (event.button === 0) this._btnLeft = false;
-            if (event.button === 1) this._btnMiddle = false;
-            if (event.button === 2) this._btnRight = false;
+        } else if (action == "drag-end") {
+            if (event.button === 0) {
+                this._btnLeft = false;
+            }
+            if (event.button === 1) {
+                this._btnMiddle = false;
+            }
+            if (event.button === 2) {
+                this._btnRight = false;
+            }
         }
 
         // Click
@@ -11545,18 +11644,16 @@ var MouseManager = Base.$extend({
                 this._callCallbacks("mouse-event", [this._dump()]);
                 this._callCallbacks(this.action, [this._dump()]);
             }
-        }
 
         // Dragging
-        else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start" ||
+        } else if (action == "dragging" || (action == "mouse-move" && (this.__prevState.action == "drag-start" ||
                  this.__prevState.action == "dragging") && (this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "dragging";
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
-        }
 
         // Drag End
-        else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
+        } else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
                  this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
             this._callCallbacks("mouse-event", [this._dump()]);
@@ -11570,18 +11667,16 @@ var MouseManager = Base.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onMouseDown
      * @private
      * @param event
      */
-    __onMouseDown: function(event) {
+    __onMouseDown: function (event) {
         this._stateMachine("mouse-down", event);
     },
 
@@ -11590,7 +11685,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onMouseUp: function(event) {
+    __onMouseUp: function (event) {
         this._stateMachine("mouse-up", event);
     },
 
@@ -11599,7 +11694,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onDoubleClick: function(event) {
+    __onDoubleClick: function (event) {
         this._stateMachine("double-click", event);
     },
 
@@ -11608,7 +11703,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onMouseMove: function(event) {
+    __onMouseMove: function (event) {
         this._stateMachine("mouse-move", event);
     },
 
@@ -11619,7 +11714,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onDocumentMouseUp: function(event) {
+    __onDocumentMouseUp: function (event) {
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("drag-end", event);
         }
@@ -11632,7 +11727,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onDocumentMouseMove: function(event) {
+    __onDocumentMouseMove: function (event) {
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("dragging", event);
         }
@@ -11643,7 +11738,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-    __onMouseWheel: function(event) {
+    __onMouseWheel: function (event) {
         var wheelDelta = null;
 
         // Webkit
@@ -11657,15 +11752,14 @@ var MouseManager = Base.$extend({
         // Firefox
         if (event.axis !== undefined && event.detail !== undefined) {
             if (event.axis == 2) { // Y
-                wheelDelta = - event.detail;
+                wheelDelta = -event.detail;
             }
         }
 
         if (wheelDelta !== null) {
             if (wheelDelta >= 0) {
                 this._stateMachine("scroll-up", event);
-            }
-            else {
+            } else {
                 this._stateMachine("scroll-down", event);
             }
         }
@@ -11674,9 +11768,9 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":4,"../helpers.js":19,"../widget.js":53}],41:[function(require,module,exports){
+},{"../base.js":6,"../helpers.js":21,"../widget.js":55}],43:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11705,7 +11799,6 @@ module.exports = MouseManager;
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -11728,7 +11821,7 @@ var _spritesheets = {};
 var SpriteSheet = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._icons = {};
         this.$super(params);
         this._updateProperties(["name"]);
@@ -11738,9 +11831,7 @@ var SpriteSheet = Base.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The sprit sheet name.
@@ -11751,11 +11842,11 @@ var SpriteSheet = Base.$extend({
      */
     _name: "default",
 
-    getName: function() {
+    getName: function () {
         return this._name;
     },
 
-    setName: function(name) {
+    setName: function (name) {
         if (_spritesheets[this.name] == this) {
             delete _spritesheets[this.name];
         }
@@ -11772,11 +11863,11 @@ var SpriteSheet = Base.$extend({
      */
     _imageUrl: null,
 
-    getImageUrl: function() {
+    getImageUrl: function () {
         return this._imageUrl;
     },
 
-    setImageUrl: function(url) {
+    setImageUrl: function (url) {
         if (!url) {
             this._imageUrl = null;
             return;
@@ -11798,11 +11889,11 @@ var SpriteSheet = Base.$extend({
      */
     _size: 16,
 
-    getSize: function() {
+    getSize: function () {
         return this._size;
     },
 
-    setSize: function(size) {
+    setSize: function (size) {
         this._size = size;
     },
 
@@ -11821,24 +11912,21 @@ var SpriteSheet = Base.$extend({
      */
     _icons: {},
 
-    getIcons: function() {
+    getIcons: function () {
         return this._icons;
     },
 
-    setIcons: function(icons) {
+    setIcons: function (icons) {
         for (var icon in icons) {
             this._icons[icon] = icons[icon];
         }
     },
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Get icon position.
@@ -11847,7 +11935,7 @@ var SpriteSheet = Base.$extend({
      * @param {String} iconName
      * @return {Object} `{x: Number, y: Number}`
      */
-    getIconPosition: function(iconName) {
+    getIconPosition: function (iconName) {
         return {x: this.icons[iconName][0], y: this.icons[iconName][1]};
     },
 
@@ -11858,7 +11946,7 @@ var SpriteSheet = Base.$extend({
      * @param {String} iconName
      * @return {String} the CSS.
      */
-    getIconCss: function(iconName) {
+    getIconCss: function (iconName) {
         return "width: "      + this.size + "px; " +
                "height: "     + this.size + "px; " +
                "background: " + "url(" + this.imageUrl + ") " +
@@ -11874,7 +11962,7 @@ var SpriteSheet = Base.$extend({
      * @param {Number} x
      * @param {Number} y
      */
-    addIcon: function(iconName, x ,y) {
+    addIcon: function (iconName, x, y) {
         this.icons = {iconName: [x, y]};
     },
 
@@ -11884,7 +11972,7 @@ var SpriteSheet = Base.$extend({
      * @method removeIcon
      * @param {String} iconName
      */
-    removeIcon: function(iconName) {
+    removeIcon: function (iconName) {
         delete this._icons[iconName];
     }
 });
@@ -11897,7 +11985,7 @@ var SpriteSheet = Base.$extend({
  *
  * @return {photonui.SpriteSheet} The sprite sheet or null.
  */
-SpriteSheet.getSpriteSheet = function(name) {
+SpriteSheet.getSpriteSheet = function (name) {
     if (_spritesheets[name] !== undefined) {
         return _spritesheets[name];
     }
@@ -11906,9 +11994,9 @@ SpriteSheet.getSpriteSheet = function(name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":4}],42:[function(require,module,exports){
+},{"../base.js":6}],44:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11970,7 +12058,7 @@ var Base = require("../base.js");
 var Translation = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         params = params || {};
         this._registerWEvents(["locale-changed"]);
         this.$super(params);
@@ -11980,14 +12068,11 @@ var Translation = Base.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The current locale (e.g. "fr", "en", "it",...).
@@ -11999,14 +12084,11 @@ var Translation = Base.$extend({
     getLocale: Stone.getLocale,
     setLocale: Stone.setLocale,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add one or more Stone.js catalog (a catalog contain all translated strings for a specific locale).
@@ -12048,7 +12130,7 @@ var Translation = Base.$extend({
      * @return {LazyString}
      */
     lazyGettext: Stone.lazyGettext,
-    
+
     /**
      * Enable/disable Stone.js translating elements with the "stonejs" attribute in the DOM.
      *
@@ -12056,7 +12138,7 @@ var Translation = Base.$extend({
      * @param {Boolean} boolean Enable or disable DOM scanning.
      */
     enableDomScan: Stone.enableDomScan,
-    
+
     /**
      * Re-translate elements with the "stonejs" attribute in the DOM.
      *
@@ -12064,26 +12146,24 @@ var Translation = Base.$extend({
      */
     updateDomTranslation: Stone.updateDomTranslation,
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onStonejsLocaleChanged
      * @private
      */
-    __onStonejsLocaleChanged: function() {
+    __onStonejsLocaleChanged: function () {
         this._callCallbacks("locale-changed", [this.locale]);
     }
 });
 
 module.exports = Translation;
 
-},{"../base.js":4,"stonejs":3}],43:[function(require,module,exports){
+},{"../base.js":6,"stonejs":3}],45:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12120,7 +12200,6 @@ module.exports = Translation;
  * @namespace photonui
  */
 
-
 var photonui = {};
 
 // Include libraries in module.
@@ -12128,6 +12207,7 @@ photonui.lib = {};
 photonui.lib.Class = require("classyjs");
 photonui.lib.KeyboardJS = require("keyboardjs");
 photonui.lib.Stone = require("stonejs");
+photonui.lib.uuid = require("uuid");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -12190,9 +12270,9 @@ photonui.TabLayout = require("./layout/tablayout.js");
 
 module.exports = photonui;
 
-},{"./base.js":4,"./composite/colorbutton.js":5,"./composite/colorpickerdialog.js":6,"./composite/fontselect.js":7,"./composite/popupmenu.js":8,"./composite/select.js":9,"./container/basewindow.js":10,"./container/container.js":11,"./container/dialog.js":12,"./container/menuitem.js":13,"./container/popupwindow.js":14,"./container/submenuitem.js":15,"./container/tabitem.js":16,"./container/viewport.js":17,"./container/window.js":18,"./helpers.js":19,"./interactive/button.js":20,"./interactive/checkbox.js":21,"./interactive/colorpalette.js":22,"./interactive/colorpicker.js":23,"./interactive/field.js":24,"./interactive/numericfield.js":25,"./interactive/slider.js":26,"./interactive/switch.js":27,"./interactive/textareafield.js":28,"./interactive/textfield.js":29,"./interactive/togglebutton.js":30,"./layout/boxlayout.js":31,"./layout/fluidlayout.js":32,"./layout/gridlayout.js":33,"./layout/layout.js":34,"./layout/menu.js":35,"./layout/tablayout.js":36,"./nonvisual/accelmanager.js":37,"./nonvisual/color.js":38,"./nonvisual/filemanager.js":39,"./nonvisual/mousemanager.js":40,"./nonvisual/spritesheet.js":41,"./nonvisual/translation.js":42,"./visual/baseicon.js":44,"./visual/canvas.js":45,"./visual/faicon.js":46,"./visual/image.js":47,"./visual/label.js":48,"./visual/progressbar.js":49,"./visual/separator.js":50,"./visual/spriteicon.js":51,"./visual/text.js":52,"./widget.js":53,"classyjs":1,"keyboardjs":2,"stonejs":3}],44:[function(require,module,exports){
+},{"./base.js":6,"./composite/colorbutton.js":7,"./composite/colorpickerdialog.js":8,"./composite/fontselect.js":9,"./composite/popupmenu.js":10,"./composite/select.js":11,"./container/basewindow.js":12,"./container/container.js":13,"./container/dialog.js":14,"./container/menuitem.js":15,"./container/popupwindow.js":16,"./container/submenuitem.js":17,"./container/tabitem.js":18,"./container/viewport.js":19,"./container/window.js":20,"./helpers.js":21,"./interactive/button.js":22,"./interactive/checkbox.js":23,"./interactive/colorpalette.js":24,"./interactive/colorpicker.js":25,"./interactive/field.js":26,"./interactive/numericfield.js":27,"./interactive/slider.js":28,"./interactive/switch.js":29,"./interactive/textareafield.js":30,"./interactive/textfield.js":31,"./interactive/togglebutton.js":32,"./layout/boxlayout.js":33,"./layout/fluidlayout.js":34,"./layout/gridlayout.js":35,"./layout/layout.js":36,"./layout/menu.js":37,"./layout/tablayout.js":38,"./nonvisual/accelmanager.js":39,"./nonvisual/color.js":40,"./nonvisual/filemanager.js":41,"./nonvisual/mousemanager.js":42,"./nonvisual/spritesheet.js":43,"./nonvisual/translation.js":44,"./visual/baseicon.js":46,"./visual/canvas.js":47,"./visual/faicon.js":48,"./visual/image.js":49,"./visual/label.js":50,"./visual/progressbar.js":51,"./visual/separator.js":52,"./visual/spriteicon.js":53,"./visual/text.js":54,"./widget.js":55,"classyjs":1,"keyboardjs":2,"stonejs":3,"uuid":5}],46:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12221,7 +12301,6 @@ module.exports = photonui;
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -12245,14 +12324,13 @@ var BaseIcon = Widget.$extend({
     // Internal Events Callbacks            //
     //////////////////////////////////////////
 
-
     /**
      * Called when the locale is changed.
      *
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 
@@ -12260,9 +12338,9 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":53}],45:[function(require,module,exports){
+},{"../widget.js":55}],47:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12312,7 +12390,7 @@ var Widget = require("../widget.js");
 var Canvas = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["width", "height"]);
 
@@ -12417,7 +12495,8 @@ var Canvas = Widget.$extend({
         }
 
         /**
-         * Returns a Blob object representing the image contained in the canvas (at the native resolution of the canvas).
+         * Returns a Blob object representing the image contained in the canvas (at the native
+         * resolution of the canvas).
          *
          * Proxy of the native canvas method if exists. For more informations see:
          *
@@ -12432,14 +12511,11 @@ var Canvas = Widget.$extend({
         }
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Canvas width.
@@ -12448,11 +12524,11 @@ var Canvas = Widget.$extend({
      * @type Number
      * default 300
      */
-    getWidth: function() {
+    getWidth: function () {
         return this.__html.canvas.width;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         this.__html.canvas.width = width || 300;
     },
 
@@ -12463,11 +12539,11 @@ var Canvas = Widget.$extend({
      * @type Number
      * default 150
      */
-    getHeight: function() {
+    getHeight: function () {
         return this.__html.canvas.height;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         this.__html.canvas.height = height || 150;
     },
 
@@ -12478,7 +12554,7 @@ var Canvas = Widget.$extend({
      * @readOnly
      * @type HTMLElement
      */
-    getCanvas: function() {
+    getCanvas: function () {
         return this.__html.canvas;
     },
 
@@ -12490,7 +12566,7 @@ var Canvas = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -12501,18 +12577,15 @@ var Canvas = Widget.$extend({
      * @type HTMLElement
      * @readOnly
      */
-    getInteractiveNode: function() {
+    getInteractiveNode: function () {
         return this.__html.canvas;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -12520,7 +12593,7 @@ var Canvas = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-canvas";
 
@@ -12528,11 +12601,9 @@ var Canvas = Widget.$extend({
         this.__html.outer.appendChild(this.__html.canvas);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -12540,16 +12611,16 @@ var Canvas = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
 
 module.exports = Canvas;
 
-},{"../widget.js":53}],46:[function(require,module,exports){
+},{"../widget.js":55}],48:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12578,7 +12649,6 @@ module.exports = Canvas;
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -12604,7 +12674,7 @@ var BaseIcon = require("./baseicon.js");
 var FAIcon = BaseIcon.$extend({
 
     // Constructor
-    __init__: function(params1, params2) {
+    __init__: function (params1, params2) {
         var params = {};
         if (params1 && typeof(params1) == "string") {
             params.iconName = params1;
@@ -12613,22 +12683,18 @@ var FAIcon = BaseIcon.$extend({
                     params[i] = params2[i];
                 }
             }
-        }
-        else if (params1) {
+        } else if (params1) {
             params = params1;
         }
         this.$super(params);
         this._updateProperties(["iconName", "size", "color"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The Font Awesome icon name (e.g. "fa-cog").
@@ -12641,11 +12707,11 @@ var FAIcon = BaseIcon.$extend({
      */
     _iconName: "",
 
-    getIconName: function() {
+    getIconName: function () {
         return this._iconName;
     },
 
-    setIconName: function(iconName) {
+    setIconName: function (iconName) {
         this._iconName = iconName || "";
         this.__html.icon.className = "fa " + this.iconName + " " + this.size;
     },
@@ -12661,11 +12727,11 @@ var FAIcon = BaseIcon.$extend({
      */
     _size: "",
 
-    getSize: function() {
+    getSize: function () {
         return this._size;
     },
 
-    setSize: function(size) {
+    setSize: function (size) {
         this._size = size || "";
         this.__html.icon.className = "fa " + this.iconName + " " + this.size;
     },
@@ -12679,11 +12745,11 @@ var FAIcon = BaseIcon.$extend({
      */
     _color: "inherit",
 
-    getColor: function() {
+    getColor: function () {
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         this._color = color || "inherit";
         this.__html.icon.style.color = this.color;
     },
@@ -12696,18 +12762,15 @@ var FAIcon = BaseIcon.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -12715,7 +12778,7 @@ var FAIcon = BaseIcon.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("span");
         this.__html.outer.className = "photonui-widget photonui-icon photonui-faicon";
 
@@ -12726,9 +12789,9 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":44}],47:[function(require,module,exports){
+},{"./baseicon.js":46}],49:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12781,7 +12844,6 @@ var Image_ = Widget.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
 
     /**
@@ -12793,11 +12855,11 @@ var Image_ = Widget.$extend({
      */
     _url: "",
 
-    getUrl: function() {
+    getUrl: function () {
         return this._url;
     },
 
-    setUrl: function(url) {
+    setUrl: function (url) {
         this._url = url;
         this.__html.image.src = url;
     },
@@ -12811,16 +12873,16 @@ var Image_ = Widget.$extend({
      */
     _width: null,
 
-    getWidth: function() {
+    getWidth: function () {
         return this._width;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         if (width !== null) {
             this._width = width;
             this.__html.image.width = width;
         } else {
-            this.__html.image.width = '';
+            this.__html.image.width = "";
         }
     },
 
@@ -12833,16 +12895,16 @@ var Image_ = Widget.$extend({
      */
     _height: null,
 
-    getHeight: function() {
+    getHeight: function () {
         return this._height;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         if (height !== null) {
             this._height = height;
             this.__html.image.height = height;
         } else {
-            this.__html.image.height = '';
+            this.__html.image.height = "";
         }
     },
 
@@ -12854,18 +12916,15 @@ var Image_ = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.div;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -12873,11 +12932,11 @@ var Image_ = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-image";
 
-        this.__html.image = document.createElement('img');
+        this.__html.image = document.createElement("img");
         this.__html.div.appendChild(this.__html.image);
     }
 
@@ -12885,9 +12944,9 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":53}],48:[function(require,module,exports){
+},{"../widget.js":55}],50:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12937,7 +12996,7 @@ var Helpers = require("../helpers.js");
 var Label = Widget.$extend({
 
     // Constructor
-    __init__: function(params1, params2) {
+    __init__: function (params1, params2) {
         var params = {};
         if (params1 && typeof(params1) == "string") {
             params.text = params1;
@@ -12946,8 +13005,7 @@ var Label = Widget.$extend({
                     params[i] = params2[i];
                 }
             }
-        }
-        else if (params1) {
+        } else if (params1) {
             params = params1;
         }
         params.layoutOptions = params.layoutOptions || {};
@@ -12958,14 +13016,11 @@ var Label = Widget.$extend({
         this._updateProperties(["text", "textAlign", "forInputName"]);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The label text.
@@ -12976,19 +13031,19 @@ var Label = Widget.$extend({
      */
     _text: "Label",
 
-    getText: function() {
+    getText: function () {
         return this._text;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._text = text;
         Helpers.cleanNode(this.__html.label);
 
-        var lines = (text+"").split("\n");
+        var lines = text.split("\n");
 
-        for (var i=0 ; i<lines.length ; i++) {
+        for (var i = 0 ; i < lines.length ; i++) {
             this.__html.label.appendChild(document.createTextNode(lines[i]));
-            if (i<lines.length-1) {
+            if (i < lines.length - 1) {
                 this.__html.label.appendChild(document.createElement("br"));
             }
         }
@@ -13008,13 +13063,13 @@ var Label = Widget.$extend({
      */
     _textAlign: "left",
 
-    getTextAlign: function() {
+    getTextAlign: function () {
         return this._textAlign;
     },
 
-    setTextAlign: function(textAlign) {
+    setTextAlign: function (textAlign) {
         if (textAlign != "left" && textAlign != "center" && textAlign != "right") {
-            throw "Text alignement sould be 'left', 'center' or 'right'.";
+            throw new Error("Text alignement sould be 'left', 'center' or 'right'.");
         }
         this._textAlign = textAlign;
         this.__html.label.style.textAlign = textAlign;
@@ -13029,25 +13084,23 @@ var Label = Widget.$extend({
      */
     _forInputName: null,
 
-    getForInputName: function() {
+    getForInputName: function () {
         return this._forInputName;
     },
 
-    setForInputName: function(forInputName) {
+    setForInputName: function (forInputName) {
         this._forInputName = forInputName;
         if (this._forInputName) {
             if (this.forInput) {
                 this.__html.label.setAttribute("for",
                         Helpers.escapeHtml(this.forInput.inputId || this.forInput.name)
                 );
-            }
-            else {
+            } else {
                 this.__html.label.setAttribute("for",
                         Helpers.escapeHtml(forInputName)
                 );
             }
-        }
-        else {
+        } else {
             this.__html.label.removeAttribute("for");
         }
     },
@@ -13059,11 +13112,11 @@ var Label = Widget.$extend({
      * @type photonui.Field, photonui.CheckBox
      * @default null
      */
-    getForInput: function() {
+    getForInput: function () {
         return Widget.getWidget(this.forInputName);
     },
 
-    setForInput: function(forInput) {
+    setForInput: function (forInput) {
         this.forInputName = forInput.name;
     },
 
@@ -13075,18 +13128,15 @@ var Label = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.label;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -13094,7 +13144,7 @@ var Label = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.label = document.createElement("label");
         this.__html.label.className = "photonui-widget photonui-label photonui-widget-fixed-height";
     }
@@ -13102,9 +13152,9 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":19,"../widget.js":53}],49:[function(require,module,exports){
+},{"../helpers.js":21,"../widget.js":55}],51:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13153,19 +13203,16 @@ var Widget = require("../widget.js");
 var ProgressBar = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["orientation", "value", "pulsate"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * Html outer element of the widget (if any).
@@ -13175,18 +13222,15 @@ var ProgressBar = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * The progression (form 0.00 to 1.00).
@@ -13197,17 +13241,16 @@ var ProgressBar = Widget.$extend({
      */
     _value: 0,
 
-    getValue: function() {
+    getValue: function () {
         return this._value;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this._value = Math.min(Math.max(value, 0), 1);
         if (this.orientation == "horizontal") {
             this.__html.bar.style.width = Math.floor(this.value * 100) + "%";
             this.__html.bar.style.height = "";
-        }
-        else {
+        } else {
             this.__html.bar.style.height = Math.floor(this.value * 100) + "%";
             this.__html.bar.style.width = "";
         }
@@ -13223,13 +13266,13 @@ var ProgressBar = Widget.$extend({
      */
     _orientation: "horizontal",
 
-    getOrientation: function() {
+    getOrientation: function () {
         return this._orientation;
     },
 
-    setOrientation: function(orientation) {
+    setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-progressbar-vertical");
@@ -13249,22 +13292,20 @@ var ProgressBar = Widget.$extend({
      */
     _pulsate: false,
 
-    isPulsate: function() {
+    isPulsate: function () {
         return this._pulsate;
     },
 
-    setPulsate: function(pulsate) {
+    setPulsate: function (pulsate) {
         this._pulsate = pulsate;
         if (pulsate) {
             this.addClass("photonui-progressbar-pulsate");
             if (this.orientation == "horizontal") {
                 this.__html.bar.style.width = "";
-            }
-            else {
+            } else {
                 this.__html.bar.style.height = "";
             }
-        }
-        else {
+        } else {
             this.removeClass("photonui-progressbar-pulsate");
             this.value = this.value;
         }
@@ -13279,16 +13320,15 @@ var ProgressBar = Widget.$extend({
      */
     _textVisible: true,
 
-    isTextVisible: function() {
+    isTextVisible: function () {
         return this._textVisible;
     },
 
-    setTextVisible: function(textVisible) {
+    setTextVisible: function (textVisible) {
         this._textVisible = textVisible;
         if (this.textVisible) {
             this.__html.text.style.display = "";
-        }
-        else {
+        } else {
             this.__html.text.style.display = "none";
         }
     },
@@ -13299,7 +13339,7 @@ var ProgressBar = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-progressbar";
 
@@ -13323,11 +13363,9 @@ var ProgressBar = Widget.$extend({
         this.__html.outer.appendChild(this.__html.bar);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -13335,16 +13373,16 @@ var ProgressBar = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
 
 module.exports = ProgressBar;
 
-},{"../widget.js":53}],50:[function(require,module,exports){
+},{"../widget.js":55}],52:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13393,19 +13431,16 @@ var Widget = require("../widget.js");
 var Separator = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["orientation"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The separator orientation ("vertical" or "horizontal").
@@ -13416,13 +13451,13 @@ var Separator = Widget.$extend({
      */
     _orientation: "horizontal",
 
-    getOrientation: function() {
+    getOrientation: function () {
         return this._orientation;
     },
 
-    setOrientation: function(orientation) {
+    setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-separator-vertical");
@@ -13433,8 +13468,7 @@ var Separator = Widget.$extend({
         this.removeClass("photonui-widget-fixed-width");
         if (this._orientation == "horizontal") {
             this.addClass("photonui-widget-fixed-height");
-        }
-        else {
+        } else {
             this.addClass("photonui-widget-fixed-width");
         }
     },
@@ -13447,18 +13481,15 @@ var Separator = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -13466,18 +13497,16 @@ var Separator = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-separator";
         this.__html.hr = document.createElement("hr");
         this.__html.outer.appendChild(this.__html.hr);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -13485,16 +13514,16 @@ var Separator = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });
 
 module.exports = Separator;
 
-},{"../widget.js":53}],51:[function(require,module,exports){
+},{"../widget.js":55}],53:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13523,7 +13552,6 @@ module.exports = Separator;
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
-
 /**
  * PhotonUI - Javascript Web User Interface.
  *
@@ -13550,7 +13578,7 @@ var SpriteSheet = require("../nonvisual/spritesheet.js");
 var SpriteIcon = BaseIcon.$extend({
 
     // Constructor
-    __init__: function(params1, params2) {
+    __init__: function (params1, params2) {
         var params = {};
         if (params1 && typeof(params1) == "string") {
             params.icon = params1;
@@ -13559,21 +13587,17 @@ var SpriteIcon = BaseIcon.$extend({
                     params[i] = params2[i];
                 }
             }
-        }
-        else if (params1) {
+        } else if (params1) {
             params = params1;
         }
         this.$super(params);
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The sprite sheet name.
@@ -13584,11 +13608,11 @@ var SpriteIcon = BaseIcon.$extend({
      */
     _spriteSheetName: "",
 
-    getSpriteSheetName: function() {
+    getSpriteSheetName: function () {
         return this._spriteSheetName;
     },
 
-    setSpriteSheetName: function(spriteSheetName) {
+    setSpriteSheetName: function (spriteSheetName) {
         this._spriteSheetName = spriteSheetName || "";
         this._update();
     },
@@ -13602,11 +13626,11 @@ var SpriteIcon = BaseIcon.$extend({
      */
     _iconName: "",
 
-    getIconName: function() {
+    getIconName: function () {
         return this._iconName;
     },
 
-    setIconName: function(iconName) {
+    setIconName: function (iconName) {
         this._iconName = iconName || "";
         this._update();
     },
@@ -13620,11 +13644,11 @@ var SpriteIcon = BaseIcon.$extend({
      * @type String
      * @default "/"
      */
-    getIcon: function() {
+    getIcon: function () {
         return this.spriteSheetName + "/" + this.iconName;
     },
 
-    setIcon: function(icon) {
+    setIcon: function (icon) {
         var names = icon.split("/");
         this.spriteSheetName = names[0];
         this.iconName = names[1];
@@ -13638,15 +13662,13 @@ var SpriteIcon = BaseIcon.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
-
 
     // ====== Private methods ======
 
@@ -13656,7 +13678,7 @@ var SpriteIcon = BaseIcon.$extend({
      * @method _update
      * @private
      */
-    _update: function() {
+    _update: function () {
         var style = "";
         if (this.spriteSheetName && this.iconName) {
             style = SpriteSheet.getSpriteSheet(this.spriteSheetName).getIconCss(this.iconName);
@@ -13670,7 +13692,7 @@ var SpriteIcon = BaseIcon.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("span");
         this.__html.outer.className = "photonui-widget photonui-icon photonui-spriteicon";
 
@@ -13681,9 +13703,9 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":41,"./baseicon.js":44}],52:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":43,"./baseicon.js":46}],54:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13733,11 +13755,9 @@ var Helpers = require("../helpers.js");
  */
 var Text_ = Widget.$extend({
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
-
 
     // ====== Public properties ======
 
@@ -13752,11 +13772,11 @@ var Text_ = Widget.$extend({
      * @type String
      * @default ""
      */
-    getText: function() {
+    getText: function () {
         return this.__html.outer.textContent;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._lastSet = "text";
         this._raw = text;
         Helpers.cleanNode(this.__html.outer);
@@ -13770,11 +13790,11 @@ var Text_ = Widget.$extend({
      * @type String
      * @default ""
      */
-    getRawHtml: function() {
+    getRawHtml: function () {
         return this.__html.outer.innerHTML;
     },
 
-    setRawHtml: function(html) {
+    setRawHtml: function (html) {
         this._lastSet = "rawHtml";
         this._raw = html;
         this.__html.outer.innerHTML = html;
@@ -13788,18 +13808,15 @@ var Text_ = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -13807,16 +13824,14 @@ var Text_ = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-text";
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -13824,7 +13839,7 @@ var Text_ = Widget.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         this.$super();
         if (this._raw instanceof Stone.LazyString) {
             this[this._lastSet] = this._raw;
@@ -13834,9 +13849,9 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":19,"../widget.js":53,"stonejs":3}],53:[function(require,module,exports){
+},{"../helpers.js":21,"../widget.js":55,"stonejs":3}],55:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13873,10 +13888,11 @@ module.exports = Text_;
  */
 
 var Stone = require("stonejs");
+var uuid = require("uuid");
+
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
 
-var photonui = require("./photonui.js");
 var _widgets = {};
 
 /**
@@ -13885,11 +13901,13 @@ var _widgets = {};
  * wEvents:
  *
  *   * show:
- *      - description: called when the widget is displayed (a change in the parent's visibility can also trigger this event).
+ *      - description: called when the widget is displayed (a change in the parent's
+ *                     visibility can also trigger this event).
  *      - callback:    function(widget)
  *
  *   * hide:
- *      - description: called when the widget is hidden (a change in the parent's visibility can also trigger this event).
+ *      - description: called when the widget is hidden (a change in the parent's visibility
+ *                     can also trigger this event).
  *      - callback:    function(widget)
  *
  * @class Widget
@@ -13900,7 +13918,7 @@ var _widgets = {};
 var Widget = Base.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         // New instances for object properties
         this.__html = {};
         this._layoutOptions = {};
@@ -13919,7 +13937,7 @@ var Widget = Base.$extend({
 
         // Default name
         if (!this.name) {
-            this.name = "widget-" + Helpers.uuid4();
+            this.name = "widget-" + uuid.v4();
         }
 
         // Additional className
@@ -13937,29 +13955,26 @@ var Widget = Base.$extend({
         _widgets[this.name] = this;
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The unique name of the widget.
      *
      * @property name
      * @type String
-     * @default "widget-" + photonui.Helpers.uuid4()
+     * @default "widget-" + uuid.v4()
      */
     _name: null,
 
-    getName: function() {
+    getName: function () {
         return this._name;
     },
 
-    setName: function(name) {
+    setName: function (name) {
         delete _widgets[this.name];
         this._name = name;
         _widgets[name] = this;
@@ -13978,7 +13993,7 @@ var Widget = Base.$extend({
      */
     _parentName: null,
 
-    getParentName: function() {
+    getParentName: function () {
         return this._parentName;
     },
 
@@ -13990,7 +14005,7 @@ var Widget = Base.$extend({
      * @readOnly
      * @default null (no parent)
      */
-    getParent: function() {
+    getParent: function () {
         return Widget.getWidget(this.parentName);
     },
 
@@ -14003,19 +14018,18 @@ var Widget = Base.$extend({
      */
     _visible: true,
 
-    isVisible: function() {
+    isVisible: function () {
         return this._visible;
     },
 
-    setVisible: function(visible) {
-        this._visible = !!visible;
+    setVisible: function (visible) {
+        this._visible = Boolean(visible);
         if (!this.html) {
             return;
         }
         if (visible) {
             this.html.style.display = "";
-        }
-        else {
+        } else {
             this.html.style.display = "none";
         }
         this._visibilityChanged();
@@ -14030,16 +14044,15 @@ var Widget = Base.$extend({
      */
     _tooltip: null,
 
-    getTooltip: function() {
+    getTooltip: function () {
         return this._tooltip;
     },
 
-    setTooltip: function(tooltip) {
+    setTooltip: function (tooltip) {
         this._tooltip = tooltip;
         if (tooltip) {
             this.html.title = tooltip;
-        }
-        else {
+        } else {
             this.html.removeAttribute("title");
         }
     },
@@ -14053,11 +14066,11 @@ var Widget = Base.$extend({
      */
     _contextMenuName: null,
 
-    getContextMenuName: function() {
+    getContextMenuName: function () {
         return this._contextMenuName;
     },
 
-    setContextMenuName: function(contextMenuName) {
+    setContextMenuName: function (contextMenuName) {
         this._contextMenuName = contextMenuName;
     },
 
@@ -14068,16 +14081,15 @@ var Widget = Base.$extend({
      * @type photonui.PopupWindow
      * @default null (= no context menu)
      */
-    getContextMenu: function() {
+    getContextMenu: function () {
         return Widget.getWidget(this.contextMenuName);
     },
 
-    setContextMenu: function(contextMenu) {
+    setContextMenu: function (contextMenu) {
         var PopupWindow = require("./container/popupwindow.js");
         if (contextMenu instanceof PopupWindow) {
             this.contextMenuName = contextMenu.name;
-        }
-        else {
+        } else {
             this.contextMenuName = null;
         }
     },
@@ -14091,11 +14103,11 @@ var Widget = Base.$extend({
      */
     _layoutOptions: {},
 
-    getLayoutOptions: function() {
+    getLayoutOptions: function () {
         return this._layoutOptions;
     },
 
-    setLayoutOptions: function(layoutOptions) {
+    setLayoutOptions: function (layoutOptions) {
         for (var option in layoutOptions) {
             this._layoutOptions[option] = layoutOptions[option];
         }
@@ -14109,8 +14121,8 @@ var Widget = Base.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
-        console.warn("getHtml() method not implemented for this widget.");
+    getHtml: function () {
+        Helpers.log("debug", "getHtml() method is not implemented on this widget.");
         return null;
     },
 
@@ -14123,7 +14135,7 @@ var Widget = Base.$extend({
      * @type Object
      * @readOnly
      */
-    getAbsolutePosition: function() {
+    getAbsolutePosition: function () {
         if (!this.html) {
             return {x: 0, y: 0};
         }
@@ -14137,7 +14149,7 @@ var Widget = Base.$extend({
      * @type Number
      * @readOnly
      */
-    getOffsetWidth: function() {
+    getOffsetWidth: function () {
         if (!this.html) {
             return 0;
         }
@@ -14151,16 +14163,14 @@ var Widget = Base.$extend({
      * @type Number
      * @readOnly
      */
-    getOffsetHeight: function() {
+    getOffsetHeight: function () {
         if (!this.html) {
             return 0;
         }
         return this.html.offsetHeight;
     },
 
-
     // ====== Private properties ======
-
 
     /**
      * Object containing references to the widget HTML elements
@@ -14171,21 +14181,18 @@ var Widget = Base.$extend({
      */
     __html: {},      // HTML Elements
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Display the widget (equivalent to widget.visible = true).
      *
      * @method show
      */
-    show: function() {
+    show: function () {
         this.visible = true;
     },
 
@@ -14194,7 +14201,7 @@ var Widget = Base.$extend({
      *
      * @method hide
      */
-    hide: function() {
+    hide: function () {
         this.visible = false;
     },
 
@@ -14203,11 +14210,10 @@ var Widget = Base.$extend({
      *
      * @method unparent
      */
-    unparent: function() {
+    unparent: function () {
         if (this.parent) {
             this.parent.removeChild(this);
-        }
-        else if (this.html && this.html.parentNode) {
+        } else if (this.html && this.html.parentNode) {
             this.html.parentNode.removeChild(this.html);
         }
     },
@@ -14217,7 +14223,7 @@ var Widget = Base.$extend({
      *
      * @method destroy
      */
-    destroy: function() {
+    destroy: function () {
         this.$super();
         this.unparent();
         delete _widgets[this.name];
@@ -14229,7 +14235,7 @@ var Widget = Base.$extend({
      * @method addClass
      * @param {String} className The class to add.
      */
-    addClass: function(className) {
+    addClass: function (className) {
         if (!this.html) {
             return;
         }
@@ -14246,7 +14252,7 @@ var Widget = Base.$extend({
      * @method removeClass
      * @param {String} className The class to remove.
      */
-    removeClass: function(className) {
+    removeClass: function (className) {
         if (!this.html) {
             return;
         }
@@ -14258,9 +14264,7 @@ var Widget = Base.$extend({
         this.html.className = classes.join(" ");
     },
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -14268,8 +14272,8 @@ var Widget = Base.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
-        console.warn("_buildHtml() method not implemented for this widget.");
+    _buildHtml: function () {
+        Helpers.log("debug", "_buildHtml() method not implemented on this widget.");
     },
 
     /**
@@ -14279,21 +14283,18 @@ var Widget = Base.$extend({
      * @private
      * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
      */
-    _visibilityChanged: function(visibility) {
+    _visibilityChanged: function (visibility) {
         visibility = (visibility !== undefined) ? visibility : this.visible;
         if (visibility && this.visible) {
             this._callCallbacks("show");
-        }
-        else {
+        } else {
             this._callCallbacks("hide");
         }
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the context menu should be displayed.
@@ -14302,7 +14303,7 @@ var Widget = Base.$extend({
      * @private
      * @param event
      */
-    __onContextMenu: function(event) {
+    __onContextMenu: function (event) {
         event.stopPropagation();
         event.preventDefault();
         if (this.contextMenuName) {
@@ -14316,7 +14317,7 @@ var Widget = Base.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // Update lazy strings...
         for (var prop in this) {
             if (this[prop] instanceof Stone.LazyString) {
@@ -14334,7 +14335,7 @@ var Widget = Base.$extend({
  *
  * @return {Widget} The widget or null.
  */
-Widget.getWidget = function(name) {
+Widget.getWidget = function (name) {
     if (_widgets[name] !== undefined) {
         return _widgets[name];
     }
@@ -14350,7 +14351,7 @@ Widget.e_parent = null;
  * @param {photonui.Widget} widget The widget to insert.
  * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
  */
-Widget.domInsert = function(widget, element) {
+Widget.domInsert = function (widget, element) {
     element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
     if (typeof(element) == "string") {
         element = document.getElementById(element);
@@ -14360,5 +14361,5 @@ Widget.domInsert = function(widget, element) {
 
 module.exports = Widget;
 
-},{"./base.js":4,"./container/popupwindow.js":14,"./helpers.js":19,"./photonui.js":43,"stonejs":3}]},{},[43])(43)
+},{"./base.js":6,"./container/popupwindow.js":16,"./helpers.js":21,"stonejs":3,"uuid":5}]},{},[45])(45)
 });

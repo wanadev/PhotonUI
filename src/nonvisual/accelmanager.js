@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,19 +50,16 @@ var KeyboardJS = require("keyboardjs");
 var AccelManager = Base.$extend({
 
     // Constructor
-    __init__: function() {
+    __init__: function () {
         this.__kbd = {};
         this.$super();
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Private properties ======
-
 
     /**
      * Keyboard bindings.
@@ -81,14 +78,11 @@ var AccelManager = Base.$extend({
      */
     __kbd: null,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Public methods ======
-
 
     /**
      * Add an accelerator.
@@ -99,7 +93,7 @@ var AccelManager = Base.$extend({
      * @param {Function} callback
      * @param {Boolean} safe If true, the accelerator is disable if a field/textArea is focused (optional, default=true)
      */
-    addAccel: function(id, keys, callback, safe) {
+    addAccel: function (id, keys, callback, safe) {
         keys = keys.toLowerCase().replace(/ *\+ */, " + ").replace(/ *, */, ", ").replace(/ *> */, " > ");
         this.removeAccel(id);
         this.__kbd[id] = {
@@ -116,24 +110,24 @@ var AccelManager = Base.$extend({
      * @method removeAccel
      * @param {String} id the accelerator id.
      */
-    removeAccel: function(id) {
-        if (!this.__kbd[id]) return;
+    removeAccel: function (id) {
+        if (!this.__kbd[id]) {
+            return;
+        }
         this.__kbd[id].binding.clear();
         delete this.__kbd[id];
     },
 
-    destroy: function() {
+    destroy: function () {
         for (var id in this.__kbd) {
             this.removeAccel(id);
         }
         this.$super();
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onAccell
@@ -142,9 +136,11 @@ var AccelManager = Base.$extend({
      * @param keys
      * @param combo
      */
-    __onAccell: function(event, keys, combo) {
+    __onAccell: function (event, keys, combo) {
         for (var id in this.__kbd) {
-            if (this.__kbd[id].keys != combo) continue;
+            if (this.__kbd[id].keys != combo) {
+                continue;
+            }
 
             if (this.__kbd[id].safe) {
                 if (document.activeElement instanceof HTMLInputElement ||

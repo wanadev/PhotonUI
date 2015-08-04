@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ var Menu = require("../layout/menu.js");
 var PopupMenu = PopupWindow.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._childrenNames = [];  // new instance
         this.$super(params);
     },
@@ -73,17 +73,15 @@ var PopupMenu = PopupWindow.$extend({
         removeChild:      Menu.prototype.removeChild,
         empty:            Menu.prototype.empty,
         destroy:          Menu.prototype.destroy,
-        _updateLayout:    Menu.prototype._updateLayout
+        _updateLayout:    Menu.prototype._updateLayout,
+        _lockUpdate:      Menu.prototype._lockUpdate
     }],
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -91,7 +89,7 @@ var PopupMenu = PopupWindow.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.$super();
         Menu.prototype._buildHtml.call(this);
 
@@ -100,11 +98,9 @@ var PopupMenu = PopupWindow.$extend({
         this.__html.outer.className = "photonui-widget photonui-menu photonui-menu-style-popupmenu";
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the locale is changed.
@@ -112,7 +108,7 @@ var PopupMenu = PopupWindow.$extend({
      * @method __onLocaleChanged
      * @private
      */
-    __onLocaleChanged: function() {
+    __onLocaleChanged: function () {
         // pass
     }
 });

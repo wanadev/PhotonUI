@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,19 +65,16 @@ var Layout = require("./layout.js");
 var BoxLayout = Layout.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this.$super(params);
         this._updateProperties(["orientation"]);
     },
-
 
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The layout orientation ("vertical" or "horizontal").
@@ -88,13 +85,13 @@ var BoxLayout = Layout.$extend({
      */
     _orientation: "vertical",
 
-    getOrientation: function() {
+    getOrientation: function () {
         return this._orientation;
     },
 
-    setOrientation: function(orientation) {
+    setOrientation: function (orientation) {
         if (orientation != "vertical" && orientation != "horizontal") {
-            throw "Error: The orientation should be \"vertical\" or \"horizontal\".";
+            throw new Error("The orientation should be \"vertical\" or \"horizontal\".");
         }
         this._orientation = orientation;
         this.removeClass("photonui-layout-orientation-vertical");
@@ -112,12 +109,12 @@ var BoxLayout = Layout.$extend({
      */
     _verticalPadding: 0,
 
-    getVerticalPadding: function() {
+    getVerticalPadding: function () {
         return this._verticalPadding;
     },
 
-    setVerticalPadding: function(padding) {
-        this._verticalPadding = padding|0;
+    setVerticalPadding: function (padding) {
+        this._verticalPadding = padding | 0;
         this.__html.outerbox.style.paddingLeft = this._verticalPadding + "px";
         this.__html.outerbox.style.paddingRight = this._verticalPadding + "px";
     },
@@ -131,12 +128,12 @@ var BoxLayout = Layout.$extend({
      */
     _horizontalPadding: 0,
 
-    getHorizontalPadding: function() {
+    getHorizontalPadding: function () {
         return this._horizontalPadding;
     },
 
-    setHorizontalPadding: function(padding) {
-        this._horizontalPadding = padding|0;
+    setHorizontalPadding: function (padding) {
+        this._horizontalPadding = padding | 0;
         this.__html.outerbox.style.paddingTop = this._horizontalPadding + "px";
         this.__html.outerbox.style.paddingBottom = this._horizontalPadding + "px";
     },
@@ -150,25 +147,26 @@ var BoxLayout = Layout.$extend({
      */
     _spacing: 5,
 
-    getSpacing: function() {
+    getSpacing: function () {
         return this._spacing;
     },
 
-    setSpacing: function(spacing) {
-        this._spacing = spacing|0;
+    setSpacing: function (spacing) {
+        this._spacing = spacing | 0;
 
         var children = this.children;
         var nodes = this.__html.outerbox.childNodes;
         var last = 0;
-        var lastOrder, currentOrder;
-        for (var i=0 ; i<nodes.length ; i++) {
+        var lastOrder;
+        var currentOrder;
+        for (var i = 0 ; i < nodes.length ; i++) {
             lastOrder = 0;
             currentOrder = 0;
             if (children[last] && children[last].layoutOptions && children[last].layoutOptions.order) {
-                lastOrder = children[last].layoutOptions.order|0;
+                lastOrder = children[last].layoutOptions.order | 0;
             }
             if (children[i] && children[i].layoutOptions && children[i].layoutOptions.order) {
-                currentOrder = children[i].layoutOptions.order|0;
+                currentOrder = children[i].layoutOptions.order | 0;
             }
 
             if (currentOrder >= lastOrder) {
@@ -178,8 +176,7 @@ var BoxLayout = Layout.$extend({
             if (this.orientation == "horizontal") {
                 nodes[i].style.marginRight = this._spacing + "px";
                 nodes[i].style.marginBottom = "";
-            }
-            else {
+            } else {
                 nodes[i].style.marginRight = "";
                 nodes[i].style.marginBottom = this._spacing + "px";
             }
@@ -199,18 +196,15 @@ var BoxLayout = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outerbox;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -218,7 +212,7 @@ var BoxLayout = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-boxlayout";
     },
@@ -229,14 +223,14 @@ var BoxLayout = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         Helpers.cleanNode(this.__html.outerbox);
 
         var fragment = document.createDocumentFragment();
         var children = this.children;
 
         var container = null;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             var options = this._computeLayoutOptions(children[i]);
 
             container = document.createElement("div");
@@ -246,17 +240,31 @@ var BoxLayout = Layout.$extend({
             container.className += " photonui-layout-align-" + options.align;
 
             // layout options: order
-            if (options.order !== null) container.style.order = options.order;
+            if (options.order !== null) {
+                container.style.order = options.order;
+            }
 
             // layout options: *width
-            if (options.minWidth !== null) container.style.minWidth = options.minWidth + "px";
-            if (options.maxWidth !== null) container.style.maxWidth = options.maxWidth + "px";
-            if (options.width !== null) container.style.width = options.width + "px";
+            if (options.minWidth !== null) {
+                container.style.minWidth = options.minWidth + "px";
+            }
+            if (options.maxWidth !== null) {
+                container.style.maxWidth = options.maxWidth + "px";
+            }
+            if (options.width !== null) {
+                container.style.width = options.width + "px";
+            }
 
             // layout options: *height
-            if (options.minHeight !== null) container.style.minHeight = options.minHeight + "px";
-            if (options.maxHeight !== null) container.style.maxHeight = options.maxHeight + "px";
-            if (options.height !== null) container.style.height = options.height + "px";
+            if (options.minHeight !== null) {
+                container.style.minHeight = options.minHeight + "px";
+            }
+            if (options.maxHeight !== null) {
+                container.style.maxHeight = options.maxHeight + "px";
+            }
+            if (options.height !== null) {
+                container.style.height = options.height + "px";
+            }
 
             container.appendChild(children[i].html);
             fragment.appendChild(container);
@@ -275,7 +283,7 @@ var BoxLayout = Layout.$extend({
      * @param {photonui.Widget} widget
      * @return {Object} the layout options
      */
-    _computeLayoutOptions: function(widget) {
+    _computeLayoutOptions: function (widget) {
         var woptions = widget.layoutOptions || {};
 
         var options = {
@@ -292,46 +300,43 @@ var BoxLayout = Layout.$extend({
         // align
         if (["stretch", "expand"].indexOf(woptions.align) > -1) {
             options.align = "stretch";
-        }
-        else if (["center", "middle"].indexOf(woptions.align) > -1) {
+        } else if (["center", "middle"].indexOf(woptions.align) > -1) {
             options.align = "center";
-        }
-        else if (["start", "begin", "top", "left"].indexOf(woptions.align) > -1) {
+        } else if (["start", "begin", "top", "left"].indexOf(woptions.align) > -1) {
             options.align = "start";
-        }
-        else if (["end", "bottom", "right"].indexOf(woptions.align) > -1) {
+        } else if (["end", "bottom", "right"].indexOf(woptions.align) > -1) {
             options.align = "end";
         }
 
         // order
         if (woptions.order !== undefined && woptions.order !== null) {
-            options.order = woptions.order|0;
+            options.order = woptions.order | 0;
         }
 
         // *width
         if (woptions.minWidth !== undefined && woptions.minWidth !== null) {
-            options.minWidth = woptions.minWidth|0;
+            options.minWidth = woptions.minWidth | 0;
         }
         if (woptions.maxWidth !== undefined && woptions.maxWidth !== null) {
-            options.maxWidth = woptions.maxWidth|0;
+            options.maxWidth = woptions.maxWidth | 0;
         }
         if (woptions.width !== undefined && woptions.width !== null) {
-            options.width = woptions.width|0;
-            options.minWidth = woptions.width|0;
-            options.maxWidth = woptions.width|0;
+            options.width = woptions.width | 0;
+            options.minWidth = woptions.width | 0;
+            options.maxWidth = woptions.width | 0;
         }
 
         // *height
         if (woptions.minHeight !== undefined && woptions.minHeight !== null) {
-            options.minHeight = woptions.minHeight|0;
+            options.minHeight = woptions.minHeight | 0;
         }
         if (woptions.maxHeight !== undefined && woptions.maxHeight !== null) {
-            options.maxHeight = woptions.maxHeight|0;
+            options.maxHeight = woptions.maxHeight | 0;
         }
         if (woptions.height !== undefined && woptions.height !== null) {
-            options.height = woptions.height|0;
-            options.minHeight = woptions.height|0;
-            options.maxHeight = woptions.height|0;
+            options.height = woptions.height | 0;
+            options.minHeight = woptions.height | 0;
+            options.maxHeight = woptions.height | 0;
         }
 
         return options;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,7 @@ var BaseIcon = require("../visual/baseicon.js");
 var Button = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
 
@@ -68,14 +68,11 @@ var Button = Widget.$extend({
         this._update();
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The button text.
@@ -86,11 +83,11 @@ var Button = Widget.$extend({
      */
     _text: "Button",
 
-    getText: function() {
-       return this._text;
+    getText: function () {
+        return this._text;
     },
 
-    setText: function(text) {
+    setText: function (text) {
         this._text = text;
         Helpers.cleanNode(this.__html.text);
         this.__html.text.appendChild(document.createTextNode(text));
@@ -105,11 +102,11 @@ var Button = Widget.$extend({
      */
     _textVisible: true,
 
-    isTextVisible: function() {
+    isTextVisible: function () {
         return this._textVisible;
     },
 
-    setTextVisible: function(textVisible) {
+    setTextVisible: function (textVisible) {
         this._textVisible = textVisible;
         this._update();
     },
@@ -123,11 +120,11 @@ var Button = Widget.$extend({
      */
     _leftIconName: null,
 
-    getLeftIconName: function() {
+    getLeftIconName: function () {
         return this._leftIconName;
     },
 
-    setLeftIconName: function(leftIconName) {
+    setLeftIconName: function (leftIconName) {
         this._leftIconName = leftIconName;
         Helpers.cleanNode(this.__html.leftIcon);
         if (this._leftIconName) {
@@ -143,11 +140,11 @@ var Button = Widget.$extend({
      * @type BaseIcon
      * @default: null
      */
-    getLeftIcon: function() {
+    getLeftIcon: function () {
         return Widget.getWidget(this._leftIconName);
     },
 
-    setLeftIcon: function(leftIcon) {
+    setLeftIcon: function (leftIcon) {
         if (leftIcon instanceof BaseIcon) {
             this.leftIconName = leftIcon.name;
             return;
@@ -164,11 +161,11 @@ var Button = Widget.$extend({
      */
     _leftIconVisible: true,
 
-    isLeftIconVisible: function() {
+    isLeftIconVisible: function () {
         return this._leftIconVisible;
     },
 
-    setLeftIconVisible: function(leftIconVisible) {
+    setLeftIconVisible: function (leftIconVisible) {
         this._leftIconVisible = leftIconVisible;
         this._update();
     },
@@ -182,11 +179,11 @@ var Button = Widget.$extend({
      */
     _rightIconName: null,
 
-    getRightIconName: function() {
+    getRightIconName: function () {
         return this._rightIconName;
     },
 
-    setRightIconName: function(rightIconName) {
+    setRightIconName: function (rightIconName) {
         this._rightIconName = rightIconName;
         Helpers.cleanNode(this.__html.rightIcon);
         if (this._rightIconName) {
@@ -202,11 +199,11 @@ var Button = Widget.$extend({
      * @type BaseIcon
      * @default: null
      */
-    getRightIcon: function() {
+    getRightIcon: function () {
         return Widget.getWidget(this._rightIconName);
     },
 
-    setRightIcon: function(rightIcon) {
+    setRightIcon: function (rightIcon) {
         if (rightIcon instanceof BaseIcon) {
             this.rightIconName = rightIcon.name;
             return;
@@ -223,11 +220,11 @@ var Button = Widget.$extend({
      */
     _rightIconVisible: true,
 
-    isRightIconVisible: function() {
+    isRightIconVisible: function () {
         return this._rightIconVisible;
     },
 
-    setRightIconVisible: function(rightIconVisible) {
+    setRightIconVisible: function (rightIconVisible) {
         this._rightIconVisible = rightIconVisible;
         this._update();
     },
@@ -244,17 +241,16 @@ var Button = Widget.$extend({
      */
     _appearance: "normal",
 
-    getAppearance: function() {
+    getAppearance: function () {
         return this._appearance;
     },
 
-    setAppearance: function(appearance) {
+    setAppearance: function (appearance) {
         this._appearance = appearance;
 
         if (appearance == "flat") {
             this.addClass("photonui-button-appearance-flat");
-        }
-        else {
+        } else {
             this.removeClass("photonui-button-appearance-flat");
         }
     },
@@ -277,11 +273,11 @@ var Button = Widget.$extend({
      */
     _buttonColor: null,
 
-    getButtonColor: function() {
+    getButtonColor: function () {
         return this._buttonColor;
     },
 
-    setButtonColor: function(buttonColor) {
+    setButtonColor: function (buttonColor) {
         if (this._buttonColor) {
             this.__html.button.classList.remove("photonui-button-color-" + this._buttonColor);
         }
@@ -299,18 +295,15 @@ var Button = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.button;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Update the button content
@@ -318,7 +311,7 @@ var Button = Widget.$extend({
      * @method _update
      * @private
      */
-    _update: function() {
+    _update: function () {
         if (this.__html.leftIcon.parentNode == this.__html.button) {
             this.__html.button.removeChild(this.__html.leftIcon);
         }
@@ -348,7 +341,7 @@ var Button = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.button = document.createElement("button");
         this.__html.button.className = "photonui-widget photonui-button";
 
@@ -365,11 +358,9 @@ var Button = Widget.$extend({
         this.__html.button.appendChild(this.__html.rightIcon);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * Called when the button is clicked.
@@ -378,11 +369,10 @@ var Button = Widget.$extend({
      * @private
      * @param event
      */
-    __onButtonClicked: function(event) {
+    __onButtonClicked: function (event) {
         this._callCallbacks("click", [event]);
     }
 });
-
 
 // Button mixin for ToggleButton
 Button._buttonMixin = {

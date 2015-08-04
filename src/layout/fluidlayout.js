@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@
  * @submodule Layout
  * @namespace photonui
  */
- 
+
 var Helpers = require("../helpers.js");
 var Layout = require("./layout.js");
 
@@ -52,9 +52,7 @@ var FluidLayout = Layout.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The vertical spacing between children widgets.
@@ -65,11 +63,11 @@ var FluidLayout = Layout.$extend({
      */
     _verticalSpacing: 0,
 
-    getVerticalSpacing: function() {
+    getVerticalSpacing: function () {
         return this._verticalSpacing;
     },
 
-    setVerticalSpacing: function(verticalSpacing) {
+    setVerticalSpacing: function (verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
         this._updateLayout();
     },
@@ -83,11 +81,11 @@ var FluidLayout = Layout.$extend({
      */
     _horizontalSpacing: 2,
 
-    getHorizontalSpacing: function() {
+    getHorizontalSpacing: function () {
         return this._horizontalSpacing;
     },
 
-    setHorizontalSpacing: function(horizontalSpacing) {
+    setHorizontalSpacing: function (horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
         this._updateLayout();
     },
@@ -100,18 +98,15 @@ var FluidLayout = Layout.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outerbox;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -119,7 +114,7 @@ var FluidLayout = Layout.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-fluidlayout";
     },
@@ -130,12 +125,12 @@ var FluidLayout = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function() {
+    _updateLayout: function () {
         var children = this.children;
         var fragment = document.createDocumentFragment();
 
         var div = null;
-        for (var i=0 ; i<children.length ; i++) {
+        for (var i = 0 ; i < children.length ; i++) {
             div = document.createElement("div");
             div.className = "photonui-container";
             div.style.padding = "0 " + this.horizontalSpacing + "px " + this.verticalSpacing + "px 0";

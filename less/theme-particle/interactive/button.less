@@ -156,7 +156,8 @@
 
 /** Flat button **/
 
-.photonui-button.photonui-button-appearance-flat {
+.photonui-button.photonui-button-appearance-flat,
+.photonui-togglebutton.photonui-button-appearance-flat input:not(:checked) + button {
     box-shadow: none;
     border-color: transparent;
     background: transparent;
@@ -166,8 +167,8 @@
     }
 
     &:focus:not(:hover) {
-        @color: @color-widget-border-focus;
-        @size: 2px;
+        @color: lighten(@color-widget-border-focus, 20%);
+        @size: 1px;
 
         box-shadow: inset @size @size 0 @color, inset -@size -@size 0 @color;
         border-bottom: none;
@@ -191,4 +192,3 @@
     .photonui-particle-button-active(@color-button-default);
     .photonui-particle-button-alternative-colors-active;
 }
-

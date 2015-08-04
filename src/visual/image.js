@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,6 @@ var Image_ = Widget.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
 
     /**
@@ -64,11 +63,11 @@ var Image_ = Widget.$extend({
      */
     _url: "",
 
-    getUrl: function() {
+    getUrl: function () {
         return this._url;
     },
 
-    setUrl: function(url) {
+    setUrl: function (url) {
         this._url = url;
         this.__html.image.src = url;
     },
@@ -82,16 +81,16 @@ var Image_ = Widget.$extend({
      */
     _width: null,
 
-    getWidth: function() {
+    getWidth: function () {
         return this._width;
     },
 
-    setWidth: function(width) {
+    setWidth: function (width) {
         if (width !== null) {
             this._width = width;
             this.__html.image.width = width;
         } else {
-            this.__html.image.width = '';
+            this.__html.image.width = "";
         }
     },
 
@@ -104,16 +103,16 @@ var Image_ = Widget.$extend({
      */
     _height: null,
 
-    getHeight: function() {
+    getHeight: function () {
         return this._height;
     },
 
-    setHeight: function(height) {
+    setHeight: function (height) {
         if (height !== null) {
             this._height = height;
             this.__html.image.height = height;
         } else {
-            this.__html.image.height = '';
+            this.__html.image.height = "";
         }
     },
 
@@ -125,18 +124,15 @@ var Image_ = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.div;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -144,11 +140,11 @@ var Image_ = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-image";
 
-        this.__html.image = document.createElement('img');
+        this.__html.image = document.createElement("img");
         this.__html.div.appendChild(this.__html.image);
     }
 

@@ -57,7 +57,14 @@ module.exports = function(grunt) {
                 globals: {"File": false},
                 browser: true,
                 browserify: true,
-                devel: true
+                curly: true
+            }
+        },
+
+        jscs: {
+            src: "src/**/*.js",
+            options: {
+                config: ".jscsrc"
             }
         },
 
@@ -85,7 +92,7 @@ module.exports = function(grunt) {
                     'dist/photonui-base.css': 'less/base/photonui-base.less'
                 }
             },
-            less_themes: {
+            less_theme: {
                 options: {
                     paths: ['.'],
                     plugins: [
@@ -94,8 +101,7 @@ module.exports = function(grunt) {
                     ],
                 },
                 files: {
-                    'dist/photonui-theme-particle.css': 'less/theme-particle/photonui-theme-particle.less',
-                    'dist/photonui-theme-wave.css': 'less/theme-wave/photonui-theme-wave.less'
+                    'dist/photonui-theme-particle.css': 'less/theme-particle/photonui-theme-particle.less'
                 }
             },
         },
@@ -111,10 +117,43 @@ module.exports = function(grunt) {
             }
         },
 
+        watch: {
+            javascript: {
+                files: ['src/**/*.js'],
+                tasks: ['browserify'],
+                options: {
+                    spawn: false
+                }
+            },
+            lessBase: {
+                files: ['less/base/**/*.less'],
+                tasks: ['less:less_base'],
+                options: {
+                    spawn: false
+                }
+            },
+            lessTheme: {
+                files: ['less/theme-particle/**/*.less'],
+                tasks: ['less:less_theme'],
+                options: {
+                    spawn: false
+                }
+            }
+        },
+
         clean: {
             dist: ['dist'],
             docs: ['doc'],
             assets: ['dist/assets']
+        },
+
+        githooks: {
+            all: {
+                options: {
+                    template: "test/githook-template.js.hb"
+                },
+                'pre-commit': 'test'
+            }
         }
     });
 
@@ -127,12 +166,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks("grunt-jscs");
+    grunt.loadNpmTasks('grunt-githooks');
 
     // Register runnable tasks.
-    grunt.registerTask('gen-js', ['browserify', 'uglify']);
-    grunt.registerTask('gen-css', ['less:less_base', 'less:less_themes', 'clean:assets', 'copy:assets']);
-    grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
-    grunt.registerTask('dist', ['default']);
-    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('gen-js', ['browserify', 'uglify']);
+    grunt.registerTask('gen-css', ['less:less_base', 'less:less_theme', 'clean:assets', 'copy:assets']);
+    grunt.registerTask('gen-docs', ['clean:docs', 'yuidoc']);
+    grunt.registerTask('test', ['jshint', 'jscs'/*, 'default', 'jasmine'*/]);
 };

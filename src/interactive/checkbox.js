@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ var Widget = require("../widget.js");
 var CheckBox = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
+    __init__: function (params) {
         this._registerWEvents(["value-changed", "click"]);
         this.$super(params);
         this.inputId = this.name + "-input";
@@ -66,14 +66,11 @@ var CheckBox = Widget.$extend({
         this.__html.checkbox.id = this.inputId;
     },
 
-
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-
     // ====== Public properties ======
-
 
     /**
      * The input value.
@@ -82,11 +79,11 @@ var CheckBox = Widget.$extend({
      * @type Boolean
      * @default false
      */
-    getValue: function() {
+    getValue: function () {
         return this.__html.checkbox.checked;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.__html.checkbox.checked = value;
     },
 
@@ -98,18 +95,15 @@ var CheckBox = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
-
 
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
-
     // ====== Private methods ======
-
 
     /**
      * Build the widget HTML.
@@ -117,9 +111,12 @@ var CheckBox = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
-        this.__html.outer.className = "photonui-widget photonui-checkbox photonui-widget-fixed-width photonui-widget-fixed-height";
+        this.__html.outer.className = "photonui-widget";
+        this.__html.outer.className += " photonui-checkbox";
+        this.__html.outer.className += " photonui-widget-fixed-width";
+        this.__html.outer.className += " photonui-widget-fixed-height";
 
         this.__html.checkbox = document.createElement("input");
         this.__html.checkbox.type = "checkbox";
@@ -130,18 +127,16 @@ var CheckBox = Widget.$extend({
         this.__html.outer.appendChild(this.__html.span);
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
-
 
     /**
      * @method __onChange
      * @private
      * @param event
      */
-    __onChange: function(event) {
+    __onChange: function (event) {
         this._callCallbacks("value-changed", [this.value]);
         // Focus the span if the real checkbox is hidden (happen when a label is clicked).
         if (window.getComputedStyle(this.__html.checkbox).display == "none") {
@@ -154,7 +149,7 @@ var CheckBox = Widget.$extend({
      * @private
      * @param event
      */
-    __onSpanClick: function(event) {
+    __onSpanClick: function (event) {
         this.value = !this.value;
         this._callCallbacks("value-changed", [this.value]);
         this._callCallbacks("click", [event]);
@@ -165,7 +160,7 @@ var CheckBox = Widget.$extend({
      * @private
      * @param event
      */
-    __onCheckboxClick: function(event) {
+    __onCheckboxClick: function (event) {
         this._callCallbacks("click", [event]);
     },
 
@@ -174,7 +169,7 @@ var CheckBox = Widget.$extend({
      * @private
      * @param event
      */
-    __onSpanKeypress: function(event) {
+    __onSpanKeypress: function (event) {
         if (event.charCode == 32 || event.keyCode == 13) {
             this.value = !this.value;
             this._callCallbacks("value-changed", [this.value]);
