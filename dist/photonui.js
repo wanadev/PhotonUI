@@ -11276,11 +11276,11 @@ var MouseManager = Base.$extend({
      */
     _scaleX: 1,
 
-    getScaleX: function() {
+    getScaleX: function () {
         return this._scaleX;
     },
 
-    setScaleX: function(scaleX) {
+    setScaleX: function (scaleX) {
         this._scaleX = scaleX;
     },
 
@@ -11293,11 +11293,11 @@ var MouseManager = Base.$extend({
      */
     _scaleY: 1,
 
-    getScaleY: function() {
+    getScaleY: function () {
         return this._scaleY;
     },
 
-    setScaleY: function(scaleY) {
+    setScaleY: function (scaleY) {
         this._scaleY = scaleY;
     },
 
@@ -11357,7 +11357,8 @@ var MouseManager = Base.$extend({
      * @type Number
      */
     getDeltaX: function () {
-        return (this.pageX - ((this.__prevState.pageX !== undefined) ? this.__prevState.pageX : this.pageX)) * this.scaleX;
+        return (this.pageX - ((this.__prevState.pageX !== undefined) ?
+            this.__prevState.pageX : this.pageX)) * this.scaleX;
     },
 
     /**
@@ -11368,7 +11369,8 @@ var MouseManager = Base.$extend({
      * @type Number
      */
     getDeltaY: function () {
-        return (this.pageY - ((this.__prevState.pageY !== undefined) ? this.__prevState.pageY : this.pageY)) * this.scaleY;
+        return (this.pageY - ((this.__prevState.pageY !== undefined) ?
+            this.__prevState.pageY : this.pageY)) * this.scaleY;
     },
 
     /**
