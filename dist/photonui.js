@@ -11268,6 +11268,40 @@ var MouseManager = Base.$extend({
     },
 
     /**
+     * Scale all position events by a factor. Use it when the canvas is scaled.
+     *
+     * @property scaleX
+     * @type Number
+     * @default 1
+     */
+    _scaleX: 1,
+
+    getScaleX: function () {
+        return this._scaleX;
+    },
+
+    setScaleX: function (scaleX) {
+        this._scaleX = scaleX;
+    },
+
+    /**
+     * Scale all position events by a factor. Use it when the canvas is scaled.
+     *
+     * @property scaleY
+     * @type Number
+     * @default 1
+     */
+    _scaleY: 1,
+
+    getScaleY: function () {
+        return this._scaleY;
+    },
+
+    setScaleY: function (scaleY) {
+        this._scaleY = scaleY;
+    },
+
+    /**
      * X position, relative to page top-left corner.
      *
      * @property pageX
@@ -11300,7 +11334,7 @@ var MouseManager = Base.$extend({
      */
     getX: function () {
         var ex = Helpers.getAbsolutePosition(this.element).x;
-        return this.pageX - ex;
+        return (this.pageX - ex) * this.scaleX;
     },
 
     /**
@@ -11312,7 +11346,7 @@ var MouseManager = Base.$extend({
      */
     getY: function () {
         var ey = Helpers.getAbsolutePosition(this.element).y;
-        return this.pageY - ey;
+        return (this.pageY - ey) * this.scaleY;
     },
 
     /**
@@ -11323,7 +11357,8 @@ var MouseManager = Base.$extend({
      * @type Number
      */
     getDeltaX: function () {
-        return this.pageX - ((this.__prevState.pageX !== undefined) ? this.__prevState.pageX : this.pageX);
+        return (this.pageX - ((this.__prevState.pageX !== undefined) ?
+            this.__prevState.pageX : this.pageX)) * this.scaleX;
     },
 
     /**
@@ -11334,7 +11369,8 @@ var MouseManager = Base.$extend({
      * @type Number
      */
     getDeltaY: function () {
-        return this.pageY - ((this.__prevState.pageY !== undefined) ? this.__prevState.pageY : this.pageY);
+        return (this.pageY - ((this.__prevState.pageY !== undefined) ?
+            this.__prevState.pageY : this.pageY)) * this.scaleY;
     },
 
     /**
