@@ -40,7 +40,7 @@ var photonui = {};
 
 // Include libraries in module.
 photonui.lib = {};
-photonui.lib.Class = require("classyjs");
+photonui.lib.Class = require("abitbol");
 photonui.lib.KeyboardJS = require("keyboardjs");
 photonui.lib.Stone = require("stonejs");
 photonui.lib.uuid = require("uuid");
