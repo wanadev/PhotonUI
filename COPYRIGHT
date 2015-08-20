@@ -5,11 +5,11 @@ PhotonUI:
     Web site: http://wanadev.github.io/PhotonUI/
 
 
-Classy:
+Abitbol:
 
-    Copyright (c) 2010 by Armin Ronacher
-    License: BSD 3-Clause <https://github.com/mitsuhiko/classy/blob/master/LICENSE>
-    Web site: http://classy.pocoo.org/
+    Copyright (c) 2015, Wanadev <http://www.wanadev.fr/>
+    License: BSD 3-Clause <https://github.com/wanadev/abitbol/blob/master/LICENSE>
+    Web site: https://github.com/wanadev/abitbol
 
 
 KeyboardJS:
@@ -27,6 +27,7 @@ Stone.js:
 
 
 node-uuid:
+
     Copyright (c) 2010-2012 Robert Kieffer
     License: MIT <https://github.com/defunctzombie/node-uuid/blob/master/LICENSE.md>
     web site: https://github.com/defunctzombie/node-uuid

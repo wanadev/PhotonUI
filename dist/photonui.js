@@ -1,166 +1,366 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/**
- * Classy - classy classes for JavaScript
- *
- * :copyright: (c) 2011 by Armin Ronacher. 
- * :license: BSD.
- */
-!function (definition) {
-  if (typeof module != 'undefined' && module.exports) module.exports = definition()
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-  else this.Class = definition()
-}(function (undefined) {
-  var
-    CLASSY_VERSION = '1.4',
-    context = this,
-    old = context.Class,
-    disable_constructor = false;
+"use strict";
 
-  /* we check if $super is in use by a class if we can.  But first we have to
-     check if the JavaScript interpreter supports that.  This also matches
-     to false positives later, but that does not do any harm besides slightly
-     slowing calls down. */
-  var probe_super = (function(){$super();}).toString().indexOf('$super') > 0;
-  function usesSuper(obj) {
-    return !probe_super || /\B\$super\b/.test(obj.toString());
-  }
+var extractAnnotations = require("./annotation.js");
 
-  /* helper function to set the attribute of something to a value or
-     removes it if the value is undefined. */
-  function setOrUnset(obj, key, value) {
-    if (value === undefined)
-      delete obj[key];
-    else
-      obj[key] = value;
-  }
+var _disableConstructor = false;
 
-  /* gets the own property of an object */
-  function getOwnProperty(obj, name) {
-    return Object.prototype.hasOwnProperty.call(obj, name)
-      ? obj[name] : undefined;
-  }
+// Inherit from a class without calling its constructor.
+function inherit(SuperClass) {
+    _disableConstructor = true;
+    var __class__ = new SuperClass();
+    _disableConstructor = false;
+    return __class__;
+}
 
-  /* instanciate a class without calling the constructor */
-  function cheapNew(cls) {
-    disable_constructor = true;
-    var rv = new cls;
-    disable_constructor = false;
-    return rv;
-  }
+// Checks if the given function uses abitbol special properties ($super, $name,...)
+function usesSpecialProperty(fn) {
+    return Boolean(fn.toString().match(/.*(\$super|\$name|\$computedPropertyName).*/));
+}
 
-  /* the base class we export */
-  var Class = function() {};
+var Class = function () {};
 
-  /* restore the global Class name and pass it to a function.  This allows
-     different versions of the classy library to be used side by side and
-     in combination with other libraries. */
-  Class.$noConflict = function() {
-    try {
-      setOrUnset(context, 'Class', old);
-    }
-    catch (e) {
-      // fix for IE that does not support delete on window
-      context.Class = old;
-    }
-    return Class;
-  };
-
-  /* what version of classy are we using? */
-  Class.$classyVersion = CLASSY_VERSION;
-
-  /* extend functionality */
-  Class.$extend = function(properties) {
-    var super_prototype = this.prototype;
-
-    /* disable constructors and instanciate prototype.  Because the
-       prototype can't raise an exception when created, we are safe
-       without a try/finally here. */
-    var prototype = cheapNew(this);
-
-    /* copy all properties of the includes over if there are any */
-    if (properties.__include__)
-      for (var i = 0, n = properties.__include__.length; i != n; ++i) {
-        var mixin = properties.__include__[i];
-        for (var name in mixin) {
-          var value = getOwnProperty(mixin, name);
-          if (value !== undefined)
-            prototype[name] = mixin[name];
-        }
-      }
- 
-    /* copy class vars from the superclass */
-    properties.__classvars__ = properties.__classvars__ || {};
-    if (prototype.__classvars__)
-      for (var key in prototype.__classvars__)
-        if (!properties.__classvars__[key]) {
-          var value = getOwnProperty(prototype.__classvars__, key);
-          properties.__classvars__[key] = value;
-        }
-
-    /* copy all properties over to the new prototype */
-    for (var name in properties) {
-      var value = getOwnProperty(properties, name);
-      if (name === '__include__' ||
-          value === undefined)
-        continue;
-
-      prototype[name] = typeof value === 'function' && usesSuper(value) ?
-        (function(meth, name) {
-          return function() {
-            var old_super = getOwnProperty(this, '$super');
-            this.$super = super_prototype[name];
-            try {
-              return meth.apply(this, arguments);
-            }
-            finally {
-              setOrUnset(this, '$super', old_super);
-            }
-          };
-        })(value, name) : value
-    }
-
-    /* dummy constructor */
-    var rv = function() {
-      if (disable_constructor)
-        return;
-      var proper_this = context === this ? cheapNew(arguments.callee) : this;
-      if (proper_this.__init__)
-        proper_this.__init__.apply(proper_this, arguments);
-      proper_this.$class = rv;
-      return proper_this;
-    }
-
-    /* copy all class vars over of any */
-    for (var key in properties.__classvars__) {
-      var value = getOwnProperty(properties.__classvars__, key);
-      if (value !== undefined)
-        rv[key] = value;
-    }
-
-    /* copy prototype and constructor over, reattach $extend and
-       return the class */
-    rv.prototype = prototype;
-    rv.constructor = rv;
-    rv.$extend = Class.$extend;
-    rv.$withData = Class.$withData;
-    return rv;
-  };
-
-  /* instanciate with data functionality */
-  Class.$withData = function(data) {
-    var rv = cheapNew(this);
-    for (var key in data) {
-      var value = getOwnProperty(data, key);
-      if (value !== undefined)
-        rv[key] = value;
-    }
-    return rv;
-  };
-
-  /* export the class */
-  return Class;
+Object.defineProperty(Class, "$class", {
+    enumerable: false,
+    value: Class
 });
-},{}],2:[function(require,module,exports){
+
+Object.defineProperty(Class, "$map", {
+    enumerable: false,
+    value: {
+        attributes: {},
+        methods: {},
+        computedProperties: {}
+    }
+});
+
+Object.defineProperty(Class, "$extend", {
+    enumerable: false,
+    value: function (properties) {
+        var _superClass = this;
+        var _classMap = JSON.parse(JSON.stringify(_superClass.$map));  // not pretty :s
+
+        // New class
+        var __class__ = function () {
+            if (_disableConstructor) {
+                return;
+            }
+            // Abitbol special properties
+            Object.defineProperty(this, "$class", {
+                enumerable: false,
+                value: __class__
+            });
+            Object.defineProperty(this, "$map", {
+                enumerable: false,
+                value: _classMap
+            });
+            Object.defineProperty(this, "$data", {
+                enumerable: false,
+                value: {}
+            });
+            // Computed properties
+            for (var property in _classMap.computedProperties) {
+                Object.defineProperty(this, property, {
+                    enumerable: true,
+                    configurable: false,
+                    get: (_classMap.computedProperties[property].get !== undefined) ? (function (accessorName) {
+                        return function () {
+                            return this[accessorName].apply(this, arguments);
+                        };
+                    })(_classMap.computedProperties[property].get) : undefined,  // jshint ignore:line
+                    set: (_classMap.computedProperties[property].set !== undefined) ? (function (mutatorName) {
+                        return function () {
+                            return this[mutatorName].apply(this, arguments);
+                        };
+                    })(_classMap.computedProperties[property].set) : undefined   // jshint ignore:line
+                });
+            }
+            // Bind this
+            for (var method in _classMap.methods) {
+                this[method] = this[method].bind(this);
+            }
+            // Call the constructor if any
+            if (this.__init__) {
+                this.__init__.apply(this, arguments);
+            }
+            return this;
+        };
+
+        // Inheritance
+        __class__.prototype = inherit(this.$class);
+
+        properties = properties || {};
+        var property;
+        var computedPropertyName;
+        var annotations;
+        var i;
+
+        // Copy properties from mixins
+        if (properties.__include__) {
+            for (i = properties.__include__.length - 1 ; i >= 0 ; i--) {
+                for (property in properties.__include__[i]) {
+                    if (properties[property] === undefined) {
+                        properties[property] = properties.__include__[i][property];
+                    }
+                }
+            }
+        }
+
+        // Add properties
+        for (property in properties || {}) {
+            if (property == "__include__" || property == "__classvars__") {
+                continue;
+            }
+            if (typeof properties[property] == "function") {
+                computedPropertyName = undefined;
+                _classMap.methods[property] = {annotations: {}};
+                // Accessors / Mutators
+                if (property.indexOf("get") === 0) {
+                    computedPropertyName = property.slice(3, 4).toLowerCase() + property.slice(4, property.length);
+                    if (!_classMap.computedProperties[computedPropertyName]) {
+                        _classMap.computedProperties[computedPropertyName] = {annotations: {}};
+                    }
+                    _classMap.computedProperties[computedPropertyName].get = property;
+                } else if (property.indexOf("set") === 0) {
+                    computedPropertyName = property.slice(3, 4).toLowerCase() + property.slice(4, property.length);
+                    if (!_classMap.computedProperties[computedPropertyName]) {
+                        _classMap.computedProperties[computedPropertyName] = {annotations: {}};
+                    }
+                    _classMap.computedProperties[computedPropertyName].set = property;
+                } else if (property.indexOf("has") === 0) {
+                    computedPropertyName = property.slice(3, 4).toLowerCase() + property.slice(4, property.length);
+                    if (!_classMap.computedProperties[computedPropertyName]) {
+                        _classMap.computedProperties[computedPropertyName] = {annotations: {}};
+                    }
+                    _classMap.computedProperties[computedPropertyName].get = property;
+                } else if (property.indexOf("is") === 0) {
+                    computedPropertyName = property.slice(2, 3).toLowerCase() + property.slice(3, property.length);
+                    if (!_classMap.computedProperties[computedPropertyName]) {
+                        _classMap.computedProperties[computedPropertyName] = {annotations: {}};
+                    }
+                    _classMap.computedProperties[computedPropertyName].get = property;
+                }
+                // Annotations
+                annotations = extractAnnotations(properties[property]);
+                for (var annotation in annotations) {
+                    _classMap.methods[property].annotations[annotation] = annotations[annotation];
+                    if (computedPropertyName) {
+                        _classMap.computedProperties[computedPropertyName]
+                                 .annotations[annotation] = annotations[annotation];
+                    }
+                }
+                // Wrapped method
+                if (usesSpecialProperty(properties[property])) {
+                    __class__.prototype[property] = (function (method, propertyName, computedPropertyName) {
+                        return function () {
+                            var _oldSuper = this.$super;
+                            var _oldName = this.$name;
+                            var _oldComputedPropertyName = this.$computedPropertyName;
+
+                            this.$super = _superClass.prototype[propertyName];
+                            this.$name = propertyName;
+                            this.$computedPropertyName = computedPropertyName;
+
+                            try {
+                                return method.apply(this, arguments);
+                            } finally {
+                                if (_oldSuper) {
+                                    this.$super = _oldSuper;
+                                } else {
+                                    delete this.$super;
+                                }
+                                if (_oldName) {
+                                    this.$name = _oldName;
+                                } else {
+                                    delete this.$name;
+                                }
+                                if (_oldComputedPropertyName) {
+                                    this.$computedPropertyName = _oldComputedPropertyName;
+                                } else {
+                                    delete this.$computedPropertyName;
+                                }
+                            }
+                        };
+                    })(properties[property], property, computedPropertyName);  // jshint ignore:line
+
+                // Simple methods
+                } else {
+                    __class__.prototype[property] = properties[property];
+                }
+            } else {
+                _classMap.attributes[property] = true;
+                __class__.prototype[property] = properties[property];
+            }
+        }
+
+        // Copy super class static properties
+        var scStaticProps = Object.getOwnPropertyNames(_superClass);
+        // Removes caller, callee and arguments from the list (strict mode)
+        // Removes non enumerable Abitbol properties too
+        scStaticProps = scStaticProps.filter(function (value) {
+            return (["caller", "callee", "arguments", "$class", "$extend", "$map"].indexOf(value) == -1);
+        });
+        for (i = 0 ; i < scStaticProps.length ; i++) {
+            if (__class__[scStaticProps[i]] === undefined) {
+                __class__[scStaticProps[i]] = _superClass[scStaticProps[i]];
+            }
+        }
+
+        // Add static properties
+        if (properties.__classvars__) {
+            for (property in properties.__classvars__) {
+                __class__[property] = properties.__classvars__[property];
+            }
+        }
+
+        // Add abitbol static properties
+        Object.defineProperty(__class__, "$class", {
+            enumerable: false,
+            value: __class__
+        });
+        Object.defineProperty(__class__, "$extend", {
+            enumerable: false,
+            value: Class.$extend
+        });
+        Object.defineProperty(__class__, "$map", {
+            enumerable: false,
+            value: _classMap
+        });
+
+        return __class__;
+    }
+});
+
+module.exports = Class;
+
+},{"./annotation.js":2}],2:[function(require,module,exports){
+"use strict";
+
+function cleanJs(js) {
+    // remove function fn(param) {
+    js = js.replace(/^function\s*[^(]*\s*\([^)]*\)\s*\{/, "");
+
+    // remove comments (not super safe but should work in most cases)
+    js = js.replace(/\/\*(.|\r|\n)*?\*\//g, "");
+    js = js.replace(/\/\/.*?\r?\n/g, "\n");
+
+    // remove indentation and CR/LF
+    js = js.replace(/\s*\r?\n\s*/g, "");
+
+    return js;
+}
+
+function extractStrings(js) {
+    var strings = [];
+
+    var instr = false;
+    var inesc = false;
+    var quote;
+    var buff;
+    var c;
+
+    for (var i = 0 ; i < js.length ; i++) {
+        c = js[i];
+
+        if (!instr) {
+            // New string
+            if (c == "\"" || c == "'") {
+                instr = true;
+                inesc = false;
+                quote = c;
+                buff = "";
+            // Char we don't care about
+            } else if ([" ", " ", "\n", "\r", ";"].indexOf(c) > -1) {  // jshint ignore:line
+                continue;
+            // Other expression -> job finished!
+            } else {
+                break;
+            }
+        } else {
+            if (!inesc) {
+                // Escaped char
+                if (c == "\\") {
+                    inesc = true;
+                // End of string
+                } else if (c == quote) {
+                    strings.push(buff);
+                    instr = false;
+                // Any char
+                } else {
+                    buff += c;
+                }
+            } else {
+                if (c == "\\") {
+                    buff += "\\";
+                } else if (c == "n") {
+                    buff += "\n";
+                } else if (c == "r") {
+                    buff += "\r";
+                } else if (c == "t") {
+                    buff += "\t";
+                } else if (c == quote) {
+                    buff += quote;
+                // We don't care...
+                } else {
+                    buff += "\\" + c;
+                }
+                inesc = false;
+            }
+        }
+    }
+
+    return strings;
+}
+
+function autoCast(value) {
+    if (value == "true") {
+        return true;
+    } else if (value == "false") {
+        return false;
+    } else if (value == "null") {
+        return null;
+    } else if (value == "undefined") {
+        return undefined;
+    } else if (value.match(/^([0-9]+\.?|[0-9]*\.[0-9]+)$/)) {
+        return parseFloat(value);
+    } else {
+        return value;
+    }
+}
+
+function extractAnnotations(func) {
+    var js = cleanJs(func.toString());
+    var strings = extractStrings(js);
+
+    var annotations = {};
+    var string;
+    var key;
+    var value;
+
+    for (var i = 0 ; i < strings.length ; i++) {
+        string = strings[i].trim();
+
+        if (string.indexOf("@") !== 0) {
+            continue;
+        }
+
+        key = string.slice(1, (string.indexOf(" ") > -1) ? string.indexOf(" ") : string.length);
+        value = true;
+        if (string.indexOf(" ") > -1) {
+            value = string.slice(string.indexOf(" ") + 1, string.length);
+            value = value.trim();
+            value = autoCast(value);
+        }
+
+        annotations[key] = value;
+    }
+
+    return annotations;
+}
+
+module.exports = extractAnnotations;
+
+},{}],3:[function(require,module,exports){
 /**
  * Title: KeyboardJS
  * Version: v0.4.1
@@ -1163,7 +1363,7 @@
 
 
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
@@ -1350,7 +1550,7 @@ module.exports = {
     updateDomTranslation: updateDomTranslation
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -1385,7 +1585,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -1570,7 +1770,7 @@ uuid.unparse = unparse;
 
 module.exports = uuid;
 
-},{"./rng":4}],6:[function(require,module,exports){
+},{"./rng":5}],7:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -1608,7 +1808,7 @@ module.exports = uuid;
  * @namespace photonui
  */
 
-var Class = require("classyjs");
+var Class = require("abitbol");
 var uuid = require("uuid");
 
 var Helpers = require("./helpers.js");
@@ -1635,33 +1835,6 @@ var Base = Class.$extend({
 
         // wEvents
         this._registerWEvents(["destroy"]);
-
-        // Create properties from accessors
-        var propName;
-        for (var prop in this) {
-            if (prop.indexOf("get") === 0) {
-                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
-                Object.defineProperty(this, propName, {
-                    get: this[prop],
-                    enumerable: true,
-                    configurable: true
-                });
-            } else if (prop.indexOf("set") === 0) {
-                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
-                Object.defineProperty(this, propName, {
-                    set: this[prop],
-                    enumerable: true,
-                    configurable: true
-                });
-            } else if (prop.indexOf("is") === 0) {
-                propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
-                Object.defineProperty(this, propName, {
-                    get: this[prop],
-                    enumerable: true,
-                    configurable: true
-                });
-            }
-        }
 
         // Apply params
         params = params || {};
@@ -1872,7 +2045,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":21,"classyjs":1,"uuid":5}],7:[function(require,module,exports){
+},{"./helpers.js":22,"abitbol":1,"uuid":6}],8:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2134,7 +2307,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":16,"../interactive/button.js":22,"../interactive/colorpalette.js":24,"../layout/boxlayout.js":33,"../nonvisual/color.js":40,"./colorpickerdialog.js":8,"stonejs":3}],8:[function(require,module,exports){
+},{"../container/popupwindow.js":17,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../layout/boxlayout.js":34,"../nonvisual/color.js":41,"./colorpickerdialog.js":9,"stonejs":4}],9:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2520,7 +2693,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":14,"../interactive/button.js":22,"../interactive/colorpalette.js":24,"../interactive/colorpicker.js":25,"../interactive/slider.js":28,"../layout/boxlayout.js":33,"../layout/gridlayout.js":35,"../nonvisual/color.js":40,"../visual/faicon.js":48,"../visual/label.js":50,"../visual/separator.js":52,"stonejs":3}],9:[function(require,module,exports){
+},{"../container/dialog.js":15,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../interactive/colorpicker.js":26,"../interactive/slider.js":29,"../layout/boxlayout.js":34,"../layout/gridlayout.js":36,"../nonvisual/color.js":41,"../visual/faicon.js":49,"../visual/label.js":51,"../visual/separator.js":53,"stonejs":4}],10:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2655,7 +2828,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":15,"./select.js":11,"stonejs":3}],10:[function(require,module,exports){
+},{"../container/menuitem.js":16,"./select.js":12,"stonejs":4}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2773,7 +2946,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":16,"../layout/menu.js":37}],11:[function(require,module,exports){
+},{"../container/popupwindow.js":17,"../layout/menu.js":38}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3152,7 +3325,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":15,"../helpers.js":21,"../widget.js":55,"./popupmenu.js":10,"stonejs":3}],12:[function(require,module,exports){
+},{"../container/menuitem.js":16,"../helpers.js":22,"../widget.js":56,"./popupmenu.js":11,"stonejs":4}],13:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3522,7 +3695,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":55,"./container.js":13}],13:[function(require,module,exports){
+},{"../widget.js":56,"./container.js":14}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3746,7 +3919,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":55}],14:[function(require,module,exports){
+},{"../widget.js":56}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3997,7 +4170,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":21,"../widget.js":55,"./window.js":20}],15:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":56,"./window.js":21}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4227,7 +4400,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":21,"../visual/baseicon.js":46,"../widget.js":55,"./container.js":13}],16:[function(require,module,exports){
+},{"../helpers.js":22,"../visual/baseicon.js":47,"../widget.js":56,"./container.js":14}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4400,7 +4573,7 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":12}],17:[function(require,module,exports){
+},{"./basewindow.js":13}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4549,7 +4722,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":37,"../widget.js":55,"./menuitem.js":15}],18:[function(require,module,exports){
+},{"../layout/menu.js":38,"../widget.js":56,"./menuitem.js":16}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4733,7 +4906,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":21,"./container.js":13}],19:[function(require,module,exports){
+},{"../helpers.js":22,"./container.js":14}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5121,7 +5294,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":21,"./container.js":13}],20:[function(require,module,exports){
+},{"../helpers.js":22,"./container.js":14}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5500,7 +5673,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":21,"../widget.js":55,"./basewindow.js":12,"stonejs":3}],21:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":56,"./basewindow.js":13,"stonejs":4}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5695,7 +5868,7 @@ Helpers.log = function (level, message) {
 
 module.exports = Helpers;
 
-},{"uuid":5}],22:[function(require,module,exports){
+},{"uuid":6}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6112,7 +6285,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":21,"../visual/baseicon.js":46,"../widget.js":55}],23:[function(require,module,exports){
+},{"../helpers.js":22,"../visual/baseicon.js":47,"../widget.js":56}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6294,7 +6467,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":55}],24:[function(require,module,exports){
+},{"../widget.js":56}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6498,7 +6671,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":21,"../nonvisual/color.js":40,"../widget.js":55}],25:[function(require,module,exports){
+},{"../helpers.js":22,"../nonvisual/color.js":41,"../widget.js":56}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7016,7 +7189,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":21,"../nonvisual/color.js":40,"../nonvisual/mousemanager.js":42,"../widget.js":55}],26:[function(require,module,exports){
+},{"../helpers.js":22,"../nonvisual/color.js":41,"../nonvisual/mousemanager.js":43,"../widget.js":56}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7206,7 +7379,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":55}],27:[function(require,module,exports){
+},{"../widget.js":56}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7572,7 +7745,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":26}],28:[function(require,module,exports){
+},{"./field.js":27}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7868,7 +8041,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":21,"./numericfield.js":27}],29:[function(require,module,exports){
+},{"../helpers.js":22,"./numericfield.js":28}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7928,7 +8101,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":23}],30:[function(require,module,exports){
+},{"./checkbox.js":24}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8042,7 +8215,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":26}],31:[function(require,module,exports){
+},{"./field.js":27}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8156,7 +8329,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":26}],32:[function(require,module,exports){
+},{"./field.js":27}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8255,7 +8428,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":22,"./checkbox.js":23}],33:[function(require,module,exports){
+},{"./button.js":23,"./checkbox.js":24}],34:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8603,7 +8776,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":21,"./layout.js":36}],34:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8751,7 +8924,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":21,"./layout.js":36}],35:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9387,7 +9560,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":21,"./layout.js":36}],36:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9673,7 +9846,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":13,"../widget.js":55}],37:[function(require,module,exports){
+},{"../container/container.js":14,"../widget.js":56}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9813,7 +9986,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":21,"./layout.js":36}],38:[function(require,module,exports){
+},{"../helpers.js":22,"./layout.js":37}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10113,7 +10286,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":18,"../helpers.js":21,"../widget.js":55,"./layout.js":36}],39:[function(require,module,exports){
+},{"../container/tabitem.js":19,"../helpers.js":22,"../widget.js":56,"./layout.js":37}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10276,7 +10449,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":6,"keyboardjs":2}],40:[function(require,module,exports){
+},{"../base.js":7,"keyboardjs":3}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10763,7 +10936,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":6}],41:[function(require,module,exports){
+},{"../base.js":7}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11079,7 +11252,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":6}],42:[function(require,module,exports){
+},{"../base.js":7}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11770,7 +11943,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":6,"../helpers.js":21,"../widget.js":55}],43:[function(require,module,exports){
+},{"../base.js":7,"../helpers.js":22,"../widget.js":56}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11996,7 +12169,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":6}],44:[function(require,module,exports){
+},{"../base.js":7}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12163,7 +12336,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":6,"stonejs":3}],45:[function(require,module,exports){
+},{"../base.js":7,"stonejs":4}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12206,7 +12379,7 @@ var photonui = {};
 
 // Include libraries in module.
 photonui.lib = {};
-photonui.lib.Class = require("classyjs");
+photonui.lib.Class = require("abitbol");
 photonui.lib.KeyboardJS = require("keyboardjs");
 photonui.lib.Stone = require("stonejs");
 photonui.lib.uuid = require("uuid");
@@ -12272,7 +12445,7 @@ photonui.TabLayout = require("./layout/tablayout.js");
 
 module.exports = photonui;
 
-},{"./base.js":6,"./composite/colorbutton.js":7,"./composite/colorpickerdialog.js":8,"./composite/fontselect.js":9,"./composite/popupmenu.js":10,"./composite/select.js":11,"./container/basewindow.js":12,"./container/container.js":13,"./container/dialog.js":14,"./container/menuitem.js":15,"./container/popupwindow.js":16,"./container/submenuitem.js":17,"./container/tabitem.js":18,"./container/viewport.js":19,"./container/window.js":20,"./helpers.js":21,"./interactive/button.js":22,"./interactive/checkbox.js":23,"./interactive/colorpalette.js":24,"./interactive/colorpicker.js":25,"./interactive/field.js":26,"./interactive/numericfield.js":27,"./interactive/slider.js":28,"./interactive/switch.js":29,"./interactive/textareafield.js":30,"./interactive/textfield.js":31,"./interactive/togglebutton.js":32,"./layout/boxlayout.js":33,"./layout/fluidlayout.js":34,"./layout/gridlayout.js":35,"./layout/layout.js":36,"./layout/menu.js":37,"./layout/tablayout.js":38,"./nonvisual/accelmanager.js":39,"./nonvisual/color.js":40,"./nonvisual/filemanager.js":41,"./nonvisual/mousemanager.js":42,"./nonvisual/spritesheet.js":43,"./nonvisual/translation.js":44,"./visual/baseicon.js":46,"./visual/canvas.js":47,"./visual/faicon.js":48,"./visual/image.js":49,"./visual/label.js":50,"./visual/progressbar.js":51,"./visual/separator.js":52,"./visual/spriteicon.js":53,"./visual/text.js":54,"./widget.js":55,"classyjs":1,"keyboardjs":2,"stonejs":3,"uuid":5}],46:[function(require,module,exports){
+},{"./base.js":7,"./composite/colorbutton.js":8,"./composite/colorpickerdialog.js":9,"./composite/fontselect.js":10,"./composite/popupmenu.js":11,"./composite/select.js":12,"./container/basewindow.js":13,"./container/container.js":14,"./container/dialog.js":15,"./container/menuitem.js":16,"./container/popupwindow.js":17,"./container/submenuitem.js":18,"./container/tabitem.js":19,"./container/viewport.js":20,"./container/window.js":21,"./helpers.js":22,"./interactive/button.js":23,"./interactive/checkbox.js":24,"./interactive/colorpalette.js":25,"./interactive/colorpicker.js":26,"./interactive/field.js":27,"./interactive/numericfield.js":28,"./interactive/slider.js":29,"./interactive/switch.js":30,"./interactive/textareafield.js":31,"./interactive/textfield.js":32,"./interactive/togglebutton.js":33,"./layout/boxlayout.js":34,"./layout/fluidlayout.js":35,"./layout/gridlayout.js":36,"./layout/layout.js":37,"./layout/menu.js":38,"./layout/tablayout.js":39,"./nonvisual/accelmanager.js":40,"./nonvisual/color.js":41,"./nonvisual/filemanager.js":42,"./nonvisual/mousemanager.js":43,"./nonvisual/spritesheet.js":44,"./nonvisual/translation.js":45,"./visual/baseicon.js":47,"./visual/canvas.js":48,"./visual/faicon.js":49,"./visual/image.js":50,"./visual/label.js":51,"./visual/progressbar.js":52,"./visual/separator.js":53,"./visual/spriteicon.js":54,"./visual/text.js":55,"./widget.js":56,"abitbol":1,"keyboardjs":3,"stonejs":4,"uuid":6}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12340,7 +12513,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":55}],47:[function(require,module,exports){
+},{"../widget.js":56}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12620,7 +12793,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":55}],48:[function(require,module,exports){
+},{"../widget.js":56}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12791,7 +12964,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":46}],49:[function(require,module,exports){
+},{"./baseicon.js":47}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12946,7 +13119,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":55}],50:[function(require,module,exports){
+},{"../widget.js":56}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13154,7 +13327,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":21,"../widget.js":55}],51:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":56}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13382,7 +13555,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":55}],52:[function(require,module,exports){
+},{"../widget.js":56}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13523,7 +13696,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":55}],53:[function(require,module,exports){
+},{"../widget.js":56}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13705,7 +13878,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":43,"./baseicon.js":46}],54:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":44,"./baseicon.js":47}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13851,7 +14024,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":21,"../widget.js":55,"stonejs":3}],55:[function(require,module,exports){
+},{"../helpers.js":22,"../widget.js":56,"stonejs":4}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14363,5 +14536,5 @@ Widget.domInsert = function (widget, element) {
 
 module.exports = Widget;
 
-},{"./base.js":6,"./container/popupwindow.js":16,"./helpers.js":21,"stonejs":3,"uuid":5}]},{},[45])(45)
+},{"./base.js":7,"./container/popupwindow.js":17,"./helpers.js":22,"stonejs":4,"uuid":6}]},{},[46])(46)
 });
