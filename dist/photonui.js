@@ -13,6 +13,11 @@ function inherit(SuperClass) {
     return __class__;
 }
 
+// Checks if the given function uses abitbol special properties ($super, $name,...)
+function usesSpecialProperty(fn) {
+    return Boolean(fn.toString().match(/.*(\$super|\$name|\$computedPropertyName).*/));
+}
+
 var Class = function () {};
 
 Object.defineProperty(Class, "$class", {
@@ -136,38 +141,44 @@ Object.defineProperty(Class, "$extend", {
                                  .annotations[annotation] = annotations[annotation];
                     }
                 }
-                //
-                __class__.prototype[property] = (function (method, propertyName, computedPropertyName) {
-                    return function () {
-                        var _oldSuper = this.$super;
-                        var _oldName = this.$name;
-                        var _oldComputedPropertyName = this.$computedPropertyName;
+                // Wrapped method
+                if (usesSpecialProperty(properties[property])) {
+                    __class__.prototype[property] = (function (method, propertyName, computedPropertyName) {
+                        return function () {
+                            var _oldSuper = this.$super;
+                            var _oldName = this.$name;
+                            var _oldComputedPropertyName = this.$computedPropertyName;
 
-                        this.$super = _superClass.prototype[propertyName];
-                        this.$name = propertyName;
-                        this.$computedPropertyName = computedPropertyName;
+                            this.$super = _superClass.prototype[propertyName];
+                            this.$name = propertyName;
+                            this.$computedPropertyName = computedPropertyName;
 
-                        try {
-                            return method.apply(this, arguments);
-                        } finally {
-                            if (_oldSuper) {
-                                this.$super = _oldSuper;
-                            } else {
-                                delete this.$super;
+                            try {
+                                return method.apply(this, arguments);
+                            } finally {
+                                if (_oldSuper) {
+                                    this.$super = _oldSuper;
+                                } else {
+                                    delete this.$super;
+                                }
+                                if (_oldName) {
+                                    this.$name = _oldName;
+                                } else {
+                                    delete this.$name;
+                                }
+                                if (_oldComputedPropertyName) {
+                                    this.$computedPropertyName = _oldComputedPropertyName;
+                                } else {
+                                    delete this.$computedPropertyName;
+                                }
                             }
-                            if (_oldName) {
-                                this.$name = _oldName;
-                            } else {
-                                delete this.$name;
-                            }
-                            if (_oldComputedPropertyName) {
-                                this.$computedPropertyName = _oldComputedPropertyName;
-                            } else {
-                                delete this.$computedPropertyName;
-                            }
-                        }
-                    };
-                })(properties[property], property, computedPropertyName);  // jshint ignore:line
+                        };
+                    })(properties[property], property, computedPropertyName);  // jshint ignore:line
+
+                // Simple methods
+                } else {
+                    __class__.prototype[property] = properties[property];
+                }
             } else {
                 _classMap.attributes[property] = true;
                 __class__.prototype[property] = properties[property];
@@ -1816,33 +1827,6 @@ var Base = Class.$extend({
 
         // wEvents
         this._registerWEvents(["destroy"]);
-
-        // Create properties from accessors
-        //var propName;
-        //for (var prop in this) {
-            //if (prop.indexOf("get") === 0) {
-                //propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
-                //Object.defineProperty(this, propName, {
-                    //get: this[prop],
-                    //enumerable: true,
-                    //configurable: true
-                //});
-            //} else if (prop.indexOf("set") === 0) {
-                //propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
-                //Object.defineProperty(this, propName, {
-                    //set: this[prop],
-                    //enumerable: true,
-                    //configurable: true
-                //});
-            //} else if (prop.indexOf("is") === 0) {
-                //propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
-                //Object.defineProperty(this, propName, {
-                    //get: this[prop],
-                    //enumerable: true,
-                    //configurable: true
-                //});
-            //}
-        //}
 
         // Apply params
         params = params || {};
