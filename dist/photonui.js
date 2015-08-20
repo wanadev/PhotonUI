@@ -63,8 +63,16 @@ Object.defineProperty(Class, "$extend", {
                 Object.defineProperty(this, property, {
                     enumerable: true,
                     configurable: false,
-                    get: this[_classMap.computedProperties[property].get],
-                    set: this[_classMap.computedProperties[property].set]
+                    get: (_classMap.computedProperties[property].get !== undefined) ? (function (accessorName) {
+                        return function () {
+                            return this[accessorName].apply(this, arguments);
+                        };
+                    })(_classMap.computedProperties[property].get) : undefined,  // jshint ignore:line
+                    set: (_classMap.computedProperties[property].set !== undefined) ? (function (mutatorName) {
+                        return function () {
+                            return this[mutatorName].apply(this, arguments);
+                        };
+                    })(_classMap.computedProperties[property].set) : undefined   // jshint ignore:line
                 });
             }
             // Bind this
