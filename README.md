@@ -57,7 +57,7 @@ then, to use it in your project you just have to import PhotonUI:
 var photonui = require("photonui");
 ```
 
-**NOTE:** do not forget to import CSS files in yout HTML page:
+**NOTE:** do not forget to import CSS files in your HTML page:
 
 ```html
 <link rel="stylesheet" href="./node_modules/photonui/dist/photonui-base.css" />
