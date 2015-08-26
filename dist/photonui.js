@@ -4606,7 +4606,7 @@ var TabItem = Container.$extend({
         this.$super(params);
         this._updateProperties(["title"]);
 
-        this._registerWEvents(["tab-click", "click"]);
+        this._registerWEvents(["click"]);
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
     },
 
