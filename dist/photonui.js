@@ -4728,8 +4728,8 @@ var TabItem = Container.$extend({
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
     },
-    
-    __onClick: function(event) {
+
+    __onClick: function (event) {
         this.show();
         this._callCallbacks("click", [event]);
     }
