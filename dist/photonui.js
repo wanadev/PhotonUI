@@ -4776,10 +4776,11 @@ var TabItem = Container.$extend({
 
     // Constructor
     __init__: function (params) {
+        this._registerWEvents(["click"]);
         this.$super(params);
         this._updateProperties(["title"]);
 
-        this._bindEvent("tab-click", this.__html.tab, "click", this.show.bind(this));
+        this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
     },
 
     //////////////////////////////////////////
@@ -4899,6 +4900,11 @@ var TabItem = Container.$extend({
         this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
+    },
+
+    __onClick: function (event) {
+        this.show();
+        this._callCallbacks("click", [event]);
     }
 
 });
