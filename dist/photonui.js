@@ -4767,6 +4767,12 @@ var Container = require("./container.js");
 /**
  * Tab Item.
  *
+ *  wEvents:
+ *
+ *   * click:
+ *     - description: called when the tab was clicked.
+ *     - callback:    function(widget, event)
+ *
  * @class TabItem
  * @constructor
  * @extends photonui.Container
@@ -4902,6 +4908,17 @@ var TabItem = Container.$extend({
         this.__html.tab.className = "photonui-tabitem-tab";
     },
 
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * Called when the tab is clicked.
+     *
+     * @method __onClick
+     * @private
+     * @param event
+     */
     __onClick: function (event) {
         this.show();
         this._callCallbacks("click", [event]);
