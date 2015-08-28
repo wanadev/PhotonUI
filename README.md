@@ -148,6 +148,11 @@ Once you feel comfortable with the custom widget creation, you can create widget
 
 ## Changelog:
 
+* **1.1.0:**
+  * Classy replaced by Abitbol
+  * Scaling support added to MouseManager
+  * "click" wEvent added to TabItem
+
 * **1.0.1:**
   * Fixes (GridLayout exception on some edge cases, flat ToggleButton theme)
   * Optimizations (destroying a layout widget)
