@@ -35,7 +35,7 @@
  * @namespace photonui
  */
 
-var Class = require("classyjs");
+var Class = require("abitbol");
 var uuid = require("uuid");
 
 var Helpers = require("./helpers.js");
@@ -62,33 +62,6 @@ var Base = Class.$extend({
 
         // wEvents
         this._registerWEvents(["destroy"]);
-
-        // Create properties from accessors
-        var propName;
-        for (var prop in this) {
-            if (prop.indexOf("get") === 0) {
-                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
-                Object.defineProperty(this, propName, {
-                    get: this[prop],
-                    enumerable: true,
-                    configurable: true
-                });
-            } else if (prop.indexOf("set") === 0) {
-                propName = prop.slice(3, 4).toLowerCase() + prop.slice(4, prop.length);
-                Object.defineProperty(this, propName, {
-                    set: this[prop],
-                    enumerable: true,
-                    configurable: true
-                });
-            } else if (prop.indexOf("is") === 0) {
-                propName = prop.slice(2, 3).toLowerCase() + prop.slice(3, prop.length);
-                Object.defineProperty(this, propName, {
-                    get: this[prop],
-                    enumerable: true,
-                    configurable: true
-                });
-            }
-        }
 
         // Apply params
         params = params || {};

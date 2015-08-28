@@ -76,7 +76,7 @@ To build PhotonUI, you will first have to install [Node.js][nodejs] (or [io.js][
 
 **NOTE:** If you are on Ubuntu / Debian Linux you must install the `nodejs-legacy` package.
 
-Next, install globaly the `grunt-cli` npm package:
+Next, install globally the `grunt-cli` npm package:
 
     npm install -g grunt-cli
 
@@ -102,7 +102,7 @@ All generated files are in the `dist` folder.
 
 PhotonUI follows the [Yandex Javascript CodeStyle][codestyle-yandex] **EXCEPT** for the quote marks where we use **double quotes** (`"`).
 
-You can automatically check your code follows the conventions by using this command:
+You can automatically check that your code follows the conventions by using this command:
 
     grunt jscs
 
@@ -118,6 +118,13 @@ As [PhantomJS][phantomjs], the browser used to run the tests, embedded a very ol
 1. Check that the javascript is well formed and that it follows the coding style: `grunt jshint jscs`
 2. Build PhotonUI: `grunt`
 3. Run the tests: open `test/index.html` in your browser.
+
+
+### Git Hooks
+
+To avoid committing bad stuff, you can install a git pre-commit hook that will abort the commit if the code contains errors. To install the hooks you just have to run the following command:
+
+    grunt githooks
 
 
 ### Creating Your Own widgets
@@ -140,6 +147,11 @@ Once you feel comfortable with the custom widget creation, you can create widget
 
 
 ## Changelog:
+
+* **1.1.0:**
+  * Classy replaced by Abitbol
+  * Scaling support added to MouseManager
+  * "click" wEvent added to TabItem
 
 * **1.0.1:**
   * Fixes (GridLayout exception on some edge cases, flat ToggleButton theme)

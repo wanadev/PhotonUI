@@ -1,6 +1,7 @@
 {
     "preset": "yandex",
     "validateQuoteMarks": "\"",
-    "requireSpaceAfterLineComment": null
+    "requireSpaceAfterLineComment": null,
+    "validateLineBreaks": null
 }
 
