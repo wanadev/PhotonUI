@@ -37,6 +37,8 @@
  */
 
 var Helpers = require("../helpers.js");
+var Widget = require("../widget.js");
+var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
 
 /**
@@ -59,7 +61,7 @@ var TabItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["title"]);
+        this._updateProperties(["title", "leftIconName"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
     },
@@ -85,8 +87,8 @@ var TabItem = Container.$extend({
 
     setTitle: function (title) {
         this._title = title;
-        Helpers.cleanNode(this.__html.tab);
-        this.__html.tab.appendChild(document.createTextNode(title));
+        Helpers.cleanNode(this.__html.title);
+        this.__html.title.appendChild(document.createTextNode(title));
     },
 
     /**
@@ -164,6 +166,43 @@ var TabItem = Container.$extend({
         }
     },
 
+    /**
+        * Left icon widget name
+        *
+        * @property leftIconName
+        * @type String
+        * @default: null
+        */
+    _leftIconName: null,
+
+    getLeftIconName: function () {
+        return this._leftIconName;
+    },
+
+    setLeftIconName: function (leftIconName) {
+        this._leftIconName = leftIconName;
+        Helpers.cleanNode(this.__html.leftIcon);
+        if (this._leftIconName) {
+            this.__html.leftIcon.appendChild(this.leftIcon.html);
+            this.leftIconVisible = true;
+        }
+    },
+
+    /**
+    * Left icon widget
+    */
+    getLeftIcon: function () {
+        return Widget.getWidget(this._leftIconName);
+    },
+
+    setLeftIcon: function (leftIcon) {
+        if (leftIcon instanceof BaseIcon) {
+            this.leftIconName = leftIcon.name;
+        } else {
+            this.leftIconName = null;
+        }
+    },
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -179,8 +218,18 @@ var TabItem = Container.$extend({
     _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
+
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
+
+        this.__html.leftIcon = document.createElement("span");
+        this.__html.leftIcon.className = "photonui-tab-icon";
+        this.__html.tab.appendChild(this.__html.leftIcon);
+
+        this.__html.title = document.createElement("span");
+        this.__html.title.className = "photonui-tabitem-title";
+        this.__html.tab.appendChild(this.__html.title);
+
     },
 
     //////////////////////////////////////////
