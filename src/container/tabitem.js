@@ -61,7 +61,7 @@ var TabItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["title", "leftIconName"]);
+        this._updateProperties(["title", "leftIconName", "rightIconName"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
     },
@@ -203,6 +203,44 @@ var TabItem = Container.$extend({
         }
     },
 
+    /**
+     * Right icon widget name
+     *
+     * @property rigthIconName
+     * @type String
+     * @default: null
+     */
+
+    _rightIconName: null,
+
+    getRightIconName: function () {
+        return this._rightIconName;
+    },
+
+    setRightIconName: function (rightIconName) {
+        this._rightIconName = rightIconName;
+        Helpers.cleanNode(this.__html.rightIcon);
+        if (this._rightIconName) {
+            this.__html.rightIcon.appendChild(this.rightIcon.html);
+            this.rightIconVisible = true;
+        }
+    },
+
+    /**
+     * Right icon widget
+     */
+    getRightIcon: function () {
+        return Widget.getWidget(this._rightIconName);
+    },
+
+    setRightIcon: function (rightIcon) {
+        if (rightIcon instanceof BaseIcon) {
+            this.rightIconName = rightIcon.name;
+        } else {
+            this.rightIconName = null;
+        }
+    },
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -229,6 +267,10 @@ var TabItem = Container.$extend({
         this.__html.title = document.createElement("span");
         this.__html.title.className = "photonui-tabitem-title";
         this.__html.tab.appendChild(this.__html.title);
+
+        this.__html.rightIcon = document.createElement("span");
+        this.__html.rightIcon.className = "photon-ui-icon";
+        this.__html.tab.appendChild(this.__html.rightIcon);
 
     },
 
