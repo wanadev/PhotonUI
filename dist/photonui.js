@@ -4789,6 +4789,7 @@ var TabItem = Container.$extend({
         this._updateProperties(["title", "leftIconName", "rightIconName"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
+        this._update();
     },
 
     //////////////////////////////////////////
@@ -4814,6 +4815,25 @@ var TabItem = Container.$extend({
         this._title = title;
         Helpers.cleanNode(this.__html.title);
         this.__html.title.appendChild(document.createTextNode(title));
+    },
+
+    /**
+     * Definie if the tabItem title is displayed or hiddin.
+     *
+     * @property titleVisible
+     * @type Boolean
+     * @default true
+     */
+    _titleVisible: true,
+
+    isTitleVisible: function() {
+        return this._titleVisible;
+    },
+
+
+    setTitleVisible: function(titleVisible) {
+        this._titleVisible = titleVisible;
+        this._update();
     },
 
     /**
@@ -4971,6 +4991,30 @@ var TabItem = Container.$extend({
     //////////////////////////////////////////
 
     // ====== Private methods ======
+
+    _update: function() {
+        if (this.__html.leftIcon.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.leftIcon);
+        }
+        if (this.__html.title.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.title);
+        }
+        if (this.__html.rightIcon.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.rightIcon);
+        }
+
+        if (this.leftIconName && this.leftIconVisible) {
+            this.__html.tab.appendChild(this.__html.leftIcon);
+        }
+
+        if (this.title && this.titleVisible) {
+            this.__html.tab.appendChild(this.__html.title);
+        }
+
+        if (this.rightIconName && this.rightIconVisible) {
+            this.__html.tab.appendChild(this.__html.rightIcon);
+        }
+    },
 
     /**
      * Build the widget HTML.
