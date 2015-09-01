@@ -145,6 +145,15 @@ module.exports = function(grunt) {
             dist: ['dist'],
             docs: ['doc'],
             assets: ['dist/assets']
+        },
+
+        githooks: {
+            all: {
+                options: {
+                    template: "test/githook-template.js.hb"
+                },
+                'pre-commit': 'test'
+            }
         }
     });
 
@@ -159,6 +168,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks("grunt-jscs");
+    grunt.loadNpmTasks('grunt-githooks');
 
     // Register runnable tasks.
     grunt.registerTask('default', ['gen-js', 'gen-docs', 'gen-css']);
