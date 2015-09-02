@@ -4762,6 +4762,8 @@ module.exports = SubMenuItem;
  */
 
 var Helpers = require("../helpers.js");
+var Widget = require("../widget.js");
+var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
 
 /**
@@ -4784,9 +4786,10 @@ var TabItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["title"]);
+        this._updateProperties(["title", "leftIconName", "rightIconName"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
+        this._update();
     },
 
     //////////////////////////////////////////
@@ -4810,8 +4813,27 @@ var TabItem = Container.$extend({
 
     setTitle: function (title) {
         this._title = title;
-        Helpers.cleanNode(this.__html.tab);
-        this.__html.tab.appendChild(document.createTextNode(title));
+        Helpers.cleanNode(this.__html.title);
+        this.__html.title.appendChild(document.createTextNode(title));
+    },
+
+    /**
+     * Definie if the tabItem title is displayed or hiddin.
+     *
+     * @property titleVisible
+     * @type Boolean
+     * @default true
+     */
+    _titleVisible: true,
+
+    isTitleVisible: function() {
+        return this._titleVisible;
+    },
+
+
+    setTitleVisible: function(titleVisible) {
+        this._titleVisible = titleVisible;
+        this._update();
     },
 
     /**
@@ -4889,11 +4911,110 @@ var TabItem = Container.$extend({
         }
     },
 
+    /**
+        * Left icon widget name
+        *
+        * @property leftIconName
+        * @type String
+        * @default: null
+        */
+    _leftIconName: null,
+
+    getLeftIconName: function () {
+        return this._leftIconName;
+    },
+
+    setLeftIconName: function (leftIconName) {
+        this._leftIconName = leftIconName;
+        Helpers.cleanNode(this.__html.leftIcon);
+        if (this._leftIconName) {
+            this.__html.leftIcon.appendChild(this.leftIcon.html);
+            this.leftIconVisible = true;
+        }
+    },
+
+    /**
+    * Left icon widget
+    */
+    getLeftIcon: function () {
+        return Widget.getWidget(this._leftIconName);
+    },
+
+    setLeftIcon: function (leftIcon) {
+        if (leftIcon instanceof BaseIcon) {
+            this.leftIconName = leftIcon.name;
+        } else {
+            this.leftIconName = null;
+        }
+    },
+
+    /**
+     * Right icon widget name
+     *
+     * @property rigthIconName
+     * @type String
+     * @default: null
+     */
+
+    _rightIconName: null,
+
+    getRightIconName: function () {
+        return this._rightIconName;
+    },
+
+    setRightIconName: function (rightIconName) {
+        this._rightIconName = rightIconName;
+        Helpers.cleanNode(this.__html.rightIcon);
+        if (this._rightIconName) {
+            this.__html.rightIcon.appendChild(this.rightIcon.html);
+            this.rightIconVisible = true;
+        }
+    },
+
+    /**
+     * Right icon widget
+     */
+    getRightIcon: function () {
+        return Widget.getWidget(this._rightIconName);
+    },
+
+    setRightIcon: function (rightIcon) {
+        if (rightIcon instanceof BaseIcon) {
+            this.rightIconName = rightIcon.name;
+        } else {
+            this.rightIconName = null;
+        }
+    },
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
     // ====== Private methods ======
+
+    _update: function() {
+        if (this.__html.leftIcon.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.leftIcon);
+        }
+        if (this.__html.title.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.title);
+        }
+        if (this.__html.rightIcon.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.rightIcon);
+        }
+
+        if (this.leftIconName && this.leftIconVisible) {
+            this.__html.tab.appendChild(this.__html.leftIcon);
+        }
+
+        if (this.title && this.titleVisible) {
+            this.__html.tab.appendChild(this.__html.title);
+        }
+
+        if (this.rightIconName && this.rightIconVisible) {
+            this.__html.tab.appendChild(this.__html.rightIcon);
+        }
+    },
 
     /**
      * Build the widget HTML.
@@ -4904,8 +5025,22 @@ var TabItem = Container.$extend({
     _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
+
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
+
+        this.__html.leftIcon = document.createElement("span");
+        this.__html.leftIcon.className = "photonui-tab-icon";
+        this.__html.tab.appendChild(this.__html.leftIcon);
+
+        this.__html.title = document.createElement("span");
+        this.__html.title.className = "photonui-tabitem-title";
+        this.__html.tab.appendChild(this.__html.title);
+
+        this.__html.rightIcon = document.createElement("span");
+        this.__html.rightIcon.className = "photon-ui-icon";
+        this.__html.tab.appendChild(this.__html.rightIcon);
+
     },
 
     //////////////////////////////////////////
@@ -4929,7 +5064,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":22,"./container.js":14}],20:[function(require,module,exports){
+},{"../helpers.js":22,"../visual/baseicon.js":47,"../widget.js":56,"./container.js":14}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
