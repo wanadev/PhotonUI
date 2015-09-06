@@ -93,7 +93,7 @@ var TabItem = Container.$extend({
     },
 
     /**
-     * Definie if the tabItem title is displayed or hiddin.
+     * Definie if the tabItem title is displayed or hidden.
      *
      * @property titleVisible
      * @type Boolean
@@ -223,6 +223,24 @@ var TabItem = Container.$extend({
     },
 
     /**
+     * Define if the left icon is displayed or hidden.
+     *
+     * @property leftIconVisible
+     * @type Boolean
+     * @default true
+     */
+    _leftIconVisible: true,
+
+    isLeftIconVisible: function () {
+        return this._leftIconVisible;
+    },
+
+    setLeftIconVisible: function (leftIconVisible) {
+        this._leftIconVisible = leftIconVisible;
+        this._update();
+    },
+
+    /**
      * Right icon widget name
      *
      * @property rigthIconName
@@ -258,6 +276,24 @@ var TabItem = Container.$extend({
         } else {
             this.rightIconName = null;
         }
+    },
+
+    /**
+     * Define if the right icon is displayed or hidden.
+     *
+     * @property rightIconVisible
+     * @type Boolean
+     * @default true
+     */
+    _rightIconVisible: true,
+
+    isRightIconVisible: function () {
+        return this._rightIconVisible;
+    },
+
+    setRightIconVisible: function (rightIconVisible) {
+        this._rightIconVisible = rightIconVisible;
+        this._update();
     },
 
     //////////////////////////////////////////
