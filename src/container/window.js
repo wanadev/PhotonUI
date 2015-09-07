@@ -352,6 +352,13 @@ var Window = BaseWindow.$extend({
         this._unbindEvent("move.dragend");
     },
 
+    /**
+     * Start moving the window.
+     *
+     * @method __movePointerStart
+     * @private
+     * @param {Object} event
+     */
     __movePointerStart: function (event) {
         // event.buttons === 1 for a move + left click/touch/pen
         if (!this.movable || event.buttons !== 1) {
@@ -364,6 +371,13 @@ var Window = BaseWindow.$extend({
         this._bindEvent("move.pointercancel", document, "pointercancel", this.__movePointerEnd.bind(this));
     },
 
+    /**
+     * Stop moving the window.
+     *
+     * @method __movePointerEnd
+     * @private
+     * @param {Object} event
+     */
     __movePointerEnd: function (event) {
         this.__html.windowTitle.style.cursor = "default";
         this._unbindEvent("move.dragging");
