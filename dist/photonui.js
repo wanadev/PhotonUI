@@ -5554,8 +5554,14 @@ var Window = BaseWindow.$extend({
         this.$super(params);
 
         // Bind js events
-        this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
-        this._bindEvent("move.touchstart", this.__html.windowTitle, "touchstart", this.__moveTouchStart.bind(this));
+        if (!window.PointerEvent) {
+            this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
+            this._bindEvent("move.touchstart", this.__html.windowTitle, "touchstart", this.__moveTouchStart.bind(this));
+        }
+        else {
+            this._bindEvent("move.pointerstart", this.__html.windowTitle, "pointerdown", this.__movePointerStart.bind(this));
+        }
+
         this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click",
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
@@ -5834,6 +5840,25 @@ var Window = BaseWindow.$extend({
         this.__html.windowTitle.style.cursor = "default";
         this._unbindEvent("move.dragging");
         this._unbindEvent("move.dragend");
+    },
+
+    __movePointerStart: function (event) {
+        // event.buttons === 1 for a move + left click/touch/pen
+        if (!this.movable || event.buttons !== 1) {
+            return;
+        }
+
+        this.__html.windowTitle.style.cursor = "move";
+        this._bindEvent("move.dragging", document, "mousemove", this.__moveDragging.bind(this, event.offsetX, event.offsetY));
+        this._bindEvent("move.pointerup", document, "pointerup", this.__movePointerEnd.bind(this));
+        this._bindEvent("move.pointercancel", document, "pointercancel", this.__movePointerEnd.bind(this));
+    },
+
+    __movePointerEnd: function (event) {
+        this.__html.windowTitle.style.cursor = "default";
+        this._unbindEvent("move.dragging");
+        this._unbindEvent("move.pointerup");
+        this._unbindEvent("move.pointercancel");
     },
 
     /**
