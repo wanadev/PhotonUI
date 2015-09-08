@@ -422,7 +422,7 @@ var Window = BaseWindow.$extend({
      * @param {Object} event
      */
     __getTouchEvent: function (event) {
-        if (event instanceof TouchEvent && event.touches.length) {
+        if (event.touches && event.touches.length) {
             var evt = event.touches[0];
             evt.pageX = evt.pageX || evt.clientX;
             evt.pageY = evt.pageX || evt.clientY;
