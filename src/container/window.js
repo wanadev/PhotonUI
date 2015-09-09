@@ -381,7 +381,8 @@ var Window = BaseWindow.$extend({
 
         var touchEvent = this.__getTouchEvent(event);
         this.__html.windowTitle.style.cursor = "move";
-        this._bindEvent("move.touchmove", document, "touchmove", this.__moveTouchMove.bind(this, touchEvent.offsetX, touchEvent.offsetY));
+        this._bindEvent("move.touchmove", document, "touchmove", 
+            this.__moveTouchMove.bind(this, touchEvent.offsetX, touchEvent.offsetY));
         this._bindEvent("move.touchend", document, "touchend", this.__moveTouchEnd.bind(this));
         this._bindEvent("move.touchcancel", document, "touchcancel", this.__moveTouchEnd.bind(this));
     },

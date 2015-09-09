@@ -5871,7 +5871,8 @@ var Window = BaseWindow.$extend({
 
         var touchEvent = this.__getTouchEvent(event);
         this.__html.windowTitle.style.cursor = "move";
-        this._bindEvent("move.touchmove", document, "touchmove", this.__moveTouchMove.bind(this, touchEvent.offsetX, touchEvent.offsetY));
+        this._bindEvent("move.touchmove", document, "touchmove", 
+            this.__moveTouchMove.bind(this, touchEvent.offsetX, touchEvent.offsetY));
         this._bindEvent("move.touchend", document, "touchend", this.__moveTouchEnd.bind(this));
         this._bindEvent("move.touchcancel", document, "touchcancel", this.__moveTouchEnd.bind(this));
     },
@@ -5912,7 +5913,7 @@ var Window = BaseWindow.$extend({
      * @param {Object} event
      */
     __getTouchEvent: function (event) {
-        if (event instanceof TouchEvent && event.touches.length) {
+        if (event.touches && event.touches.length) {
             var evt = event.touches[0];
             evt.pageX = evt.pageX || evt.clientX;
             evt.pageY = evt.pageX || evt.clientY;
@@ -8244,7 +8245,7 @@ var Slider = NumericField.$extend({
         this._updateFromMouseEvent(event);
     },
 
-     /**
+    /**
      * @method __onSliderTouchStart
      * @private
      * @param event
@@ -8256,7 +8257,7 @@ var Slider = NumericField.$extend({
         this._bindEvent("slider-touchcancel", document, "touchcancel", this.__onSliderTouchEnd.bind(this));
     },
 
-     /**
+    /**
      * @method __onSliderTouchMove
      * @private
      * @param event
@@ -8265,7 +8266,7 @@ var Slider = NumericField.$extend({
         this._updateFromMouseEvent(this.__getTouchEvent(event));
     },
 
-     /**
+    /**
      * @method __onSliderTouchEnd
      * @private
      * @param event
@@ -8285,7 +8286,7 @@ var Slider = NumericField.$extend({
      * @param {Object} event
      */
     __getTouchEvent: function (event) {
-        if (event instanceof TouchEvent && event.touches.length) {
+        if (event.touches && event.touches.length) {
             var evt = event.touches[0];
             evt.pageX = evt.pageX || evt.clientX;
             evt.pageY = evt.pageX || evt.clientY;

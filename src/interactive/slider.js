@@ -218,7 +218,7 @@ var Slider = NumericField.$extend({
         this._updateFromMouseEvent(event);
     },
 
-     /**
+    /**
      * @method __onSliderTouchStart
      * @private
      * @param event
@@ -230,7 +230,7 @@ var Slider = NumericField.$extend({
         this._bindEvent("slider-touchcancel", document, "touchcancel", this.__onSliderTouchEnd.bind(this));
     },
 
-     /**
+    /**
      * @method __onSliderTouchMove
      * @private
      * @param event
@@ -239,7 +239,7 @@ var Slider = NumericField.$extend({
         this._updateFromMouseEvent(this.__getTouchEvent(event));
     },
 
-     /**
+    /**
      * @method __onSliderTouchEnd
      * @private
      * @param event
