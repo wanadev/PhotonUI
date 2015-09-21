@@ -174,6 +174,11 @@ var Slider = NumericField.$extend({
      * @param event
      */
     _updateFromMouseEvent: function (event) {
+        // Prevent reset on touchend.
+        if (typeof(event.pageX) === "undefined") {
+            return;
+        }
+
         var wx = Helpers.getAbsolutePosition(this.__html.slider).x;
         var gw = this.__html.grip.offsetWidth;
         var x = Math.round(event.pageX - wx - gw / 2);
@@ -260,6 +265,7 @@ var Slider = NumericField.$extend({
      */
     __getTouchEvent: function (event) {
         if (event.touches && event.touches.length) {
+            event.preventDefault();
             var evt = event.touches[0];
             evt.pageX = evt.pageX || evt.clientX;
             evt.pageY = evt.pageX || evt.clientY;
