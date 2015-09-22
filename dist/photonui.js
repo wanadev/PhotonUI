@@ -5555,6 +5555,8 @@ var Window = BaseWindow.$extend({
 
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
+        this._bindEvent("move.touchstart", this.__html.windowTitle, "touchstart", this.__moveTouchStart.bind(this));
+
         this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click",
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
@@ -5819,13 +5821,7 @@ var Window = BaseWindow.$extend({
      * @param {Object} event
      */
     __moveDragging: function (offsetX, offsetY, event) {
-        var e_body = document.getElementsByTagName("body")[0];
-        var x = Math.min(Math.max(event.pageX - offsetX, 40 - this.offsetWidth), e_body.offsetWidth - 40);
-        var y = Math.max(event.pageY - offsetY, 0);
-        if (e_body.offsetHeight > 0) {
-            y = Math.min(y, e_body.offsetHeight - this.__html.windowTitle.offsetHeight);
-        }
-        this.setPosition(x, y);
+        this.__internalDragging(offsetX, offsetY, event.pageX, event.pageY);
     },
 
     /**
@@ -5839,6 +5835,97 @@ var Window = BaseWindow.$extend({
         this.__html.windowTitle.style.cursor = "default";
         this._unbindEvent("move.dragging");
         this._unbindEvent("move.dragend");
+    },
+
+    /**
+     * Move the window.
+     *
+     * @method __internalDragging
+     * @private
+     * @param {Number} offsetX
+     * @param {Number} offsetY
+     * @param {Number} pageX
+     * @param {Number} pageY
+     */
+    __internalDragging: function (offsetX, offsetY, pageX, pageY) {
+        var e_body = document.getElementsByTagName("body")[0];
+        var x = Math.min(Math.max(pageX - offsetX, 40 - this.offsetWidth), e_body.offsetWidth - 40);
+        var y = Math.max(pageY - offsetY, 0);
+        if (e_body.offsetHeight > 0) {
+            y = Math.min(y, e_body.offsetHeight - this.__html.windowTitle.offsetHeight);
+        }
+        this.setPosition(x, y);
+    },
+
+    /**
+     * Start moving the window.
+     *
+     * @method _moveTouchStart
+     * @private
+     * @param {Object} event
+     */
+    __moveTouchStart: function (event) {
+        if (!this.movable) {
+            return;
+        }
+
+        var touchEvent = this.__getTouchEvent(event);
+        this.__html.windowTitle.style.cursor = "move";
+        this._bindEvent("move.touchmove", document, "touchmove",
+            this.__moveTouchMove.bind(this, touchEvent.offsetX, touchEvent.offsetY));
+        this._bindEvent("move.touchend", document, "touchend", this.__moveTouchEnd.bind(this));
+        this._bindEvent("move.touchcancel", document, "touchcancel", this.__moveTouchEnd.bind(this));
+    },
+
+    /**
+     * Move the window.
+     *
+     * @method _moveTouchMove
+     * @private
+     * @param {Number} offsetX
+     * @param {Number} offsetY
+     * @param {Object} event
+     */
+    __moveTouchMove: function (offsetX, offsetY, event) {
+        var touchEvent = this.__getTouchEvent(event);
+        this.__internalDragging(offsetX, offsetY, touchEvent.pageX, touchEvent.pageY);
+    },
+
+    /**
+     * Stop moving the window.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __moveTouchEnd: function (event) {
+        this.__html.windowTitle.style.cursor = "default";
+        this._unbindEvent("move.touchmove");
+        this._unbindEvent("move.touchend");
+        this._unbindEvent("move.touchcancel");
+    },
+
+    /**
+     * Gets the first touch event and normalizes pageX/Y and offsetX/Y properties.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __getTouchEvent: function (event) {
+        if (event.touches && event.touches.length) {
+            event.preventDefault();
+            var evt = event.touches[0];
+            evt.pageX = evt.pageX || evt.clientX;
+            evt.pageY = evt.pageX || evt.clientY;
+
+            var position = Helpers.getAbsolutePosition(event.target);
+            evt.offsetX = evt.offsetX || evt.pageX - position.x;
+            evt.offsetY = evt.offsetY || evt.pageY - position.y;
+            return evt;
+        }
+
+        return event;
     },
 
     /**
@@ -8000,6 +8087,8 @@ var Slider = NumericField.$extend({
         this._updateProperties(["fieldVisible"]);
 
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
+        this._bindEvent("slider-touchstart", this.__html.slider, "touchstart", this.__onSliderTouchStart.bind(this));
+
         this._bindEvent("slider-keydown", this.__html.slider, "keydown", this.__onSliderKeyDown.bind(this));
         this._bindEvent("slider-mousewheel", this.__html.slider, "mousewheel", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("slider-mousewheel-firefox", this.__html.slider,
@@ -8113,6 +8202,11 @@ var Slider = NumericField.$extend({
      * @param event
      */
     _updateFromMouseEvent: function (event) {
+        // Prevent reset on touchend.
+        if (typeof(event.pageX) === "undefined") {
+            return;
+        }
+
         var wx = Helpers.getAbsolutePosition(this.__html.slider).x;
         var gw = this.__html.grip.offsetWidth;
         var x = Math.round(event.pageX - wx - gw / 2);
@@ -8155,6 +8249,62 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-mousemove");
         this._unbindEvent("slider-mouseup");
         this._updateFromMouseEvent(event);
+    },
+
+    /**
+     * @method __onSliderTouchStart
+     * @private
+     * @param event
+     */
+    __onSliderTouchStart: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+        this._bindEvent("slider-touchmove", document, "touchmove", this.__onSliderTouchMove.bind(this));
+        this._bindEvent("slider-touchend", document, "touchend", this.__onSliderTouchEnd.bind(this));
+        this._bindEvent("slider-touchcancel", document, "touchcancel", this.__onSliderTouchEnd.bind(this));
+    },
+
+    /**
+     * @method __onSliderTouchMove
+     * @private
+     * @param event
+     */
+    __onSliderTouchMove: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+    },
+
+    /**
+     * @method __onSliderTouchEnd
+     * @private
+     * @param event
+     */
+    __onSliderTouchEnd: function (event) {
+        this._unbindEvent("slider-touchmove");
+        this._unbindEvent("slider-touchend");
+        this._unbindEvent("slider-touchcancel");
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+    },
+
+    /**
+     * Gets the first touch event and normalizes pageX/Y and offsetX/Y properties.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __getTouchEvent: function (event) {
+        if (event.touches && event.touches.length) {
+            event.preventDefault();
+            var evt = event.touches[0];
+            evt.pageX = evt.pageX || evt.clientX;
+            evt.pageY = evt.pageX || evt.clientY;
+
+            var position = Helpers.getAbsolutePosition(event.target);
+            evt.offsetX = evt.offsetX || evt.pageX - position.x;
+            evt.offsetY = evt.offsetY || evt.pageY - position.y;
+            return evt;
+        }
+
+        return event;
     },
 
     /*
