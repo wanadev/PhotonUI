@@ -253,7 +253,6 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-touchmove");
         this._unbindEvent("slider-touchend");
         this._unbindEvent("slider-touchcancel");
-        this._updateFromMouseEvent(this.__getTouchEvent(event));
     },
 
     /**

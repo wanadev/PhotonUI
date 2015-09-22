@@ -70,6 +70,7 @@ var Window = BaseWindow.$extend({
         this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click",
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
+        this._bindEvent("totop-touch", this.__html.window, "touchstart", this.moveToFront.bind(this));
         this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
                         function (event) { event.stopPropagation(); });
 
@@ -376,6 +377,9 @@ var Window = BaseWindow.$extend({
      */
     __moveTouchStart: function (event) {
         if (!this.movable) {
+            return;
+        }
+        if (event.target !== this.__html.windowTitle) {
             return;
         }
 
