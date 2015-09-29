@@ -114,11 +114,33 @@ var Window = BaseWindow.$extend({
     _movable: true,
 
     isMovable: function () {
-        return this._movable;
+        return this._movable && (!this._fullscreen);
     },
 
     setMovable: function (movable) {
         this._movable = movable;
+    },
+
+    /**
+     * Fullscreen Window
+     *
+     * @property fullscreen
+     * @type Boolean
+     * @default false
+     */
+    _fullscreen: false,
+
+    isFullscreen: function () {
+        return this._fullscreen;
+    },
+
+    setFullscreen: function (fullscreen) {
+        this._fullscreen = Boolean(fullscreen);
+        if (this._fullscreen) {
+            this.addClass("photonui-window-fullscreen");
+        } else {
+            this.removeClass("photonui-window-fullscreen");
+        }
     },
 
     /**

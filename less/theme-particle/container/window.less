@@ -34,10 +34,10 @@
     background: @color-background;
     border-radius: 2px;
     box-shadow: @shadow-window;
+    @titlebar-height: 40px;
 
     .photonui-window-title {
-        height: 40px;
-        margin: -1px -1px 0 -1px;
+        height: @titlebar-height;
         border-radius: 2px 2px 0 0;
         background: @color-window-inactive-titlebar-background;
         transition: all @transition-duration;
@@ -99,6 +99,14 @@
     &.photonui-window-have-button .photonui-window-title-text {
         padding: 8px 0 8px 10px;
         width: calc(~"100% - 42px");
+    }
+
+    &.photonui-window-fullscreen {
+        .photonui-window-content {
+            height: ~"calc(100% - " @titlebar-height ~")" !important;
+            min-height: ~"calc(100% - " @titlebar-height ~")" !important;
+            max-height: ~"calc(100% - " @titlebar-height ~")" !important;
+        }
     }
 }
 

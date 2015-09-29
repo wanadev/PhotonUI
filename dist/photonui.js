@@ -5604,11 +5604,33 @@ var Window = BaseWindow.$extend({
     _movable: true,
 
     isMovable: function () {
-        return this._movable;
+        return this._movable && (!this._fullscreen);
     },
 
     setMovable: function (movable) {
         this._movable = movable;
+    },
+
+    /**
+     * Fullscreen Window
+     *
+     * @property fullscreen
+     * @type Boolean
+     * @default false
+     */
+    _fullscreen: false,
+
+    isFullscreen: function () {
+        return this._fullscreen;
+    },
+
+    setFullscreen: function (fullscreen) {
+        this._fullscreen = Boolean(fullscreen);
+        if (this._fullscreen) {
+            this.addClass("photonui-window-fullscreen");
+        } else {
+            this.removeClass("photonui-window-fullscreen");
+        }
     },
 
     /**
@@ -8729,7 +8751,6 @@ var ToggleButton = CheckBox.$extend({
 
     // Constructor
     __init__: function (params) {
-        //this._registerWEvents(["click"]);
         this.$super(params);
         this.__buttonInit();
         this.removeClass("photonui-checkbox");
@@ -8740,9 +8761,6 @@ var ToggleButton = CheckBox.$extend({
 
     // photonui.Button constructor (without the call to $super)
     __buttonInit: function () {
-        // Bind js events
-        //this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
-
         // Update properties
         this._updateProperties(["text", "leftIconName", "rightIconName"]);
         this._update();
