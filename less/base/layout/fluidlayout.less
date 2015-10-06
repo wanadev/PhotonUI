@@ -30,8 +30,18 @@
 
 
 .photonui-fluidlayout {
-    > .photonui-container {
-        display: inline-block;
-        vertical-align: middle;
+    overflow: hidden;
+    margin-bottom: -4px;
+
+    > .photonui-fluidlayout-innerbox {
+        display: flex;
+        flex-wrap: wrap;
+        align-content: center;
+
+        &::first-line {
+            > .photonui-container {
+                border: green solid 2px;
+            }
+        }
     }
 }

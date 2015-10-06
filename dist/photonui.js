@@ -9260,6 +9260,9 @@ var FluidLayout = Layout.$extend({
     _buildHtml: function () {
         this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-fluidlayout";
+        this.__html.innerbox = document.createElement("div");
+        this.__html.innerbox.className = "photonui-fluidlayout-innerbox";
+        this.__html.outerbox.appendChild(this.__html.innerbox);
     },
 
     /**
@@ -9272,17 +9275,21 @@ var FluidLayout = Layout.$extend({
         var children = this.children;
         var fragment = document.createDocumentFragment();
 
+        this.__html.innerbox.style.marginTop = (this.verticalSpacing > 0) ? -this.verticalSpacing + "px" : "0px";
+        this.__html.innerbox.style.marginLeft = (this.horizontalSpacing > 0) ? -this.horizontalSpacing + "px" : "0px";
+
         var div = null;
         for (var i = 0 ; i < children.length ; i++) {
             div = document.createElement("div");
             div.className = "photonui-container";
-            div.style.padding = "0 " + this.horizontalSpacing + "px " + this.verticalSpacing + "px 0";
+            div.style.marginTop = this.verticalSpacing + "px";
+            div.style.marginLeft = this.horizontalSpacing + "px";
             div.appendChild(children[i].html);
             fragment.appendChild(div);
         }
 
-        Helpers.cleanNode(this.__html.outerbox);
-        this.__html.outerbox.appendChild(fragment);
+        Helpers.cleanNode(this.__html.innerbox);
+        this.__html.innerbox.appendChild(fragment);
     }
 });
 
@@ -11839,6 +11846,40 @@ var MouseManager = Base.$extend({
     },
 
     /**
+     * Translate all position events by a scalar. Use it when the canvas is translated.
+     *
+     * @property translateX
+     * @type Number
+     * @default 0
+     */
+    _translateX: 0,
+
+    getTranslateX: function () {
+        return this._translateX;
+    },
+
+    setTranslateX: function (translateX) {
+        this._translateX = translateX;
+    },
+
+    /**
+     * translate all position events by a scalar. Use it when the canvas is translated.
+     *
+     * @property translateY
+     * @type Number
+     * @default 0
+     */
+    _translateY: 0,
+
+    getTranslateY: function () {
+        return this._translateY;
+    },
+
+    setTranslateY: function (translateY) {
+        this._translateY = translateY;
+    },
+
+    /**
      * X position, relative to page top-left corner.
      *
      * @property pageX
@@ -11871,7 +11912,7 @@ var MouseManager = Base.$extend({
      */
     getX: function () {
         var ex = Helpers.getAbsolutePosition(this.element).x;
-        return (this.pageX - ex) * this.scaleX;
+        return (this.pageX - ex) * this.scaleX + this.translateX;
     },
 
     /**
@@ -11883,7 +11924,7 @@ var MouseManager = Base.$extend({
      */
     getY: function () {
         var ey = Helpers.getAbsolutePosition(this.element).y;
-        return (this.pageY - ey) * this.scaleY;
+        return (this.pageY - ey) * this.scaleY + this.translateY;
     },
 
     /**
