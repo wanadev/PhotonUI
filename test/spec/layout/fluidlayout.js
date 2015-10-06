@@ -47,7 +47,7 @@ describe("photonui.FluidLayout", function() {
         expect(w4x).toEqual(ax);
     });
 
-    it("can have horizontalSpacing", function() {
+    it("can have an horizontalSpacing", function() {
         this.area.style.width = "310px";
         this.layout.horizontalSpacing = 5;
         this.layout.children = [this.w1, this.w2, this.w3, this.w4];
@@ -59,7 +59,7 @@ describe("photonui.FluidLayout", function() {
         expect(w4x).toEqual(ax);
     });
 
-    it("can have verticalSpacing", function() {
+    it("can have a verticalSpacing", function() {
         this.area.style.width = "300px";
         this.layout.verticalSpacing = 5;
         this.layout.children = [this.w1, this.w2, this.w3, this.w4];
@@ -71,7 +71,25 @@ describe("photonui.FluidLayout", function() {
         expect(w4y).toEqual(ay + 100 + 5);
     });
 
-    // TODO Order
+    it("can have a verticalPadding", function() {
+        this.layout.verticalPadding = 10;
+        this.layout.children = [this.w1, this.w2, this.w3, this.w4];
+
+        var ax = photonui.Helpers.getAbsolutePosition(this.area).x;
+        var w1x = photonui.Helpers.getAbsolutePosition(this.w1.html).x;
+
+        expect(w1x - ax).toEqual(10);
+    });
+
+    it("can have an horizontalPadding", function() {
+        this.layout.horizontalPadding = 10;
+        this.layout.children = [this.w1, this.w2, this.w3, this.w4];
+
+        var ay = photonui.Helpers.getAbsolutePosition(this.area).y;
+        var w1y = photonui.Helpers.getAbsolutePosition(this.w1.html).y;
+
+        expect(w1y - ay).toEqual(10);
+    });
 
 });
 

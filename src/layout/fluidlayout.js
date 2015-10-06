@@ -77,9 +77,9 @@ var FluidLayout = Layout.$extend({
      *
      * @property horizontalSpacing
      * @type Number
-     * @default 2
+     * @default 0
      */
-    _horizontalSpacing: 2,
+    _horizontalSpacing: 0,
 
     getHorizontalSpacing: function () {
         return this._horizontalSpacing;
@@ -88,6 +88,44 @@ var FluidLayout = Layout.$extend({
     setHorizontalSpacing: function (horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
         this._updateLayout();
+    },
+
+    /**
+     * Vertical padding (px).
+     *
+     * @property verticalPadding
+     * @type Number
+     * @default 0
+     */
+    _verticalPadding: 0,
+
+    getVerticalPadding: function () {
+        return this._verticalPadding;
+    },
+
+    setVerticalPadding: function (padding) {
+        this._verticalPadding = padding | 0;
+        this.__html.innerbox.style.paddingLeft = this._verticalPadding + "px";
+        this.__html.innerbox.style.paddingRight = this._verticalPadding + "px";
+    },
+
+    /**
+     * Horizontal padding (px).
+     *
+     * @property horizontalPadding
+     * @type Number
+     * @default 0
+     */
+    _horizontalPadding: 0,
+
+    getHorizontalPadding: function () {
+        return this._horizontalPadding;
+    },
+
+    setHorizontalPadding: function (padding) {
+        this._horizontalPadding = padding | 0;
+        this.__html.innerbox.style.paddingTop = this._horizontalPadding + "px";
+        this.__html.innerbox.style.paddingBottom = this._horizontalPadding + "px";
     },
 
     /**
@@ -147,7 +185,79 @@ var FluidLayout = Layout.$extend({
 
         Helpers.cleanNode(this.__html.innerbox);
         this.__html.innerbox.appendChild(fragment);
-    }
+    },
+
+    /**
+     * Returns a normalized layoutOption for a given widget.
+     *
+     * @method _computeLayoutOptions
+     * @private
+     * @param {photonui.Widget} widget
+     * @return {Object} the layout options
+     */
+    _computeLayoutOptions: function (widget) {
+        var woptions = widget.layoutOptions || {};
+
+        var options = {
+            order: 1,
+            align: "stretch",   // start|begin|top, center|middle, end|bottom, stretch|expand
+            minWidth: null,
+            maxWidth: null,
+            width: null,
+            minHeight: null,
+            maxHeight: null,
+            height: null
+        };
+
+        // order
+        if (woptions.order !== undefined) {
+            options.order = woptions.order | 0;
+        }
+
+        // align
+        if (woptions.align) {
+            if (["stretch", "expand"].indexOf(woptions.align) > -1) {
+                options.align = "stretch";
+            } else if (["center", "middle"].indexOf(woptions.align) > -1) {
+                options.align = "center";
+            } else if (["start", "begin", "top"].indexOf(woptions.align) > -1) {
+                options.align = "start";
+            } else if (["end", "bottom"].indexOf(woptions.align) > -1) {
+                options.align = "end";
+            }
+        }
+
+        // *width
+        if (woptions.minWidth !== undefined && woptions.minWidth !== null) {
+            options.minWidth = woptions.minWidth | 0;
+        }
+        if (woptions.maxWidth !== undefined && woptions.maxWidth !== null) {
+            options.maxWidth = woptions.maxWidth | 0;
+        }
+        if (woptions.width !== undefined && woptions.width !== null) {
+            options.width = woptions.width | 0;
+            options.minWidth = woptions.width | 0;
+            options.maxWidth = woptions.width | 0;
+        }
+
+        // *height
+        if (woptions.minHeight !== undefined && woptions.minHeight !== null) {
+            options.minHeight = woptions.minHeight | 0;
+        }
+        if (woptions.maxHeight !== undefined && woptions.maxHeight !== null) {
+            options.maxHeight = woptions.maxHeight | 0;
+        }
+        if (woptions.height !== undefined && woptions.height !== null) {
+            options.height = woptions.height | 0;
+            options.minHeight = woptions.height | 0;
+            options.maxHeight = woptions.height | 0;
+        }
+
+        return options;
+    },
+
+    // TODO option verticalAlign    start|begin|top, center|middle, end|bottom
+    // TODO option horizontalAlign  start|begin|left, center|middle, end|right
 });
 
 module.exports = FluidLayout;
