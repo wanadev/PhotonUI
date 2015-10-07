@@ -267,6 +267,11 @@ var FluidLayout = Layout.$extend({
             // layout option: align
             div.className += " photonui-layout-align-" + options.align;
 
+            // layout options: order
+            if (options.order !== null) {
+                div.style.order = options.order;
+            }
+
             div.appendChild(children[i].html);
             fragment.appendChild(div);
         }
@@ -287,7 +292,7 @@ var FluidLayout = Layout.$extend({
         var woptions = widget.layoutOptions || {};
 
         var options = {
-            order: 1,
+            order: null,
             align: "center",   // start|begin|top, center|middle, end|bottom, stretch|expand
             minWidth: null,
             maxWidth: null,

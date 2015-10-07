@@ -166,5 +166,19 @@ describe("photonui.FluidLayout", function() {
         expect(this.w4.offsetHeight).toEqual(50);
     });
 
+    it("can change the order of its children", function() {
+        this.area.style.width = "200px";
+
+        this.w1.layoutOptions = {order: 2};
+        this.w2.layoutOptions = {order: 1};
+
+        this.layout.children = [this.w1, this.w2];
+
+        var w1x = photonui.Helpers.getAbsolutePosition(this.w1.html).x;
+        var w2x = photonui.Helpers.getAbsolutePosition(this.w2.html).x;
+
+        expect(w1x).toBeGreaterThan(w2x);
+    });
+
 });
 
