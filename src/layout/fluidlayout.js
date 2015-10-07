@@ -267,6 +267,28 @@ var FluidLayout = Layout.$extend({
             // layout option: align
             div.className += " photonui-layout-align-" + options.align;
 
+            // layout options: *width
+            if (options.minWidth !== null) {
+                div.style.minWidth = options.minWidth + "px";
+            }
+            if (options.maxWidth !== null) {
+                div.style.maxWidth = options.maxWidth + "px";
+            }
+            if (options.width !== null) {
+                div.style.width = options.width + "px";
+            }
+
+            // layout options: *height
+            if (options.minHeight !== null) {
+                div.style.minHeight = options.minHeight + "px";
+            }
+            if (options.maxHeight !== null) {
+                div.style.maxHeight = options.maxHeight + "px";
+            }
+            if (options.height !== null) {
+                div.style.height = options.height + "px";
+            }
+
             // layout options: order
             if (options.order !== null) {
                 div.style.order = options.order;

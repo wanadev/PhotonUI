@@ -155,15 +155,9 @@ describe("photonui.FluidLayout", function() {
 
         expect(photonui.Helpers.getAbsolutePosition(this.w1.html).y).toEqual(ay);
         expect(this.w1.offsetHeight).toEqual(150);
-
         expect(photonui.Helpers.getAbsolutePosition(this.w2.html).y).toEqual(ay);
-        expect(this.w2.offsetHeight).toEqual(50);
-
-        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toEqual(ay + 50);
-        expect(this.w3.offsetHeight).toEqual(50);
-
-        expect(photonui.Helpers.getAbsolutePosition(this.w4.html).y).toEqual(ay + 100);
-        expect(this.w4.offsetHeight).toEqual(50);
+        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toBeGreaterThan(ay + 40);
+        expect(photonui.Helpers.getAbsolutePosition(this.w4.html).y).toBeGreaterThan(ay + 80);
     });
 
     it("can change the order of its children", function() {
