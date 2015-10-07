@@ -11839,6 +11839,40 @@ var MouseManager = Base.$extend({
     },
 
     /**
+     * Translate all position events by a scalar. Use it when the canvas is translated.
+     *
+     * @property translateX
+     * @type Number
+     * @default 0
+     */
+    _translateX: 0,
+
+    getTranslateX: function () {
+        return this._translateX;
+    },
+
+    setTranslateX: function (translateX) {
+        this._translateX = translateX;
+    },
+
+    /**
+     * translate all position events by a scalar. Use it when the canvas is translated.
+     *
+     * @property translateY
+     * @type Number
+     * @default 0
+     */
+    _translateY: 0,
+
+    getTranslateY: function () {
+        return this._translateY;
+    },
+
+    setTranslateY: function (translateY) {
+        this._translateY = translateY;
+    },
+
+    /**
      * X position, relative to page top-left corner.
      *
      * @property pageX
@@ -11871,7 +11905,7 @@ var MouseManager = Base.$extend({
      */
     getX: function () {
         var ex = Helpers.getAbsolutePosition(this.element).x;
-        return (this.pageX - ex) * this.scaleX;
+        return (this.pageX - ex) * this.scaleX + this.translateX;
     },
 
     /**
@@ -11883,7 +11917,7 @@ var MouseManager = Base.$extend({
      */
     getY: function () {
         var ey = Helpers.getAbsolutePosition(this.element).y;
-        return (this.pageY - ey) * this.scaleY;
+        return (this.pageY - ey) * this.scaleY + this.translateY;
     },
 
     /**
