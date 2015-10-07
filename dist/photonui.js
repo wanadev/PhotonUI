@@ -9272,6 +9272,70 @@ var FluidLayout = Layout.$extend({
     },
 
     /**
+     * Vertical alignment of children widgets.
+     *
+     * Values:
+     *
+     *     * start|top|begin (default)
+     *     * center|middle
+     *     * end|bottom
+     *
+     * @property verticalAlign
+     * @type String
+     * @default "start"
+     */
+    _verticalAlign: "start",
+
+    getVerticalAlign: function () {
+        return this._verticalAlign;
+    },
+
+    setVerticalAlign: function (align) {
+        if (["start", "top", "begin"].indexOf(align) > -1) {
+            this._verticalAlign = "start";
+            this.__html.innerbox.style.alignContent = "flex-start";
+        } else if (["center", "middle"].indexOf(align) > -1) {
+            this._verticalAlign = "center";
+            this.__html.innerbox.style.alignContent = "center";
+        } else if (["end", "bottom"].indexOf(align) > -1) {
+            this._verticalAlign = "end";
+            this.__html.innerbox.style.alignContent = "flex-end";
+        }
+    },
+
+    /**
+     * Horizontal alignment of children widgets.
+     *
+     * Values:
+     *
+     *     * start|left|begin (default)
+     *     * center|middle
+     *     * end|right
+     *
+     * @property horizontalAlign
+     * @type String
+     * @default "start"
+     */
+    _horizontallAlign: "start",
+
+    getHorizontalAlign: function () {
+        return this._horizontalAlign;
+    },
+
+    setHorizontalAlign: function (align) {
+        if (["start", "left", "begin"].indexOf(align) > -1) {
+            this._horizontalAlign = "start";
+            this.__html.innerbox.style.justifyContent = "flex-start";
+        } else if (["center", "middle"].indexOf(align) > -1) {
+            this._horizontalAlign = "center";
+            this.__html.innerbox.style.justifyContent = "center";
+        } else if (["end", "right"].indexOf(align) > -1) {
+            this._horizontalAlign = "end";
+            this.__html.innerbox.style.justifyContent = "flex-end";
+        }
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -9397,10 +9461,8 @@ var FluidLayout = Layout.$extend({
         }
 
         return options;
-    },
+    }
 
-    // TODO option verticalAlign    start|begin|top, center|middle, end|bottom
-    // TODO option horizontalAlign  start|begin|left, center|middle, end|right
 });
 
 module.exports = FluidLayout;

@@ -91,5 +91,50 @@ describe("photonui.FluidLayout", function() {
         expect(w1y - ay).toEqual(10);
     });
 
+
+    it("can align verticaly its children", function() {
+        this.area.style.width = "250px";
+        this.area.style.height = "250px";
+
+        this.layout.children = [this.w1, this.w2, this.w3, this.w4];
+
+        var ay = photonui.Helpers.getAbsolutePosition(this.area).y;
+        var w1y;
+
+        this.layout.verticalAlign = "start";
+        w1y = photonui.Helpers.getAbsolutePosition(this.w1.html).y;
+        expect(w1y).toEqual(ay);
+
+        this.layout.verticalAlign = "center";
+        w1y = photonui.Helpers.getAbsolutePosition(this.w1.html).y;
+        expect(w1y).toEqual(ay + 25);
+
+        this.layout.verticalAlign = "end";
+        w1y = photonui.Helpers.getAbsolutePosition(this.w1.html).y;
+        expect(w1y).toEqual(ay + 50);
+    });
+
+    it("can align horizontally its children", function() {
+        this.area.style.width = "250px";
+        this.area.style.height = "250px";
+
+        this.layout.children = [this.w1, this.w2, this.w3, this.w4];
+
+        var ax = photonui.Helpers.getAbsolutePosition(this.area).x;
+        var w1x;
+
+        this.layout.horizontalAlign = "start";
+        w1x = photonui.Helpers.getAbsolutePosition(this.w1.html).x;
+        expect(w1x).toEqual(ax);
+
+        this.layout.horizontalAlign = "center";
+        w1x = photonui.Helpers.getAbsolutePosition(this.w1.html).x;
+        expect(w1x).toEqual(ax + 25);
+
+        this.layout.horizontalAlign = "end";
+        w1x = photonui.Helpers.getAbsolutePosition(this.w1.html).x;
+        expect(w1x).toEqual(ax + 50);
+    });
+
 });
 
