@@ -42,6 +42,22 @@ var Layout = require("./layout.js");
 /**
  * Fluid Layout.
  *
+ * Layout Options:
+ *
+ *     {
+ *         align: <String (stretch|expand, start|left|top, center|middle, end|right|bottom), default=center>,
+ *
+ *         order: <Number default=null (auto)>
+ *
+ *         minWidth: <Number (null=auto), default=null>,
+ *         maxWidth: <Number (null=auto), default=null>,
+ *         width: <Number (null=auto), default=null>,
+ *
+ *         minHeight: <Number (null=auto), default=null>,
+ *         maxHeight: <Number (null=auto), default=null>,
+ *         height: <Number (null=auto), default=null>
+ *     }
+ *
  * @class FluidLayout
  * @constructor
  * @extends photonui.Layout
@@ -239,10 +255,18 @@ var FluidLayout = Layout.$extend({
 
         var div = null;
         for (var i = 0 ; i < children.length ; i++) {
+            var options = this._computeLayoutOptions(children[i]);
+
             div = document.createElement("div");
             div.className = "photonui-container";
+
+            // spacings
             div.style.marginTop = this.verticalSpacing + "px";
             div.style.marginLeft = this.horizontalSpacing + "px";
+
+            // layout option: align
+            div.className += " photonui-layout-align-" + options.align;
+
             div.appendChild(children[i].html);
             fragment.appendChild(div);
         }
@@ -264,7 +288,7 @@ var FluidLayout = Layout.$extend({
 
         var options = {
             order: 1,
-            align: "stretch",   // start|begin|top, center|middle, end|bottom, stretch|expand
+            align: "center",   // start|begin|top, center|middle, end|bottom, stretch|expand
             minWidth: null,
             maxWidth: null,
             width: null,

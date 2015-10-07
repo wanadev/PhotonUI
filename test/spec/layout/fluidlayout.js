@@ -136,5 +136,35 @@ describe("photonui.FluidLayout", function() {
         expect(w1x).toEqual(ax + 50);
     });
 
+    it("can align its children on rows", function() {
+        this.area.style.width = "400px";
+        this.area.style.height = "150px";
+
+        this.w1.html.style.height = "auto";
+        this.w1.layoutOptions = {align: "stretch"};
+        this.w2.html.style.height = "auto";
+        this.w2.layoutOptions = {align: "start"};
+        this.w3.html.style.height = "auto";
+        this.w3.layoutOptions = {align: "center"};
+        this.w4.html.style.height = "auto";
+        this.w4.layoutOptions = {align: "end"};
+
+        this.layout.children = [this.w1, this.w2, this.w3, this.w4];
+
+        var ay = photonui.Helpers.getAbsolutePosition(this.area).y;
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w1.html).y).toEqual(ay);
+        expect(this.w1.offsetHeight).toEqual(150);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w2.html).y).toEqual(ay);
+        expect(this.w2.offsetHeight).toEqual(50);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toEqual(ay + 50);
+        expect(this.w3.offsetHeight).toEqual(50);
+
+        expect(photonui.Helpers.getAbsolutePosition(this.w4.html).y).toEqual(ay + 100);
+        expect(this.w4.offsetHeight).toEqual(50);
+    });
+
 });
 
