@@ -30,8 +30,32 @@
 
 
 .photonui-fluidlayout {
-    > .photonui-container {
-        display: inline-block;
-        vertical-align: middle;
+    overflow: hidden;
+    margin-bottom: -4px;
+
+    > .photonui-fluidlayout-innerbox {
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+        align-content: flex-start;
+
+        > .photonui-container {
+            &.photonui-layout-align-stretch {
+                align-self: stretch;
+                height: 100%;
+                > * {
+                    height: 100% !important;
+                }
+            }
+            &.photonui-layout-align-start {
+                align-self: flex-start;
+            }
+            &.photonui-layout-align-center {
+                align-self: center;
+            }
+            &.photonui-layout-align-end {
+                align-self: flex-end;
+            }
+        }
     }
 }
