@@ -12894,6 +12894,14 @@ var Translation = Base.$extend({
     // ====== Public methods ======
 
     /**
+     * Find and set the best language for the user (depending on available catalogs and given language list).
+     *
+     * @method setBestMatchingLocale
+     * @param {Array|String} locales Language list (optional, e.g. `"fr"`, `["fr", "fr_FR", "en_US"]`).
+     */
+    setBestMatchingLocale: Stone.setBestMatchingLocale,
+
+    /**
      * Add one or more Stone.js catalog (a catalog contain all translated strings for a specific locale).
      *
      * @method addCatalogs
