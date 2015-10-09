@@ -4762,6 +4762,8 @@ module.exports = SubMenuItem;
  */
 
 var Helpers = require("../helpers.js");
+var Widget = require("../widget.js");
+var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
 
 /**
@@ -4784,9 +4786,10 @@ var TabItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["title"]);
+        this._updateProperties(["title", "leftIconName", "rightIconName"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
+        this._update();
     },
 
     //////////////////////////////////////////
@@ -4810,8 +4813,26 @@ var TabItem = Container.$extend({
 
     setTitle: function (title) {
         this._title = title;
-        Helpers.cleanNode(this.__html.tab);
-        this.__html.tab.appendChild(document.createTextNode(title));
+        Helpers.cleanNode(this.__html.title);
+        this.__html.title.appendChild(document.createTextNode(title));
+    },
+
+    /**
+     * Definie if the tabItem title is displayed or hidden.
+     *
+     * @property titleVisible
+     * @type Boolean
+     * @default true
+     */
+    _titleVisible: true,
+
+    isTitleVisible: function () {
+        return this._titleVisible;
+    },
+
+    setTitleVisible: function (titleVisible) {
+        this._titleVisible = titleVisible;
+        this._update();
     },
 
     /**
@@ -4889,11 +4910,146 @@ var TabItem = Container.$extend({
         }
     },
 
+    /**
+        * Left icon widget name
+        *
+        * @property leftIconName
+        * @type String
+        * @default: null
+        */
+    _leftIconName: null,
+
+    getLeftIconName: function () {
+        return this._leftIconName;
+    },
+
+    setLeftIconName: function (leftIconName) {
+        this._leftIconName = leftIconName;
+        Helpers.cleanNode(this.__html.leftIcon);
+        if (this._leftIconName) {
+            this.__html.leftIcon.appendChild(this.leftIcon.html);
+            this.leftIconVisible = true;
+        }
+    },
+
+    /**
+    * Left icon widget
+    */
+    getLeftIcon: function () {
+        return Widget.getWidget(this._leftIconName);
+    },
+
+    setLeftIcon: function (leftIcon) {
+        if (leftIcon instanceof BaseIcon) {
+            this.leftIconName = leftIcon.name;
+        } else {
+            this.leftIconName = null;
+        }
+    },
+
+    /**
+     * Define if the left icon is displayed or hidden.
+     *
+     * @property leftIconVisible
+     * @type Boolean
+     * @default true
+     */
+    _leftIconVisible: true,
+
+    isLeftIconVisible: function () {
+        return this._leftIconVisible;
+    },
+
+    setLeftIconVisible: function (leftIconVisible) {
+        this._leftIconVisible = leftIconVisible;
+        this._update();
+    },
+
+    /**
+     * Right icon widget name
+     *
+     * @property rigthIconName
+     * @type String
+     * @default: null
+     */
+
+    _rightIconName: null,
+
+    getRightIconName: function () {
+        return this._rightIconName;
+    },
+
+    setRightIconName: function (rightIconName) {
+        this._rightIconName = rightIconName;
+        Helpers.cleanNode(this.__html.rightIcon);
+        if (this._rightIconName) {
+            this.__html.rightIcon.appendChild(this.rightIcon.html);
+            this.rightIconVisible = true;
+        }
+    },
+
+    /**
+     * Right icon widget
+     */
+    getRightIcon: function () {
+        return Widget.getWidget(this._rightIconName);
+    },
+
+    setRightIcon: function (rightIcon) {
+        if (rightIcon instanceof BaseIcon) {
+            this.rightIconName = rightIcon.name;
+        } else {
+            this.rightIconName = null;
+        }
+    },
+
+    /**
+     * Define if the right icon is displayed or hidden.
+     *
+     * @property rightIconVisible
+     * @type Boolean
+     * @default true
+     */
+    _rightIconVisible: true,
+
+    isRightIconVisible: function () {
+        return this._rightIconVisible;
+    },
+
+    setRightIconVisible: function (rightIconVisible) {
+        this._rightIconVisible = rightIconVisible;
+        this._update();
+    },
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
     // ====== Private methods ======
+
+    _update: function () {
+        if (this.__html.leftIcon.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.leftIcon);
+        }
+        if (this.__html.title.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.title);
+        }
+        if (this.__html.rightIcon.parentNode == this.__html.tab) {
+            this.__html.tab.removeChild(this.__html.rightIcon);
+        }
+
+        if (this.leftIconName && this.leftIconVisible) {
+            this.__html.tab.appendChild(this.__html.leftIcon);
+        }
+
+        if (this.title && this.titleVisible) {
+            this.__html.tab.appendChild(this.__html.title);
+        }
+
+        if (this.rightIconName && this.rightIconVisible) {
+            this.__html.tab.appendChild(this.__html.rightIcon);
+        }
+    },
 
     /**
      * Build the widget HTML.
@@ -4904,8 +5060,22 @@ var TabItem = Container.$extend({
     _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-tabitem photonui-container";
+
         this.__html.tab = document.createElement("div");
         this.__html.tab.className = "photonui-tabitem-tab";
+
+        this.__html.leftIcon = document.createElement("span");
+        this.__html.leftIcon.className = "photonui-tab-icon";
+        this.__html.tab.appendChild(this.__html.leftIcon);
+
+        this.__html.title = document.createElement("span");
+        this.__html.title.className = "photonui-tabitem-title";
+        this.__html.tab.appendChild(this.__html.title);
+
+        this.__html.rightIcon = document.createElement("span");
+        this.__html.rightIcon.className = "photon-ui-icon";
+        this.__html.tab.appendChild(this.__html.rightIcon);
+
     },
 
     //////////////////////////////////////////
@@ -4929,7 +5099,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":22,"./container.js":14}],20:[function(require,module,exports){
+},{"../helpers.js":22,"../visual/baseicon.js":47,"../widget.js":56,"./container.js":14}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5385,9 +5555,12 @@ var Window = BaseWindow.$extend({
 
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
+        this._bindEvent("move.touchstart", this.__html.windowTitle, "touchstart", this.__moveTouchStart.bind(this));
+
         this._bindEvent("closeButton.click", this.__html.windowTitleCloseButton, "click",
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
+        this._bindEvent("totop-touch", this.__html.window, "touchstart", this.moveToFront.bind(this));
         this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
                         function (event) { event.stopPropagation(); });
 
@@ -5431,11 +5604,33 @@ var Window = BaseWindow.$extend({
     _movable: true,
 
     isMovable: function () {
-        return this._movable;
+        return this._movable && (!this._fullscreen);
     },
 
     setMovable: function (movable) {
         this._movable = movable;
+    },
+
+    /**
+     * Fullscreen Window
+     *
+     * @property fullscreen
+     * @type Boolean
+     * @default false
+     */
+    _fullscreen: false,
+
+    isFullscreen: function () {
+        return this._fullscreen;
+    },
+
+    setFullscreen: function (fullscreen) {
+        this._fullscreen = Boolean(fullscreen);
+        if (this._fullscreen) {
+            this.addClass("photonui-window-fullscreen");
+        } else {
+            this.removeClass("photonui-window-fullscreen");
+        }
     },
 
     /**
@@ -5649,13 +5844,7 @@ var Window = BaseWindow.$extend({
      * @param {Object} event
      */
     __moveDragging: function (offsetX, offsetY, event) {
-        var e_body = document.getElementsByTagName("body")[0];
-        var x = Math.min(Math.max(event.pageX - offsetX, 40 - this.offsetWidth), e_body.offsetWidth - 40);
-        var y = Math.max(event.pageY - offsetY, 0);
-        if (e_body.offsetHeight > 0) {
-            y = Math.min(y, e_body.offsetHeight - this.__html.windowTitle.offsetHeight);
-        }
-        this.setPosition(x, y);
+        this.__internalDragging(offsetX, offsetY, event.pageX, event.pageY);
     },
 
     /**
@@ -5669,6 +5858,100 @@ var Window = BaseWindow.$extend({
         this.__html.windowTitle.style.cursor = "default";
         this._unbindEvent("move.dragging");
         this._unbindEvent("move.dragend");
+    },
+
+    /**
+     * Move the window.
+     *
+     * @method __internalDragging
+     * @private
+     * @param {Number} offsetX
+     * @param {Number} offsetY
+     * @param {Number} pageX
+     * @param {Number} pageY
+     */
+    __internalDragging: function (offsetX, offsetY, pageX, pageY) {
+        var e_body = document.getElementsByTagName("body")[0];
+        var x = Math.min(Math.max(pageX - offsetX, 40 - this.offsetWidth), e_body.offsetWidth - 40);
+        var y = Math.max(pageY - offsetY, 0);
+        if (e_body.offsetHeight > 0) {
+            y = Math.min(y, e_body.offsetHeight - this.__html.windowTitle.offsetHeight);
+        }
+        this.setPosition(x, y);
+    },
+
+    /**
+     * Start moving the window.
+     *
+     * @method _moveTouchStart
+     * @private
+     * @param {Object} event
+     */
+    __moveTouchStart: function (event) {
+        if (!this.movable) {
+            return;
+        }
+        if (event.target !== this.__html.windowTitle) {
+            return;
+        }
+
+        var touchEvent = this.__getTouchEvent(event);
+        this.__html.windowTitle.style.cursor = "move";
+        this._bindEvent("move.touchmove", document, "touchmove",
+            this.__moveTouchMove.bind(this, touchEvent.offsetX, touchEvent.offsetY));
+        this._bindEvent("move.touchend", document, "touchend", this.__moveTouchEnd.bind(this));
+        this._bindEvent("move.touchcancel", document, "touchcancel", this.__moveTouchEnd.bind(this));
+    },
+
+    /**
+     * Move the window.
+     *
+     * @method _moveTouchMove
+     * @private
+     * @param {Number} offsetX
+     * @param {Number} offsetY
+     * @param {Object} event
+     */
+    __moveTouchMove: function (offsetX, offsetY, event) {
+        var touchEvent = this.__getTouchEvent(event);
+        this.__internalDragging(offsetX, offsetY, touchEvent.pageX, touchEvent.pageY);
+    },
+
+    /**
+     * Stop moving the window.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __moveTouchEnd: function (event) {
+        this.__html.windowTitle.style.cursor = "default";
+        this._unbindEvent("move.touchmove");
+        this._unbindEvent("move.touchend");
+        this._unbindEvent("move.touchcancel");
+    },
+
+    /**
+     * Gets the first touch event and normalizes pageX/Y and offsetX/Y properties.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __getTouchEvent: function (event) {
+        if (event.touches && event.touches.length) {
+            event.preventDefault();
+            var evt = event.touches[0];
+            evt.pageX = evt.pageX || evt.clientX;
+            evt.pageY = evt.pageX || evt.clientY;
+
+            var position = Helpers.getAbsolutePosition(event.target);
+            evt.offsetX = evt.offsetX || evt.pageX - position.x;
+            evt.offsetY = evt.offsetY || evt.pageY - position.y;
+            return evt;
+        }
+
+        return event;
     },
 
     /**
@@ -7830,6 +8113,8 @@ var Slider = NumericField.$extend({
         this._updateProperties(["fieldVisible"]);
 
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
+        this._bindEvent("slider-touchstart", this.__html.slider, "touchstart", this.__onSliderTouchStart.bind(this));
+
         this._bindEvent("slider-keydown", this.__html.slider, "keydown", this.__onSliderKeyDown.bind(this));
         this._bindEvent("slider-mousewheel", this.__html.slider, "mousewheel", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("slider-mousewheel-firefox", this.__html.slider,
@@ -7943,6 +8228,11 @@ var Slider = NumericField.$extend({
      * @param event
      */
     _updateFromMouseEvent: function (event) {
+        // Prevent reset on touchend.
+        if (typeof(event.pageX) === "undefined") {
+            return;
+        }
+
         var wx = Helpers.getAbsolutePosition(this.__html.slider).x;
         var gw = this.__html.grip.offsetWidth;
         var x = Math.round(event.pageX - wx - gw / 2);
@@ -7985,6 +8275,61 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-mousemove");
         this._unbindEvent("slider-mouseup");
         this._updateFromMouseEvent(event);
+    },
+
+    /**
+     * @method __onSliderTouchStart
+     * @private
+     * @param event
+     */
+    __onSliderTouchStart: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+        this._bindEvent("slider-touchmove", document, "touchmove", this.__onSliderTouchMove.bind(this));
+        this._bindEvent("slider-touchend", document, "touchend", this.__onSliderTouchEnd.bind(this));
+        this._bindEvent("slider-touchcancel", document, "touchcancel", this.__onSliderTouchEnd.bind(this));
+    },
+
+    /**
+     * @method __onSliderTouchMove
+     * @private
+     * @param event
+     */
+    __onSliderTouchMove: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+    },
+
+    /**
+     * @method __onSliderTouchEnd
+     * @private
+     * @param event
+     */
+    __onSliderTouchEnd: function (event) {
+        this._unbindEvent("slider-touchmove");
+        this._unbindEvent("slider-touchend");
+        this._unbindEvent("slider-touchcancel");
+    },
+
+    /**
+     * Gets the first touch event and normalizes pageX/Y and offsetX/Y properties.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __getTouchEvent: function (event) {
+        if (event.touches && event.touches.length) {
+            event.preventDefault();
+            var evt = event.touches[0];
+            evt.pageX = evt.pageX || evt.clientX;
+            evt.pageY = evt.pageX || evt.clientY;
+
+            var position = Helpers.getAbsolutePosition(event.target);
+            evt.offsetX = evt.offsetX || evt.pageX - position.x;
+            evt.offsetY = evt.offsetY || evt.pageY - position.y;
+            return evt;
+        }
+
+        return event;
     },
 
     /*
@@ -8406,7 +8751,6 @@ var ToggleButton = CheckBox.$extend({
 
     // Constructor
     __init__: function (params) {
-        this._registerWEvents(["click"]);
         this.$super(params);
         this.__buttonInit();
         this.removeClass("photonui-checkbox");
@@ -8417,9 +8761,6 @@ var ToggleButton = CheckBox.$extend({
 
     // photonui.Button constructor (without the call to $super)
     __buttonInit: function () {
-        // Bind js events
-        this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
-
         // Update properties
         this._updateProperties(["text", "leftIconName", "rightIconName"]);
         this._update();
@@ -8844,6 +9185,22 @@ var Layout = require("./layout.js");
 /**
  * Fluid Layout.
  *
+ * Layout Options:
+ *
+ *     {
+ *         align: <String (stretch|expand, start|left|top, center|middle, end|right|bottom), default=center>,
+ *
+ *         order: <Number default=null (auto)>
+ *
+ *         minWidth: <Number (null=auto), default=null>,
+ *         maxWidth: <Number (null=auto), default=null>,
+ *         width: <Number (null=auto), default=null>,
+ *
+ *         minHeight: <Number (null=auto), default=null>,
+ *         maxHeight: <Number (null=auto), default=null>,
+ *         height: <Number (null=auto), default=null>
+ *     }
+ *
  * @class FluidLayout
  * @constructor
  * @extends photonui.Layout
@@ -8879,9 +9236,9 @@ var FluidLayout = Layout.$extend({
      *
      * @property horizontalSpacing
      * @type Number
-     * @default 2
+     * @default 0
      */
-    _horizontalSpacing: 2,
+    _horizontalSpacing: 0,
 
     getHorizontalSpacing: function () {
         return this._horizontalSpacing;
@@ -8890,6 +9247,108 @@ var FluidLayout = Layout.$extend({
     setHorizontalSpacing: function (horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
         this._updateLayout();
+    },
+
+    /**
+     * Vertical padding (px).
+     *
+     * @property verticalPadding
+     * @type Number
+     * @default 0
+     */
+    _verticalPadding: 0,
+
+    getVerticalPadding: function () {
+        return this._verticalPadding;
+    },
+
+    setVerticalPadding: function (padding) {
+        this._verticalPadding = padding | 0;
+        this.__html.innerbox.style.paddingLeft = this._verticalPadding + "px";
+        this.__html.innerbox.style.paddingRight = this._verticalPadding + "px";
+    },
+
+    /**
+     * Horizontal padding (px).
+     *
+     * @property horizontalPadding
+     * @type Number
+     * @default 0
+     */
+    _horizontalPadding: 0,
+
+    getHorizontalPadding: function () {
+        return this._horizontalPadding;
+    },
+
+    setHorizontalPadding: function (padding) {
+        this._horizontalPadding = padding | 0;
+        this.__html.innerbox.style.paddingTop = this._horizontalPadding + "px";
+        this.__html.innerbox.style.paddingBottom = this._horizontalPadding + "px";
+    },
+
+    /**
+     * Vertical alignment of children widgets.
+     *
+     * Values:
+     *
+     *     * start|top|begin (default)
+     *     * center|middle
+     *     * end|bottom
+     *
+     * @property verticalAlign
+     * @type String
+     * @default "start"
+     */
+    _verticalAlign: "start",
+
+    getVerticalAlign: function () {
+        return this._verticalAlign;
+    },
+
+    setVerticalAlign: function (align) {
+        if (["start", "top", "begin"].indexOf(align) > -1) {
+            this._verticalAlign = "start";
+            this.__html.innerbox.style.alignContent = "flex-start";
+        } else if (["center", "middle"].indexOf(align) > -1) {
+            this._verticalAlign = "center";
+            this.__html.innerbox.style.alignContent = "center";
+        } else if (["end", "bottom"].indexOf(align) > -1) {
+            this._verticalAlign = "end";
+            this.__html.innerbox.style.alignContent = "flex-end";
+        }
+    },
+
+    /**
+     * Horizontal alignment of children widgets.
+     *
+     * Values:
+     *
+     *     * start|left|begin (default)
+     *     * center|middle
+     *     * end|right
+     *
+     * @property horizontalAlign
+     * @type String
+     * @default "start"
+     */
+    _horizontallAlign: "start",
+
+    getHorizontalAlign: function () {
+        return this._horizontalAlign;
+    },
+
+    setHorizontalAlign: function (align) {
+        if (["start", "left", "begin"].indexOf(align) > -1) {
+            this._horizontalAlign = "start";
+            this.__html.innerbox.style.justifyContent = "flex-start";
+        } else if (["center", "middle"].indexOf(align) > -1) {
+            this._horizontalAlign = "center";
+            this.__html.innerbox.style.justifyContent = "center";
+        } else if (["end", "right"].indexOf(align) > -1) {
+            this._horizontalAlign = "end";
+            this.__html.innerbox.style.justifyContent = "flex-end";
+        }
     },
 
     /**
@@ -8919,6 +9378,9 @@ var FluidLayout = Layout.$extend({
     _buildHtml: function () {
         this.__html.outerbox = document.createElement("div");
         this.__html.outerbox.className = "photonui-widget photonui-fluidlayout";
+        this.__html.innerbox = document.createElement("div");
+        this.__html.innerbox.className = "photonui-fluidlayout-innerbox";
+        this.__html.outerbox.appendChild(this.__html.innerbox);
     },
 
     /**
@@ -8931,18 +9393,127 @@ var FluidLayout = Layout.$extend({
         var children = this.children;
         var fragment = document.createDocumentFragment();
 
+        this.__html.innerbox.style.marginTop = (this.verticalSpacing > 0) ? -this.verticalSpacing + "px" : "0px";
+        this.__html.innerbox.style.marginLeft = (this.horizontalSpacing > 0) ? -this.horizontalSpacing + "px" : "0px";
+
         var div = null;
         for (var i = 0 ; i < children.length ; i++) {
+            var options = this._computeLayoutOptions(children[i]);
+
             div = document.createElement("div");
             div.className = "photonui-container";
-            div.style.padding = "0 " + this.horizontalSpacing + "px " + this.verticalSpacing + "px 0";
+
+            // spacings
+            div.style.marginTop = this.verticalSpacing + "px";
+            div.style.marginLeft = this.horizontalSpacing + "px";
+
+            // layout option: align
+            div.className += " photonui-layout-align-" + options.align;
+
+            // layout options: *width
+            if (options.minWidth !== null) {
+                div.style.minWidth = options.minWidth + "px";
+            }
+            if (options.maxWidth !== null) {
+                div.style.maxWidth = options.maxWidth + "px";
+            }
+            if (options.width !== null) {
+                div.style.width = options.width + "px";
+            }
+
+            // layout options: *height
+            if (options.minHeight !== null) {
+                div.style.minHeight = options.minHeight + "px";
+            }
+            if (options.maxHeight !== null) {
+                div.style.maxHeight = options.maxHeight + "px";
+            }
+            if (options.height !== null) {
+                div.style.height = options.height + "px";
+            }
+
+            // layout options: order
+            if (options.order !== null) {
+                div.style.order = options.order;
+            }
+
             div.appendChild(children[i].html);
             fragment.appendChild(div);
         }
 
-        Helpers.cleanNode(this.__html.outerbox);
-        this.__html.outerbox.appendChild(fragment);
+        Helpers.cleanNode(this.__html.innerbox);
+        this.__html.innerbox.appendChild(fragment);
+    },
+
+    /**
+     * Returns a normalized layoutOption for a given widget.
+     *
+     * @method _computeLayoutOptions
+     * @private
+     * @param {photonui.Widget} widget
+     * @return {Object} the layout options
+     */
+    _computeLayoutOptions: function (widget) {
+        var woptions = widget.layoutOptions || {};
+
+        var options = {
+            order: null,
+            align: "center",   // start|begin|top, center|middle, end|bottom, stretch|expand
+            minWidth: null,
+            maxWidth: null,
+            width: null,
+            minHeight: null,
+            maxHeight: null,
+            height: null
+        };
+
+        // order
+        if (woptions.order !== undefined) {
+            options.order = woptions.order | 0;
+        }
+
+        // align
+        if (woptions.align) {
+            if (["stretch", "expand"].indexOf(woptions.align) > -1) {
+                options.align = "stretch";
+            } else if (["center", "middle"].indexOf(woptions.align) > -1) {
+                options.align = "center";
+            } else if (["start", "begin", "top"].indexOf(woptions.align) > -1) {
+                options.align = "start";
+            } else if (["end", "bottom"].indexOf(woptions.align) > -1) {
+                options.align = "end";
+            }
+        }
+
+        // *width
+        if (woptions.minWidth !== undefined && woptions.minWidth !== null) {
+            options.minWidth = woptions.minWidth | 0;
+        }
+        if (woptions.maxWidth !== undefined && woptions.maxWidth !== null) {
+            options.maxWidth = woptions.maxWidth | 0;
+        }
+        if (woptions.width !== undefined && woptions.width !== null) {
+            options.width = woptions.width | 0;
+            options.minWidth = woptions.width | 0;
+            options.maxWidth = woptions.width | 0;
+        }
+
+        // *height
+        if (woptions.minHeight !== undefined && woptions.minHeight !== null) {
+            options.minHeight = woptions.minHeight | 0;
+        }
+        if (woptions.maxHeight !== undefined && woptions.maxHeight !== null) {
+            options.maxHeight = woptions.maxHeight | 0;
+        }
+        if (woptions.height !== undefined && woptions.height !== null) {
+            options.height = woptions.height | 0;
+            options.minHeight = woptions.height | 0;
+            options.maxHeight = woptions.height | 0;
+        }
+
+        return options;
     }
+
 });
 
 module.exports = FluidLayout;
@@ -11498,6 +12069,40 @@ var MouseManager = Base.$extend({
     },
 
     /**
+     * Translate all position events by a scalar. Use it when the canvas is translated.
+     *
+     * @property translateX
+     * @type Number
+     * @default 0
+     */
+    _translateX: 0,
+
+    getTranslateX: function () {
+        return this._translateX;
+    },
+
+    setTranslateX: function (translateX) {
+        this._translateX = translateX;
+    },
+
+    /**
+     * translate all position events by a scalar. Use it when the canvas is translated.
+     *
+     * @property translateY
+     * @type Number
+     * @default 0
+     */
+    _translateY: 0,
+
+    getTranslateY: function () {
+        return this._translateY;
+    },
+
+    setTranslateY: function (translateY) {
+        this._translateY = translateY;
+    },
+
+    /**
      * X position, relative to page top-left corner.
      *
      * @property pageX
@@ -11530,7 +12135,7 @@ var MouseManager = Base.$extend({
      */
     getX: function () {
         var ex = Helpers.getAbsolutePosition(this.element).x;
-        return (this.pageX - ex) * this.scaleX;
+        return (this.pageX - ex) * this.scaleX + this.translateX;
     },
 
     /**
@@ -11542,7 +12147,7 @@ var MouseManager = Base.$extend({
      */
     getY: function () {
         var ey = Helpers.getAbsolutePosition(this.element).y;
-        return (this.pageY - ey) * this.scaleY;
+        return (this.pageY - ey) * this.scaleY + this.translateY;
     },
 
     /**
@@ -12287,6 +12892,14 @@ var Translation = Base.$extend({
     //////////////////////////////////////////
 
     // ====== Public methods ======
+
+    /**
+     * Find and set the best language for the user (depending on available catalogs and given language list).
+     *
+     * @method setBestMatchingLocale
+     * @param {Array|String} locales Language list (optional, e.g. `"fr"`, `["fr", "fr_FR", "en_US"]`).
+     */
+    setBestMatchingLocale: Stone.setBestMatchingLocale,
 
     /**
      * Add one or more Stone.js catalog (a catalog contain all translated strings for a specific locale).

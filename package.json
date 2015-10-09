@@ -1,6 +1,6 @@
 {
   "name": "photonui",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A javascript framework to create user interfaces",
   "homepage": "http://wanadev.github.io/PhotonUI/",
   "author": "Wanadev (http://wanadev.fr/)",
@@ -28,7 +28,7 @@
   "dependencies": {
     "abitbol": "^1.0.3",
     "keyboardjs": "flozz/KeyboardJS",
-    "stonejs": ">=2.0.0",
+    "stonejs": ">=2.1.0",
     "uuid": "^2.0.1"
   },
   "devDependencies": {

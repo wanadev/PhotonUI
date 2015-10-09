@@ -1,6 +1,5 @@
 demo
 doc
-less
 test
 gruntfile.js
 dist/*.js

@@ -59,6 +59,8 @@ var Slider = NumericField.$extend({
         this._updateProperties(["fieldVisible"]);
 
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
+        this._bindEvent("slider-touchstart", this.__html.slider, "touchstart", this.__onSliderTouchStart.bind(this));
+
         this._bindEvent("slider-keydown", this.__html.slider, "keydown", this.__onSliderKeyDown.bind(this));
         this._bindEvent("slider-mousewheel", this.__html.slider, "mousewheel", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("slider-mousewheel-firefox", this.__html.slider,
@@ -172,6 +174,11 @@ var Slider = NumericField.$extend({
      * @param event
      */
     _updateFromMouseEvent: function (event) {
+        // Prevent reset on touchend.
+        if (typeof(event.pageX) === "undefined") {
+            return;
+        }
+
         var wx = Helpers.getAbsolutePosition(this.__html.slider).x;
         var gw = this.__html.grip.offsetWidth;
         var x = Math.round(event.pageX - wx - gw / 2);
@@ -214,6 +221,61 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-mousemove");
         this._unbindEvent("slider-mouseup");
         this._updateFromMouseEvent(event);
+    },
+
+    /**
+     * @method __onSliderTouchStart
+     * @private
+     * @param event
+     */
+    __onSliderTouchStart: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+        this._bindEvent("slider-touchmove", document, "touchmove", this.__onSliderTouchMove.bind(this));
+        this._bindEvent("slider-touchend", document, "touchend", this.__onSliderTouchEnd.bind(this));
+        this._bindEvent("slider-touchcancel", document, "touchcancel", this.__onSliderTouchEnd.bind(this));
+    },
+
+    /**
+     * @method __onSliderTouchMove
+     * @private
+     * @param event
+     */
+    __onSliderTouchMove: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+    },
+
+    /**
+     * @method __onSliderTouchEnd
+     * @private
+     * @param event
+     */
+    __onSliderTouchEnd: function (event) {
+        this._unbindEvent("slider-touchmove");
+        this._unbindEvent("slider-touchend");
+        this._unbindEvent("slider-touchcancel");
+    },
+
+    /**
+     * Gets the first touch event and normalizes pageX/Y and offsetX/Y properties.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __getTouchEvent: function (event) {
+        if (event.touches && event.touches.length) {
+            event.preventDefault();
+            var evt = event.touches[0];
+            evt.pageX = evt.pageX || evt.clientX;
+            evt.pageY = evt.pageX || evt.clientY;
+
+            var position = Helpers.getAbsolutePosition(event.target);
+            evt.offsetX = evt.offsetX || evt.pageX - position.x;
+            evt.offsetY = evt.offsetY || evt.pageY - position.y;
+            return evt;
+        }
+
+        return event;
     },
 
     /*

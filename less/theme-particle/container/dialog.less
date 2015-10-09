@@ -30,8 +30,10 @@
 
 
 .photonui-dialog-buttons {
+
     padding: 6px 5px 5px 5px;
     text-align: right;
+    box-sizing: border-box;
 
     box-shadow: @shadow-dialog-buttonsarea;
     background: @color-dialog-buttonsarea-background;
@@ -41,6 +43,23 @@
 
         &:first-child {
             margin-left: 0;
+        }
+    }
+}
+
+.photonui-window.photonui-dialog {
+    @titlebar-height: 40px;
+    @buttonbar-height: 55px;
+
+    &.photonui-window-fullscreen {
+        .photonui-window-content {
+            height: ~"calc(100% - " @buttonbar-height ~" - " @titlebar-height ~")" !important;
+            min-height: ~"calc(100% - " @buttonbar-height ~" - " @titlebar-height ~")" !important;
+            max-height: ~"calc(100% - " @buttonbar-height ~" - " @titlebar-height ~")" !important;
+        }
+
+        .photonui-dialog-buttons {
+            height: @buttonbar-height;
         }
     }
 }

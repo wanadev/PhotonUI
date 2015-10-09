@@ -148,6 +148,15 @@ Once you feel comfortable with the custom widget creation, you can create widget
 
 ## Changelog:
 
+* **1.2.0:**
+  * TabItem can now have icons
+  * Touch support on Window and Slider
+  * Window: fullscreen option added
+  * Fixes "click" wEvent triggered twice on ToggleButton (issue #17)
+  * Translation abstraction added to MouseManager
+  * FluidLayout: re-implemented using CSS flexbox, new properties and layoutOptions available,
+  * Stone.js updated
+
 * **1.1.0:**
   * Classy replaced by Abitbol
   * Scaling support added to MouseManager
