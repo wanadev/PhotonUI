@@ -189,7 +189,7 @@ var FluidLayout = Layout.$extend({
      * @type String
      * @default "start"
      */
-    _horizontallAlign: "start",
+    _horizontalAlign: "start",
 
     getHorizontalAlign: function () {
         return this._horizontalAlign;

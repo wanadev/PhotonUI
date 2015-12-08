@@ -148,6 +148,9 @@ Once you feel comfortable with the custom widget creation, you can create widget
 
 ## Changelog:
 
+* **1.2.1:**
+    * Fixes minor display issues
+
 * **1.2.0:**
   * TabItem can now have icons
   * Touch support on Window and Slider
