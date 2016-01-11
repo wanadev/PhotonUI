@@ -29,8 +29,33 @@
  */
 
 
+.photonui-widget {
+    display: inline-block;
+    box-sizing: border-box;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+}
 
-// Variables
-@import "variables.less";
-@import "imports.less";
+.photonui-container-expand-child-horizontal > .photonui-widget:not(.photonui-widget-fixed-width),
+.photonui-container-expand-child > .photonui-widget:not(.photonui-widget-fixed-width) {
+    width: 100% !important;
+}
+
+.photonui-container-expand-child-vertical > .photonui-widget:not(.photonui-widget-fixed-height),
+.photonui-container-expand-child > .photonui-widget:not(.photonui-widget-fixed-height) {
+    height: 100% !important;
+}
+
+
+/** Reset some unwanted things **/
+
+.photonui-widget button::-moz-focus-inner,
+.photonui-widget input[type="submit"]::-moz-focus-inner,
+button.photonui-widget::-moz-focus-inner,
+input[type="submit"].photonui-widget::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
 
