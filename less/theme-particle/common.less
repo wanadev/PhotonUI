@@ -29,8 +29,34 @@
  */
 
 
+// Selection
+.photonui-widget {
 
-// Variables
-@import "variables.less";
-@import "imports.less";
+    color: @color-text;
+
+    &::selection {
+        background: @color-highlight-background;
+        color: @color-highlight-text;
+    }
+
+    &::-moz-selection {
+        background: @color-highlight-background;
+        color: @color-highlight-text;
+    }
+
+    &::-o-selection {
+        background: @color-highlight-background;
+        color: @color-highlight-text;
+    }
+
+    &::-ms-selection {
+        background: @color-highlight-background;
+        color: @color-highlight-text;
+    }
+
+    &::-webkit-selection {
+        background: @color-highlight-background;
+        color: @color-highlight-text;
+    }
+}
 

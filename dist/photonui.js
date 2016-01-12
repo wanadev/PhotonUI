@@ -3871,21 +3871,6 @@ var Container = Widget.$extend({
         return null;
     },
 
-    /**
-     * Called when the visibility changes.
-     *
-     * @method _visibilityChanged
-     * @private
-     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
-     */
-    _visibilityChanged: function (visibility) {
-        visibility = (visibility !== undefined) ? visibility : this.visible;
-        if (this.child instanceof Widget) {
-            this.child._visibilityChanged(visibility);
-        }
-        this.$super(visibility);
-    },
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -3914,7 +3899,25 @@ var Container = Widget.$extend({
             this.child.destroy();
         }
         this.$super();
-    }
+    },
+
+    // ====== Private methods ======
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function (visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (this.child instanceof Widget) {
+            this.child._visibilityChanged(visibility);
+        }
+        this.$super(visibility);
+    },
+
 });
 
 module.exports = Container;
@@ -10123,6 +10126,7 @@ var GridLayout = Layout.$extend({
 
             // 1st pass -> height: auto
             for (var i = 0 ; i < nodes.length ; i++) {
+                //nodes[i].children[0].style.height = "auto";
                 nodes[i].style.height = "auto";
             }
 
@@ -10140,6 +10144,13 @@ var GridLayout = Layout.$extend({
                     continue;
                 }
                 _size(nodes[i]);
+            }
+
+            // 4th pass -> HACK to force reflow on Gecko... T_T
+            for (i = 0 ; i < nodes.length ; i++) {
+                nodes[i].style.borderBottom = "transparent solid 1px";
+                var foo = nodes[i].offsetHeight;
+                nodes[i].style.borderBottom = "transparent solid 0px";
             }
 
             this._updatingLayout = false;
