@@ -3884,7 +3884,7 @@ var Container = Widget.$extend({
      * @param {photonui.Widget} widget The widget to remove/
      */
     removeChild: function (widget) {
-        if (this.child == widget) {
+        if (this.child === widget) {
             this.child = null;
         }
     },
