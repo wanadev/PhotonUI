@@ -1365,7 +1365,7 @@ module.exports = extractAnnotations;
 
 },{}],4:[function(require,module,exports){
 /*
- * Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
+ * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1392,40 +1392,91 @@ module.exports = extractAnnotations;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+"use strict";
 
-var catalogs = {};
-var locale = null;
+var _gettext = require("./gettext.js").gettext;
+
 var domScan = false;
 
-function LazyString(string, replacements) {
-    this.toString = gettext.bind(this, string, replacements);
+function updateDomTranslation() {
+    if (!domScan) {
+        return;
+    }
+    var elements = document.getElementsByTagName("*");
+    var params = null;
+    var attrs = null;
+    var i = 0;
+    var j = 0;
+    for (i = 0 ; i < elements.length ; i++) {
+        if (elements[i].hasAttribute("stonejs")) {
+            // First pass
+            if (!elements[i].hasAttribute("stonejs-orig-string")) {
+                elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
+            }
 
-    var props = Object.getOwnPropertyNames(String.prototype);
-    for (var i=0 ; i<props.length ; i++) {
-        if (props[i] == "toString") continue;
-        if (typeof(String.prototype[props[i]]) == "function") {
-            this[props[i]] = function() {
-                var translatedString = this.self.toString();
-                return translatedString[this.prop].apply(translatedString, arguments);
-            }.bind({self: this, prop: props[i]});
-        }
-        else {
-            Object.defineProperty(this, props[i], {
-                get: function() {
-                    var translatedString = this.self.toString();
-                    return translatedString[this.prop]
-                }.bind({self: this, prop: props[i]}),
-                enumerable: false,
-                configurable: false
-            });
+            params = {};
+            attrs = elements[i].attributes;
+            for (j = 0 ; j < attrs.length ; j++) {
+                if (attrs[j].name.indexOf("stonejs-param-") === 0) {
+                    params[attrs[j].name.substr(14)] = attrs[j].value;
+                }
+            }
+
+            elements[i].innerHTML = _gettext(elements[i].getAttribute("stonejs-orig-string"), params);
         }
     }
 }
 
+function enableDomScan(enable) {
+    domScan = Boolean(enable);
+    updateDomTranslation();
+}
+
+module.exports = {
+    enableDomScan: enableDomScan,
+    updateDomTranslation: updateDomTranslation
+};
+
+},{"./gettext.js":5}],5:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of the author nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+"use strict";
+
+var helpers = require("./helpers.js");
+
+var catalogs = {};
+var locale = null;
+
 function gettext(string, replacements) {
     var result = string;
 
-    if (locale && catalogs[locale] && catalogs[locale].messages[string] &&
+    if (locale && catalogs[locale] && catalogs[locale].messages && catalogs[locale].messages[string] &&
         catalogs[locale].messages[string].length > 0 && catalogs[locale].messages[string][0] !== "") {
         result = catalogs[locale].messages[string][0];
     }
@@ -1437,6 +1488,32 @@ function gettext(string, replacements) {
     }
 
     return result;
+}
+
+function LazyString(string, replacements) {
+    this.toString = gettext.bind(this, string, replacements);
+
+    var props = Object.getOwnPropertyNames(String.prototype);
+    for (var i = 0 ; i < props.length ; i++) {
+        if (props[i] == "toString") {
+            continue;
+        }
+        if (typeof(String.prototype[props[i]]) == "function") {
+            this[props[i]] = function () {
+                var translatedString = this.self.toString();
+                return translatedString[this.prop].apply(translatedString, arguments);
+            }.bind({self: this, prop: props[i]});
+        } else {
+            Object.defineProperty(this, props[i], {
+                get: function () {
+                    var translatedString = this.self.toString();
+                    return translatedString[this.prop];
+                }.bind({self: this, prop: props[i]}),
+                enumerable: false,
+                configurable: false
+            });
+        }
+    }
 }
 
 function lazyGettext(string, replacements) {
@@ -1455,39 +1532,161 @@ function getLocale() {
 
 function setLocale(l) {
     locale = l;
-    if (domScan) {
-        updateDomTranslation();
-    }
-    _sendEvent("stonejs-locale-changed");
 }
 
-function guessUserLanguage() {
-    var lang = navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || null;
-
-    if (lang) {
-        lang = lang.toLowerCase();
+function setBestMatchingLocale(l) {
+    if (!l) {
+        l = helpers.extractLanguages();
+    }
+    if (!Array.isArray(l)) {
+        l = [l];
     }
 
-    if (lang && lang.length > 3) {
-        lang = lang.split(";")[0];
-        lang = lang.split(",")[0];
-        lang = lang.split("-")[0];
-        lang = lang.split("_")[0];
-        if (lang.length > 3) {
-            lang = null;
+    var buff;
+
+    var availableCatalogs = Object.keys(catalogs);
+    var refCatalogs = [];
+    for (var i = 0 ; i < availableCatalogs.length ; i++) {
+        buff = helpers.parseLanguageCode(availableCatalogs[i]);
+        buff.cat = availableCatalogs[i];
+        refCatalogs.push(buff);
+    }
+
+    var locales = [];
+    for (i = 0 ; i < l.length ; i++) {
+        locales.push(helpers.parseLanguageCode(l[i]));
+    }
+
+    function _match(lang, lect, catalogList) {
+        if (lang === null) {
+            return null;
+        }
+        for (var i = 0 ; i < catalogList.length ; i++) {
+            if (lect == "*" && catalogList[i].lang === lang) {
+                return catalogList[i];
+            } else if (catalogList[i].lang === lang && catalogList[i].lect === lect) {
+                return catalogList[i];
+            }
         }
     }
 
-    return lang || "en";
+    // 1. Exact matching (with locale+lect > locale)
+    var bestMatchingLocale = null;
+    var indexMatch = 0;
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, locales[i].lect, refCatalogs);
+        if (buff && (!bestMatchingLocale)) {
+            bestMatchingLocale = buff;
+            indexMatch = i;
+        } else if (buff && bestMatchingLocale &&
+                   buff.lang === bestMatchingLocale.lang &&
+                   bestMatchingLocale.lect === null && buff.lect !== null) {
+            bestMatchingLocale = buff;
+            indexMatch = i;
+        }
+        if (bestMatchingLocale && bestMatchingLocale.lang && bestMatchingLocale.lect) {
+            break;
+        }
+    }
+
+    // 2. Fuzzy matching of locales without lect (fr_FR == fr)
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, null, refCatalogs);
+        if (buff) {
+            if ((!bestMatchingLocale) || bestMatchingLocale && indexMatch >= i &&
+                bestMatchingLocale.lang !== buff.lang) {
+                setLocale(buff.cat);
+                return;
+            }
+        }
+    }
+
+    // 3. Fuzzy matching with ref lect (fr_* == fr_FR)
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, locales[i].lang, refCatalogs);
+        if (buff) {
+            if ((!bestMatchingLocale) || bestMatchingLocale && indexMatch >= i &&
+                bestMatchingLocale.lang !== buff.lang) {
+                setLocale(buff.cat);
+                return;
+            }
+        }
+    }
+
+    // 1.5 => set the language found at step 1 if there is nothing better
+    if (bestMatchingLocale) {
+        setLocale(bestMatchingLocale.cat);
+        return;
+    }
+
+    // 4. Fuzzy matching of any lect (fr_* == fr_*)
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, "*", refCatalogs);
+        if (buff) {
+            setLocale(buff.cat);
+            return;
+        }
+    }
+
+    // 5. Nothing matches... maybe the given locales are invalide... try to match with catalogs
+    for (i = 0 ; i < l.length ; i++) {
+        if (catalogs[l[i]]) {
+            setLocale(l[i]);
+            return;
+        }
+    }
+
+    // 6. Nothing matches... lang = c;
+    setLocale("c");
 }
 
-function _sendEvent(name, data) {
-    var data = data || {};
+module.exports = {
+    LazyString: LazyString,
+    gettext: gettext,
+    lazyGettext: lazyGettext,
+    addCatalogs: addCatalogs,
+    getLocale: getLocale,
+    setLocale: setLocale,
+    setBestMatchingLocale: setBestMatchingLocale
+};
+
+},{"./helpers.js":6}],6:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of the author nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+"use strict";
+
+function sendEvent(name, data) {
+    data = data || {};
     var ev = null;
     try {
         ev = new Event(name);
-    }
-    catch (e) {
+    } catch (e) {
         // The old-fashioned way... THANK YOU MSIE!
         ev = document.createEvent("Event");
         ev.initEvent(name, true, false);
@@ -1498,59 +1697,161 @@ function _sendEvent(name, data) {
     document.dispatchEvent(ev);
 }
 
+// fr -> {lang: "fr", lect: null, q: 1}
+// fr_FR, fr-fr -> {lang: "fr", lect: "fr", q: 1}
+// fr_FR;q=0.8, fr-fr;q=0.8 -> {lang: "fr", lect: "fr", q: 0.8}
+function parseLanguageCode(lang) {
+    lang = lang.toLowerCase().replace(/-/g, "_");
+    var result = {lang: null, lect: null, q: 1};
+    var buff = "";
+
+    if (lang.indexOf(";") > -1) {
+        buff = lang.split(";");
+        if (buff.length == 2 && buff[1].match(/^q=(1|0\.[0-9]+)$/)) {
+            result.q = parseFloat(buff[1].split("=")[1]);
+        }
+        buff = buff[0] || "";
+    } else {
+        buff = lang;
+    }
+
+    if (buff.indexOf("_") > -1) {
+        buff = buff.split("_");
+        if (buff.length == 2) {
+            if (buff[0].length == 2) {
+                result.lang = buff[0];
+                if (buff[1].length == 2) {
+                    result.lect = buff[1];
+                }
+            }
+        } else if (buff[0].length == 2) {
+            result = buff[0];
+        }
+    } else if (buff.length == 2) {
+        result.lang = buff;
+    }
+
+    return result;
+}
+
+function extractLanguages(languageString) {
+    if (languageString === undefined) {
+        languageString = navigator.language || navigator.userLanguage ||
+            navigator.systemLanguage || navigator.browserLanguage;
+    }
+    if (!languageString || languageString === "") {
+        return ["en"];
+    }
+
+    var langs = [];
+    var rawLangs = languageString.split(",");
+    var buff;
+
+    // extract langs
+    var lang;
+    for (var i = 0 ; i < rawLangs.length ; i++) {
+        lang = parseLanguageCode(rawLangs[i]);
+        if (lang.lang) {
+            langs.push(lang);
+        }
+    }
+
+    // Empty list
+    if (langs.length === 0) {
+        return ["en"];
+    }
+
+    // Sort languages by priority
+    langs = langs.sort(function (a, b) {
+        return b.q - a.q;
+    });
+
+    // Generates final list
+    var result = [];
+
+    for (i = 0 ; i < langs.length ; i++) {
+        buff = langs[i].lang;
+        if (langs[i].lect) {
+            buff += "_";
+            buff += langs[i].lect.toUpperCase();
+        }
+        result.push(buff);
+    }
+
+    return result;
+}
+
+module.exports = {
+    sendEvent: sendEvent,
+    parseLanguageCode: parseLanguageCode,
+    extractLanguages: extractLanguages
+};
+
+},{}],7:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of the author nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+"use strict";
+
+var helpers = require("./helpers.js");
+var gettext = require("./gettext.js");
+var dom = require("./dom.js");
+
+function guessUserLanguage() {
+    return helpers.extractLanguages()[0];
+}
+
+function setLocale(l) {
+    gettext.setLocale(l);
+    dom.updateDomTranslation();
+    helpers.sendEvent("stonejs-locale-changed");
+}
+
 function _autoloadCatalogs(event) {
-    addCatalogs(event.catalog);
+    gettext.addCatalogs(event.catalog);
 }
 
 document.addEventListener("stonejs-autoload-catalogs", _autoloadCatalogs, true);
 
-function enableDomScan(enable) {
-    domScan = !!enable;
-    if (domScan) {
-        updateDomTranslation();
-    }
-}
-
-function updateDomTranslation() {
-    var elements = document.getElementsByTagName("*");
-    var params = null;
-    var attrs = null;
-    var i = 0;
-    var j = 0;
-    for (i=0 ; i<elements.length ; i++) {
-        if (elements[i].hasAttribute("stonejs")) {
-            // First pass
-            if (!elements[i].hasAttribute("stonejs-orig-string")) {
-                elements[i].setAttribute("stonejs-orig-string", elements[i].innerHTML);
-            }
-
-            params = {};
-            attrs = elements[i].attributes;
-            for (j=0 ; j<attrs.length ; j++) {
-                if (attrs[j].name.indexOf("stonejs-param-") == 0) {
-                    params[attrs[j].name.substr(14)] = attrs[j].value;
-                }
-            }
-
-            __gettext = gettext;  // Avoid false detection
-            elements[i].innerHTML = __gettext(elements[i].getAttribute("stonejs-orig-string"), params);
-        }
-    }
-}
-
 module.exports = {
-    LazyString: LazyString,
-    gettext: gettext,
-    lazyGettext: lazyGettext,
-    addCatalogs: addCatalogs,
-    getLocale: getLocale,
+    LazyString: gettext.LazyString,
+    gettext: gettext.gettext,
+    lazyGettext: gettext.lazyGettext,
+    addCatalogs: gettext.addCatalogs,
+    getLocale: gettext.getLocale,
     setLocale: setLocale,
+    setBestMatchingLocale: gettext.setBestMatchingLocale,
     guessUserLanguage: guessUserLanguage,
-    enableDomScan: enableDomScan,
-    updateDomTranslation: updateDomTranslation
+    enableDomScan: dom.enableDomScan,
+    updateDomTranslation: dom.updateDomTranslation
 };
 
-},{}],5:[function(require,module,exports){
+},{"./dom.js":4,"./gettext.js":5,"./helpers.js":6}],8:[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -1585,7 +1886,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -1770,7 +2071,7 @@ uuid.unparse = unparse;
 
 module.exports = uuid;
 
-},{"./rng":5}],7:[function(require,module,exports){
+},{"./rng":8}],10:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -1839,7 +2140,7 @@ var Base = Class.$extend({
         // Apply params
         params = params || {};
         for (var param in params) {
-            if (this[param] !== undefined) {
+            if (this.$map.computedProperties[param]) {
                 this[param] = params[param];
             }
         }
@@ -2045,7 +2346,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":22,"abitbol":1,"uuid":6}],8:[function(require,module,exports){
+},{"./helpers.js":25,"abitbol":1,"uuid":9}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2307,7 +2608,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":17,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../layout/boxlayout.js":34,"../nonvisual/color.js":41,"./colorpickerdialog.js":9,"stonejs":4}],9:[function(require,module,exports){
+},{"../container/popupwindow.js":20,"../interactive/button.js":26,"../interactive/colorpalette.js":28,"../layout/boxlayout.js":37,"../nonvisual/color.js":44,"./colorpickerdialog.js":12,"stonejs":7}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2693,7 +2994,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":15,"../interactive/button.js":23,"../interactive/colorpalette.js":25,"../interactive/colorpicker.js":26,"../interactive/slider.js":29,"../layout/boxlayout.js":34,"../layout/gridlayout.js":36,"../nonvisual/color.js":41,"../visual/faicon.js":49,"../visual/label.js":51,"../visual/separator.js":53,"stonejs":4}],10:[function(require,module,exports){
+},{"../container/dialog.js":18,"../interactive/button.js":26,"../interactive/colorpalette.js":28,"../interactive/colorpicker.js":29,"../interactive/slider.js":32,"../layout/boxlayout.js":37,"../layout/gridlayout.js":39,"../nonvisual/color.js":44,"../visual/faicon.js":52,"../visual/label.js":54,"../visual/separator.js":56,"stonejs":7}],13:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2828,7 +3129,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":16,"./select.js":12,"stonejs":4}],11:[function(require,module,exports){
+},{"../container/menuitem.js":19,"./select.js":15,"stonejs":7}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2946,7 +3247,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":17,"../layout/menu.js":38}],12:[function(require,module,exports){
+},{"../container/popupwindow.js":20,"../layout/menu.js":41}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3325,7 +3626,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":16,"../helpers.js":22,"../widget.js":56,"./popupmenu.js":11,"stonejs":4}],13:[function(require,module,exports){
+},{"../container/menuitem.js":19,"../helpers.js":25,"../widget.js":59,"./popupmenu.js":14,"stonejs":7}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3695,7 +3996,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":56,"./container.js":14}],14:[function(require,module,exports){
+},{"../widget.js":59,"./container.js":17}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3922,7 +4223,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":56}],15:[function(require,module,exports){
+},{"../widget.js":59}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4173,7 +4474,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":22,"../widget.js":56,"./window.js":21}],16:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":59,"./window.js":24}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4403,7 +4704,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":22,"../visual/baseicon.js":47,"../widget.js":56,"./container.js":14}],17:[function(require,module,exports){
+},{"../helpers.js":25,"../visual/baseicon.js":50,"../widget.js":59,"./container.js":17}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4576,7 +4877,7 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":13}],18:[function(require,module,exports){
+},{"./basewindow.js":16}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4725,7 +5026,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":38,"../widget.js":56,"./menuitem.js":16}],19:[function(require,module,exports){
+},{"../layout/menu.js":41,"../widget.js":59,"./menuitem.js":19}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5102,7 +5403,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":22,"../visual/baseicon.js":47,"../widget.js":56,"./container.js":14}],20:[function(require,module,exports){
+},{"../helpers.js":25,"../visual/baseicon.js":50,"../widget.js":59,"./container.js":17}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5490,7 +5791,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":22,"./container.js":14}],21:[function(require,module,exports){
+},{"../helpers.js":25,"./container.js":17}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5982,7 +6283,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":22,"../widget.js":56,"./basewindow.js":13,"stonejs":4}],22:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":59,"./basewindow.js":16,"stonejs":7}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6177,7 +6478,7 @@ Helpers.log = function (level, message) {
 
 module.exports = Helpers;
 
-},{"uuid":6}],23:[function(require,module,exports){
+},{"uuid":9}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6594,7 +6895,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":22,"../visual/baseicon.js":47,"../widget.js":56}],24:[function(require,module,exports){
+},{"../helpers.js":25,"../visual/baseicon.js":50,"../widget.js":59}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6776,7 +7077,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":56}],25:[function(require,module,exports){
+},{"../widget.js":59}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6980,7 +7281,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":22,"../nonvisual/color.js":41,"../widget.js":56}],26:[function(require,module,exports){
+},{"../helpers.js":25,"../nonvisual/color.js":44,"../widget.js":59}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7498,7 +7799,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":22,"../nonvisual/color.js":41,"../nonvisual/mousemanager.js":43,"../widget.js":56}],27:[function(require,module,exports){
+},{"../helpers.js":25,"../nonvisual/color.js":44,"../nonvisual/mousemanager.js":46,"../widget.js":59}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7688,7 +7989,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":56}],28:[function(require,module,exports){
+},{"../widget.js":59}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8054,7 +8355,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":27}],29:[function(require,module,exports){
+},{"./field.js":30}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8412,7 +8713,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":22,"./numericfield.js":28}],30:[function(require,module,exports){
+},{"../helpers.js":25,"./numericfield.js":31}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8472,7 +8773,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":24}],31:[function(require,module,exports){
+},{"./checkbox.js":27}],34:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8586,7 +8887,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":27}],32:[function(require,module,exports){
+},{"./field.js":30}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8700,7 +9001,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":27}],33:[function(require,module,exports){
+},{"./field.js":30}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8795,7 +9096,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":23,"./checkbox.js":24}],34:[function(require,module,exports){
+},{"./button.js":26,"./checkbox.js":27}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9143,7 +9444,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":22,"./layout.js":37}],35:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":40}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9521,7 +9822,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":22,"./layout.js":37}],36:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":40}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10165,7 +10466,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":22,"./layout.js":37}],37:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":40}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10451,7 +10752,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":14,"../widget.js":56}],38:[function(require,module,exports){
+},{"../container/container.js":17,"../widget.js":59}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10591,7 +10892,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":22,"./layout.js":37}],39:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":40}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10891,7 +11192,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":19,"../helpers.js":22,"../widget.js":56,"./layout.js":37}],40:[function(require,module,exports){
+},{"../container/tabitem.js":22,"../helpers.js":25,"../widget.js":59,"./layout.js":40}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11054,7 +11355,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":7,"keyboardjs":3}],41:[function(require,module,exports){
+},{"../base.js":10,"keyboardjs":3}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11541,7 +11842,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":7}],42:[function(require,module,exports){
+},{"../base.js":10}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11857,7 +12158,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":7}],43:[function(require,module,exports){
+},{"../base.js":10}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12582,7 +12883,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":7,"../helpers.js":22,"../widget.js":56}],44:[function(require,module,exports){
+},{"../base.js":10,"../helpers.js":25,"../widget.js":59}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12808,7 +13109,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":7}],45:[function(require,module,exports){
+},{"../base.js":10}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12983,7 +13284,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":7,"stonejs":4}],46:[function(require,module,exports){
+},{"../base.js":10,"stonejs":7}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13092,7 +13393,7 @@ photonui.TabLayout = require("./layout/tablayout.js");
 
 module.exports = photonui;
 
-},{"./base.js":7,"./composite/colorbutton.js":8,"./composite/colorpickerdialog.js":9,"./composite/fontselect.js":10,"./composite/popupmenu.js":11,"./composite/select.js":12,"./container/basewindow.js":13,"./container/container.js":14,"./container/dialog.js":15,"./container/menuitem.js":16,"./container/popupwindow.js":17,"./container/submenuitem.js":18,"./container/tabitem.js":19,"./container/viewport.js":20,"./container/window.js":21,"./helpers.js":22,"./interactive/button.js":23,"./interactive/checkbox.js":24,"./interactive/colorpalette.js":25,"./interactive/colorpicker.js":26,"./interactive/field.js":27,"./interactive/numericfield.js":28,"./interactive/slider.js":29,"./interactive/switch.js":30,"./interactive/textareafield.js":31,"./interactive/textfield.js":32,"./interactive/togglebutton.js":33,"./layout/boxlayout.js":34,"./layout/fluidlayout.js":35,"./layout/gridlayout.js":36,"./layout/layout.js":37,"./layout/menu.js":38,"./layout/tablayout.js":39,"./nonvisual/accelmanager.js":40,"./nonvisual/color.js":41,"./nonvisual/filemanager.js":42,"./nonvisual/mousemanager.js":43,"./nonvisual/spritesheet.js":44,"./nonvisual/translation.js":45,"./visual/baseicon.js":47,"./visual/canvas.js":48,"./visual/faicon.js":49,"./visual/image.js":50,"./visual/label.js":51,"./visual/progressbar.js":52,"./visual/separator.js":53,"./visual/spriteicon.js":54,"./visual/text.js":55,"./widget.js":56,"abitbol":1,"keyboardjs":3,"stonejs":4,"uuid":6}],47:[function(require,module,exports){
+},{"./base.js":10,"./composite/colorbutton.js":11,"./composite/colorpickerdialog.js":12,"./composite/fontselect.js":13,"./composite/popupmenu.js":14,"./composite/select.js":15,"./container/basewindow.js":16,"./container/container.js":17,"./container/dialog.js":18,"./container/menuitem.js":19,"./container/popupwindow.js":20,"./container/submenuitem.js":21,"./container/tabitem.js":22,"./container/viewport.js":23,"./container/window.js":24,"./helpers.js":25,"./interactive/button.js":26,"./interactive/checkbox.js":27,"./interactive/colorpalette.js":28,"./interactive/colorpicker.js":29,"./interactive/field.js":30,"./interactive/numericfield.js":31,"./interactive/slider.js":32,"./interactive/switch.js":33,"./interactive/textareafield.js":34,"./interactive/textfield.js":35,"./interactive/togglebutton.js":36,"./layout/boxlayout.js":37,"./layout/fluidlayout.js":38,"./layout/gridlayout.js":39,"./layout/layout.js":40,"./layout/menu.js":41,"./layout/tablayout.js":42,"./nonvisual/accelmanager.js":43,"./nonvisual/color.js":44,"./nonvisual/filemanager.js":45,"./nonvisual/mousemanager.js":46,"./nonvisual/spritesheet.js":47,"./nonvisual/translation.js":48,"./visual/baseicon.js":50,"./visual/canvas.js":51,"./visual/faicon.js":52,"./visual/image.js":53,"./visual/label.js":54,"./visual/progressbar.js":55,"./visual/separator.js":56,"./visual/spriteicon.js":57,"./visual/text.js":58,"./widget.js":59,"abitbol":1,"keyboardjs":3,"stonejs":7,"uuid":9}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13160,7 +13461,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":56}],48:[function(require,module,exports){
+},{"../widget.js":59}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13440,7 +13741,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":56}],49:[function(require,module,exports){
+},{"../widget.js":59}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13611,7 +13912,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":47}],50:[function(require,module,exports){
+},{"./baseicon.js":50}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13766,7 +14067,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":56}],51:[function(require,module,exports){
+},{"../widget.js":59}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13974,7 +14275,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":22,"../widget.js":56}],52:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":59}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14202,7 +14503,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":56}],53:[function(require,module,exports){
+},{"../widget.js":59}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14343,7 +14644,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":56}],54:[function(require,module,exports){
+},{"../widget.js":59}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14525,7 +14826,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":44,"./baseicon.js":47}],55:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":47,"./baseicon.js":50}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14671,7 +14972,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":22,"../widget.js":56,"stonejs":4}],56:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":59,"stonejs":7}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -15183,5 +15484,5 @@ Widget.domInsert = function (widget, element) {
 
 module.exports = Widget;
 
-},{"./base.js":7,"./container/popupwindow.js":17,"./helpers.js":22,"stonejs":4,"uuid":6}]},{},[46])(46)
+},{"./base.js":10,"./container/popupwindow.js":20,"./helpers.js":25,"stonejs":7,"uuid":9}]},{},[49])(49)
 });

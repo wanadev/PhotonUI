@@ -66,7 +66,7 @@ var Base = Class.$extend({
         // Apply params
         params = params || {};
         for (var param in params) {
-            if (this[param] !== undefined) {
+            if (this.$map.computedProperties[param]) {
                 this[param] = params[param];
             }
         }
