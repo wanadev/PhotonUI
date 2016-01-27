@@ -285,9 +285,9 @@ describe("photonui.GridLayout (layoutOptons)", function() {
             expect(this.w8.offsetWidth).toBeAlmostEqualTo(100);
             expect(this.w9.offsetWidth).toBeAlmostEqualTo(100);
 
-            expect(this.w1.offsetHeight + this.w4.offsetHeight + this.w7.offsetHeight).toBeAlmostEqualTo(300);
-            expect(this.w2.offsetHeight + this.w5.offsetHeight + this.w8.offsetHeight).toBeAlmostEqualTo(300);
-            expect(this.w3.offsetHeight + this.w6.offsetHeight + this.w9.offsetHeight).toBeAlmostEqualTo(300);
+            expect(this.w1.offsetHeight + this.w4.offsetHeight + this.w7.offsetHeight).toBeAlmostEqualTo(300, 3);
+            expect(this.w2.offsetHeight + this.w5.offsetHeight + this.w8.offsetHeight).toBeAlmostEqualTo(300, 3);
+            expect(this.w3.offsetHeight + this.w6.offsetHeight + this.w9.offsetHeight).toBeAlmostEqualTo(300, 3);
 
             done();
         }.bind(this);
@@ -366,7 +366,7 @@ describe("photonui.GridLayout (layoutOptons)", function() {
             expect(photonui.Helpers.getAbsolutePosition(this.w2.html).y).toBeLessThan(areaPos.y + 300 - this.w2.offsetHeight - this.w5.offsetHeight - this.w8.offsetHeight);
 
             expect(this.w3.offsetHeight + this.w6.offsetHeight + this.w9.offsetHeight).toBeLessThan(300);
-            expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toBeAlmostEqualTo(areaPos.y + 300 - this.w3.offsetHeight - this.w6.offsetHeight - this.w9.offsetHeight);
+            expect(photonui.Helpers.getAbsolutePosition(this.w3.html).y).toBeAlmostEqualTo(areaPos.y + 300 - this.w3.offsetHeight - this.w6.offsetHeight - this.w9.offsetHeight, 3);
 
             done();
         }.bind(this);
