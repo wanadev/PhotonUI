@@ -2608,7 +2608,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":20,"../interactive/button.js":26,"../interactive/colorpalette.js":28,"../layout/boxlayout.js":37,"../nonvisual/color.js":44,"./colorpickerdialog.js":12,"stonejs":7}],12:[function(require,module,exports){
+},{"../container/popupwindow.js":20,"../interactive/button.js":26,"../interactive/colorpalette.js":28,"../layout/boxlayout.js":38,"../nonvisual/color.js":45,"./colorpickerdialog.js":12,"stonejs":7}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -2994,7 +2994,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":18,"../interactive/button.js":26,"../interactive/colorpalette.js":28,"../interactive/colorpicker.js":29,"../interactive/slider.js":32,"../layout/boxlayout.js":37,"../layout/gridlayout.js":39,"../nonvisual/color.js":44,"../visual/faicon.js":52,"../visual/label.js":54,"../visual/separator.js":56,"stonejs":7}],13:[function(require,module,exports){
+},{"../container/dialog.js":18,"../interactive/button.js":26,"../interactive/colorpalette.js":28,"../interactive/colorpicker.js":29,"../interactive/slider.js":33,"../layout/boxlayout.js":38,"../layout/gridlayout.js":40,"../nonvisual/color.js":45,"../visual/faicon.js":53,"../visual/label.js":55,"../visual/separator.js":57,"stonejs":7}],13:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3247,7 +3247,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":20,"../layout/menu.js":41}],15:[function(require,module,exports){
+},{"../container/popupwindow.js":20,"../layout/menu.js":42}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3626,7 +3626,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":19,"../helpers.js":25,"../widget.js":59,"./popupmenu.js":14,"stonejs":7}],16:[function(require,module,exports){
+},{"../container/menuitem.js":19,"../helpers.js":25,"../widget.js":60,"./popupmenu.js":14,"stonejs":7}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -3996,7 +3996,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":59,"./container.js":17}],17:[function(require,module,exports){
+},{"../widget.js":60,"./container.js":17}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4223,7 +4223,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":59}],18:[function(require,module,exports){
+},{"../widget.js":60}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4474,7 +4474,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":25,"../widget.js":59,"./window.js":24}],19:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":60,"./window.js":24}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4704,7 +4704,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":25,"../visual/baseicon.js":50,"../widget.js":59,"./container.js":17}],20:[function(require,module,exports){
+},{"../helpers.js":25,"../visual/baseicon.js":51,"../widget.js":60,"./container.js":17}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5026,7 +5026,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":41,"../widget.js":59,"./menuitem.js":19}],22:[function(require,module,exports){
+},{"../layout/menu.js":42,"../widget.js":60,"./menuitem.js":19}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -5403,7 +5403,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":25,"../visual/baseicon.js":50,"../widget.js":59,"./container.js":17}],23:[function(require,module,exports){
+},{"../helpers.js":25,"../visual/baseicon.js":51,"../widget.js":60,"./container.js":17}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6283,7 +6283,7 @@ var Window = BaseWindow.$extend({
 
 module.exports = Window;
 
-},{"../helpers.js":25,"../widget.js":59,"./basewindow.js":16,"stonejs":7}],25:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":60,"./basewindow.js":16,"stonejs":7}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -6895,7 +6895,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":25,"../visual/baseicon.js":50,"../widget.js":59}],27:[function(require,module,exports){
+},{"../helpers.js":25,"../visual/baseicon.js":51,"../widget.js":60}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7077,7 +7077,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":59}],28:[function(require,module,exports){
+},{"../widget.js":60}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7281,7 +7281,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":25,"../nonvisual/color.js":44,"../widget.js":59}],29:[function(require,module,exports){
+},{"../helpers.js":25,"../nonvisual/color.js":45,"../widget.js":60}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7799,7 +7799,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":25,"../nonvisual/color.js":44,"../nonvisual/mousemanager.js":46,"../widget.js":59}],30:[function(require,module,exports){
+},{"../helpers.js":25,"../nonvisual/color.js":45,"../nonvisual/mousemanager.js":47,"../widget.js":60}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -7989,7 +7989,213 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":59}],31:[function(require,module,exports){
+},{"../widget.js":60}],31:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule Interactive
+ * @namespace photonui
+ */
+
+var Widget = require("../widget.js");
+var BaseIcon = require("../visual/baseicon.js");
+var Helpers = require("../helpers.js");
+
+/**
+ * A simple flat button that only contains an icon
+ *
+ * wEvents:
+ *
+ *   * click:
+ *     - description: called when the button was clicked.
+ *     - callback:    function(widget, event)
+ *
+ * @class IconButton
+ * @constructor
+ * @extends photonui.Widget
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var IconButton = Widget.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        this._registerWEvents(["click"]);
+        this.$super(params);
+        this._updateProperties(["width", "height"]);
+
+        this._bindEvent("click", this.__html.div, "click", this.__onButtonClicked.bind(this));
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * Button width
+     *
+     * @property width
+     * @type Number
+     * @default 16
+     */
+    _width: 16,
+
+    getWidth: function () {
+        return this._width;
+    },
+
+    setWidth: function (width) {
+        this._width = width;
+        this.html.style.width = width + "px";
+        this.html.style.minWidth = width + "px";
+        this.html.style.maxWidth = width + "px";
+    },
+
+    /**
+     * Button height
+     *
+     * @property height
+     * @type Number
+     * @default 16
+     */
+    _height: 16,
+
+    getHeight: function () {
+        return this._height;
+    },
+
+    setHeight: function (height) {
+        this._height = height;
+        this.html.style.height = height + "px";
+        this.html.style.minHeight = height + "px";
+        this.html.style.maxHeight = height + "px";
+        this.html.style.lineHeight = height + "px";
+    },
+
+    /**
+     * Icon widget name.
+     *
+     * @property iconName
+     * @type String
+     * @default: null
+     */
+    _iconName: null,
+
+    getIconName: function () {
+        return this._iconName;
+    },
+
+    setIconName: function (iconName) {
+        this._iconName = iconName;
+        Helpers.cleanNode(this.__html.div);
+        if (this._iconName) {
+            this.__html.div.appendChild(this.icon.html);
+            this.iconVisible = true;
+        }
+    },
+
+    /**
+     * Icon widget.
+     *
+     * @property icon
+     * @type BaseIcon
+     * @default: null
+     */
+    getIcon: function () {
+        return Widget.getWidget(this._iconName);
+    },
+
+    setIcon: function (icon) {
+        if (icon instanceof BaseIcon) {
+            this.iconName = icon.name;
+            return;
+        }
+        this.iconName = null;
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function () {
+        return this.__html.div;
+    },
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Private methods ======
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function () {
+        this.__html.div = document.createElement("div");
+        this.__html.div.className = "photonui-widget photonui-iconbutton";
+        this.__html.div.className += "photonui-widget-fixed-width photonui-widget-fixed-height";
+        this.__html.div.tabIndex = "0";
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * Called when the button is clicked.
+     *
+     * @method __onButtonClicked
+     * @private
+     * @param event
+     */
+    __onButtonClicked: function (event) {
+        this._callCallbacks("click", [event]);
+    }
+
+});
+
+module.exports = IconButton;
+
+},{"../helpers.js":25,"../visual/baseicon.js":51,"../widget.js":60}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8355,7 +8561,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":30}],32:[function(require,module,exports){
+},{"./field.js":30}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8713,7 +8919,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":25,"./numericfield.js":31}],33:[function(require,module,exports){
+},{"../helpers.js":25,"./numericfield.js":32}],34:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8773,7 +8979,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":27}],34:[function(require,module,exports){
+},{"./checkbox.js":27}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -8887,7 +9093,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":30}],35:[function(require,module,exports){
+},{"./field.js":30}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9001,7 +9207,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":30}],36:[function(require,module,exports){
+},{"./field.js":30}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9096,7 +9302,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":26,"./checkbox.js":27}],37:[function(require,module,exports){
+},{"./button.js":26,"./checkbox.js":27}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9444,7 +9650,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":25,"./layout.js":40}],38:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":41}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -9822,7 +10028,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":25,"./layout.js":40}],39:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":41}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10466,7 +10672,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":25,"./layout.js":40}],40:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":41}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10752,7 +10958,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":17,"../widget.js":59}],41:[function(require,module,exports){
+},{"../container/container.js":17,"../widget.js":60}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -10892,7 +11098,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":25,"./layout.js":40}],42:[function(require,module,exports){
+},{"../helpers.js":25,"./layout.js":41}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11192,7 +11398,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":22,"../helpers.js":25,"../widget.js":59,"./layout.js":40}],43:[function(require,module,exports){
+},{"../container/tabitem.js":22,"../helpers.js":25,"../widget.js":60,"./layout.js":41}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11355,7 +11561,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":10,"keyboardjs":3}],44:[function(require,module,exports){
+},{"../base.js":10,"keyboardjs":3}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -11842,7 +12048,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":10}],45:[function(require,module,exports){
+},{"../base.js":10}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12158,7 +12364,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":10}],46:[function(require,module,exports){
+},{"../base.js":10}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -12883,7 +13089,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":10,"../helpers.js":25,"../widget.js":59}],47:[function(require,module,exports){
+},{"../base.js":10,"../helpers.js":25,"../widget.js":60}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13109,7 +13315,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":10}],48:[function(require,module,exports){
+},{"../base.js":10}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13284,7 +13490,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":10,"stonejs":7}],49:[function(require,module,exports){
+},{"../base.js":10,"stonejs":7}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13388,12 +13594,13 @@ photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
 photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
+photonui.IconButton = require("./interactive/iconbutton.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
 module.exports = photonui;
 
-},{"./base.js":10,"./composite/colorbutton.js":11,"./composite/colorpickerdialog.js":12,"./composite/fontselect.js":13,"./composite/popupmenu.js":14,"./composite/select.js":15,"./container/basewindow.js":16,"./container/container.js":17,"./container/dialog.js":18,"./container/menuitem.js":19,"./container/popupwindow.js":20,"./container/submenuitem.js":21,"./container/tabitem.js":22,"./container/viewport.js":23,"./container/window.js":24,"./helpers.js":25,"./interactive/button.js":26,"./interactive/checkbox.js":27,"./interactive/colorpalette.js":28,"./interactive/colorpicker.js":29,"./interactive/field.js":30,"./interactive/numericfield.js":31,"./interactive/slider.js":32,"./interactive/switch.js":33,"./interactive/textareafield.js":34,"./interactive/textfield.js":35,"./interactive/togglebutton.js":36,"./layout/boxlayout.js":37,"./layout/fluidlayout.js":38,"./layout/gridlayout.js":39,"./layout/layout.js":40,"./layout/menu.js":41,"./layout/tablayout.js":42,"./nonvisual/accelmanager.js":43,"./nonvisual/color.js":44,"./nonvisual/filemanager.js":45,"./nonvisual/mousemanager.js":46,"./nonvisual/spritesheet.js":47,"./nonvisual/translation.js":48,"./visual/baseicon.js":50,"./visual/canvas.js":51,"./visual/faicon.js":52,"./visual/image.js":53,"./visual/label.js":54,"./visual/progressbar.js":55,"./visual/separator.js":56,"./visual/spriteicon.js":57,"./visual/text.js":58,"./widget.js":59,"abitbol":1,"keyboardjs":3,"stonejs":7,"uuid":9}],50:[function(require,module,exports){
+},{"./base.js":10,"./composite/colorbutton.js":11,"./composite/colorpickerdialog.js":12,"./composite/fontselect.js":13,"./composite/popupmenu.js":14,"./composite/select.js":15,"./container/basewindow.js":16,"./container/container.js":17,"./container/dialog.js":18,"./container/menuitem.js":19,"./container/popupwindow.js":20,"./container/submenuitem.js":21,"./container/tabitem.js":22,"./container/viewport.js":23,"./container/window.js":24,"./helpers.js":25,"./interactive/button.js":26,"./interactive/checkbox.js":27,"./interactive/colorpalette.js":28,"./interactive/colorpicker.js":29,"./interactive/field.js":30,"./interactive/iconbutton.js":31,"./interactive/numericfield.js":32,"./interactive/slider.js":33,"./interactive/switch.js":34,"./interactive/textareafield.js":35,"./interactive/textfield.js":36,"./interactive/togglebutton.js":37,"./layout/boxlayout.js":38,"./layout/fluidlayout.js":39,"./layout/gridlayout.js":40,"./layout/layout.js":41,"./layout/menu.js":42,"./layout/tablayout.js":43,"./nonvisual/accelmanager.js":44,"./nonvisual/color.js":45,"./nonvisual/filemanager.js":46,"./nonvisual/mousemanager.js":47,"./nonvisual/spritesheet.js":48,"./nonvisual/translation.js":49,"./visual/baseicon.js":51,"./visual/canvas.js":52,"./visual/faicon.js":53,"./visual/image.js":54,"./visual/label.js":55,"./visual/progressbar.js":56,"./visual/separator.js":57,"./visual/spriteicon.js":58,"./visual/text.js":59,"./widget.js":60,"abitbol":1,"keyboardjs":3,"stonejs":7,"uuid":9}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13461,7 +13668,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":59}],51:[function(require,module,exports){
+},{"../widget.js":60}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13741,7 +13948,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":59}],52:[function(require,module,exports){
+},{"../widget.js":60}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -13912,7 +14119,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":50}],53:[function(require,module,exports){
+},{"./baseicon.js":51}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14067,7 +14274,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":59}],54:[function(require,module,exports){
+},{"../widget.js":60}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14275,7 +14482,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":25,"../widget.js":59}],55:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":60}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14503,7 +14710,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":59}],56:[function(require,module,exports){
+},{"../widget.js":60}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14644,7 +14851,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":59}],57:[function(require,module,exports){
+},{"../widget.js":60}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14826,7 +15033,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":47,"./baseicon.js":50}],58:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":48,"./baseicon.js":51}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -14972,7 +15179,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":25,"../widget.js":59,"stonejs":7}],59:[function(require,module,exports){
+},{"../helpers.js":25,"../widget.js":60,"stonejs":7}],60:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -15484,5 +15691,5 @@ Widget.domInsert = function (widget, element) {
 
 module.exports = Widget;
 
-},{"./base.js":10,"./container/popupwindow.js":20,"./helpers.js":25,"stonejs":7,"uuid":9}]},{},[49])(49)
+},{"./base.js":10,"./container/popupwindow.js":20,"./helpers.js":25,"stonejs":7,"uuid":9}]},{},[50])(50)
 });
