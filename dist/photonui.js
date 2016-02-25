@@ -1538,106 +1538,10 @@ function setBestMatchingLocale(l) {
     if (!l) {
         l = helpers.extractLanguages();
     }
-    if (!Array.isArray(l)) {
-        l = [l];
-    }
-
-    var buff;
-
     var availableCatalogs = Object.keys(catalogs);
-    var refCatalogs = [];
-    for (var i = 0 ; i < availableCatalogs.length ; i++) {
-        buff = helpers.parseLanguageCode(availableCatalogs[i]);
-        buff.cat = availableCatalogs[i];
-        refCatalogs.push(buff);
-    }
 
-    var locales = [];
-    for (i = 0 ; i < l.length ; i++) {
-        locales.push(helpers.parseLanguageCode(l[i]));
-    }
-
-    function _match(lang, lect, catalogList) {
-        if (lang === null) {
-            return null;
-        }
-        for (var i = 0 ; i < catalogList.length ; i++) {
-            if (lect == "*" && catalogList[i].lang === lang) {
-                return catalogList[i];
-            } else if (catalogList[i].lang === lang && catalogList[i].lect === lect) {
-                return catalogList[i];
-            }
-        }
-    }
-
-    // 1. Exact matching (with locale+lect > locale)
-    var bestMatchingLocale = null;
-    var indexMatch = 0;
-    for (i = 0 ; i < locales.length ; i++) {
-        buff = _match(locales[i].lang, locales[i].lect, refCatalogs);
-        if (buff && (!bestMatchingLocale)) {
-            bestMatchingLocale = buff;
-            indexMatch = i;
-        } else if (buff && bestMatchingLocale &&
-                   buff.lang === bestMatchingLocale.lang &&
-                   bestMatchingLocale.lect === null && buff.lect !== null) {
-            bestMatchingLocale = buff;
-            indexMatch = i;
-        }
-        if (bestMatchingLocale && bestMatchingLocale.lang && bestMatchingLocale.lect) {
-            break;
-        }
-    }
-
-    // 2. Fuzzy matching of locales without lect (fr_FR == fr)
-    for (i = 0 ; i < locales.length ; i++) {
-        buff = _match(locales[i].lang, null, refCatalogs);
-        if (buff) {
-            if ((!bestMatchingLocale) || bestMatchingLocale && indexMatch >= i &&
-                bestMatchingLocale.lang !== buff.lang) {
-                setLocale(buff.cat);
-                return;
-            }
-        }
-    }
-
-    // 3. Fuzzy matching with ref lect (fr_* == fr_FR)
-    for (i = 0 ; i < locales.length ; i++) {
-        buff = _match(locales[i].lang, locales[i].lang, refCatalogs);
-        if (buff) {
-            if ((!bestMatchingLocale) || bestMatchingLocale && indexMatch >= i &&
-                bestMatchingLocale.lang !== buff.lang) {
-                setLocale(buff.cat);
-                return;
-            }
-        }
-    }
-
-    // 1.5 => set the language found at step 1 if there is nothing better
-    if (bestMatchingLocale) {
-        setLocale(bestMatchingLocale.cat);
-        return;
-    }
-
-    // 4. Fuzzy matching of any lect (fr_* == fr_*)
-    for (i = 0 ; i < locales.length ; i++) {
-        buff = _match(locales[i].lang, "*", refCatalogs);
-        if (buff) {
-            setLocale(buff.cat);
-            return;
-        }
-    }
-
-    // 5. Nothing matches... maybe the given locales are invalide... try to match with catalogs
-    for (i = 0 ; i < l.length ; i++) {
-        if (catalogs[l[i]]) {
-            setLocale(l[i]);
-            return;
-        }
-    }
-
-    // 6. Nothing matches... lang = c;
-    setLocale("c");
+    var bestLocale = helpers.findBestMatchingLocale(l, availableCatalogs);
+    setLocale(bestLocale);
 }
 
 module.exports = {
@@ -1781,10 +1685,108 @@ function extractLanguages(languageString) {
     return result;
 }
 
+function findBestMatchingLocale(locale, catalogs) {
+    if (!Array.isArray(locale)) {
+        locale = [locale];
+    }
+
+    var buff;
+
+    var refCatalogs = [];
+    for (var i = 0 ; i < catalogs.length ; i++) {
+        buff = parseLanguageCode(catalogs[i]);
+        buff.cat = catalogs[i];
+        refCatalogs.push(buff);
+    }
+
+    var locales = [];
+    for (i = 0 ; i < locale.length ; i++) {
+        locales.push(parseLanguageCode(locale[i]));
+    }
+
+    function _match(lang, lect, catalogList) {
+        if (lang === null) {
+            return null;
+        }
+        for (var i = 0 ; i < catalogList.length ; i++) {
+            if (lect == "*" && catalogList[i].lang === lang) {
+                return catalogList[i];
+            } else if (catalogList[i].lang === lang && catalogList[i].lect === lect) {
+                return catalogList[i];
+            }
+        }
+    }
+
+    // 1. Exact matching (with locale+lect > locale)
+    var bestMatchingLocale = null;
+    var indexMatch = 0;
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, locales[i].lect, refCatalogs);
+        if (buff && (!bestMatchingLocale)) {
+            bestMatchingLocale = buff;
+            indexMatch = i;
+        } else if (buff && bestMatchingLocale &&
+                   buff.lang === bestMatchingLocale.lang &&
+                   bestMatchingLocale.lect === null && buff.lect !== null) {
+            bestMatchingLocale = buff;
+            indexMatch = i;
+        }
+        if (bestMatchingLocale && bestMatchingLocale.lang && bestMatchingLocale.lect) {
+            break;
+        }
+    }
+
+    // 2. Fuzzy matching of locales without lect (fr_FR == fr)
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, null, refCatalogs);
+        if (buff) {
+            if ((!bestMatchingLocale) || bestMatchingLocale && indexMatch >= i &&
+                bestMatchingLocale.lang !== buff.lang) {
+                return buff.cat;
+            }
+        }
+    }
+
+    // 3. Fuzzy matching with ref lect (fr_* == fr_FR)
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, locales[i].lang, refCatalogs);
+        if (buff) {
+            if ((!bestMatchingLocale) || bestMatchingLocale && indexMatch >= i &&
+                bestMatchingLocale.lang !== buff.lang) {
+                return buff.cat;
+            }
+        }
+    }
+
+    // 1.5 => set the language found at step 1 if there is nothing better
+    if (bestMatchingLocale) {
+        return bestMatchingLocale.cat;
+    }
+
+    // 4. Fuzzy matching of any lect (fr_* == fr_*)
+    for (i = 0 ; i < locales.length ; i++) {
+        buff = _match(locales[i].lang, "*", refCatalogs);
+        if (buff) {
+            return buff.cat;
+        }
+    }
+
+    // 5. Nothing matches... maybe the given locales are invalide... try to match with catalogs
+    for (i = 0 ; i < locale.length ; i++) {
+        if (catalogs.indexOf(locale[i]) >= 0) {
+            return locale[i];
+        }
+    }
+
+    // 6. Nothing matches... lang = c;
+    return "c";
+}
+
 module.exports = {
     sendEvent: sendEvent,
     parseLanguageCode: parseLanguageCode,
-    extractLanguages: extractLanguages
+    extractLanguages: extractLanguages,
+    findBestMatchingLocale: findBestMatchingLocale
 };
 
 },{}],7:[function(require,module,exports){
@@ -1846,6 +1848,7 @@ module.exports = {
     getLocale: gettext.getLocale,
     setLocale: setLocale,
     setBestMatchingLocale: gettext.setBestMatchingLocale,
+    findBestMatchingLocale: helpers.findBestMatchingLocale,
     guessUserLanguage: guessUserLanguage,
     enableDomScan: dom.enableDomScan,
     updateDomTranslation: dom.updateDomTranslation
@@ -4264,7 +4267,7 @@ module.exports = Container;
 
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
-var Window = require("./window.js");
+var Window = require("./window.js");  // jshint ignore:line
 
 var _windowList = [];
 
@@ -5850,7 +5853,7 @@ var _windowList = [];
  * @constructor
  * @extends photonui.BaseWindow
  */
-var Window = BaseWindow.$extend({
+var Window = BaseWindow.$extend({  // jshint ignore:line
 
     // Constructor
     __init__: function (params) {

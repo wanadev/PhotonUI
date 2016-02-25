@@ -56,7 +56,7 @@ var _windowList = [];
  * @constructor
  * @extends photonui.BaseWindow
  */
-var Window = BaseWindow.$extend({
+var Window = BaseWindow.$extend({  // jshint ignore:line
 
     // Constructor
     __init__: function (params) {
