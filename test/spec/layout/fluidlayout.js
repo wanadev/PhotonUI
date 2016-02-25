@@ -48,7 +48,7 @@ describe("photonui.FluidLayout", function() {
     });
 
     it("can have an horizontalSpacing", function() {
-        this.area.style.width = "310px";
+        this.area.style.width = "315px";
         this.layout.horizontalSpacing = 5;
         this.layout.children = [this.w1, this.w2, this.w3, this.w4];
 
