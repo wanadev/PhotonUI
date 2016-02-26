@@ -148,6 +148,11 @@ Once you feel comfortable with the custom widget creation, you can create widget
 
 ## Changelog:
 
+* **1.4.0:**
+    * New widgets: `Template`, `IconButton`,
+    * All widgets have now a `data` property that can contain anything you want,
+    * Font Awesome updated to 4.5
+
 * **1.3.0:**
     * Fixes vertical sizing issue in GridLayout with latest Gecko versions...
     * Better split of Less files
