@@ -44,6 +44,7 @@ photonui.lib.Class = require("abitbol");
 photonui.lib.KeyboardJS = require("keyboardjs");
 photonui.lib.Stone = require("stonejs");
 photonui.lib.uuid = require("uuid");
+photonui.lib.lodash = require("lodash");
 
 // Base
 photonui.Helpers = require("./helpers.js");
@@ -101,6 +102,8 @@ photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
 photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
+photonui.IconButton = require("./interactive/iconbutton.js");
+photonui.Template = require("./visual/template.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 

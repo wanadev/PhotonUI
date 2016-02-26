@@ -1,0 +1,24 @@
+{
+  "futurehostile": true,
+  "freeze": true,
+  "latedef": true,
+  "noarg": true,
+  "nocomma": true,
+  "nonbsp": true,
+  "nonew": true,
+  "undef": true,
+  "globals": {
+    "File": false,
+    "photonui": false,
+    "addTitle": true,
+    "addTestArea": true,
+    "DummyWidget": true,
+    "DummyContainer": true,
+    "DummyLayout": true,
+    "toBeAlmostEqualToMatcher": true
+  },
+  "browser": true,
+  "browserify": true,
+  "jasmine": true,
+  "curly": true
+}

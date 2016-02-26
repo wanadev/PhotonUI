@@ -38,7 +38,7 @@
 
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
-var Window = require("./window.js");
+var Window = require("./window.js");  // jshint ignore:line
 
 var _windowList = [];
 

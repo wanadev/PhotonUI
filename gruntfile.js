@@ -46,18 +46,7 @@ module.exports = function(grunt) {
         jshint: {
             all: ['src/**/*.js'],
             options: {
-                futurehostile: true,
-                freeze: true,
-                latedef: true,
-                noarg: true,
-                nocomma: true,
-                nonbsp: true,
-                nonew: true,
-                undef: true,
-                globals: {"File": false},
-                browser: true,
-                browserify: true,
-                curly: true
+                jshintrc: true
             }
         },
 
@@ -69,7 +58,7 @@ module.exports = function(grunt) {
         },
 
         jasmine: {
-            pivotal: {
+            all: {
                 src: ['dist/photonui.js', 'test/helpers.js'],
                 options: {
                     specs: ['test/spec/*.js', 'test/spec/**/*.js'],
@@ -85,7 +74,7 @@ module.exports = function(grunt) {
                     paths: ['.'],
                     plugins: [
                         new (require('less-plugin-autoprefix'))({browsers: ['last 2 versions']}),
-                        new (require('less-plugin-clean-css'))()
+                        //new (require('less-plugin-clean-css'))()
                     ],
                 },
                 files: {

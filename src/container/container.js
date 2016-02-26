@@ -135,7 +135,7 @@ var Container = Widget.$extend({
         }
         this._childName = childName;
         if (this.child && this.child._parentName) {
-            this.child.parent.child = null;
+            this.child.parent.removeChild(this.child);
         }
         if (this.childName && this.containerNode && this.child && this.child.html) {
             this.containerNode.appendChild(this.child.html);
@@ -186,7 +186,7 @@ var Container = Widget.$extend({
      * @param {photonui.Widget} widget The widget to remove/
      */
     removeChild: function (widget) {
-        if (this.child == widget) {
+        if (this.child === widget) {
             this.child = null;
         }
     },

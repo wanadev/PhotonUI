@@ -47,7 +47,7 @@ var Helpers = require("./helpers.js");
  *
  *   * destroy:
  *      - description: called before the widget was destroyed.
- *      - callback:    function(widget)
+ *      - callback:    function (widget)
  *
  * @class Base
  * @constructor
@@ -59,6 +59,7 @@ var Base = Class.$extend({
     __init__: function (params) {
         // New instances for object properties
         this.__events = {};
+        this._data = {};
 
         // wEvents
         this._registerWEvents(["destroy"]);
@@ -66,7 +67,7 @@ var Base = Class.$extend({
         // Apply params
         params = params || {};
         for (var param in params) {
-            if (this[param] !== undefined) {
+            if (this.$map.computedProperties[param]) {
                 this[param] = params[param];
             }
         }
@@ -96,6 +97,25 @@ var Base = Class.$extend({
     //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * Arbitrary data
+     *
+     * @property data
+     * @type object
+     * @default {}
+     */
+    _data: null,
+
+    getData: function () {
+        return this._data;
+    },
+
+    setData: function (data) {
+        this._data = data;
+    },
 
     // ====== Private properties ======
 
@@ -141,7 +161,7 @@ var Base = Class.$extend({
      *
      * Callback signature:
      *
-     *     function(Object(Base/Widget) [, arg1 [, arg2 [, ...]]])
+     *     function (Object(Base/Widget) [, arg1 [, arg2 [, ...]]])
      *
      * @method registerCallback
      * @param {String} id An unique id for the callback.

@@ -657,7 +657,24 @@ var win = new photonui.Window({
                         })
                     }),
                     new photonui.TabItem({
-                        title: "Tab 2"
+                        title: "Tab 2",
+                        child: new photonui.FluidLayout({
+                            children: [
+                                new photonui.IconButton({
+                                    icon: new photonui.FAIcon("fa-paw")
+                                }),
+                                new photonui.IconButton({
+                                    icon: new photonui.FAIcon("fa-paw"),
+                                    width: 32,
+                                    height: 32
+                                }),
+                                new photonui.IconButton({
+                                    icon: new photonui.FAIcon("fa-paw"),
+                                    width: 48,
+                                    height: 48
+                                })
+                            ]
+                        })
                     }),
                     new photonui.TabItem({
                         title: "Tab 3"
@@ -979,12 +996,12 @@ var win2 = new photonui.Window({
 });
 
 
-
 new photonui.ColorPickerDialog({
     x: 10,
     y: 10,
     visible: true
 });
+
 
 win.center();
 win.show();

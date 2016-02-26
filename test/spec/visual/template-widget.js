@@ -1,28 +1,36 @@
-describe("photonui.Widget", function() {
+//
+// This file was auto-generated and may not be modified
+//
 
-    beforeEach(function() {
+describe("photonui.Template (widget)", function () {
+
+    beforeEach(function () {
         this.c = new DummyContainer();
-        this.w = new DummyWidget();
+        this.w = new photonui.Template();
     });
 
-    afterEach(function() {
+    afterEach(function () {
         this.c.destroy();
         this.w.destroy();
     });
 
-    it("has a name", function() {
+    it("has a name", function () {
         expect(this.w.name).not.toBeUndefined();
     });
 
-    it("has HTML element", function() {
+    it("has HTML element", function () {
         expect(this.w.html instanceof HTMLElement).toBeTruthy();
     });
 
-    it("has the 'photonui-widget' class on its outer HTML", function() {
+    it("has the 'photonui-widget' class on its outer HTML", function () {
         expect(this.w.html.className).toContain("photonui-widget");
     });
 
-    it("can be unparented", function() {
+    it("has the 'photonui-template' class on its outer HTML", function () {
+        expect(this.w.html.className).toContain("photonui-template");
+    });
+
+    it("can be unparented", function () {
         this.c.child = this.w;
         this.w.unparent();
 
@@ -31,7 +39,7 @@ describe("photonui.Widget", function() {
         expect(this.c.containerNode.childNodes.length).toEqual(0);
     });
 
-    it("is unparented when it is destroyed", function() {
+    it("is unparented when it is destroyed", function () {
         this.c.child = this.w;
         this.w.destroy();
 
@@ -40,7 +48,7 @@ describe("photonui.Widget", function() {
         expect(this.c.containerNode.childNodes.length).toEqual(0);
     });
 
-    it("can be inserted and removed from any html element", function() {
+    it("can be inserted and removed from any html element", function () {
         var div = document.createElement("div");
 
         photonui.domInsert(this.w, div);
@@ -50,18 +58,8 @@ describe("photonui.Widget", function() {
         expect(div.childNodes).not.toContain(this.w.html);
     });
 
-    it("have its name as id of its HTML element", function() {
+    it("have its name as id of its HTML element", function () {
         expect(this.w.html.id).toEqual(this.w.name);
-    });
-
-    it("can contains arbitrary data", function() {
-        var widget = new DummyWidget({
-            data: {
-                hello: "world"
-            }
-        });
-
-        expect(widget.data.hello).toEqual("world");
     });
 
 });
