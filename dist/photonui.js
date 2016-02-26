@@ -15672,45 +15672,58 @@ var Widget = Base.$extend({
      */
     __onLocaleChanged: function () {
         // Update lazy strings...
-        for (var prop in this) {
+        for (var prop in this.$map.computedProperties) {
             if (this[prop] instanceof Stone.LazyString) {
                 this[prop] = this[prop];
             }
         }
+    },
+
+    __classvars__: {
+
+        /**
+         * @property e_parent
+         * @static
+         * @type HTMLElement
+         * @default null
+         */
+        e_parent: null,
+
+        /**
+         * Get a widget.
+         *
+         * @method getWidget
+         * @static
+         * @param {String} name The widget name.
+         *
+         * @return {Widget} The widget or null.
+         */
+        getWidget: function (name) {
+            if (_widgets[name] !== undefined) {
+                return _widgets[name];
+            }
+            return null;
+        },
+
+        /**
+         * Insert a widget in the DOM.
+         *
+         * method domInsert
+         * @static
+         * @param {photonui.Widget} widget The widget to insert.
+         * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
+         */
+        domInsert: function (widget, element) {
+            element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
+            if (typeof(element) == "string") {
+                element = document.getElementById(element);
+            }
+            element.appendChild(widget.html);
+        }
+
     }
+
 });
-
-/*
- * Get a widget.
- *
- * @method getWidget
- * @param {String} name The widget name.
- *
- * @return {Widget} The widget or null.
- */
-Widget.getWidget = function (name) {
-    if (_widgets[name] !== undefined) {
-        return _widgets[name];
-    }
-    return null;
-};
-
-Widget.e_parent = null;
-
-/*
- * Insert a widget in the DOM.
- *
- * method domInsert
- * @param {photonui.Widget} widget The widget to insert.
- * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
- */
-Widget.domInsert = function (widget, element) {
-    element = element || Widget.e_parent || document.getElementsByTagName("body")[0];
-    if (typeof(element) == "string") {
-        element = document.getElementById(element);
-    }
-    element.appendChild(widget.html);
-};
 
 module.exports = Widget;
 
