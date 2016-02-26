@@ -180,7 +180,7 @@ var IconButton = Widget.$extend({
     _buildHtml: function () {
         this.__html.div = document.createElement("div");
         this.__html.div.className = "photonui-widget photonui-iconbutton";
-        this.__html.div.className += "photonui-widget-fixed-width photonui-widget-fixed-height";
+        this.__html.div.className += " photonui-widget-fixed-width photonui-widget-fixed-height";
         this.__html.div.tabIndex = "0";
     },
 
