@@ -28,6 +28,7 @@
   "dependencies": {
     "abitbol": "^1.0.3",
     "keyboardjs": "flozz/KeyboardJS",
+    "lodash": "^4.5.1",
     "stonejs": ">=2.1.0",
     "uuid": "^2.0.1"
   },

@@ -1,6 +1,6 @@
 PhotonUI:
 
-    Copyright (c) 2014-2015 Wanadev
+    Copyright (c) 2014-2016 Wanadev
     License: BSD 3-Clause <https://github.com/wanadev/PhotonUI/blob/master/COPYING>
     Web site: http://wanadev.github.io/PhotonUI/
 
@@ -39,3 +39,10 @@ Font Awesome:
     Font License: SIL OFL 1.1 <http://scripts.sil.org/OFL>
     CSS License: MIT <http://opensource.org/licenses/mit-license.html>
     Web site: http://fontawesome.io/
+
+
+lodash:
+
+    Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+    License: MIT <https://github.com/lodash/lodash/blob/master/LICENSE>
+    Web site: https://github.com/lodash/lodash
