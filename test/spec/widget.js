@@ -54,5 +54,15 @@ describe("photonui.Widget", function() {
         expect(this.w.html.id).toEqual(this.w.name);
     });
 
+    it("can contains arbitrary data", function() {
+        var widget = new DummyWidget({
+            data: {
+                hello: "world"
+            }
+        });
+
+        expect(widget.data.hello).toEqual("world");
+    });
+
 });
 

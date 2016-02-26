@@ -58,7 +58,7 @@ module.exports = function(grunt) {
         },
 
         jasmine: {
-            pivotal: {
+            all: {
                 src: ['dist/photonui.js', 'test/helpers.js'],
                 options: {
                     specs: ['test/spec/*.js', 'test/spec/**/*.js'],
