@@ -345,7 +345,7 @@ var Widget = Base.$extend({
     },
 
     /**
-     * DHide the widget (equivalent to widget.visible = false).
+     * Hide the widget (equivalent to widget.visible = false).
      *
      * @method hide
      */
