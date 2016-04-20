@@ -94,7 +94,7 @@ var ColorPickerDialog = Dialog.$extend({
      * The color.
      *
      * @property color
-     * @type kzd.Color
+     * @type photonui.Color
      */
     _color: null,
 

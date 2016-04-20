@@ -17402,7 +17402,7 @@ var ColorButton = Button.$extend({
      * The color.
      *
      * @property color
-     * @type kzd.Color
+     * @type photonui.Color
      */
     _color: null,
 
@@ -17665,7 +17665,7 @@ var ColorPickerDialog = Dialog.$extend({
      * The color.
      *
      * @property color
-     * @type kzd.Color
+     * @type photonui.Color
      */
     _color: null,
 
@@ -22128,7 +22128,7 @@ var ColorPalette = Widget.$extend({
      * The color.
      *
      * @property color
-     * @type kzd.Color
+     * @type photonui.Color
      */
     _color: null,
 
@@ -22357,7 +22357,7 @@ var ColorPicker = Widget.$extend({
      * The color.
      *
      * @property color
-     * @type kzd.Color
+     * @type photonui.Color
      */
     _color: null,
 
@@ -30646,7 +30646,7 @@ var Widget = Base.$extend({
     },
 
     /**
-     * DHide the widget (equivalent to widget.visible = false).
+     * Hide the widget (equivalent to widget.visible = false).
      *
      * @method hide
      */
