@@ -104,7 +104,7 @@ var MenuItem = Container.$extend({
     },
 
     /**
-     * Right icon widget name.
+     * Left icon widget name.
      *
      * @property iconName
      * @type String
@@ -125,7 +125,7 @@ var MenuItem = Container.$extend({
     },
 
     /**
-     * Right icon widget.
+     * Left icon widget.
      *
      * @property icon
      * @type photonui.BaseIcon
