@@ -63,7 +63,7 @@ var SpriteSheet = Base.$extend({
     // ====== Public properties ======
 
     /**
-     * The sprit sheet name.
+     * The spritsheet name.
      *
      * @property name
      * @type String
