@@ -130,7 +130,7 @@ var Translation = Base.$extend({
     /**
      * Make a string translatable.
      *
-     * Tthe main difference between this method and the `gettext` method is
+     * The main difference between this method and the `gettext` method is
      * that this method does not return a translated sting but an object that
      * will translate the sting when it will be displayed (.toString() method
      * called).
