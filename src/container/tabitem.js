@@ -190,7 +190,7 @@ var TabItem = Container.$extend({
         *
         * @property leftIconName
         * @type String
-        * @default: null
+        * @default null
         */
     _leftIconName: null,
 
@@ -209,6 +209,10 @@ var TabItem = Container.$extend({
 
     /**
     * Left icon widget
+    * 
+    * @property leftIcon
+    * @type photonui.Icon
+    * @default null
     */
     getLeftIcon: function () {
         return Widget.getWidget(this._leftIconName);
@@ -245,7 +249,7 @@ var TabItem = Container.$extend({
      *
      * @property rigthIconName
      * @type String
-     * @default: null
+     * @default null
      */
 
     _rightIconName: null,
@@ -265,6 +269,10 @@ var TabItem = Container.$extend({
 
     /**
      * Right icon widget
+     *
+     * @property rightIcon
+     * @type photonui.Icon
+     * @default null
      */
     getRightIcon: function () {
         return Widget.getWidget(this._rightIconName);
