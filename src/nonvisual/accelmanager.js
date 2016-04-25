@@ -89,7 +89,7 @@ var AccelManager = Base.$extend({
      *
      * @method addAccel
      * @param {String} id An unique id for the accelerator.
-     * @param {String} kays The keys of the accelerator (see the keyCombo section of http://robertwhurst.github.io/KeyboardJS/ ).
+     * @param {String} keys The keys of the accelerator (see the keyCombo section of http://robertwhurst.github.io/KeyboardJS/ ).
      * @param {Function} callback
      * @param {Boolean} safe If true, the accelerator is disable if a field/textArea is focused (optional, default=true)
      */
