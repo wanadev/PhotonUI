@@ -631,6 +631,7 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onMouseDown: function (event) {
+        event.stopPropagation();
         this._stateMachine("mouse-down", event);
     },
 
@@ -640,6 +641,7 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onMouseUp: function (event) {
+        event.stopPropagation();
         this._stateMachine("mouse-up", event);
     },
 
@@ -658,6 +660,7 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onMouseMove: function (event) {
+        event.stopPropagation();
         this._stateMachine("mouse-move", event);
     },
 
