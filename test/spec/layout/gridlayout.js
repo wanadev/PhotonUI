@@ -301,32 +301,32 @@ describe("photonui.GridLayout (layoutOptons)", function() {
         this.area.style.height = "300px";
 
         setTimeout(function() {
-            expect(this.w1.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w1.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w1.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w1.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w2.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w2.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w2.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w2.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w3.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w3.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w3.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w3.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w4.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w4.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w4.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w4.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w5.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w5.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w5.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w5.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w6.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w6.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w6.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w6.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w7.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w7.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w7.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w7.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w8.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w8.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w8.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w8.offsetHeight).toBeAlmostEqualTo(100, 3);
 
-            expect(this.w9.offsetWidth).toBeAlmostEqualTo(100);
-            expect(this.w9.offsetHeight).toBeAlmostEqualTo(100);
+            expect(this.w9.offsetWidth).toBeAlmostEqualTo(100, 3);
+            expect(this.w9.offsetHeight).toBeAlmostEqualTo(100, 3);
 
             this.w9.html.style.minHeight = "130px";
 

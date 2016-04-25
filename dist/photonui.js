@@ -27566,7 +27566,7 @@ var MouseManager = Base.$extend({
     },
 
     /**
-     * translate all position events by a scalar. Use it when the canvas is translated.
+     * Translate all position events by a scalar. Use it when the canvas is translated.
      *
      * @property translateY
      * @type Number
