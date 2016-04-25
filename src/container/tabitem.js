@@ -211,7 +211,7 @@ var TabItem = Container.$extend({
     * Left icon widget
     * 
     * @property leftIcon
-    * @type FAIcon
+    * @type photonui.Icon
     * @default null
     */
     getLeftIcon: function () {
@@ -271,7 +271,7 @@ var TabItem = Container.$extend({
      * Right icon widget
      *
      * @property rightIcon
-     * @type FAIcon
+     * @type photonui.Icon
      * @default null
      */
     getRightIcon: function () {
