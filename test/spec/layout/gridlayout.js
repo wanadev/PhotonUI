@@ -333,7 +333,7 @@ describe("photonui.GridLayout (layoutOptons)", function() {
             //this.grid._sizingHack();
 
             setTimeout(function() {
-                expect(this.w3.offsetHeight + this.w6.offsetHeight + this.w9.offsetHeight).toBeAlmostEqualTo(300);
+                expect(this.w3.offsetHeight + this.w6.offsetHeight + this.w9.offsetHeight).toBeAlmostEqualTo(300, 3);
 
                 done();
             }.bind(this), 10);
