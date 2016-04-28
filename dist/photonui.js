@@ -21292,7 +21292,7 @@ var TabItem = Container.$extend({
 
     /**
     * Left icon widget
-    * 
+    *
     * @property leftIcon
     * @type photonui.Icon
     * @default null
@@ -25967,24 +25967,23 @@ var FluidLayout = Layout.$extend({
         var children = this.children;
         var fragment = document.createDocumentFragment();
 
-        this.__html.innerbox.style.marginBottom = (this.verticalSpacing > 0) ? -this.verticalSpacing + "px" : "0px";
+        this.__html.innerbox.style.marginTop = (this.verticalSpacing > 0) ? -this.verticalSpacing + "px" : "0px";
         this.__html.innerbox.style.marginLeft = (this.horizontalSpacing > 0) ? -this.horizontalSpacing + "px" : "0px";
 
+        // Store in a var the calcWidth too auto cast in string
         var calcWidth = (this.horizontalSpacing > 0) ? this.horizontalSpacing + "px" : "0px";
         this.__html.innerbox.style.width = "calc(100% + " + calcWidth + ")";
-
-        
 
         var div = null;
         for (var i = 0 ; i < children.length ; i++) {
             var options = this._computeLayoutOptions(children[i]);
 
             div = document.createElement("div");
-            div.className = "photonui-container nothing";
+            div.className = "photonui-container";
 
             // spacings
-            div.style.paddingBottom = this.verticalSpacing + "px";
-            div.style.paddingLeft = this.horizontalSpacing + "px";
+            div.style.marginTop = this.verticalSpacing + "px";
+            div.style.marginLeft = this.horizontalSpacing + "px";
 
             // layout option: align
             div.className += " photonui-layout-align-" + options.align;
@@ -26019,8 +26018,6 @@ var FluidLayout = Layout.$extend({
             div.appendChild(children[i].html);
             fragment.appendChild(div);
         }
-
-        
 
         Helpers.cleanNode(this.__html.innerbox);
         this.__html.innerbox.appendChild(fragment);

@@ -265,8 +265,8 @@ var FluidLayout = Layout.$extend({
             div.className = "photonui-container";
 
             // spacings
-            div.style.paddingTop = this.verticalSpacing + "px";
-            div.style.paddingLeft = this.horizontalSpacing + "px";
+            div.style.marginTop = this.verticalSpacing + "px";
+            div.style.marginLeft = this.horizontalSpacing + "px";
 
             // layout option: align
             div.className += " photonui-layout-align-" + options.align;
