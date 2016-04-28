@@ -209,7 +209,7 @@ var TabItem = Container.$extend({
 
     /**
     * Left icon widget
-    * 
+    *
     * @property leftIcon
     * @type photonui.Icon
     * @default null

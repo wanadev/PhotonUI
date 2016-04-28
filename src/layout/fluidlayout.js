@@ -253,6 +253,10 @@ var FluidLayout = Layout.$extend({
         this.__html.innerbox.style.marginTop = (this.verticalSpacing > 0) ? -this.verticalSpacing + "px" : "0px";
         this.__html.innerbox.style.marginLeft = (this.horizontalSpacing > 0) ? -this.horizontalSpacing + "px" : "0px";
 
+        // Store in a var the calcWidth too auto cast in string
+        var calcWidth = (this.horizontalSpacing > 0) ? this.horizontalSpacing + "px" : "0px";
+        this.__html.innerbox.style.width = "calc(100% + " + calcWidth + ")";
+
         var div = null;
         for (var i = 0 ; i < children.length ; i++) {
             var options = this._computeLayoutOptions(children[i]);
@@ -261,8 +265,8 @@ var FluidLayout = Layout.$extend({
             div.className = "photonui-container";
 
             // spacings
-            div.style.marginTop = this.verticalSpacing + "px";
-            div.style.marginLeft = this.horizontalSpacing + "px";
+            div.style.paddingTop = this.verticalSpacing + "px";
+            div.style.paddingLeft = this.horizontalSpacing + "px";
 
             // layout option: align
             div.className += " photonui-layout-align-" + options.align;
