@@ -3711,42 +3711,42 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   height: 100%;
   width: 100%;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox {
   -webkit-flex-direction: column-reverse;
       -ms-flex-direction: column-reverse;
           flex-direction: column-reverse;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox {
   -webkit-flex-direction: row-reverse;
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;

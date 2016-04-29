@@ -68,15 +68,15 @@
         box-shadow: @shadow;
     }
 
-    &.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox,
-    &.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox {
+    &.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox,
+    &.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox {
 
-        .photonui-tablayout-tabs {
+         > .photonui-tablayout-tabs {
             height: @tab-horiz-active-height;
             min-height: @tab-horiz-active-height;
             max-height: @tab-horiz-active-height;
 
-            .photonui-tabitem-tab {
+            > .photonui-tabitem-tab {
                 line-height: @tab-horiz-height;
                 height: @tab-horiz-height;
                 text-align: center;
@@ -93,16 +93,16 @@
         }
     }
 
-    &.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox,
-    &.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox {
+    &.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox,
+    &.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox {
 
-        .photonui-tablayout-tabs {
+         > .photonui-tablayout-tabs {
             width: @tab-vert-active-width;
             min-width: @tab-vert-active-width;
             max-width: @tab-vert-active-width;
             padding-top: 1px;
 
-            .photonui-tabitem-tab {
+            > .photonui-tabitem-tab {
                 width: calc(100% - 6px);
                 line-height: @tab-vert-height;
                 height: @tab-vert-height;
@@ -122,10 +122,10 @@
     }
 
 
-    &.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox {
+    &.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox {
 
-        .photonui-tablayout-tabs {
-            .photonui-tabitem-tab {
+        > .photonui-tablayout-tabs {
+            > .photonui-tabitem-tab {
                 align-self: flex-end;
                 border-bottom: none;
 
@@ -141,10 +141,10 @@
         }
     }
 
-    &.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox {
+    &.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox {
 
-        .photonui-tablayout-tabs {
-            .photonui-tabitem-tab {
+        > .photonui-tablayout-tabs {
+            > .photonui-tabitem-tab {
                 align-self: flex-start;
                 border-top: none;
 
@@ -160,10 +160,10 @@
         }
     }
 
-    &.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox {
+    &.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox {
 
-        .photonui-tablayout-tabs {
-            .photonui-tabitem-tab {
+        > .photonui-tablayout-tabs {
+            > .photonui-tabitem-tab {
                 align-self: flex-end;
                 border-right: none;
                 text-align: right;
@@ -181,10 +181,10 @@
         }
     }
 
-    &.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox {
+    &.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox {
 
-        .photonui-tablayout-tabs {
-            .photonui-tabitem-tab {
+        > .photonui-tablayout-tabs {
+            > .photonui-tabitem-tab {
                 align-self: flex-start;
                 border-left: none;
 
