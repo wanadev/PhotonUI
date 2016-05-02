@@ -25970,6 +25970,10 @@ var FluidLayout = Layout.$extend({
         this.__html.innerbox.style.marginTop = (this.verticalSpacing > 0) ? -this.verticalSpacing + "px" : "0px";
         this.__html.innerbox.style.marginLeft = (this.horizontalSpacing > 0) ? -this.horizontalSpacing + "px" : "0px";
 
+        // Store in a var the calcWidth too auto cast in string
+        var calcWidth = (this.horizontalSpacing > 0) ? this.horizontalSpacing + "px" : "0px";
+        this.__html.innerbox.style.width = "calc(100% + " + calcWidth + ")";
+
         var div = null;
         for (var i = 0 ; i < children.length ; i++) {
             var options = this._computeLayoutOptions(children[i]);
