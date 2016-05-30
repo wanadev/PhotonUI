@@ -40,6 +40,7 @@ var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
+var IconButton = require("../interactive/iconbutton.js");
 
 /**
  * Tab Item.
@@ -219,7 +220,7 @@ var TabItem = Container.$extend({
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton) {
             this.leftIconName = leftIcon.name;
         } else {
             this.leftIconName = null;
@@ -279,7 +280,7 @@ var TabItem = Container.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton) {
             this.rightIconName = rightIcon.name;
         } else {
             this.rightIconName = null;
@@ -356,7 +357,7 @@ var TabItem = Container.$extend({
         this.__html.tab.appendChild(this.__html.title);
 
         this.__html.rightIcon = document.createElement("span");
-        this.__html.rightIcon.className = "photonui-tabitem-lefticon";
+        this.__html.rightIcon.className = "photonui-tabitem-righticon";
         this.__html.tab.appendChild(this.__html.rightIcon);
 
     },

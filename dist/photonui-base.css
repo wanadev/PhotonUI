@@ -3705,6 +3705,10 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-lefticon > .photonui-iconbutton > .photonui-faicon,
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-righticon > .photonui-iconbutton > .photonui-faicon {
+  vertical-align: baseline;
+}
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content {
   box-sizing: border-box;
   min-height: 20px;
