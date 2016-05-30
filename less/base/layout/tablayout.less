@@ -48,15 +48,20 @@
             box-sizing: border-box;
 
             .photonui-tabitem-tab {
+                display: flex;
                 box-sizing: border-box;
                 min-width: 10px;
                 max-width: 150px;
                 overflow: hidden;
-                text-overflow: ellipsis;
                 white-space: nowrap;
                 -wibkit-user-select: none;
                 -moz-user-select: none;
                 user-select: none;
+
+                .photonui-tabitem-title {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
         }
 

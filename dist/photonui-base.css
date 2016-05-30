@@ -3687,17 +3687,23 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   box-sizing: border-box;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   box-sizing: border-box;
   min-width: 10px;
   max-width: 150px;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   -wibkit-user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
       -ms-user-select: none;
           user-select: none;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content {
   box-sizing: border-box;

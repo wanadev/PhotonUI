@@ -21443,7 +21443,7 @@ var TabItem = Container.$extend({
         this.__html.tab.className = "photonui-tabitem-tab";
 
         this.__html.leftIcon = document.createElement("span");
-        this.__html.leftIcon.className = "photonui-tab-icon";
+        this.__html.leftIcon.className = "photonui-tabitem-lefticon";
         this.__html.tab.appendChild(this.__html.leftIcon);
 
         this.__html.title = document.createElement("span");
@@ -21451,7 +21451,7 @@ var TabItem = Container.$extend({
         this.__html.tab.appendChild(this.__html.title);
 
         this.__html.rightIcon = document.createElement("span");
-        this.__html.rightIcon.className = "photon-ui-icon";
+        this.__html.rightIcon.className = "photonui-tabitem-lefticon";
         this.__html.tab.appendChild(this.__html.rightIcon);
 
     },
