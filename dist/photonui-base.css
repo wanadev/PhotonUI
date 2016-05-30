@@ -3687,17 +3687,27 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   box-sizing: border-box;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   box-sizing: border-box;
   min-width: 10px;
   max-width: 150px;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   -wibkit-user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
       -ms-user-select: none;
           user-select: none;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-lefticon > .photonui-iconbutton > .photonui-faicon,
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-righticon > .photonui-iconbutton > .photonui-faicon {
+  vertical-align: baseline;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content {
   box-sizing: border-box;
@@ -3711,42 +3721,42 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   height: 100%;
   width: 100%;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-top .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox {
   -webkit-flex-direction: column-reverse;
       -ms-flex-direction: column-reverse;
           flex-direction: column-reverse;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-bottom .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-left .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox {
+.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox {
   -webkit-flex-direction: row-reverse;
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse;
 }
-.photonui-tablayout.photonui-tablayout-tabposition-right .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;

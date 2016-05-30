@@ -178,7 +178,7 @@ var Widget = Base.$extend({
         if (visible) {
             this.html.style.display = "";
         } else {
-            this.html.style.display = "none";
+            this.html.style.setProperty("display", "none", "important");
         }
         this._visibilityChanged();
     },
@@ -345,7 +345,7 @@ var Widget = Base.$extend({
     },
 
     /**
-     * DHide the widget (equivalent to widget.visible = false).
+     * Hide the widget (equivalent to widget.visible = false).
      *
      * @method hide
      */

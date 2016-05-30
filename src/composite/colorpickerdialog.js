@@ -94,7 +94,7 @@ var ColorPickerDialog = Dialog.$extend({
      * The color.
      *
      * @property color
-     * @type kzd.Color
+     * @type photonui.Color
      */
     _color: null,
 
@@ -114,7 +114,19 @@ var ColorPickerDialog = Dialog.$extend({
         this.__onColorChanged();
     },
 
-    //
+    /**
+     * The color as hex string (shorthand to ColorPickerDialog.color.hexString).
+     *
+     * @property value
+     * @type String
+     */
+    getValue: function () {
+        return this._color.hexString;
+    },
+
+    setValue: function (value) {
+        this._color.hexString = value;
+    },
 
     setVisible: function (visible) {
         this.$super(visible);

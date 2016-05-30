@@ -40,6 +40,7 @@ var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
+var IconButton = require("../interactive/iconbutton.js");
 
 /**
  * Tab Item.
@@ -190,7 +191,7 @@ var TabItem = Container.$extend({
         *
         * @property leftIconName
         * @type String
-        * @default: null
+        * @default null
         */
     _leftIconName: null,
 
@@ -209,13 +210,17 @@ var TabItem = Container.$extend({
 
     /**
     * Left icon widget
+    *
+    * @property leftIcon
+    * @type photonui.Icon
+    * @default null
     */
     getLeftIcon: function () {
         return Widget.getWidget(this._leftIconName);
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton) {
             this.leftIconName = leftIcon.name;
         } else {
             this.leftIconName = null;
@@ -245,7 +250,7 @@ var TabItem = Container.$extend({
      *
      * @property rigthIconName
      * @type String
-     * @default: null
+     * @default null
      */
 
     _rightIconName: null,
@@ -265,13 +270,17 @@ var TabItem = Container.$extend({
 
     /**
      * Right icon widget
+     *
+     * @property rightIcon
+     * @type photonui.Icon
+     * @default null
      */
     getRightIcon: function () {
         return Widget.getWidget(this._rightIconName);
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton) {
             this.rightIconName = rightIcon.name;
         } else {
             this.rightIconName = null;
@@ -340,7 +349,7 @@ var TabItem = Container.$extend({
         this.__html.tab.className = "photonui-tabitem-tab";
 
         this.__html.leftIcon = document.createElement("span");
-        this.__html.leftIcon.className = "photonui-tab-icon";
+        this.__html.leftIcon.className = "photonui-tabitem-lefticon";
         this.__html.tab.appendChild(this.__html.leftIcon);
 
         this.__html.title = document.createElement("span");
@@ -348,7 +357,7 @@ var TabItem = Container.$extend({
         this.__html.tab.appendChild(this.__html.title);
 
         this.__html.rightIcon = document.createElement("span");
-        this.__html.rightIcon.className = "photon-ui-icon";
+        this.__html.rightIcon.className = "photonui-tabitem-righticon";
         this.__html.tab.appendChild(this.__html.rightIcon);
 
     },

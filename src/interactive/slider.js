@@ -291,6 +291,8 @@ var Slider = NumericField.$extend({
             this.value -= this.step;
             this._callCallbacks("value-changed", [this.value]);
         }
+        event.preventDefault();
+        event.stopPropagation();
     },
 
     /**

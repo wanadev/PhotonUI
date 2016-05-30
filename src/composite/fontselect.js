@@ -91,7 +91,7 @@ var FontSelect = Select.$extend({
     /**
      * The placeholder displayed if nothing is selected.
      *
-     * @property Placeholder
+     * @property placeholder
      * @type String
      * @default "Select a font..."
      */
