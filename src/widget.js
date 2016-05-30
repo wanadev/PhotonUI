@@ -178,7 +178,7 @@ var Widget = Base.$extend({
         if (visible) {
             this.html.style.display = "";
         } else {
-            this.html.style.display = "none";
+            this.html.style.setProperty("display", "none", "important");
         }
         this._visibilityChanged();
     },
