@@ -19437,7 +19437,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":19,"../interactive/button.js":27,"../interactive/colorpalette.js":29,"../interactive/colorpicker.js":30,"../interactive/slider.js":34,"../layout/boxlayout.js":39,"../layout/gridlayout.js":41,"../nonvisual/color.js":46,"../visual/faicon.js":54,"../visual/label.js":56,"../visual/separator.js":58,"stonejs":8}],14:[function(require,module,exports){
+},{"../container/dialog.js":19,"../interactive/button.js":27,"../interactive/colorpalette.js":29,"../interactive/colorpicker.js":30,"../interactive/slider.js":34,"../layout/boxlayout.js":39,"../layout/gridlayout.js":41,"../nonvisual/color.js":46,"../visual/faicon.js":55,"../visual/label.js":57,"../visual/separator.js":59,"stonejs":8}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20069,7 +20069,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":20,"../helpers.js":26,"../widget.js":62,"./popupmenu.js":15,"stonejs":8}],17:[function(require,module,exports){
+},{"../container/menuitem.js":20,"../helpers.js":26,"../widget.js":63,"./popupmenu.js":15,"stonejs":8}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20439,7 +20439,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":62,"./container.js":18}],18:[function(require,module,exports){
+},{"../widget.js":63,"./container.js":18}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20666,7 +20666,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":62}],19:[function(require,module,exports){
+},{"../widget.js":63}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20917,7 +20917,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":26,"../widget.js":62,"./window.js":25}],20:[function(require,module,exports){
+},{"../helpers.js":26,"../widget.js":63,"./window.js":25}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21147,7 +21147,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":26,"../visual/baseicon.js":52,"../widget.js":62,"./container.js":18}],21:[function(require,module,exports){
+},{"../helpers.js":26,"../visual/baseicon.js":53,"../widget.js":63,"./container.js":18}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21469,7 +21469,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":43,"../widget.js":62,"./menuitem.js":20}],23:[function(require,module,exports){
+},{"../layout/menu.js":43,"../widget.js":63,"./menuitem.js":20}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21855,7 +21855,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":26,"../interactive/iconbutton.js":32,"../visual/baseicon.js":52,"../widget.js":62,"./container.js":18}],24:[function(require,module,exports){
+},{"../helpers.js":26,"../interactive/iconbutton.js":32,"../visual/baseicon.js":53,"../widget.js":63,"./container.js":18}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22735,7 +22735,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
 module.exports = Window;
 
-},{"../helpers.js":26,"../widget.js":62,"./basewindow.js":17,"stonejs":8}],26:[function(require,module,exports){
+},{"../helpers.js":26,"../widget.js":63,"./basewindow.js":17,"stonejs":8}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23347,7 +23347,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":26,"../visual/baseicon.js":52,"../widget.js":62}],28:[function(require,module,exports){
+},{"../helpers.js":26,"../visual/baseicon.js":53,"../widget.js":63}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23529,7 +23529,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":62}],29:[function(require,module,exports){
+},{"../widget.js":63}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23733,7 +23733,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":26,"../nonvisual/color.js":46,"../widget.js":62}],30:[function(require,module,exports){
+},{"../helpers.js":26,"../nonvisual/color.js":46,"../widget.js":63}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24251,7 +24251,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":26,"../nonvisual/color.js":46,"../nonvisual/mousemanager.js":48,"../widget.js":62}],31:[function(require,module,exports){
+},{"../helpers.js":26,"../nonvisual/color.js":46,"../nonvisual/mousemanager.js":49,"../widget.js":63}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24441,7 +24441,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":62}],32:[function(require,module,exports){
+},{"../widget.js":63}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24647,7 +24647,7 @@ var IconButton = Widget.$extend({
 
 module.exports = IconButton;
 
-},{"../helpers.js":26,"../visual/baseicon.js":52,"../widget.js":62}],33:[function(require,module,exports){
+},{"../helpers.js":26,"../visual/baseicon.js":53,"../widget.js":63}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27416,7 +27416,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":18,"../widget.js":62}],43:[function(require,module,exports){
+},{"../container/container.js":18,"../widget.js":63}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27856,7 +27856,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":23,"../helpers.js":26,"../widget.js":62,"./layout.js":42}],45:[function(require,module,exports){
+},{"../container/tabitem.js":23,"../helpers.js":26,"../widget.js":63,"./layout.js":42}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28850,6 +28850,479 @@ module.exports = FileManager;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * Authored by: A. Breust <https://github.com/Breush>
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule NonVisual
+ * @namespace photonui
+ */
+
+var Helpers = require("../helpers.js");
+var Base = require("../base.js");
+var Widget = require("../widget.js");
+
+/**
+ * Manage document-wide keyboard events.
+ *
+ * wEvents:
+ *
+ *   * key-down:
+ *      - description: When a key is pushed (event launched just once until key is released).
+ *      - callback:    function(manager, kstate)
+ *
+ *   * key-up:
+ *      - description: When a key is released.
+ *      - callback:    function(manager, kstate)
+ *
+ *   * key-hold:
+ *      - description: When the last key pressed is held down.
+ *      - callback:    function(manager, kstate)
+ *
+ *
+ * kstate:
+ *
+ *   A snapshot of the keyboard state when the event occured.
+ *
+ *     {
+ *         event: <Object>,       // The original js event
+ *         action: <String>,      // The event name (key-down/up, key-hold)
+ *         keys: <String>,        // The object of active keys
+ *         key: <String>,         // User-friendly key name
+ *     }
+ *
+ * @class KeyboardManager
+ * @constructor
+ * @extends photonui.Base
+ * @param {photonui.Widget} element Any PhotonUI Widget (optional).
+ * @param {HTMLElement} element Any HTML element (optional).
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var KeyboardManager = Base.$extend({
+
+    // Constructor
+    __init__: function (element, params) {
+        this._registerWEvents(["key-down", "key-up", "key-hold"]);
+        if (element && (element instanceof Widget || element instanceof HTMLElement)) {
+            this.$super(params);
+            this.element = element;
+        } else {
+            this.$super(element);
+        }
+
+        this._initKeyCache();
+
+        // NOTE Holding event might be broken on old versions of Ubuntu + GTK
+        // for an event "keyup" is fired before the "keydown" repeat.
+        // One work-around would be to send by ourself the events inside an animation loop,
+        // according to the last and the current states of active keys.
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * The HTML Element on which the events are binded.
+     *
+     * NOTE: If a photonui.Widget object is assigned to this property,
+     *       its HTML Element will be automatically assigned to the property instead.
+     *
+     * @property element
+     * @type HTMLElement
+     * @default null
+     */
+    _element: null,
+
+    getElement: function () {
+        return this._element || document;
+    },
+
+    setElement: function (element) {
+        if (element instanceof Widget) {
+            this._element = element.interactiveNode || element.html;
+        } else if (element instanceof HTMLElement) {
+            this._element = element;
+        } else {
+            this._element = null;
+        }
+        this._updateEvents();
+    },
+
+    /**
+     * The action:
+     *
+     *   * "key-down"
+     *   * "key-up"
+     *   * "key-hold"
+     *
+     * @property action
+     * @readOnly
+     * @type String
+     */
+    _action: "",
+
+    getAction: function () {
+        return this._action;
+    },
+
+    // ====== Private properties ======
+
+    /**
+     * Last event object.
+     *
+     * @property __event
+     * @private
+     * @type Object
+     * @default {}
+     */
+    __event: {},
+
+    /**
+     * The currently active keys.
+     *
+     * @property keys
+     * @private
+     * @type Object
+     * @default {}
+     */
+    __keys: {},
+
+    /**
+     * Last key concerned.
+     *
+     * @property __key
+     * @private
+     * @type Object
+     * @default {}
+     */
+    __key: {},
+
+    /**
+     * KeyCode correspondance to key name.
+     *
+     * @property __keyCache
+     * @private
+     * @type Array
+     */
+    __keyCache: [],
+
+    /**
+     * Key name correspondance to key code.
+     *
+     * @property __keyCache
+     * @private
+     * @type Array
+     */
+    __keyCodeCache: [],
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Bind events on the HTML Element.
+     *
+     * @method _updateEvents
+     * @private
+     */
+    _updateEvents: function () {
+        // Unbind all existing events
+        for (var id in this.__events) {
+            this._unbindEvent(id);
+        }
+        // Check if we have an html element
+        if (!this.element) {
+            return;
+        }
+        // Bind new events
+        // We will simulate the standard "keypress" event because some browsers
+        // do not emit one for special keys (alt, ctrl, shift, escape).
+        this._bindEvent("key-down", this.getElement(), "keydown", this.__onDocumentKeyDown.bind(this));
+        this._bindEvent("key-up", this.getElement(), "keyup", this.__onDocumentKeyUp.bind(this));
+
+        this._bindEvent("lost-focus", window, "blur", this.__onWindowBlur.bind(this));
+    },
+
+    /**
+     * Check if a specific key is currently pressed.
+     *
+     * @method isKeyPressed
+     * @param {String} key The key name
+     * @return {Boolean}
+     */
+    isKeyPressed: function (key) {
+        var keyState = this.__keys[this.__keyCodeCache[key]];
+        return (keyState) ? true : false;
+    },
+
+    /**
+     * Check if a specific key is currently released.
+     *
+     * @method isKeyReleased
+     * @param {String} key The key name
+     * @return {Boolean}
+     */
+    isKeyReleased: function (key) {
+        var keyState = this.__keys[this.__keyCodeCache[key]];
+        return (keyState) ? false : true;
+    },
+
+    // ====== Private methods ======
+
+    /**
+     * Take a snapshot of the KeyboardManager
+     *
+     * @method _dump
+     * @private
+     * @return {Object}
+     */
+    _dump: function () {
+        return {
+            event: this.__event,
+            action: this._action,
+            key: this.__key
+        };
+    },
+
+    /**
+     * Check if the user has not focused an input element
+     *
+     * @method _checkFocus
+     * @private
+     * @return {Boolean}
+     */
+    _checkFocus: function () {
+        return !(document.activeElement instanceof HTMLInputElement ||
+                document.activeElement instanceof HTMLSelectElement ||
+                document.activeElement instanceof HTMLTextAreaElement);
+    },
+
+    /**
+     * Check the validity of the keyboard event
+     *
+     * @method _checkEvent
+     * @private
+     * @param {KeyboardEvent} event The keyboard event
+     * @return {Boolean}
+     */
+    _checkEvent: function (event) {
+        this.__event = event;
+        this.__key = this._keyFromEvent(event);
+
+        if (!this.__key || this.__key === "Dead") {
+            return false;
+        }
+
+        this.__keyCodeCache[this.__key] = event.keyCode;
+
+        return this._checkFocus();
+    },
+
+    /**
+     * Create the key correspondance cache for basic touches
+     *
+     * @method _initKeyCache
+     * @private
+     */
+    _initKeyCache: function () {
+        // General
+        this.__keyCache[3] = "cancel";
+        this.__keyCache[8] = "backspace";
+        this.__keyCache[9] = "tab";
+        this.__keyCache[12] = "clear";
+        this.__keyCache[13] = "enter";
+        this.__keyCache[16] = "shift";
+        this.__keyCache[17] = "ctrl";
+        this.__keyCache[18] = "alt";
+        this.__keyCache[19] = "pause";
+        this.__keyCache[20] = "capslock";
+        this.__keyCache[27] = "escape";
+        this.__keyCache[32] = "space";
+        this.__keyCache[33] = "pageup";
+        this.__keyCache[34] = "pagedown";
+        this.__keyCache[35] = "end";
+        this.__keyCache[36] = "home";
+        this.__keyCache[37] = "left";
+        this.__keyCache[38] = "up";
+        this.__keyCache[39] = "right";
+        this.__keyCache[40] = "down";
+        this.__keyCache[41] = "select";
+        this.__keyCache[42] = "printscreen";
+        this.__keyCache[43] = "execute";
+        this.__keyCache[44] = "snapshot";
+        this.__keyCache[45] = "insert";
+        this.__keyCache[46] = "delete";
+        this.__keyCache[47] = "help";
+
+        // 0-9
+        this.__keyCache[48] = "0";
+        this.__keyCache[49] = "1";
+        this.__keyCache[50] = "2";
+        this.__keyCache[51] = "3";
+        this.__keyCache[52] = "4";
+        this.__keyCache[53] = "5";
+        this.__keyCache[54] = "6";
+        this.__keyCache[55] = "7";
+        this.__keyCache[56] = "8";
+        this.__keyCache[57] = "9";
+
+        // A-Z
+        for (var keyCode = 65; keyCode <= 90; ++keyCode) {
+            this.__keyCache[keyCode] = String.fromCharCode(keyCode);
+        }
+
+        // numpad
+        this.__keyCache[96] = "num0";
+        this.__keyCache[97] = "num1";
+        this.__keyCache[98] = "num2";
+        this.__keyCache[99] = "num3";
+        this.__keyCache[100] = "num4";
+        this.__keyCache[101] = "num5";
+        this.__keyCache[102] = "num6";
+        this.__keyCache[103] = "num7";
+        this.__keyCache[104] = "num8";
+        this.__keyCache[105] = "num9";
+        this.__keyCache[106] = "num*";
+        this.__keyCache[107] = "num+";
+        this.__keyCache[108] = "numenter";
+        this.__keyCache[109] = "num-";
+        this.__keyCache[110] = "num.";
+        this.__keyCache[111] = "num/";
+        this.__keyCache[144] = "numlock";
+        this.__keyCache[145] = "scrolllock";
+
+        // function keys
+        this.__keyCache[112] = "f1";
+        this.__keyCache[113] = "f2";
+        this.__keyCache[114] = "f3";
+        this.__keyCache[115] = "f4";
+        this.__keyCache[116] = "f5";
+        this.__keyCache[117] = "f6";
+        this.__keyCache[118] = "f7";
+        this.__keyCache[119] = "f8";
+        this.__keyCache[120] = "f9";
+        this.__keyCache[121] = "f10";
+        this.__keyCache[122] = "f11";
+        this.__keyCache[123] = "f12";
+    },
+
+    /**
+     * Get the key name from a native keyboard event
+     *
+     * @method _keyFromEvent
+     * @private
+     * @param {KeyboardEvent} event The keyboard event
+     * @return {String}
+     */
+    _keyFromEvent: function (keyboardEvent) {
+        var key = this.__keyCache[keyboardEvent.keyCode];
+        if (!key) {
+            key = keyboardEvent.key;
+            this.__keyCache[keyboardEvent.keyCode] = key;
+        }
+        return key;
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * Used to grab all keyboard events
+     *
+     * @method __onDocumentKeyDown
+     * @private
+     * @param event
+     */
+    __onDocumentKeyDown: function (event) {
+        if (!this._checkEvent(event)) {
+            return;
+        }
+
+        this._action = (this.__keys[event.keyCode]) ? "key-hold" : "key-down";
+        this.__keys[event.keyCode] = true;
+        this._callCallbacks(this._action, [this._dump()]);
+
+        event.stopPropagation();
+        event.preventDefault();
+    },
+
+    /**
+     * Used to grab all keyboard events
+     *
+     * @method __onDocumentKeyUp
+     * @private
+     * @param event
+     */
+    __onDocumentKeyUp: function (event) {
+        if (!this._checkEvent(event) || !this.__keys[event.keyCode]) {
+            return;
+        }
+
+        this._action = "key-up";
+        this.__keys[event.keyCode] = undefined;
+        this._callCallbacks(this._action, [this._dump()]);
+
+        event.stopPropagation();
+        event.preventDefault();
+    },
+
+    /**
+     * Called when the window loose focus
+     *
+     * @method __onWindowBlur
+     * @private
+     */
+    __onWindowBlur: function () {
+        this._action = "key-up";
+        this._event = undefined;
+
+        for (var keyCode in this.__keys) {
+            this.__keys[keyCode] = undefined;
+            this.__key = this.__keyCache[keyCode];
+            this._callCallbacks(this._action, [this._dump()]);
+        }
+    }
+});
+
+module.exports = KeyboardManager;
+
+},{"../base.js":11,"../helpers.js":26,"../widget.js":63}],49:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 
@@ -29550,7 +30023,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":11,"../helpers.js":26,"../widget.js":62}],49:[function(require,module,exports){
+},{"../base.js":11,"../helpers.js":26,"../widget.js":63}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29776,7 +30249,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":11}],50:[function(require,module,exports){
+},{"../base.js":11}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29951,7 +30424,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":11,"stonejs":8}],51:[function(require,module,exports){
+},{"../base.js":11,"stonejs":8}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30013,6 +30486,7 @@ photonui.getWidget = photonui.Widget.getWidget;
 photonui.FileManager = require("./nonvisual/filemanager.js");
 photonui.Translation = require("./nonvisual/translation.js");
 photonui.AccelManager = require("./nonvisual/accelmanager.js");
+photonui.KeyboardManager = require("./nonvisual/keyboardmanager.js");
 photonui.MouseManager = require("./nonvisual/mousemanager.js");
 photonui.BaseIcon = require("./visual/baseicon.js");
 photonui.FAIcon = require("./visual/faicon.js");
@@ -30063,7 +30537,7 @@ photonui.Template = require("./visual/template.js");
 
 module.exports = photonui;
 
-},{"./base.js":11,"./composite/colorbutton.js":12,"./composite/colorpickerdialog.js":13,"./composite/fontselect.js":14,"./composite/popupmenu.js":15,"./composite/select.js":16,"./container/basewindow.js":17,"./container/container.js":18,"./container/dialog.js":19,"./container/menuitem.js":20,"./container/popupwindow.js":21,"./container/submenuitem.js":22,"./container/tabitem.js":23,"./container/viewport.js":24,"./container/window.js":25,"./helpers.js":26,"./interactive/button.js":27,"./interactive/checkbox.js":28,"./interactive/colorpalette.js":29,"./interactive/colorpicker.js":30,"./interactive/field.js":31,"./interactive/iconbutton.js":32,"./interactive/numericfield.js":33,"./interactive/slider.js":34,"./interactive/switch.js":35,"./interactive/textareafield.js":36,"./interactive/textfield.js":37,"./interactive/togglebutton.js":38,"./layout/boxlayout.js":39,"./layout/fluidlayout.js":40,"./layout/gridlayout.js":41,"./layout/layout.js":42,"./layout/menu.js":43,"./layout/tablayout.js":44,"./nonvisual/accelmanager.js":45,"./nonvisual/color.js":46,"./nonvisual/filemanager.js":47,"./nonvisual/mousemanager.js":48,"./nonvisual/spritesheet.js":49,"./nonvisual/translation.js":50,"./visual/baseicon.js":52,"./visual/canvas.js":53,"./visual/faicon.js":54,"./visual/image.js":55,"./visual/label.js":56,"./visual/progressbar.js":57,"./visual/separator.js":58,"./visual/spriteicon.js":59,"./visual/template.js":60,"./visual/text.js":61,"./widget.js":62,"abitbol":1,"keyboardjs":3,"lodash":4,"stonejs":8,"uuid":10}],52:[function(require,module,exports){
+},{"./base.js":11,"./composite/colorbutton.js":12,"./composite/colorpickerdialog.js":13,"./composite/fontselect.js":14,"./composite/popupmenu.js":15,"./composite/select.js":16,"./container/basewindow.js":17,"./container/container.js":18,"./container/dialog.js":19,"./container/menuitem.js":20,"./container/popupwindow.js":21,"./container/submenuitem.js":22,"./container/tabitem.js":23,"./container/viewport.js":24,"./container/window.js":25,"./helpers.js":26,"./interactive/button.js":27,"./interactive/checkbox.js":28,"./interactive/colorpalette.js":29,"./interactive/colorpicker.js":30,"./interactive/field.js":31,"./interactive/iconbutton.js":32,"./interactive/numericfield.js":33,"./interactive/slider.js":34,"./interactive/switch.js":35,"./interactive/textareafield.js":36,"./interactive/textfield.js":37,"./interactive/togglebutton.js":38,"./layout/boxlayout.js":39,"./layout/fluidlayout.js":40,"./layout/gridlayout.js":41,"./layout/layout.js":42,"./layout/menu.js":43,"./layout/tablayout.js":44,"./nonvisual/accelmanager.js":45,"./nonvisual/color.js":46,"./nonvisual/filemanager.js":47,"./nonvisual/keyboardmanager.js":48,"./nonvisual/mousemanager.js":49,"./nonvisual/spritesheet.js":50,"./nonvisual/translation.js":51,"./visual/baseicon.js":53,"./visual/canvas.js":54,"./visual/faicon.js":55,"./visual/image.js":56,"./visual/label.js":57,"./visual/progressbar.js":58,"./visual/separator.js":59,"./visual/spriteicon.js":60,"./visual/template.js":61,"./visual/text.js":62,"./widget.js":63,"abitbol":1,"keyboardjs":3,"lodash":4,"stonejs":8,"uuid":10}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30131,7 +30605,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":62}],53:[function(require,module,exports){
+},{"../widget.js":63}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30411,7 +30885,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":62}],54:[function(require,module,exports){
+},{"../widget.js":63}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30582,7 +31056,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":52}],55:[function(require,module,exports){
+},{"./baseicon.js":53}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30737,7 +31211,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":62}],56:[function(require,module,exports){
+},{"../widget.js":63}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30945,7 +31419,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":26,"../widget.js":62}],57:[function(require,module,exports){
+},{"../helpers.js":26,"../widget.js":63}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31173,7 +31647,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":62}],58:[function(require,module,exports){
+},{"../widget.js":63}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31314,7 +31788,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":62}],59:[function(require,module,exports){
+},{"../widget.js":63}],60:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31496,7 +31970,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":49,"./baseicon.js":52}],60:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":50,"./baseicon.js":53}],61:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31653,7 +32127,7 @@ var Template = Widget.$extend({
 
 module.exports = Template;
 
-},{"../helpers.js":26,"../widget.js":62,"lodash":4}],61:[function(require,module,exports){
+},{"../helpers.js":26,"../widget.js":63,"lodash":4}],62:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31799,7 +32273,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":26,"../widget.js":62,"stonejs":8}],62:[function(require,module,exports){
+},{"../helpers.js":26,"../widget.js":63,"stonejs":8}],63:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32324,5 +32798,5 @@ var Widget = Base.$extend({
 
 module.exports = Widget;
 
-},{"./base.js":11,"./container/popupwindow.js":21,"./helpers.js":26,"stonejs":8,"uuid":10}]},{},[51])(51)
+},{"./base.js":11,"./container/popupwindow.js":21,"./helpers.js":26,"stonejs":8,"uuid":10}]},{},[52])(52)
 });
