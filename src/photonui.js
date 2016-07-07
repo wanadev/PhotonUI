@@ -59,6 +59,7 @@ photonui.getWidget = photonui.Widget.getWidget;
 photonui.FileManager = require("./nonvisual/filemanager.js");
 photonui.Translation = require("./nonvisual/translation.js");
 photonui.AccelManager = require("./nonvisual/accelmanager.js");
+photonui.KeyboardManager = require("./nonvisual/keyboardmanager.js");
 photonui.MouseManager = require("./nonvisual/mousemanager.js");
 photonui.BaseIcon = require("./visual/baseicon.js");
 photonui.FAIcon = require("./visual/faicon.js");
