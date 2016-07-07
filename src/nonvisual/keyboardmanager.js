@@ -186,7 +186,7 @@ var KeyboardManager = Base.$extend({
      */
     isKeyPressed: function (key) {
         var keyState = this.__keys[this.__keyCodeCache[key]];
-        return (keyState)? true : false;
+        return (keyState) ? true : false;
     },
 
     /**
@@ -198,7 +198,7 @@ var KeyboardManager = Base.$extend({
      */
     isKeyReleased: function (key) {
         var keyState = this.__keys[this.__keyCodeCache[key]];
-        return (keyState)? false : true;
+        return (keyState) ? false : true;
     },
 
     // ====== Private methods ======
@@ -243,8 +243,9 @@ var KeyboardManager = Base.$extend({
         this.__event = event;
         this.__key = this._keyFromEvent(event);
 
-        if (!this.__key || this.__key === "Dead")
+        if (!this.__key || this.__key === "Dead") {
             return false;
+        }
 
         this.__keyCodeCache[this.__key] = event.keyCode;
 
@@ -300,8 +301,9 @@ var KeyboardManager = Base.$extend({
         this.__keyCache[57] = "9";
 
         // A-Z
-        for (var keyCode = 65; keyCode <= 90; ++keyCode)
+        for (var keyCode = 65; keyCode <= 90; ++keyCode) {
             this.__keyCache[keyCode] = String.fromCharCode(keyCode);
+        }
 
         // numpad
         this.__keyCache[96] = "num0";
@@ -355,7 +357,6 @@ var KeyboardManager = Base.$extend({
         return key;
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
@@ -372,7 +373,7 @@ var KeyboardManager = Base.$extend({
             return;
         }
 
-        this._action = (this.__keys[event.keyCode])? "key-hold" : "key-down";
+        this._action = (this.__keys[event.keyCode]) ? "key-hold" : "key-down";
         this.__keys[event.keyCode] = true;
         this._callCallbacks(this._action, [this._dump()]);
 
