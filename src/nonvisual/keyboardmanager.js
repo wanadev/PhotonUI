@@ -36,16 +36,14 @@
  * @namespace photonui
  */
 
+var Helpers = require("../helpers.js");
 var Base = require("../base.js");
+var Widget = require("../widget.js");
 
 /**
  * Manage document-wide keyboard events.
  *
  * wEvents:
- *
- *   * key-event:
- *      - description: Called for *ALL* keyboard events.
- *      - callback:    function(manager, kstate)
  *
  *   * key-down:
  *      - description: When a key is pushed (event launched just once until key is released).
@@ -74,14 +72,21 @@ var Base = require("../base.js");
  * @class KeyboardManager
  * @constructor
  * @extends photonui.Base
+ * @param {photonui.Widget} element Any PhotonUI Widget (optional).
+ * @param {HTMLElement} element Any HTML element (optional).
  * @param {Object} params An object that can contain any property of the widget (optional).
  */
 var KeyboardManager = Base.$extend({
 
     // Constructor
-    __init__: function (params) {
+    __init__: function (element, params) {
         this._registerWEvents(["key-down", "key-up", "key-hold"]);
-        this.$super(params);
+        if (element && (element instanceof Widget || element instanceof HTMLElement)) {
+            this.$super(params);
+            this.element = element;
+        } else {
+            this.$super(element);
+        }
 
         this._initKeyCache();
 
@@ -89,13 +94,6 @@ var KeyboardManager = Base.$extend({
         // for an event "keyup" is fired before the "keydown" repeat.
         // One work-around would be to send by ourself the events inside an animation loop,
         // according to the last and the current states of active keys.
-
-        // Bind new events
-        // We will simulate the standard "keypress" event because some browsers
-        // do not emit one for special keys (alt, ctrl, shift, escape).
-        this._bindEvent("key-down", document, "keydown", this.__onDocumentKeyDown.bind(this));
-        this._bindEvent("key-up", document, "keyup", this.__onDocumentKeyUp.bind(this));
-        this._bindEvent("lost-focus", window, "blur", this.__onWindowBlur.bind(this));
     },
 
     //////////////////////////////////////////
@@ -103,6 +101,33 @@ var KeyboardManager = Base.$extend({
     //////////////////////////////////////////
 
     // ====== Public properties ======
+
+    /**
+     * The HTML Element on which the events are binded.
+     *
+     * NOTE: If a photonui.Widget object is assigned to this property,
+     *       its HTML Element will be automatically assigned to the property instead.
+     *
+     * @property element
+     * @type HTMLElement
+     * @default null
+     */
+    _element: null,
+
+    getElement: function () {
+        return this._element || document;
+    },
+
+    setElement: function (element) {
+        if (element instanceof Widget) {
+            this._element = element.interactiveNode || element.html;
+        } else if (element instanceof HTMLElement) {
+            this._element = element;
+        } else {
+            this._element = null;
+        }
+        this._updateEvents();
+    },
 
     /**
      * The action:
@@ -176,6 +201,30 @@ var KeyboardManager = Base.$extend({
     //////////////////////////////////////////
 
     // ====== Public methods ======
+
+    /**
+     * Bind events on the HTML Element.
+     *
+     * @method _updateEvents
+     * @private
+     */
+    _updateEvents: function () {
+        // Unbind all existing events
+        for (var id in this.__events) {
+            this._unbindEvent(id);
+        }
+        // Check if we have an html element
+        if (!this.element) {
+            return;
+        }
+        // Bind new events
+        // We will simulate the standard "keypress" event because some browsers
+        // do not emit one for special keys (alt, ctrl, shift, escape).
+        this._bindEvent("key-down", this.getElement(), "keydown", this.__onDocumentKeyDown.bind(this));
+        this._bindEvent("key-up", this.getElement(), "keyup", this.__onDocumentKeyUp.bind(this));
+
+        this._bindEvent("lost-focus", window, "blur", this.__onWindowBlur.bind(this));
+    },
 
     /**
      * Check if a specific key is currently pressed.
