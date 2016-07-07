@@ -148,17 +148,20 @@ Once you feel comfortable with the custom widget creation, you can create widget
 
 ## Changelog:
 
+* **1.4.1:**
+  * various fixes
+
 * **1.4.0:**
-    * New widgets: `Template`, `IconButton`,
-    * All widgets have now a `data` property that can contain anything you want,
-    * Font Awesome updated to 4.5
+  * New widgets: `Template`, `IconButton`,
+  * All widgets have now a `data` property that can contain anything you want,
+  * Font Awesome updated to 4.5
 
 * **1.3.0:**
-    * Fixes vertical sizing issue in GridLayout with latest Gecko versions...
-    * Better split of Less files
+  * Fixes vertical sizing issue in GridLayout with latest Gecko versions...
+  * Better split of Less files
 
 * **1.2.1:**
-    * Fixes minor display issues
+  * Fixes minor display issues
 
 * **1.2.0:**
   * TabItem can now have icons
