@@ -81,7 +81,7 @@ var KeyboardManager = Base.$extend({
     // Constructor
     __init__: function (element, params) {
         this._registerWEvents(["key-down", "key-up", "key-hold"]);
-        if (element && (element instanceof Widget || element instanceof HTMLElement)) {
+        if (element && (element instanceof Widget || element instanceof HTMLElement || element === document)) {
             this.$super(params);
             this.element = element;
         } else {
@@ -121,7 +121,7 @@ var KeyboardManager = Base.$extend({
     setElement: function (element) {
         if (element instanceof Widget) {
             this._element = element.interactiveNode || element.html;
-        } else if (element instanceof HTMLElement) {
+        } else if (element instanceof HTMLElement || element === document) {
             this._element = element;
         } else {
             this._element = null;
