@@ -81,12 +81,13 @@ var KeyboardManager = Base.$extend({
     // Constructor
     __init__: function (element, params) {
         this._registerWEvents(["key-down", "key-up", "key-hold"]);
-        if (element && (element instanceof Widget || element instanceof HTMLElement)) {
+        if (element && (element instanceof Widget || element instanceof HTMLElement || element === document)) {
             this.$super(params);
             this.element = element;
         } else {
             this.$super(element);
         }
+        this._updateProperties(["safe", "noPreventDefault"]);
 
         this._initKeyCache();
 
@@ -101,6 +102,40 @@ var KeyboardManager = Base.$extend({
     //////////////////////////////////////////
 
     // ====== Public properties ======
+
+    /**
+     * Disable the keyboard manager callbacks when focusing a input field-like element.
+     *
+     * @property safe
+     * @type Boolean
+     * @default true
+     */
+    _safe: true,
+
+    getSafe: function () {
+        return this._safe;
+    },
+
+    setSafe: function (safe) {
+        this._safe = safe;
+    },
+
+    /**
+     * Disable concerned events default actions.
+     *
+     * @property noPreventDefault
+     * @type Boolean
+     * @default false
+     */
+    _noPreventDefault: false,
+
+    getNoPreventDefault: function () {
+        return this._noPreventDefault;
+    },
+
+    setNoPreventDefault: function (noPreventDefault) {
+        this._noPreventDefault = noPreventDefault;
+    },
 
     /**
      * The HTML Element on which the events are binded.
@@ -121,7 +156,7 @@ var KeyboardManager = Base.$extend({
     setElement: function (element) {
         if (element instanceof Widget) {
             this._element = element.interactiveNode || element.html;
-        } else if (element instanceof HTMLElement) {
+        } else if (element instanceof HTMLElement || element === document) {
             this._element = element;
         } else {
             this._element = null;
@@ -275,9 +310,9 @@ var KeyboardManager = Base.$extend({
      * @return {Boolean}
      */
     _checkFocus: function () {
-        return !(document.activeElement instanceof HTMLInputElement ||
-                document.activeElement instanceof HTMLSelectElement ||
-                document.activeElement instanceof HTMLTextAreaElement);
+        return !(this._safe && (document.activeElement instanceof HTMLInputElement ||
+               document.activeElement instanceof HTMLSelectElement ||
+               document.activeElement instanceof HTMLTextAreaElement));
     },
 
     /**
@@ -426,8 +461,10 @@ var KeyboardManager = Base.$extend({
         this.__keys[event.keyCode] = true;
         this._callCallbacks(this._action, [this._dump()]);
 
-        event.stopPropagation();
-        event.preventDefault();
+        if (!this._noPreventDefault) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
     },
 
     /**
@@ -446,8 +483,10 @@ var KeyboardManager = Base.$extend({
         this.__keys[event.keyCode] = undefined;
         this._callCallbacks(this._action, [this._dump()]);
 
-        event.stopPropagation();
-        event.preventDefault();
+        if (!this._noPreventDefault) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
     },
 
     /**
