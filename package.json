@@ -26,7 +26,7 @@
     "url": "http://github.com/wanadev/PhotonUI.git"
   },
   "dependencies": {
-    "abitbol": "^1.0.3",
+    "abitbol": "^1.0.4",
     "keyboardjs": "flozz/KeyboardJS",
     "lodash": "^4.5.1",
     "stonejs": ">=2.1.0",
