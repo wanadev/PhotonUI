@@ -197,6 +197,7 @@ var FileManager = Base.$extend({
      */
     open: function () {
         this.__fileField.style.display = "inline-block";
+        this.__fileField.value = null;
         this.__fileField.focus();
         this.__fileField.click();
         this.__fileField.style.display = "none";
