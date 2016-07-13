@@ -32806,7 +32806,6 @@ var Widget = Base.$extend({
          * @method getWidget
          * @static
          * @param {String} name The widget name.
-         *
          * @return {Widget} The widget or null.
          */
         getWidget: function (name) {
@@ -32814,6 +32813,17 @@ var Widget = Base.$extend({
                 return _widgets[name];
             }
             return null;
+        },
+
+        /**
+         * Get all instanciated PhotonUI widgets.
+         *
+         * @method getAllWidgets
+         * @static
+         * @return {Object} An object containing all widgets `{"widgetName": Widget, ...}`
+         */
+        getAllWidgets: function (name) {
+            return _widgets;
         },
 
         /**
