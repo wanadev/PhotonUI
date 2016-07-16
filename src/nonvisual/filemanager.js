@@ -145,8 +145,8 @@ var FileManager = Base.$extend({
             this._bindEvent("document-drop", document, "drop", function (event) {
                 event.preventDefault();
             });
-            this._bindEvent("element-dragover", document, "dragover", function (event) {});
-            this._bindEvent("element-drop", document, "drop", this.__onFileDropped.bind(this));
+            this._bindEvent("element-dragover", element, "dragover", function (event) {});
+            this._bindEvent("element-drop", element, "drop", this.__onFileDropped.bind(this));
         }
     },
 
