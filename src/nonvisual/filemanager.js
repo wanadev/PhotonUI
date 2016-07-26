@@ -145,8 +145,8 @@ var FileManager = Base.$extend({
             this._bindEvent("document-drop", document, "drop", function (event) {
                 event.preventDefault();
             });
-            this._bindEvent("element-dragover", document, "dragover", function (event) {});
-            this._bindEvent("element-drop", document, "drop", this.__onFileDropped.bind(this));
+            this._bindEvent("element-dragover", element, "dragover", function (event) {});
+            this._bindEvent("element-drop", element, "drop", this.__onFileDropped.bind(this));
         }
     },
 
@@ -197,6 +197,7 @@ var FileManager = Base.$extend({
      */
     open: function () {
         this.__fileField.style.display = "inline-block";
+        this.__fileField.value = null;
         this.__fileField.focus();
         this.__fileField.click();
         this.__fileField.style.display = "none";

@@ -7,8 +7,7 @@
 [![Dev Dependencies](https://img.shields.io/david/dev/wanadev/PhotonUI.svg?maxAge=2592000)]()
 
 
-PhotonUI javascript framework to create rich web user interfaces without having
-to manipulate any HTML nor CSS.
+PhotonUI javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
 
 * **Website:** http://wanadev.github.io/PhotonUI/
 * **Quick start:** http://wanadev.github.io/PhotonUI/doc/quick-start.html
@@ -34,11 +33,11 @@ in your page:
         <meta charset="UTF-8" />
         <title>Boilerplate</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
+
         <link type="text/css" rel="stylesheet" href="dist/photonui-base.css" />
         <link type="text/css" rel="stylesheet" href="dist/photonui-theme-particle.css" />
         <script src="dist/photonui.js"></script>
-        
+
     </head>
     <body>
     </body>
@@ -78,9 +77,10 @@ tools.
 
 ### Installing Dependencies
 
-To build PhotonUI, you will first have to install [Node.js][nodejs] (or [io.js][iojs]).
+To build PhotonUI, you will first have to install [Node.js][nodejs] (or
+[io.js][iojs]).
 
-**NOTE:** If you are on Ubuntu / Debian Linux you must install the
+**NOTE:** If you are on Ubuntu / Debian Linux you must install the
 `nodejs-legacy` package.
 
 Next, install globally the `grunt-cli` npm package:
@@ -121,13 +121,12 @@ this command:
 
 ### Testing
 
-~~To run the PhotonUI tests, you can use the following command:~~
+To run the PhotonUI tests, you can use the following commands (you should have
+chromium and firefox installed):
 
-~~grunt test~~
+    npm test
 
-As [PhantomJS][phantomjs], the browser used to run the tests, embedded a very
-old Webkit version, the tests cannot be automatically ; you have to run them
-manually in you browser:
+You can also run manually the tests in your browser:
 
 1. Check that the javascript is well formed and that it follows the coding
    style: `grunt jshint jscs`
@@ -150,8 +149,7 @@ If you want to create you own PhotonUI widgets, first read this:
 
 * http://wanadev.github.io/PhotonUI/doc/custom-widget.html
 
-The documentation above explain how to create a custom widget **outside** of
-the PhotonUI project.
+The documentation above explain how to create a custom widget **outside** of the PhotonUI project.
 
 Once you feel comfortable with the custom widget creation, you can create
 widgets inside the PhotonUI project. We created a [Yeoman][yo] generator that
@@ -167,6 +165,10 @@ creates all required files for you:
 
 
 ## Changelog:
+
+* **1.5.1:**
+  * Fixes an issue with `FileManager`,
+  * cleanup build / test dependencies
 
 * **1.5.0:**
   * New widget: `photonui.KeyboardManager` (thx @Breush)
