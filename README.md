@@ -33,11 +33,11 @@ in your page:
         <meta charset="UTF-8" />
         <title>Boilerplate</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
+
         <link type="text/css" rel="stylesheet" href="dist/photonui-base.css" />
         <link type="text/css" rel="stylesheet" href="dist/photonui-theme-particle.css" />
         <script src="dist/photonui.js"></script>
-        
+
     </head>
     <body>
     </body>
@@ -47,7 +47,8 @@ in your page:
 
 ### NPM and Browserify
 
-If you are using [Browserify][browserify] in your project, a [NPM package][npm] is available. To install it, juste type:
+If you are using [Browserify][browserify] in your project, a [NPM package][npm]
+is available. To install it, juste type:
 
 ```
 npm install --save photonui
@@ -69,14 +70,18 @@ var photonui = require("photonui");
 
 ## Hacking
 
-PhotonUI is built using [Grunt][grunt], [Less][less] and [Browserify][browserify]. If you want to hack it, you will have to install few tools.
+PhotonUI is built using [Grunt][grunt], [Less][less] and
+[Browserify][browserify]. If you want to hack it, you will have to install few
+tools.
 
 
 ### Installing Dependencies
 
-To build PhotonUI, you will first have to install [Node.js][nodejs] (or [io.js][iojs]).
+To build PhotonUI, you will first have to install [Node.js][nodejs] (or
+[io.js][iojs]).
 
-**NOTE:** If you are on Ubuntu / Debian Linux you must install the `nodejs-legacy` package.
+**NOTE:** If you are on Ubuntu / Debian Linux you must install the
+`nodejs-legacy` package.
 
 Next, install globally the `grunt-cli` npm package:
 
@@ -89,42 +94,51 @@ Then install the PhotonUI's dependencies:
 
 ### Building PhotonUI
 
-Once the build stuff and dependencies installed, you just have to run the `grunt` command to build PhotonUI:
+Once the build stuff and dependencies installed, you just have to run the
+`grunt` command to build PhotonUI:
 
     grunt
 
 All generated files are in the `dist` folder.
 
-**NOTE:** during the development, it can be annoying to run the `grunt` command every time you make a change. You can instead run the following command to automatically rebuild what changed each time you modify a file:
+**NOTE:** during the development, it can be annoying to run the `grunt` command
+every time you make a change. You can instead run the following command to
+automatically rebuild what changed each time you modify a file:
 
     grunt watch
 
 
 ### Coding Style
 
-PhotonUI follows the [Yandex Javascript CodeStyle][codestyle-yandex] **EXCEPT** for the quote marks where we use **double quotes** (`"`).
+PhotonUI follows the [Yandex Javascript CodeStyle][codestyle-yandex] **EXCEPT**
+for the quote marks where we use **double quotes** (`"`).
 
-You can automatically check that your code follows the conventions by using this command:
+You can automatically check that your code follows the conventions by using
+this command:
 
     grunt jscs
 
 
 ### Testing
 
-~~To run the PhotonUI tests, you can use the following command:~~
+To run the PhotonUI tests, you can use the following commands (you should have
+chromium and firefox installed):
 
-~~grunt test~~
+    npm test
 
-As [PhantomJS][phantomjs], the browser used to run the tests, embedded a very old Webkit version, the tests cannot be automatically ; you have to run them manually in you browser:
+You can also run manually the tests in your browser:
 
-1. Check that the javascript is well formed and that it follows the coding style: `grunt jshint jscs`
+1. Check that the javascript is well formed and that it follows the coding
+   style: `grunt jshint jscs`
 2. Build PhotonUI: `grunt`
 3. Run the tests: open `test/index.html` in your browser.
 
 
 ### Git Hooks
 
-To avoid committing bad stuff, you can install a git pre-commit hook that will abort the commit if the code contains errors. To install the hooks you just have to run the following command:
+To avoid committing bad stuff, you can install a git pre-commit hook that will
+abort the commit if the code contains errors. To install the hooks you just
+have to run the following command:
 
     grunt githooks
 
@@ -137,7 +151,9 @@ If you want to create you own PhotonUI widgets, first read this:
 
 The documentation above explain how to create a custom widget **outside** of the PhotonUI project.
 
-Once you feel comfortable with the custom widget creation, you can create widgets inside the PhotonUI project. We created a [Yeoman][yo] generator that creates all required files for you:
+Once you feel comfortable with the custom widget creation, you can create
+widgets inside the PhotonUI project. We created a [Yeoman][yo] generator that
+creates all required files for you:
 
 * https://github.com/wanadev/generator-photonui-widget
 
