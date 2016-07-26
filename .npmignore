@@ -6,3 +6,5 @@ dist/*.js
 .jscsrc
 karma.conf.js
 .travis.yml
+.jshintrc
+.tern-project

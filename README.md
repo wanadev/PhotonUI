@@ -166,6 +166,13 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.5.1:**
+  * Fixes an issue with `FileManager`,
+  * cleanup build / test dependencies
+
+* **1.5.0:**
+  * New widget: `photonui.KeyboardManager` (thx @Breush)
+
 * **1.4.1:**
   * various fixes
 
