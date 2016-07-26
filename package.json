@@ -47,7 +47,7 @@
     "grunt-contrib-yuidoc": ">=0.7.0",
     "grunt-githooks": "^0.6.0",
     "grunt-jscs": "^1.8.0",
-    "karma": "^1.1.0",
+    "karma": "^1.1.2",
     "karma-chrome-launcher": "^1.0.1",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.0.2",
