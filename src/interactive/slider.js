@@ -285,14 +285,16 @@ var Slider = NumericField.$extend({
      */
     __onSliderKeyDown: function (event) {
         if (event.keyCode == 38 || event.keyCode == 39) {  // Up, Right
+            event.preventDefault();
+            event.stopPropagation();
             this.value += this.step;
             this._callCallbacks("value-changed", [this.value]);
         } else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
+            event.preventDefault();
+            event.stopPropagation();
             this.value -= this.step;
             this._callCallbacks("value-changed", [this.value]);
         }
-        event.preventDefault();
-        event.stopPropagation();
     },
 
     /**
