@@ -294,6 +294,13 @@ var Select = Widget.$extend({
 
     // ====== Public methods ======
 
+    setVisible: function (visible) {
+        this.$super(visible);
+        if (!visible) {
+            this.__popupMenu.hide();
+        }
+    },
+
     /**
      * Add a widget to the layout.
      *
