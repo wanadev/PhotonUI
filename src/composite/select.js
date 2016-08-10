@@ -267,6 +267,13 @@ var Select = Widget.$extend({
         this.__popupMenu.setIconVisible(p);
     },
 
+    setVisible: function (visible) {
+        this.$super(visible);
+        if (!visible) {
+            this.__popupMenu.hide();
+        }
+    },
+
     /**
      * Html outer element of the widget (if any).
      *
@@ -278,6 +285,8 @@ var Select = Widget.$extend({
     getHtml: function () {
         return this.__html.select;
     },
+
+    // ====== Private properties ======
 
     /**
      * The popupMenu.
@@ -293,13 +302,6 @@ var Select = Widget.$extend({
     //////////////////////////////////////////
 
     // ====== Public methods ======
-
-    setVisible: function (visible) {
-        this.$super(visible);
-        if (!visible) {
-            this.__popupMenu.hide();
-        }
-    },
 
     /**
      * Add a widget to the layout.
