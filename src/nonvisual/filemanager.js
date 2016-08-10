@@ -264,7 +264,7 @@ var FileManager = Base.$extend({
             }
         }
 
-        if (match) {
+        if (match || this.acceptedMimes.length === 0 && this.acceptedExts.length === 0) {
             this._callCallbacks("file-open", [file, x, y]);
         }
     },
