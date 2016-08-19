@@ -67,7 +67,7 @@ var BoxLayout = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation"]);
+        this._updateProperties(["orientation", "stretchToParentHeight"]);
     },
 
     //////////////////////////////////////////
@@ -185,6 +185,29 @@ var BoxLayout = Layout.$extend({
         if (nodes.length > 0) {
             nodes[last].style.marginRight = "";
             nodes[last].style.marginBottom = "";
+        }
+    },
+
+    /**
+     * Whether to stretch the box to its parent height or not.
+     *
+     * @property stretchToParentHeight
+     * @type Boolean
+     * @default true
+     */
+    _stretchToParentHeight: true,
+
+    getStretchToParentHeight: function () {
+        return this._stretchToParentHeight;
+    },
+
+    setStretchToParentHeight: function (stretch) {
+        this._stretchToParentHeight = stretch;
+
+        if (this._stretchToParentHeight) {
+            this.__html.outerbox.style.height = "100%";
+        } else {
+            this.__html.outerbox.style.height = "";
         }
     },
 
