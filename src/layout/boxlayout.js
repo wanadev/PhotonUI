@@ -67,7 +67,7 @@ var BoxLayout = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation", "stretchToParentSize"]);
+        this._updateProperties(["orientation", "stretchToParentHeight"]);
     },
 
     //////////////////////////////////////////
@@ -189,9 +189,9 @@ var BoxLayout = Layout.$extend({
     },
 
     /**
-     * Whether to stretch the box to its parent size or not.
+     * Whether to stretch the box to its parent height or not.
      *
-     * @property stretchToParentSize
+     * @property stretchToParentHeight
      * @type Boolean
      * @default true
      */
@@ -203,7 +203,12 @@ var BoxLayout = Layout.$extend({
 
     setStretchToParentHeight: function (stretch) {
         this._stretchToParentHeight = stretch;
-        this._updateLayout();
+
+        if (this._stretchToParentHeight) {
+            this.__html.outerbox.style.height = "100%";
+        } else {
+            this.__html.outerbox.style.height = "";
+        }
     },
 
     /**
@@ -243,12 +248,6 @@ var BoxLayout = Layout.$extend({
      */
     _updateLayout: function () {
         Helpers.cleanNode(this.__html.outerbox);
-
-        if (this._stretchToParentHeight) {
-            this.__html.outerbox.style.height = "100%";
-        } else {
-            this.__html.outerbox.style.height = "";
-        }
 
         var fragment = document.createDocumentFragment();
         var children = this.children;
