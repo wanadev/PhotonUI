@@ -73,6 +73,7 @@ var Select = Widget.$extend({
 
         this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
+        this._bindEvent("mouse-down", this.html, "mousedown", this.__onMouseDown.bind(this));
 
         this.setValue(params.value || this.value, true);
     },
@@ -369,7 +370,22 @@ var Select = Widget.$extend({
         if (!this._minWidthDefined) {
             this.popupMinWidth = this.offsetWidth;
         }
-        this.__popupMenu.popupWidget(this);
+        if (this.__popupMenu.visible) {
+            this.__popupMenu.hide();
+        } else {
+            this.__popupMenu.popupWidget(this);
+        }
+    },
+
+    /**
+     * @method __onMouseDown
+     * @private
+     * @param event
+     */
+    __onMouseDown: function (event) {
+        if (this.__popupMenu.visible) {
+            event.stopPropagation();
+        }
     },
 
     /**
@@ -381,6 +397,7 @@ var Select = Widget.$extend({
         this.value = widget.value;
         this._callCallbacks("value-changed", [this.value]);
     }
+
 });
 
 module.exports = Select;
