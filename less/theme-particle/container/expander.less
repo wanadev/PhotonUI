@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,45 +25,49 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Authored by: Fabien LOISON <http://flozz.fr/>
+ * Authored by: Alexis BREUST
  */
-@import "common.less";
-@import "composite/popupmenu.less";
-@import "container/window.less";
-@import "container/dialog.less";
-@import "container/expander.less";
-@import "container/popupwindow.less";
-@import "container/menuitem.less";
-@import "layout/menu.less";
-@import "interactive/button.less";
-@import "interactive/checkbox.less";
-@import "composite/colorbutton.less";
-@import "interactive/colorpalette.less";
-@import "interactive/colorpicker.less";
-@import "interactive/field.less";
-@import "interactive/slider.less";
-@import "interactive/switch.less";
-@import "visual/label.less";
-@import "visual/progressbar.less";
-@import "visual/separator.less";
-@import "composite/select.less";
-@import "container/tabitem.less";
-@import "layout/tablayout.less";
-@import "container/viewport.less";
-@import "composite/fontselect.less";
-@import "layout/fluidlayout.less";
-@import "visual/canvas.less";
-@import "visual/text.less";
-@import "visual/spriteicon.less";
-@import "visual/faicon.less";
-@import "container/submenuitem.less";
-@import "interactive/numericfield.less";
-@import "interactive/textfield.less";
-@import "interactive/textareafield.less";
-@import "interactive/togglebutton.less";
-@import "composite/colorpickerdialog.less";
-@import "interactive/iconbutton.less";
-@import "visual/template.less";
-/* [generator] */
-/* DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR! */
 
+
+.photonui-expander {
+    @spacing: 5px;
+
+    &-title {
+        @arrow-size: 6px;
+
+        box-sizing: border-box;
+        padding: @spacing;
+        padding-left: @arrow-size + @spacing;
+        font-weight: bold;
+        color: @color-text;
+
+        &:before {
+            box-sizing: border-box;
+            content: "";
+            display: inline-block;
+            border: transparent solid @arrow-size;
+            border-top-color: @color-text;
+            position: relative;
+            left: -@arrow-size;
+            transform: rotate(0deg) translate(0, @arrow-size / 2 + 2);
+            transition: transform @transition-duration;
+        }
+
+        .photonui-expander-folded > &:before {
+            transform: rotate(-90deg) translate(0, @arrow-size / 2 + 2);
+            transition: transform @transition-duration;
+        }
+
+        &:hover,
+        &:active {
+            background: @color-highlight-background;
+            color: @color-highlight-text;
+        }
+
+        &:hover:before,
+        &:active:before {
+            border-top-color: @color-highlight-text;
+        }
+    }
+
+}
