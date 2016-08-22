@@ -61,7 +61,6 @@ var ColorPalette = Widget.$extend({
         this._color = new Color(ColorPalette.palette[0][0]);
         this._registerWEvents(["value-changed"]);
         this.$super(params);
-        this._updateProperties(["palette", "value"]);
     },
 
     //////////////////////////////////////////
@@ -77,6 +76,7 @@ var ColorPalette = Widget.$extend({
      * @type String
      */
     getValue: function () {
+        "@photonui-update";
         return this.color.hexString;
     },
 
@@ -112,6 +112,7 @@ var ColorPalette = Widget.$extend({
     _palette: null,
 
     getPalette: function () {
+        "@photonui-update";
         return this._palette || ColorPalette.palette;
     },
 

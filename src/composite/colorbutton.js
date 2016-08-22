@@ -66,7 +66,6 @@ var ColorButton = Button.$extend({
         this._registerWEvents(["value-changed"]);
         this.$super(params);
         this._buildUi();
-        this._updateProperties(["color"]);
     },
 
     //////////////////////////////////////////
@@ -98,6 +97,7 @@ var ColorButton = Button.$extend({
     _color: null,
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 

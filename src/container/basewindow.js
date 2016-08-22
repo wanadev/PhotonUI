@@ -67,12 +67,6 @@ var BaseWindow = Container.$extend({
 
         // Insert the window in the DOM tree
         Widget.domInsert(this);
-
-        // Update properties
-        this._updateProperties([
-            "position", "width", "height", "minWidth", "minHeight",
-            "maxWidth", "maxHeight", "padding"
-        ]);
     },
 
     //////////////////////////////////////////
@@ -91,6 +85,7 @@ var BaseWindow = Container.$extend({
      * @default {x: 0, y: 0}
      */
     getPosition: function () {
+        "@photonui-update";
         if (this.visible && this.html.parentNode) {
             return this.absolutePosition;
         }
@@ -160,6 +155,7 @@ var BaseWindow = Container.$extend({
     _width: null,
 
     getWidth: function () {
+        "@photonui-update";
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetWidth;
         }
@@ -185,6 +181,7 @@ var BaseWindow = Container.$extend({
     _height: null,
 
     getHeight: function () {
+        "@photonui-update";
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetHeight;
         }
@@ -210,6 +207,7 @@ var BaseWindow = Container.$extend({
     _minWidth: null,
 
     getMinWidth: function () {
+        "@photonui-update";
         return this._minWidth;
     },
 
@@ -232,6 +230,7 @@ var BaseWindow = Container.$extend({
     _minHeight: null,
 
     getMinHeight: function () {
+        "@photonui-update";
         return this._minHeight;
     },
 
@@ -254,6 +253,7 @@ var BaseWindow = Container.$extend({
     _maxWidth: null,
 
     getMaxWidth: function () {
+        "@photonui-update";
         return this._maxWidth;
     },
 
@@ -276,6 +276,7 @@ var BaseWindow = Container.$extend({
     _maxHeight: null,
 
     getMaxHeight: function () {
+        "@photonui-update";
         return this._maxHeight;
     },
 
@@ -298,6 +299,7 @@ var BaseWindow = Container.$extend({
     _padding: 0,
 
     getPadding: function () {
+        "@photonui-update";
         return this._padding;
     },
 

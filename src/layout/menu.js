@@ -51,7 +51,6 @@ var Menu = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["iconVisible"]);
     },
 
     //////////////////////////////////////////
@@ -70,6 +69,7 @@ var Menu = Layout.$extend({
     _iconVisible: true,
 
     isIconVisible: function () {
+        "@photonui-update";
         return this._iconVisible;
     },
 

@@ -75,7 +75,6 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
                         function (event) { event.stopPropagation(); });
 
         // Update Properties
-        this._updateProperties(["title", "closeButtonVisible"]);
         this.moveToFront();
     },
 
@@ -95,6 +94,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
     _title: "Window",
 
     getTitle: function () {
+        "@photonui-update";
         return this._title;
     },
 
@@ -153,6 +153,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
     _closeButtonVisible: true,
 
     getCloseButtonVisible: function () {
+        "@photonui-update";
         return this._closeButtonVisible;
     },
 

@@ -50,7 +50,6 @@ var NumericField = Field.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["value"]);
         this._bindFieldEvents();
         this._unbindEvent("value-changed");
         this._bindEvent("keypress", this.__html.field, "keypress", this.__onKeypress.bind(this));
@@ -162,6 +161,7 @@ var NumericField = Field.$extend({
     _value: 0,
 
     getValue: function () {
+        "@photonui-update";
         return parseFloat(this._value);
     },
 

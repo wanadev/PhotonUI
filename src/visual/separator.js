@@ -50,7 +50,6 @@ var Separator = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation"]);
     },
 
     //////////////////////////////////////////
@@ -69,6 +68,7 @@ var Separator = Widget.$extend({
     _orientation: "horizontal",
 
     getOrientation: function () {
+        "@photonui-update";
         return this._orientation;
     },
 

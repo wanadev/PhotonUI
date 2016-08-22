@@ -73,7 +73,6 @@ var GridLayout = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["verticalSpacing"]);
 
         // XXX Sizing Hack
         if (window.MutationObserver) {
@@ -143,6 +142,7 @@ var GridLayout = Layout.$extend({
     _verticalSpacing: 5,
 
     getVerticalSpacing: function () {
+        "@photonui-update";
         return this._verticalSpacing;
     },
 

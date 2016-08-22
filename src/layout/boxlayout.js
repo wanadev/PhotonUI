@@ -67,7 +67,6 @@ var BoxLayout = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation", "stretchToParentHeight"]);
     },
 
     //////////////////////////////////////////
@@ -86,6 +85,7 @@ var BoxLayout = Layout.$extend({
     _orientation: "vertical",
 
     getOrientation: function () {
+        "@photonui-update";
         return this._orientation;
     },
 
@@ -97,7 +97,7 @@ var BoxLayout = Layout.$extend({
         this.removeClass("photonui-layout-orientation-vertical");
         this.removeClass("photonui-layout-orientation-horizontal");
         this.addClass("photonui-layout-orientation-" + this.orientation);
-        this._updateProperties(["spacing"]);
+        this.spacing = this.spacing;
     },
 
     /**
@@ -198,6 +198,7 @@ var BoxLayout = Layout.$extend({
     _stretchToParentHeight: true,
 
     getStretchToParentHeight: function () {
+        "@photonui-update";
         return this._stretchToParentHeight;
     },
 
@@ -294,8 +295,7 @@ var BoxLayout = Layout.$extend({
         }
 
         this.__html.outerbox.appendChild(fragment);
-
-        this._updateProperties(["spacing"]);
+        this.spacing = this.spacing;
     },
 
     /**

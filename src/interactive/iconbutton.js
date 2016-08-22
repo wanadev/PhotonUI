@@ -60,7 +60,6 @@ var IconButton = Widget.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["width", "height"]);
 
         this._bindEvent("click", this.__html.div, "click", this.__onButtonClicked.bind(this));
     },
@@ -81,6 +80,7 @@ var IconButton = Widget.$extend({
     _width: 16,
 
     getWidth: function () {
+        "@photonui-update";
         return this._width;
     },
 
@@ -101,6 +101,7 @@ var IconButton = Widget.$extend({
     _height: 16,
 
     getHeight: function () {
+        "@photonui-update";
         return this._height;
     },
 
