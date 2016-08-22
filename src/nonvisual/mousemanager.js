@@ -631,7 +631,6 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onMouseDown: function (event) {
-        event.stopPropagation();
         this._stateMachine("mouse-down", event);
     },
 
@@ -641,7 +640,6 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onMouseUp: function (event) {
-        event.stopPropagation();
         this._stateMachine("mouse-up", event);
     },
 
@@ -660,7 +658,6 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onMouseMove: function (event) {
-        event.stopPropagation();
         this._stateMachine("mouse-move", event);
     },
 
@@ -672,6 +669,9 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onDocumentMouseUp: function (event) {
+        if (event.target === this._element) {
+            return;
+        }
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("drag-end", event);
         }
@@ -685,6 +685,9 @@ var MouseManager = Base.$extend({
      * @param event
      */
     __onDocumentMouseMove: function (event) {
+        if (event.target === this._element) {
+            return;
+        }
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("dragging", event);
         }
