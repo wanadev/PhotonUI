@@ -55,6 +55,7 @@ var TabLayout = Layout.$extend({
     __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
+        this.activeTab = this.activeTab;
     },
 
     //////////////////////////////////////////
@@ -165,7 +166,6 @@ var TabLayout = Layout.$extend({
      * @default null
      */
     getActiveTab: function () {
-        "@photonui-update";
         return Widget.getWidget(this.activeTabName);
     },
 
