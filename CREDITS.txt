@@ -1,5 +1,5 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-abitbol v1.0.4 - License BSD-3-Clause
+abitbol v1.1.0 - License BSD-3-Clause
 downloaded from <https://www.npmjs.com/package/abitbol>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c) 2015, Wanadev <http://www.wanadev.fr/>
@@ -77,7 +77,7 @@ or implied, of Robert Hurst.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-lodash v4.14.0 - License MIT
+lodash v4.15.0 - License MIT
 downloaded from <https://www.npmjs.com/package/lodash>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright jQuery Foundation and other contributors <https://jquery.org/>
