@@ -41,10 +41,6 @@
         font-weight: bold;
         color: @color-text;
 
-        &:focus {
-            border-color: @color-widget-border-focus;
-        }
-
         &:before {
             box-sizing: border-box;
             content: "";
@@ -62,14 +58,19 @@
             transition: transform @transition-duration;
         }
 
-        &:hover,
+        &:focus,
         &:active {
+            outline: none;
+            box-shadow: inset 1px 1px 0 @color-widget-border-focus, inset -1px -1px 0 @color-widget-border-focus;
+        }
+
+        &:hover {
+            outline: none;
             background: @color-highlight-background;
             color: @color-highlight-text;
         }
 
-        &:hover:before,
-        &:active:before {
+        &:hover:before {
             border-top-color: @color-highlight-text;
         }
     }
