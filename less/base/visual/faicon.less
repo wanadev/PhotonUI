@@ -29,6 +29,30 @@
  */
 
 
-.photonui-faicon {
-    /* ... */
+@import "../../../node_modules/font-awesome/less/variables.less";
+@import "../../../node_modules/font-awesome/less/mixins.less";
+
+// @import "path.less";
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('@{photonui-assets-path}/fontawesome-webfont.eot?v=@{fa-version}');
+  src: url('@{photonui-assets-path}/fontawesome-webfont.eot?#iefix&v=@{fa-version}') format('embedded-opentype'),
+    url('@{photonui-assets-path}/fontawesome-webfont.woff2?v=@{fa-version}') format('woff2'),
+    url('@{photonui-assets-path}/fontawesome-webfont.woff?v=@{fa-version}') format('woff'),
+    url('@{photonui-assets-path}/fontawesome-webfont.ttf?v=@{fa-version}') format('truetype'),
+    url('@{photonui-assets-path}/fontawesome-webfont.svg?v=@{fa-version}#fontawesomeregular') format('svg');
+  // src: url('@{fa-font-path}/FontAwesome.otf') format('opentype'); // used when developing fonts
+  font-weight: normal;
+  font-style: normal;
 }
+
+@import "../../../node_modules/font-awesome/less/core.less";
+@import "../../../node_modules/font-awesome/less/larger.less";
+@import "../../../node_modules/font-awesome/less/fixed-width.less";
+@import "../../../node_modules/font-awesome/less/list.less";
+@import "../../../node_modules/font-awesome/less/bordered-pulled.less";
+@import "../../../node_modules/font-awesome/less/animated.less";
+@import "../../../node_modules/font-awesome/less/rotated-flipped.less";
+@import "../../../node_modules/font-awesome/less/stacked.less";
+@import "../../../node_modules/font-awesome/less/icons.less";
+@import "../../../node_modules/font-awesome/less/screen-reader.less";

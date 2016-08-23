@@ -89,7 +89,7 @@ module.exports = function(grunt) {
                 expand: true,
                 flatten: true,
                 filter: "isFile",
-                cwd: "src/assets/",
+                cwd: "./node_modules/font-awesome/fonts/",
                 src: "**",
                 dest: "dist/assets/"
             }
