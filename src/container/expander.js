@@ -46,11 +46,11 @@ var Container = require("./container.js");
  * wEvents:
  *
  *   * folded:
- *     - description: called when the expander is folded.
- *     - callback:    function(widget, event)
+ *     - description: called when the expander is folded by user.
+ *     - callback:    function(widget)
  *   * unfolded:
- *     - description: called when the expander is unfolded.
- *     - callback:    function(widget, event)
+ *     - description: called when the expander is unfolded by user.
+ *     - callback:    function(widget)
  *
  * @class Expander
  * @constructor
@@ -168,18 +168,18 @@ var Expander = Container.$extend({
     // ====== Public methods ======
 
     /**
-     * Switch current folded state and sends and event.
+     * Toggle current folded state and sends and event.
      *
-     * @method switchFolded
+     * @method toggleFolded
      * @param {Event} event
      */
-    switchFolded: function (event) {
+    toggleFolded: function () {
         this.folded = !this._folded;
 
         if (this._folded) {
-            this._callCallbacks("folded", [event]);
+            this._callCallbacks("folded", []);
         } else {
-            this._callCallbacks("unfolded", [event]);
+            this._callCallbacks("unfolded", []);
         }
     },
 
@@ -201,7 +201,7 @@ var Expander = Container.$extend({
         this.__html.outer.appendChild(this.__html.title);
 
         this.__html.content = document.createElement("div");
-        this.__html.content.className = "photonui-expander-content";
+        this.__html.content.className = "photonui-container photonui-expander-content";
         this.__html.outer.appendChild(this.__html.content);
     },
 
@@ -210,7 +210,7 @@ var Expander = Container.$extend({
      * @private
      */
     __onTitleClicked: function (widget, event) {
-        this.switchFolded(event);
+        this.toggleFolded();
     },
 
     /**
@@ -219,7 +219,7 @@ var Expander = Container.$extend({
      */
     __onTitleKeyPress: function (event) {
         if (event.charCode == 32 || event.keyCode == 13) {
-            this.switchFolded(event);
+            this.toggleFolded();
         }
     }
 
