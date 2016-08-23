@@ -79,6 +79,7 @@ var GridLayout = Layout.$extend({
             this.__sizinghack_observer = new MutationObserver(this._sizingHack.bind(this));
             this.__sizinghack_observer_params = {attributes: true, childList: true, characterData: true, subtree: true};
             this.__sizinghack_observer.observe(this.__html.gridBody, this.__sizinghack_observer_params);
+            this._updateLayout();
         }
     },
 
@@ -148,10 +149,6 @@ var GridLayout = Layout.$extend({
 
     setVerticalSpacing: function (verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
-        //this._updatingLayout = true;
-        //this._updateSpacing();
-        //this._updatingLayout = false;
-        //this._sizingHack();
         this._updateLayout();
     },
 
@@ -170,10 +167,6 @@ var GridLayout = Layout.$extend({
 
     setHorizontalSpacing: function (horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
-        //this._updatingLayout = true;
-        //this._updateSpacing();
-        //this._updatingLayout = false;
-        //this._sizingHack();
         this._updateLayout();
     },
 
