@@ -797,7 +797,32 @@ var win = new photonui.Window({
                         })
                     }),
                     new photonui.TabItem({
-                        title: "Tab 3"
+                        title: "Expander",
+                        child: new photonui.BoxLayout({
+                            stretchToParentHeight: false,
+                            children: [
+                                new photonui.Expander({
+                                    title: "Initially folded",
+                                    folded: true,
+                                    child: new photonui.BoxLayout({
+                                        children: [
+                                            new photonui.Button({buttonColor: "blue"}),
+                                            new photonui.Button({buttonColor: "blue"})
+                                        ]
+                                    })
+                                }),
+                                new photonui.Expander({
+                                    child: new photonui.BoxLayout({
+                                        horizontalSpacing: 5,
+                                        verticalSpacing: 5,
+                                        children: [
+                                            new photonui.Button({buttonColor: "blue"}),
+                                            new photonui.Button({buttonColor: "blue"})
+                                        ]
+                                    })
+                                })
+                            ]
+                        })
                     })
                 ]
             }),

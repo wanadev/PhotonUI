@@ -216,7 +216,7 @@ var MenuItem = Container.$extend({
         this.__html.outer.appendChild(this.__html.text);
 
         this.__html.widget = document.createElement("span");
-        this.__html.widget.className = "photonui-menuitem-widget";
+        this.__html.widget.className = "photonui-container photonui-menuitem-widget";
         this.__html.outer.appendChild(this.__html.widget);
     },
 
