@@ -238,7 +238,21 @@ module.exports = Class;
 
 function cleanJs(js) {
     // remove function fn(param) {
-    js = js.replace(/^function\s*[^(]*\s*\([^)]*\)\s*\{/, "");
+    // or fn(param) {
+    // or (param) => {
+    var c;
+    var p = 0;
+    for (var i = 0 ; i < js.length ; i++) {
+        c = js[i];
+        if (c == "(") {
+            ++p;
+        } else if (c == ")") {
+            --p;
+        } else if (c == "{" && p === 0) {
+            js = js.slice(i + 1);
+            break;
+        }
+    }
 
     // remove comments (not super safe but should work in most cases)
     js = js.replace(/\/\*(.|\r|\n)*?\*\//g, "");
@@ -361,1009 +375,819 @@ function extractAnnotations(func) {
 module.exports = extractAnnotations;
 
 },{}],3:[function(require,module,exports){
-/**
- * Title: KeyboardJS
- * Version: v0.4.1
- * Description: KeyboardJS is a flexible and easy to use keyboard binding
- * library.
- * Author: Robert Hurst.
- *
- * Copyright 2011, Robert William Hurst
- * Licenced under the BSD License.
- * See https://raw.github.com/RobertWHurst/KeyboardJS/master/license.txt
- */
-(function(context, factory) {
-
-	//INDEXOF POLLYFILL
-	[].indexOf||(Array.prototype.indexOf=function(a,b,c){for(c=this.length,b=(c+~~b)%c;b<c&&(!(b in this)||this[b]!==a);b++);return b^c?b:-1;});
-
-	//AMD
-	if(typeof define === 'function' && define.amd) { define(constructAMD); }
-
-	//CommonJS
-	else if(typeof module !== 'undefined') {constructCommonJS()}
-
-	//GLOBAL
-	else { constructGlobal(); }
-
-	/**
-	 * Construct AMD version of the library
-	 */
-	function constructAMD() {
-
-		//create a library instance
-		return init(context);
-
-		//spawns a library instance
-		function init(context) {
-			var library;
-			library = factory(context, 'amd');
-			library.fork = init;
-			return library;
-		}
-	}
-
-	/**
-	 * Construct CommonJS version of the library
-	 */
-	function constructCommonJS() {
-
-		//create a library instance
-		module.exports = init(context);
-
-		return;
-
-		//spawns a library instance
-		function init(context) {
-			var library;
-			library = factory(context, 'CommonJS');
-			library.fork = init;
-			return library;
-
-		}
-
-	}
-
-	/**
-	 * Construct a Global version of the library
-	 */
-	function constructGlobal() {
-		var library;
-
-		//create a library instance
-		library = init(context);
-
-		//spawns a library instance
-		function init(context) {
-			var library, namespaces = [], previousValues = {};
-
-			library = factory(context, 'global');
-			library.fork = init;
-			library.noConflict = noConflict;
-			library.noConflict('KeyboardJS', 'k');
-			return library;
-
-			//sets library namespaces
-			function noConflict(    ) {
-				var args, nI, newNamespaces;
-
-				newNamespaces = Array.prototype.slice.apply(arguments);
-
-				for(nI = 0; nI < namespaces.length; nI += 1) {
-					if(typeof previousValues[namespaces[nI]] === 'undefined') {
-						delete context[namespaces[nI]];
-					} else {
-						context[namespaces[nI]] = previousValues[namespaces[nI]];
-					}
-				}
-
-				previousValues = {};
-
-				for(nI = 0; nI < newNamespaces.length; nI += 1) {
-					if(typeof newNamespaces[nI] !== 'string') {
-						throw new Error('Cannot replace namespaces. All new namespaces must be strings.');
-					}
-					previousValues[newNamespaces[nI]] = context[newNamespaces[nI]];
-					context[newNamespaces[nI]] = library;
-				}
-
-				namespaces = newNamespaces;
-
-				return namespaces;
-			}
-		}
-	}
-
-})(this, function(targetWindow, env) {
-	var KeyboardJS = {}, locales = {}, locale, map, macros, activeKeys = [], bindings = [], activeBindings = [],
-	activeMacros = [], aI, usLocale;
-	targetWindow = (targetWindow && Object.getOwnPropertyNames(targetWindow).length > 0 ) ? targetWindow : window;
-
-	///////////////////////
-	// DEFAULT US LOCALE //
-	///////////////////////
-
-	//define US locale
-	//If you create a new locale please submit it as a pull request or post
-	// it in the issue tracker at
-	// http://github.com/RobertWhurst/KeyboardJS/issues/
-	usLocale = {
-		"map": {
-
-			//general
-			"3": ["cancel"],
-			"8": ["backspace"],
-			"9": ["tab"],
-			"12": ["clear"],
-			"13": ["enter"],
-			"16": ["shift"],
-			"17": ["ctrl"],
-			"18": ["alt", "menu"],
-			"19": ["pause", "break"],
-			"20": ["capslock"],
-			"27": ["escape", "esc"],
-			"32": ["space", "spacebar"],
-			"33": ["pageup"],
-			"34": ["pagedown"],
-			"35": ["end"],
-			"36": ["home"],
-			"37": ["left"],
-			"38": ["up"],
-			"39": ["right"],
-			"40": ["down"],
-			"41": ["select"],
-			"42": ["printscreen"],
-			"43": ["execute"],
-			"44": ["snapshot"],
-			"45": ["insert", "ins"],
-			"46": ["delete", "del"],
-			"47": ["help"],
-			"91": ["command", "windows", "win", "super", "leftcommand", "leftwindows", "leftwin", "leftsuper"],
-			"92": ["command", "windows", "win", "super", "rightcommand", "rightwindows", "rightwin", "rightsuper"],
-			"145": ["scrolllock", "scroll"],
-			"186": ["semicolon", ";"],
-			"187": ["equal", "equalsign", "="],
-			"188": ["comma", ","],
-			"189": ["dash", "-"],
-			"190": ["period", "."],
-			"191": ["slash", "forwardslash", "/"],
-			"192": ["graveaccent", "`"],
-			"219": ["openbracket", "["],
-			"220": ["backslash", "\\"],
-			"221": ["closebracket", "]"],
-			"222": ["apostrophe", "'"],
-
-			//0-9
-			"48": ["zero", "0"],
-			"49": ["one", "1"],
-			"50": ["two", "2"],
-			"51": ["three", "3"],
-			"52": ["four", "4"],
-			"53": ["five", "5"],
-			"54": ["six", "6"],
-			"55": ["seven", "7"],
-			"56": ["eight", "8"],
-			"57": ["nine", "9"],
-
-			//numpad
-			"96": ["numzero", "num0"],
-			"97": ["numone", "num1"],
-			"98": ["numtwo", "num2"],
-			"99": ["numthree", "num3"],
-			"100": ["numfour", "num4"],
-			"101": ["numfive", "num5"],
-			"102": ["numsix", "num6"],
-			"103": ["numseven", "num7"],
-			"104": ["numeight", "num8"],
-			"105": ["numnine", "num9"],
-			"106": ["nummultiply", "num*"],
-			"107": ["numadd", "num+"],
-			"108": ["numenter"],
-			"109": ["numsubtract", "num-"],
-			"110": ["numdecimal", "num."],
-			"111": ["numdivide", "num/"],
-			"144": ["numlock", "num"],
-
-			//function keys
-			"112": ["f1"],
-			"113": ["f2"],
-			"114": ["f3"],
-			"115": ["f4"],
-			"116": ["f5"],
-			"117": ["f6"],
-			"118": ["f7"],
-			"119": ["f8"],
-			"120": ["f9"],
-			"121": ["f10"],
-			"122": ["f11"],
-			"123": ["f12"]
-		},
-		"macros": [
-
-			//secondary key symbols
-			['shift + `', ["tilde", "~"]],
-			['shift + 1', ["exclamation", "exclamationpoint", "!"]],
-			['shift + 2', ["at", "@"]],
-			['shift + 3', ["number", "#"]],
-			['shift + 4', ["dollar", "dollars", "dollarsign", "$"]],
-			['shift + 5', ["percent", "%"]],
-			['shift + 6', ["caret", "^"]],
-			['shift + 7', ["ampersand", "and", "&"]],
-			['shift + 8', ["asterisk", "*"]],
-			['shift + 9', ["openparen", "("]],
-			['shift + 0', ["closeparen", ")"]],
-			['shift + -', ["underscore", "_"]],
-			['shift + =', ["plus", "+"]],
-			['shift + (', ["opencurlybrace", "opencurlybracket", "{"]],
-			['shift + )', ["closecurlybrace", "closecurlybracket", "}"]],
-			['shift + \\', ["verticalbar", "|"]],
-			['shift + ;', ["colon", ":"]],
-			['shift + \'', ["quotationmark", "\""]],
-			['shift + !,', ["openanglebracket", "<"]],
-			['shift + .', ["closeanglebracket", ">"]],
-			['shift + /', ["questionmark", "?"]]
-		]
-	};
-	//a-z and A-Z
-	for (aI = 65; aI <= 90; aI += 1) {
-		usLocale.map[aI] = String.fromCharCode(aI + 32);
-		usLocale.macros.push(['shift + ' + String.fromCharCode(aI + 32) + ', capslock + ' + String.fromCharCode(aI + 32), [String.fromCharCode(aI)]]);
-	}
-
-  // Support command key on Mac.
-	// This is unfortunately browser specific
-	if(/^Mac/.test(navigator.platform)){
-		// Chrome,Safari
-		if(/Chrome/.test(navigator.userAgent) ||
-			 /Safari/.test(navigator.userAgent)){
-				 usLocale.map["93"] = usLocale.map["92"];
-		}
-		// Opera
-		if(/Opera/.test(navigator.userAgent)){
-			usLocale.map["17"] = usLocale.map["91"];
-			delete usLocale.map["91"];
-		}
-		// Firefox
-		if(/Firefox/.test(navigator.userAgent)){
-			usLocale.map["224"] = usLocale.map["91"];
-			delete usLocale.map["91"];
-		}
-		delete usLocale.map["92"];
-	}
-
-	registerLocale('us', usLocale);
-	getSetLocale('us');
-
-
-	//////////
-	// INIT //
-	//////////
-
-	//enable the library
-	enable();
-
-
-	/////////
-	// API //
-	/////////
-
-	//assemble the library and return it
-	KeyboardJS.enable = enable;
-	KeyboardJS.disable = disable;
-	KeyboardJS.activeKeys = getActiveKeys;
-	KeyboardJS.releaseKey = removeActiveKey;
-	KeyboardJS.pressKey = addActiveKey;
-	KeyboardJS.on = createBinding;
-	KeyboardJS.clear = removeBindingByKeyCombo;
-	KeyboardJS.clear.key = removeBindingByKeyName;
-	KeyboardJS.locale = getSetLocale;
-	KeyboardJS.locale.register = registerLocale;
-	KeyboardJS.macro = createMacro;
-	KeyboardJS.macro.remove = removeMacro;
-	KeyboardJS.key = {};
-	KeyboardJS.key.name = getKeyName;
-	KeyboardJS.key.code = getKeyCode;
-	KeyboardJS.combo = {};
-	KeyboardJS.combo.active = isSatisfiedCombo;
-	KeyboardJS.combo.parse = parseKeyCombo;
-	KeyboardJS.combo.stringify = stringifyKeyCombo;
-	return KeyboardJS;
-
-
-	//////////////////////
-	// INSTANCE METHODS //
-	//////////////////////
-
-	/**
-	 * Enables KeyboardJS
-	 */
-	function enable() {
-		if(targetWindow.addEventListener) {
-			targetWindow.document.addEventListener('keydown', keydown, false);
-			targetWindow.document.addEventListener('keyup', keyup, false);
-			targetWindow.addEventListener('blur', reset, false);
-			targetWindow.addEventListener('webkitfullscreenchange', reset, false);
-			targetWindow.addEventListener('mozfullscreenchange', reset, false);
-		} else if(targetWindow.attachEvent) {
-			targetWindow.document.attachEvent('onkeydown', keydown);
-			targetWindow.document.attachEvent('onkeyup', keyup);
-			targetWindow.attachEvent('onblur', reset);
-		}
-	}
-
-	/**
-	 * Exits all active bindings and disables KeyboardJS
-	 */
-	function disable() {
-		reset();
-		if(targetWindow.removeEventListener) {
-			targetWindow.document.removeEventListener('keydown', keydown, false);
-			targetWindow.document.removeEventListener('keyup', keyup, false);
-			targetWindow.removeEventListener('blur', reset, false);
-			targetWindow.removeEventListener('webkitfullscreenchange', reset, false);
-			targetWindow.removeEventListener('mozfullscreenchange', reset, false);
-		} else if(targetWindow.detachEvent) {
-			targetWindow.document.detachEvent('onkeydown', keydown);
-			targetWindow.document.detachEvent('onkeyup', keyup);
-			targetWindow.detachEvent('onblur', reset);
-		}
-	}
-
-
-	////////////////////
-	// EVENT HANDLERS //
-	////////////////////
-
-	/**
-	 * Exits all active bindings. Optionally passes an event to all binding
-	 *  handlers.
-	 * @param  {KeyboardEvent}	event	[Optional]
-	 */
-	function reset(event) {
-		activeKeys = [];
-		pruneMacros();
-		pruneBindings(event);
-	}
-
-	/**
-	 * Key down event handler.
-	 * @param  {KeyboardEvent}	event
-	 */
-	function keydown(event) {
-		var keyNames, keyName, kI;
-		keyNames = getKeyName(event.keyCode);
-		if(keyNames.length < 1) { return; }
-		event.isRepeat = false;
-		for(kI = 0; kI < keyNames.length; kI += 1) {
-		    keyName = keyNames[kI];
-		    if (getActiveKeys().indexOf(keyName) != -1)
-		        event.isRepeat = true;
-			addActiveKey(keyName);
-		}
-		executeMacros();
-		executeBindings(event);
-	}
-
-	/**
-	 * Key up event handler.
-	 * @param  {KeyboardEvent} event
-	 */
-	function keyup(event) {
-		var keyNames, kI;
-		keyNames = getKeyName(event.keyCode);
-		if(keyNames.length < 1) { return; }
-		for(kI = 0; kI < keyNames.length; kI += 1) {
-			removeActiveKey(keyNames[kI]);
-		}
-		pruneMacros();
-		pruneBindings(event);
-	}
-
-	/**
-	 * Accepts a key code and returns the key names defined by the current
-	 *  locale.
-	 * @param  {Number}	keyCode
-	 * @return {Array}	keyNames	An array of key names defined for the key
-	 *  code as defined by the current locale.
-	 */
-	function getKeyName(keyCode) {
-		return map[keyCode] || [];
-	}
-
-	/**
-	 * Accepts a key name and returns the key code defined by the current
-	 *  locale.
-	 * @param  {Number}	keyName
-	 * @return {Number|false}
-	 */
-	function getKeyCode(keyName) {
-		var keyCode;
-		for(keyCode in map) {
-			if(!map.hasOwnProperty(keyCode)) { continue; }
-			if(map[keyCode].indexOf(keyName) > -1) { return keyCode; }
-		}
-		return false;
-	}
-
-
-	////////////
-	// MACROS //
-	////////////
-
-	/**
-	 * Accepts a key combo and an array of key names to inject once the key
-	 *  combo is satisfied.
-	 * @param  {String}	combo
-	 * @param  {Array}	injectedKeys
-	 */
-	function createMacro(combo, injectedKeys) {
-		if(typeof combo !== 'string' && (typeof combo !== 'object' || typeof combo.push !== 'function')) {
-			throw new Error("Cannot create macro. The combo must be a string or array.");
-		}
-		if(typeof injectedKeys !== 'object' || typeof injectedKeys.push !== 'function') {
-			throw new Error("Cannot create macro. The injectedKeys must be an array.");
-		}
-		macros.push([combo, injectedKeys]);
-	}
-
-	/**
-	 * Accepts a key combo and clears any and all macros bound to that key
-	 * combo.
-	 * @param  {String} combo
-	 */
-	function removeMacro(combo) {
-		var macro;
-		if(typeof combo !== 'string' && (typeof combo !== 'object' || typeof combo.push !== 'function')) { throw new Error("Cannot remove macro. The combo must be a string or array."); }
-		for(mI = 0; mI < macros.length; mI += 1) {
-			macro = macros[mI];
-			if(compareCombos(combo, macro[0])) {
-				removeActiveKey(macro[1]);
-				macros.splice(mI, 1);
-				break;
-			}
-		}
-	}
-
-	/**
-	 * Executes macros against the active keys. Each macro's key combo is
-	 *  checked and if found to be satisfied, the macro's key names are injected
-	 *  into active keys.
-	 */
-	function executeMacros() {
-		var mI, combo, kI;
-		for(mI = 0; mI < macros.length; mI += 1) {
-			combo = parseKeyCombo(macros[mI][0]);
-			if(activeMacros.indexOf(macros[mI]) === -1 && isSatisfiedCombo(combo)) {
-				activeMacros.push(macros[mI]);
-				for(kI = 0; kI < macros[mI][1].length; kI += 1) {
-					addActiveKey(macros[mI][1][kI]);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Prunes active macros. Checks each active macro's key combo and if found
-	 *  to no longer to be satisfied, each of the macro's key names are removed
-	 *  from active keys.
-	 */
-	function pruneMacros() {
-		var mI, combo, kI;
-		for(mI = 0; mI < activeMacros.length; mI += 1) {
-			combo = parseKeyCombo(activeMacros[mI][0]);
-			if(isSatisfiedCombo(combo) === false) {
-				for(kI = 0; kI < activeMacros[mI][1].length; kI += 1) {
-					removeActiveKey(activeMacros[mI][1][kI]);
-				}
-				activeMacros.splice(mI, 1);
-				mI -= 1;
-			}
-		}
-	}
-
-
-	//////////////
-	// BINDINGS //
-	//////////////
-
-	/**
-	 * Creates a binding object, and, if provided, binds a key down hander and
-	 *  a key up handler. Returns a binding object that emits keyup and
-	 *  keydown events.
-	 * @param  {String}		keyCombo
-	 * @param  {Function}	keyDownCallback	[Optional]
-	 * @param  {Function}	keyUpCallback	[Optional]
-	 * @return {Object}		binding
-	 */
-	function createBinding(keyCombo, keyDownCallback, keyUpCallback) {
-		var api = {}, binding, subBindings = [], bindingApi = {}, kI,
-		subCombo;
-
-		//break the combo down into a combo array
-		if(typeof keyCombo === 'string') {
-			keyCombo = parseKeyCombo(keyCombo);
-		}
-
-		//bind each sub combo contained within the combo string
-		for(kI = 0; kI < keyCombo.length; kI += 1) {
-			binding = {};
-
-			//stringify the combo again
-			subCombo = stringifyKeyCombo([keyCombo[kI]]);
-
-			//validate the sub combo
-			if(typeof subCombo !== 'string') { throw new Error('Failed to bind key combo. The key combo must be string.'); }
-
-			//create the binding
-			binding.keyCombo = subCombo;
-			binding.keyDownCallback = [];
-			binding.keyUpCallback = [];
-
-			//inject the key down and key up callbacks if given
-			if(keyDownCallback) { binding.keyDownCallback.push(keyDownCallback); }
-			if(keyUpCallback) { binding.keyUpCallback.push(keyUpCallback); }
-
-			//stash the new binding
-			bindings.push(binding);
-			subBindings.push(binding);
-		}
-
-		//build the binding api
-		api.clear = clear;
-		api.on = on;
-		return api;
-
-		/**
-		 * Clears the binding
-		 */
-		function clear() {
-			var bI;
-			for(bI = 0; bI < subBindings.length; bI += 1) {
-				bindings.splice(bindings.indexOf(subBindings[bI]), 1);
-			}
-		}
-
-		/**
-		 * Accepts an event name. and any number of callbacks. When the event is
-		 *  emitted, all callbacks are executed. Available events are key up and
-		 *  key down.
-		 * @param  {String}	eventName
-		 * @return {Object}	subBinding
-		 */
-		function on(eventName    ) {
-			var api = {}, callbacks, cI, bI;
-
-			//validate event name
-			if(typeof eventName !== 'string') { throw new Error('Cannot bind callback. The event name must be a string.'); }
-			if(eventName !== 'keyup' && eventName !== 'keydown') { throw new Error('Cannot bind callback. The event name must be a "keyup" or "keydown".'); }
-
-			//gather the callbacks
-			callbacks = Array.prototype.slice.apply(arguments, [1]);
-
-			//stash each the new binding
-			for(cI = 0; cI < callbacks.length; cI += 1) {
-				if(typeof callbacks[cI] === 'function') {
-					if(eventName === 'keyup') {
-						for(bI = 0; bI < subBindings.length; bI += 1) {
-							subBindings[bI].keyUpCallback.push(callbacks[cI]);
-						}
-					} else if(eventName === 'keydown') {
-						for(bI = 0; bI < subBindings.length; bI += 1) {
-							subBindings[bI].keyDownCallback.push(callbacks[cI]);
-						}
-					}
-				}
-			}
-
-			//construct and return the sub binding api
-			api.clear = clear;
-			return api;
-
-			/**
-			 * Clears the binding
-			 */
-			function clear() {
-				var cI, bI;
-				for(cI = 0; cI < callbacks.length; cI += 1) {
-					if(typeof callbacks[cI] === 'function') {
-						if(eventName === 'keyup') {
-							for(bI = 0; bI < subBindings.length; bI += 1) {
-								subBindings[bI].keyUpCallback.splice(subBindings[bI].keyUpCallback.indexOf(callbacks[cI]), 1);
-							}
-						} else {
-							for(bI = 0; bI < subBindings.length; bI += 1) {
-								subBindings[bI].keyDownCallback.splice(subBindings[bI].keyDownCallback.indexOf(callbacks[cI]), 1);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears all binding attached to a given key combo. Key name order does not
-	 * matter as long as the key combos equate.
-	 * @param  {String}	keyCombo
-	 */
-	function removeBindingByKeyCombo(keyCombo) {
-		var bI, binding, keyName;
-		for(bI = 0; bI < bindings.length; bI += 1) {
-			binding = bindings[bI];
-			if(compareCombos(keyCombo, binding.keyCombo)) {
-				bindings.splice(bI, 1); bI -= 1;
-			}
-		}
-	}
-
-	/**
-	 * Clears all binding attached to key combos containing a given key name.
-	 * @param  {String}	keyName
-	 */
-	function removeBindingByKeyName(keyName) {
-		var bI, kI, binding;
-		if(keyName) {
-			for(bI = 0; bI < bindings.length; bI += 1) {
-				binding = bindings[bI];
-				for(kI = 0; kI < binding.keyCombo.length; kI += 1) {
-					if(binding.keyCombo[kI].indexOf(keyName) > -1) {
-						bindings.splice(bI, 1); bI -= 1;
-						break;
-					}
-				}
-			}
-		} else {
-			bindings = [];
-		}
-	}
-
-	/**
-	 * Executes bindings that are active. Only allows the keys to be used once
-	 *  as to prevent binding overlap.
-	 * @param  {KeyboardEvent}	event	The keyboard event.
-	 */
-	function executeBindings(event) {
-		var bI, sBI, binding, bindingKeys, remainingKeys, cI, killEventBubble, kI, bindingKeysSatisfied,
-		index, sortedBindings = [], bindingWeight;
-
-		remainingKeys = [].concat(activeKeys);
-		for(bI = 0; bI < bindings.length; bI += 1) {
-			bindingWeight = extractComboKeys(bindings[bI].keyCombo).length;
-			if(!sortedBindings[bindingWeight]) { sortedBindings[bindingWeight] = []; }
-			sortedBindings[bindingWeight].push(bindings[bI]);
-		}
-		for(sBI = sortedBindings.length - 1; sBI >= 0; sBI -= 1) {
-			if(!sortedBindings[sBI]) { continue; }
-			for(bI = 0; bI < sortedBindings[sBI].length; bI += 1) {
-				binding = sortedBindings[sBI][bI];
-				bindingKeys = extractComboKeys(binding.keyCombo);
-				bindingKeysSatisfied = true;
-				for(kI = 0; kI < bindingKeys.length; kI += 1) {
-					if(remainingKeys.indexOf(bindingKeys[kI]) === -1) {
-						bindingKeysSatisfied = false;
-						break;
-					}
-				}
-				if(bindingKeysSatisfied && isSatisfiedCombo(binding.keyCombo)) {
-					activeBindings.push(binding);
-					for(kI = 0; kI < bindingKeys.length; kI += 1) {
-						index = remainingKeys.indexOf(bindingKeys[kI]);
-						if(index > -1) {
-							remainingKeys.splice(index, 1);
-							kI -= 1;
-						}
-					}
-					for(cI = 0; cI < binding.keyDownCallback.length; cI += 1) {
-						if (binding.keyDownCallback[cI](event, getActiveKeys(), binding.keyCombo) === false) {
-							killEventBubble = true;
-						}
-					}
-					if(killEventBubble === true) {
-						event.preventDefault();
-						event.stopPropagation();
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Removes bindings that are no longer satisfied by the active keys. Also
-	 *  fires the key up callbacks.
-	 * @param  {KeyboardEvent}	event
-	 */
-	function pruneBindings(event) {
-		var bI, cI, binding, killEventBubble;
-		for(bI = 0; bI < activeBindings.length; bI += 1) {
-			binding = activeBindings[bI];
-			if(isSatisfiedCombo(binding.keyCombo) === false) {
-				for(cI = 0; cI < binding.keyUpCallback.length; cI += 1) {
-					if (binding.keyUpCallback[cI](event, getActiveKeys(), binding.keyCombo) === false) {
-						killEventBubble = true;
-					}
-				}
-				if(killEventBubble === true) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-				activeBindings.splice(bI, 1);
-				bI -= 1;
-			}
-		}
-	}
-
-
-	///////////////////
-	// COMBO STRINGS //
-	///////////////////
-
-	/**
-	 * Compares two key combos returning true when they are functionally
-	 *  equivalent.
-	 * @param  {String}	keyComboArrayA keyCombo A key combo string or array.
-	 * @param  {String}	keyComboArrayB keyCombo A key combo string or array.
-	 * @return {Boolean}
-	 */
-	function compareCombos(keyComboArrayA, keyComboArrayB) {
-		var cI, sI, kI;
-		keyComboArrayA = parseKeyCombo(keyComboArrayA);
-		keyComboArrayB = parseKeyCombo(keyComboArrayB);
-		if(keyComboArrayA.length !== keyComboArrayB.length) { return false; }
-		for(cI = 0; cI < keyComboArrayA.length; cI += 1) {
-			if(keyComboArrayA[cI].length !== keyComboArrayB[cI].length) { return false; }
-			for(sI = 0; sI < keyComboArrayA[cI].length; sI += 1) {
-				if(keyComboArrayA[cI][sI].length !== keyComboArrayB[cI][sI].length) { return false; }
-				for(kI = 0; kI < keyComboArrayA[cI][sI].length; kI += 1) {
-					if(keyComboArrayB[cI][sI].indexOf(keyComboArrayA[cI][sI][kI]) === -1) { return false; }
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Checks to see if a key combo string or key array is satisfied by the
-	 *  currently active keys. It does not take into account spent keys.
-	 * @param  {String}	keyCombo	A key combo string or array.
-	 * @return {Boolean}
-	 */
-	function isSatisfiedCombo(keyCombo) {
-		var cI, sI, stage, kI, stageOffset = 0, index, comboMatches;
-		keyCombo = parseKeyCombo(keyCombo);
-		for(cI = 0; cI < keyCombo.length; cI += 1) {
-			comboMatches = true;
-			stageOffset = 0;
-			for(sI = 0; sI < keyCombo[cI].length; sI += 1) {
-				stage = [].concat(keyCombo[cI][sI]);
-				for(kI = stageOffset; kI < activeKeys.length; kI += 1) {
-					index = stage.indexOf(activeKeys[kI]);
-					if(index > -1) {
-						stage.splice(index, 1);
-						stageOffset = kI;
-					}
-				}
-				if(stage.length !== 0) { comboMatches = false; break; }
-			}
-			if(comboMatches) { return true; }
-		}
-		return false;
-	}
-
-	/**
-	 * Accepts a key combo array or string and returns a flat array containing all keys referenced by
-	 * the key combo.
-	 * @param  {String}	keyCombo	A key combo string or array.
-	 * @return {Array}
-	 */
-	function extractComboKeys(keyCombo) {
-		var cI, sI, kI, keys = [];
-		keyCombo = parseKeyCombo(keyCombo);
-		for(cI = 0; cI < keyCombo.length; cI += 1) {
-			for(sI = 0; sI < keyCombo[cI].length; sI += 1) {
-				keys = keys.concat(keyCombo[cI][sI]);
-			}
-		}
-		return keys;
-	}
-
-	/**
-	 * Parses a key combo string into a 3 dimensional array.
-	 * - Level 1 - sub combos.
-	 * - Level 2 - combo stages. A stage is a set of key name pairs that must
-	 *  be satisfied in the order they are defined.
-	 * - Level 3 - each key name to the stage.
-	 * @param  {String|Array}	keyCombo	A key combo string.
-	 * @return {Array}
-	 */
-	function parseKeyCombo(keyCombo) {
-		var s = keyCombo, i = 0, op = 0, ws = false, nc = false, combos = [], combo = [], stage = [], key = '';
-
-		if(typeof keyCombo === 'object' && typeof keyCombo.push === 'function') { return keyCombo; }
-		if(typeof keyCombo !== 'string') { throw new Error('Cannot parse "keyCombo" because its type is "' + (typeof keyCombo) + '". It must be a "string".'); }
-
-		//remove leading whitespace
-		while(s.charAt(i) === ' ') { i += 1; }
-		while(true) {
-			if(s.charAt(i) === ' ') {
-				//white space & next combo op
-				while(s.charAt(i) === ' ') { i += 1; }
-				ws = true;
-			} else if(s.charAt(i) === ',') {
-				if(op || nc) { throw new Error('Failed to parse key combo. Unexpected , at character index ' + i + '.'); }
-				nc = true;
-				i += 1;
-			} else if(s.charAt(i) === '+') {
-				//next key
-				if(key.length) { stage.push(key); key = ''; }
-				if(op || nc) { throw new Error('Failed to parse key combo. Unexpected + at character index ' + i + '.'); }
-				op = true;
-				i += 1;
-			} else if(s.charAt(i) === '>') {
-				//next stage op
-				if(key.length) { stage.push(key); key = ''; }
-				if(stage.length) { combo.push(stage); stage = []; }
-				if(op || nc) { throw new Error('Failed to parse key combo. Unexpected > at character index ' + i + '.'); }
-				op = true;
-				i += 1;
-			} else if(i < s.length - 1 && s.charAt(i) === '!' && (s.charAt(i + 1) === '>' || s.charAt(i + 1) === ',' || s.charAt(i + 1) === '+')) {
-				key += s.charAt(i + 1);
-				op = false;
-				ws = false;
-				nc = false;
-				i += 2;
-			} else if(i < s.length && s.charAt(i) !== '+' && s.charAt(i) !== '>' && s.charAt(i) !== ',' && s.charAt(i) !== ' ') {
-				//end combo
-				if(op === false && ws === true || nc === true) {
-					if(key.length) { stage.push(key); key = ''; }
-					if(stage.length) { combo.push(stage); stage = []; }
-					if(combo.length) { combos.push(combo); combo = []; }
-				}
-				op = false;
-				ws = false;
-				nc = false;
-				//key
-				while(i < s.length && s.charAt(i) !== '+' && s.charAt(i) !== '>' && s.charAt(i) !== ',' && s.charAt(i) !== ' ') {
-					key += s.charAt(i);
-					i += 1;
-				}
-			} else {
-				//unknown char
-				i += 1;
-				continue;
-			}
-			//end of combos string
-			if(i >= s.length) {
-				if(key.length) { stage.push(key); key = ''; }
-				if(stage.length) { combo.push(stage); stage = []; }
-				if(combo.length) { combos.push(combo); combo = []; }
-				break;
-			}
-		}
-		return combos;
-	}
-
-	/**
-	 * Stringifys a key combo.
-	 * @param  {Array|String}	keyComboArray	A key combo array. If a key
-	 *  combo string is given it will be returned.
-	 * @return {String}
-	 */
-	function stringifyKeyCombo(keyComboArray) {
-		var cI, ccI, output = [];
-		if(typeof keyComboArray === 'string') { return keyComboArray; }
-		if(typeof keyComboArray !== 'object' || typeof keyComboArray.push !== 'function') { throw new Error('Cannot stringify key combo.'); }
-		for(cI = 0; cI < keyComboArray.length; cI += 1) {
-			output[cI] = [];
-			for(ccI = 0; ccI < keyComboArray[cI].length; ccI += 1) {
-				output[cI][ccI] = keyComboArray[cI][ccI].join(' + ');
-			}
-			output[cI] = output[cI].join(' > ');
-		}
-		return output.join(' ');
-	}
-
-
-	/////////////////
-	// ACTIVE KEYS //
-	/////////////////
-
-	/**
-	 * Returns the a copy of the active keys array.
-	 * @return {Array}
-	 */
-	function getActiveKeys() {
-		return [].concat(activeKeys);
-	}
-
-	/**
-	 * Adds a key to the active keys array, but only if it has not already been
-	 *  added.
-	 * @param {String}	keyName	The key name string.
-	 */
-	function addActiveKey(keyName) {
-		if(keyName.match(/\s/)) { throw new Error('Cannot add key name ' + keyName + ' to active keys because it contains whitespace.'); }
-		if(activeKeys.indexOf(keyName) > -1) { return; }
-		activeKeys.push(keyName);
-	}
-
-	/**
-	 * Removes a key from the active keys array.
-	 * @param  {String}	keyNames	The key name string.
-	 */
-	function removeActiveKey(keyName) {
-		var keyCode = getKeyCode(keyName);
-		if(keyCode === '91' || keyCode === '92') { activeKeys = []; } //remove all key on release of super.
-		else { activeKeys.splice(activeKeys.indexOf(keyName), 1); }
-		// Mac Specific remove all keys on release of super
-		if(/^Mac/.test(navigator.platform)){
-			// Chrome,Safari
-			if(/Chrome/.test(navigator.userAgent) ||
-				 /Safari/.test(navigator.userAgent)){
-				if(keyCode === '91' || keyCode === '93') { activeKeys = []; }
-			}
-			// Opera
-			if(/Opera/.test(navigator.userAgent) && keyCode == "17"){
-				activeKeys = [];
-			}
-			// Firefox
-			if(/Firefox/.test(navigator.userAgent) && keyCode == "224"){
-				activeKeys = [];
-			}
-		}
-	}
-
-
-	/////////////
-	// LOCALES //
-	/////////////
-
-	/**
-	 * Registers a new locale. This is useful if you would like to add support for a new keyboard layout. It could also be useful for
-	 * alternative key names. For example if you program games you could create a locale for your key mappings. Instead of key 65 mapped
-	 * to 'a' you could map it to 'jump'.
-	 * @param  {String}	localeName	The name of the new locale.
-	 * @param  {Object}	localeMap	The locale map.
-	 */
-	function registerLocale(localeName, localeMap) {
-
-		//validate arguments
-		if(typeof localeName !== 'string') { throw new Error('Cannot register new locale. The locale name must be a string.'); }
-		if(typeof localeMap !== 'object') { throw new Error('Cannot register ' + localeName + ' locale. The locale map must be an object.'); }
-		if(typeof localeMap.map !== 'object') { throw new Error('Cannot register ' + localeName + ' locale. The locale map is invalid.'); }
-
-		//stash the locale
-		if(!localeMap.macros) { localeMap.macros = []; }
-		locales[localeName] = localeMap;
-	}
-
-	/**
-	 * Swaps the current locale.
-	 * @param  {String}	localeName	The locale to activate.
-	 * @return {Object}
-	 */
-	function getSetLocale(localeName) {
-
-		//if a new locale is given then set it
-		if(localeName) {
-			if(typeof localeName !== 'string') { throw new Error('Cannot set locale. The locale name must be a string.'); }
-			if(!locales[localeName]) { throw new Error('Cannot set locale to ' + localeName + ' because it does not exist. If you would like to submit a ' + localeName + ' locale map for KeyboardJS please submit it at https://github.com/RobertWHurst/KeyboardJS/issues.'); }
-
-			//set the current map and macros
-			map = locales[localeName].map;
-			macros = locales[localeName].macros;
-
-			//set the current locale
-			locale = localeName;
-		}
-
-		//return the current locale
-		return locale;
-	}
-});
-
-
-
-},{}],4:[function(require,module,exports){
+
+var Keyboard = require('./lib/keyboard');
+var Locale   = require('./lib/locale');
+var KeyCombo = require('./lib/key-combo');
+
+var keyboard = new Keyboard();
+
+keyboard.setLocale('us', require('./locales/us'));
+
+exports          = module.exports = keyboard;
+exports.Keyboard = Keyboard;
+exports.Locale   = Locale;
+exports.KeyCombo = KeyCombo;
+
+},{"./lib/key-combo":4,"./lib/keyboard":5,"./lib/locale":6,"./locales/us":7}],4:[function(require,module,exports){
+
+function KeyCombo(keyComboStr) {
+  this.sourceStr = keyComboStr;
+  this.subCombos = KeyCombo.parseComboStr(keyComboStr);
+  this.keyNames  = this.subCombos.reduce(function(memo, nextSubCombo) {
+    return memo.concat(nextSubCombo);
+  });
+}
+
+// TODO: Add support for key combo sequences
+KeyCombo.sequenceDeliminator = '>>';
+KeyCombo.comboDeliminator    = '>';
+KeyCombo.keyDeliminator      = '+';
+
+KeyCombo.parseComboStr = function(keyComboStr) {
+  var subComboStrs = KeyCombo._splitStr(keyComboStr, KeyCombo.comboDeliminator);
+  var combo        = [];
+
+  for (var i = 0 ; i < subComboStrs.length; i += 1) {
+    combo.push(KeyCombo._splitStr(subComboStrs[i], KeyCombo.keyDeliminator));
+  }
+  return combo;
+};
+
+KeyCombo.prototype.check = function(pressedKeyNames) {
+  var startingKeyNameIndex = 0;
+  for (var i = 0; i < this.subCombos.length; i += 1) {
+    startingKeyNameIndex = this._checkSubCombo(
+      this.subCombos[i],
+      startingKeyNameIndex,
+      pressedKeyNames
+    );
+    if (startingKeyNameIndex === -1) { return false; }
+  }
+  return true;
+};
+
+KeyCombo.prototype.isEqual = function(otherKeyCombo) {
+  if (
+    !otherKeyCombo ||
+    typeof otherKeyCombo !== 'string' &&
+    typeof otherKeyCombo !== 'object'
+  ) { return false; }
+
+  if (typeof otherKeyCombo === 'string') {
+    otherKeyCombo = new KeyCombo(otherKeyCombo);
+  }
+
+  if (this.subCombos.length !== otherKeyCombo.subCombos.length) {
+    return false;
+  }
+  for (var i = 0; i < this.subCombos.length; i += 1) {
+    if (this.subCombos[i].length !== otherKeyCombo.subCombos[i].length) {
+      return false;
+    }
+  }
+
+  for (var i = 0; i < this.subCombos.length; i += 1) {
+    var subCombo      = this.subCombos[i];
+    var otherSubCombo = otherKeyCombo.subCombos[i].slice(0);
+
+    for (var j = 0; j < subCombo.length; j += 1) {
+      var keyName = subCombo[j];
+      var index   = otherSubCombo.indexOf(keyName);
+
+      if (index > -1) {
+        otherSubCombo.splice(index, 1);
+      }
+    }
+    if (otherSubCombo.length !== 0) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+KeyCombo._splitStr = function(str, deliminator) {
+  var s  = str;
+  var d  = deliminator;
+  var c  = '';
+  var ca = [];
+
+  for (var ci = 0; ci < s.length; ci += 1) {
+    if (ci > 0 && s[ci] === d && s[ci - 1] !== '\\') {
+      ca.push(c.trim());
+      c = '';
+      ci += 1;
+    }
+    c += s[ci];
+  }
+  if (c) { ca.push(c.trim()); }
+
+  return ca;
+};
+
+KeyCombo.prototype._checkSubCombo = function(subCombo, startingKeyNameIndex, pressedKeyNames) {
+  subCombo = subCombo.slice(0);
+  pressedKeyNames = pressedKeyNames.slice(startingKeyNameIndex);
+
+  var endIndex = startingKeyNameIndex;
+  for (var i = 0; i < subCombo.length; i += 1) {
+
+    var keyName = subCombo[i];
+    if (keyName[0] === '\\') {
+      var escapedKeyName = keyName.slice(1);
+      if (
+        escapedKeyName === KeyCombo.comboDeliminator ||
+        escapedKeyName === KeyCombo.keyDeliminator
+      ) {
+        keyName = escapedKeyName;
+      }
+    }
+
+    var index = pressedKeyNames.indexOf(keyName);
+    if (index > -1) {
+      subCombo.splice(i, 1);
+      i -= 1;
+      if (index > endIndex) {
+        endIndex = index;
+      }
+      if (subCombo.length === 0) {
+        return endIndex;
+      }
+    }
+  }
+  return -1;
+};
+
+
+module.exports = KeyCombo;
+
+},{}],5:[function(require,module,exports){
+(function (global){
+
+var Locale = require('./locale');
+var KeyCombo = require('./key-combo');
+
+
+function Keyboard(targetWindow, targetElement, platform, userAgent) {
+  this._locale               = null;
+  this._currentContext       = null;
+  this._contexts             = {};
+  this._listeners            = [];
+  this._appliedListeners     = [];
+  this._locales              = {};
+  this._targetElement        = null;
+  this._targetWindow         = null;
+  this._targetPlatform       = '';
+  this._targetUserAgent      = '';
+  this._isModernBrowser      = false;
+  this._targetKeyDownBinding = null;
+  this._targetKeyUpBinding   = null;
+  this._targetResetBinding   = null;
+  this._paused               = false;
+
+  this.setContext('global');
+  this.watch(targetWindow, targetElement, platform, userAgent);
+}
+
+Keyboard.prototype.setLocale = function(localeName, localeBuilder) {
+  var locale = null;
+  if (typeof localeName === 'string') {
+
+    if (localeBuilder) {
+      locale = new Locale(localeName);
+      localeBuilder(locale, this._targetPlatform, this._targetUserAgent);
+    } else {
+      locale = this._locales[localeName] || null;
+    }
+  } else {
+    locale     = localeName;
+    localeName = locale._localeName;
+  }
+
+  this._locale              = locale;
+  this._locales[localeName] = locale;
+  if (locale) {
+    this._locale.pressedKeys = locale.pressedKeys;
+  }
+};
+
+Keyboard.prototype.getLocale = function(localName) {
+  localName || (localName = this._locale.localeName);
+  return this._locales[localName] || null;
+};
+
+Keyboard.prototype.bind = function(keyComboStr, pressHandler, releaseHandler, preventRepeatByDefault) {
+  if (keyComboStr === null || typeof keyComboStr === 'function') {
+    preventRepeatByDefault = releaseHandler;
+    releaseHandler         = pressHandler;
+    pressHandler           = keyComboStr;
+    keyComboStr            = null;
+  }
+
+  if (
+    keyComboStr &&
+    typeof keyComboStr === 'object' &&
+    typeof keyComboStr.length === 'number'
+  ) {
+    for (var i = 0; i < keyComboStr.length; i += 1) {
+      this.bind(keyComboStr[i], pressHandler, releaseHandler);
+    }
+    return;
+  }
+
+  this._listeners.push({
+    keyCombo               : keyComboStr ? new KeyCombo(keyComboStr) : null,
+    pressHandler           : pressHandler           || null,
+    releaseHandler         : releaseHandler         || null,
+    preventRepeat          : preventRepeatByDefault || false,
+    preventRepeatByDefault : preventRepeatByDefault || false
+  });
+};
+Keyboard.prototype.addListener = Keyboard.prototype.bind;
+Keyboard.prototype.on          = Keyboard.prototype.bind;
+
+Keyboard.prototype.unbind = function(keyComboStr, pressHandler, releaseHandler) {
+  if (keyComboStr === null || typeof keyComboStr === 'function') {
+    releaseHandler = pressHandler;
+    pressHandler   = keyComboStr;
+    keyComboStr = null;
+  }
+
+  if (
+    keyComboStr &&
+    typeof keyComboStr === 'object' &&
+    typeof keyComboStr.length === 'number'
+  ) {
+    for (var i = 0; i < keyComboStr.length; i += 1) {
+      this.unbind(keyComboStr[i], pressHandler, releaseHandler);
+    }
+    return;
+  }
+
+  for (var i = 0; i < this._listeners.length; i += 1) {
+    var listener = this._listeners[i];
+
+    var comboMatches          = !keyComboStr && !listener.keyCombo ||
+                                listener.keyCombo.isEqual(keyComboStr);
+    var pressHandlerMatches   = !pressHandler && !releaseHandler ||
+                                !pressHandler && !listener.pressHandler ||
+                                pressHandler === listener.pressHandler;
+    var releaseHandlerMatches = !pressHandler && !releaseHandler ||
+                                !releaseHandler && !listener.releaseHandler ||
+                                releaseHandler === listener.releaseHandler;
+
+    if (comboMatches && pressHandlerMatches && releaseHandlerMatches) {
+      this._listeners.splice(i, 1);
+      i -= 1;
+    }
+  }
+};
+Keyboard.prototype.removeListener = Keyboard.prototype.unbind;
+Keyboard.prototype.off            = Keyboard.prototype.unbind;
+
+Keyboard.prototype.setContext = function(contextName) {
+  if(this._locale) { this.releaseAllKeys(); }
+
+  if (!this._contexts[contextName]) {
+    this._contexts[contextName] = [];
+  }
+  this._listeners      = this._contexts[contextName];
+  this._currentContext = contextName;
+};
+
+Keyboard.prototype.getContext = function() {
+  return this._currentContext;
+};
+
+Keyboard.prototype.withContext = function(contextName, callback) {
+  var previousContextName = this.getContext();
+  this.setContext(contextName);
+
+  callback();
+
+  this.setContext(previousContextName);
+};
+
+Keyboard.prototype.watch = function(targetWindow, targetElement, targetPlatform, targetUserAgent) {
+  var _this = this;
+
+  this.stop();
+
+  if (!targetWindow) {
+    if (!global.addEventListener && !global.attachEvent) {
+      throw new Error('Cannot find global functions addEventListener or attachEvent.');
+    }
+    targetWindow = global;
+  }
+
+  if (typeof targetWindow.nodeType === 'number') {
+    targetUserAgent = targetPlatform;
+    targetPlatform  = targetElement;
+    targetElement   = targetWindow;
+    targetWindow    = global;
+  }
+  
+  if (!targetWindow.addEventListener && !targetWindow.attachEvent) {
+    throw new Error('Cannot find addEventListener or attachEvent methods on targetWindow.');
+  }
+  
+  this._isModernBrowser = !!targetWindow.addEventListener;
+
+  var userAgent = targetWindow.navigator && targetWindow.navigator.userAgent || '';
+  var platform  = targetWindow.navigator && targetWindow.navigator.platform  || '';
+
+  targetElement   && targetElement   !== null || (targetElement   = targetWindow.document);
+  targetPlatform  && targetPlatform  !== null || (targetPlatform  = platform);
+  targetUserAgent && targetUserAgent !== null || (targetUserAgent = userAgent);
+
+  this._targetKeyDownBinding = function(event) {
+    _this.pressKey(event.keyCode, event);
+  };
+  this._targetKeyUpBinding = function(event) {
+    _this.releaseKey(event.keyCode, event);
+  };
+  this._targetResetBinding = function(event) {
+    _this.releaseAllKeys(event)
+  };
+
+  this._bindEvent(targetElement, 'keydown', this._targetKeyDownBinding);
+  this._bindEvent(targetElement, 'keyup',   this._targetKeyUpBinding);
+  this._bindEvent(targetWindow,  'focus',   this._targetResetBinding);
+  this._bindEvent(targetWindow,  'blur',    this._targetResetBinding);
+
+  this._targetElement   = targetElement;
+  this._targetWindow    = targetWindow;
+  this._targetPlatform  = targetPlatform;
+  this._targetUserAgent = targetUserAgent;
+};
+
+Keyboard.prototype.stop = function() {
+  var _this = this;
+
+  if (!this._targetElement || !this._targetWindow) { return; }
+
+  this._unbindEvent(this._targetElement, 'keydown', this._targetKeyDownBinding);
+  this._unbindEvent(this._targetElement, 'keyup',   this._targetKeyUpBinding);
+  this._unbindEvent(this._targetWindow,  'focus',   this._targetResetBinding);
+  this._unbindEvent(this._targetWindow,  'blur',    this._targetResetBinding);
+
+  this._targetWindow  = null;
+  this._targetElement = null;
+};
+
+Keyboard.prototype.pressKey = function(keyCode, event) {
+  if (this._paused) { return; }
+  if (!this._locale) { throw new Error('Locale not set'); }
+
+  this._locale.pressKey(keyCode);
+  this._applyBindings(event);
+};
+
+Keyboard.prototype.releaseKey = function(keyCode, event) {
+  if (this._paused) { return; }
+  if (!this._locale) { throw new Error('Locale not set'); }
+
+  this._locale.releaseKey(keyCode);
+  this._clearBindings(event);
+};
+
+Keyboard.prototype.releaseAllKeys = function(event) {
+  if (this._paused) { return; }
+  if (!this._locale) { throw new Error('Locale not set'); }
+
+  this._locale.pressedKeys.length = 0;
+  this._clearBindings(event);
+};
+
+Keyboard.prototype.pause = function() {
+  if (this._paused) { return; }
+  if (this._locale) { this.releaseAllKeys(); }
+  this._paused = true;
+};
+
+Keyboard.prototype.resume = function() {
+  this._paused = false;
+};
+
+Keyboard.prototype.reset = function() {
+  this.releaseAllKeys();
+  this._listeners.length = 0;
+};
+
+Keyboard.prototype._bindEvent = function(targetElement, eventName, handler) {
+  return this._isModernBrowser ?
+    targetElement.addEventListener(eventName, handler, false) :
+    targetElement.attachEvent('on' + eventName, handler);
+};
+
+Keyboard.prototype._unbindEvent = function(targetElement, eventName, handler) {
+  return this._isModernBrowser ?
+    targetElement.removeEventListener(eventName, handler, false) :
+    targetElement.detachEvent('on' + eventName, handler);
+};
+
+Keyboard.prototype._getGroupedListeners = function() {
+  var listenerGroups   = [];
+  var listenerGroupMap = [];
+
+  var listeners = this._listeners;
+  if (this._currentContext !== 'global') {
+    listeners = [].concat(listeners, this._contexts.global);
+  }
+
+  listeners.sort(function(a, b) {
+    return b.keyCombo.keyNames.length - a.keyCombo.keyNames.length;
+  }).forEach(function(l) {
+    var mapIndex = -1;
+    for (var i = 0; i < listenerGroupMap.length; i += 1) {
+      if (listenerGroupMap[i].isEqual(l.keyCombo)) {
+        mapIndex = i;
+      }
+    }
+    if (mapIndex === -1) {
+      mapIndex = listenerGroupMap.length;
+      listenerGroupMap.push(l.keyCombo);
+    }
+    if (!listenerGroups[mapIndex]) {
+      listenerGroups[mapIndex] = [];
+    }
+    listenerGroups[mapIndex].push(l);
+  });
+  return listenerGroups;
+};
+
+Keyboard.prototype._applyBindings = function(event) {
+  var preventRepeat = false;
+
+  event || (event = {});
+  event.preventRepeat = function() { preventRepeat = true; };
+  event.pressedKeys   = this._locale.pressedKeys.slice(0);
+
+  var pressedKeys    = this._locale.pressedKeys.slice(0);
+  var listenerGroups = this._getGroupedListeners();
+
+
+  for (var i = 0; i < listenerGroups.length; i += 1) {
+    var listeners = listenerGroups[i];
+    var keyCombo  = listeners[0].keyCombo;
+
+    if (keyCombo === null || keyCombo.check(pressedKeys)) {
+      for (var j = 0; j < listeners.length; j += 1) {
+        var listener = listeners[j];
+
+        if (keyCombo === null) {
+          listener = {
+            keyCombo               : new KeyCombo(pressedKeys.join('+')),
+            pressHandler           : listener.pressHandler,
+            releaseHandler         : listener.releaseHandler,
+            preventRepeat          : listener.preventRepeat,
+            preventRepeatByDefault : listener.preventRepeatByDefault
+          };
+        }
+
+        if (listener.pressHandler && !listener.preventRepeat) {
+          listener.pressHandler.call(this, event);
+          if (preventRepeat) {
+            listener.preventRepeat = preventRepeat;
+            preventRepeat          = false;
+          }
+        }
+
+        if (listener.releaseHandler && this._appliedListeners.indexOf(listener) === -1) {
+          this._appliedListeners.push(listener);
+        }
+      }
+
+      if (keyCombo) {
+        for (var j = 0; j < keyCombo.keyNames.length; j += 1) {
+          var index = pressedKeys.indexOf(keyCombo.keyNames[j]);
+          if (index !== -1) {
+            pressedKeys.splice(index, 1);
+            j -= 1;
+          }
+        }
+      }
+    }
+  }
+};
+
+Keyboard.prototype._clearBindings = function(event) {
+  event || (event = {});
+
+  for (var i = 0; i < this._appliedListeners.length; i += 1) {
+    var listener = this._appliedListeners[i];
+    var keyCombo = listener.keyCombo;
+    if (keyCombo === null || !keyCombo.check(this._locale.pressedKeys)) {
+      listener.preventRepeat = listener.preventRepeatByDefault;
+      listener.releaseHandler.call(this, event);
+      this._appliedListeners.splice(i, 1);
+      i -= 1;
+    }
+  }
+};
+
+module.exports = Keyboard;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./key-combo":4,"./locale":6}],6:[function(require,module,exports){
+
+var KeyCombo = require('./key-combo');
+
+
+function Locale(name) {
+  this.localeName     = name;
+  this.pressedKeys    = [];
+  this._appliedMacros = [];
+  this._keyMap        = {};
+  this._killKeyCodes  = [];
+  this._macros        = [];
+}
+
+Locale.prototype.bindKeyCode = function(keyCode, keyNames) {
+  if (typeof keyNames === 'string') {
+    keyNames = [keyNames];
+  }
+
+  this._keyMap[keyCode] = keyNames;
+};
+
+Locale.prototype.bindMacro = function(keyComboStr, keyNames) {
+  if (typeof keyNames === 'string') {
+    keyNames = [ keyNames ];
+  }
+
+  var handler = null;
+  if (typeof keyNames === 'function') {
+    handler = keyNames;
+    keyNames = null;
+  }
+
+  var macro = {
+    keyCombo : new KeyCombo(keyComboStr),
+    keyNames : keyNames,
+    handler  : handler
+  };
+
+  this._macros.push(macro);
+};
+
+Locale.prototype.getKeyCodes = function(keyName) {
+  var keyCodes = [];
+  for (var keyCode in this._keyMap) {
+    var index = this._keyMap[keyCode].indexOf(keyName);
+    if (index > -1) { keyCodes.push(keyCode|0); }
+  }
+  return keyCodes;
+};
+
+Locale.prototype.getKeyNames = function(keyCode) {
+  return this._keyMap[keyCode] || [];
+};
+
+Locale.prototype.setKillKey = function(keyCode) {
+  if (typeof keyCode === 'string') {
+    var keyCodes = this.getKeyCodes(keyCode);
+    for (var i = 0; i < keyCodes.length; i += 1) {
+      this.setKillKey(keyCodes[i]);
+    }
+    return;
+  }
+
+  this._killKeyCodes.push(keyCode);
+};
+
+Locale.prototype.pressKey = function(keyCode) {
+  if (typeof keyCode === 'string') {
+    var keyCodes = this.getKeyCodes(keyCode);
+    for (var i = 0; i < keyCodes.length; i += 1) {
+      this.pressKey(keyCodes[i]);
+    }
+    return;
+  }
+
+  var keyNames = this.getKeyNames(keyCode);
+  for (var i = 0; i < keyNames.length; i += 1) {
+    if (this.pressedKeys.indexOf(keyNames[i]) === -1) {
+      this.pressedKeys.push(keyNames[i]);
+    }
+  }
+
+  this._applyMacros();
+};
+
+Locale.prototype.releaseKey = function(keyCode) {
+  if (typeof keyCode === 'string') {
+    var keyCodes = this.getKeyCodes(keyCode);
+    for (var i = 0; i < keyCodes.length; i += 1) {
+      this.releaseKey(keyCodes[i]);
+    }
+  }
+
+  else {
+    var keyNames         = this.getKeyNames(keyCode);
+    var killKeyCodeIndex = this._killKeyCodes.indexOf(keyCode);
+    
+    if (killKeyCodeIndex > -1) {
+      this.pressedKeys.length = 0;
+    } else {
+      for (var i = 0; i < keyNames.length; i += 1) {
+        var index = this.pressedKeys.indexOf(keyNames[i]);
+        if (index > -1) {
+          this.pressedKeys.splice(index, 1);
+        }
+      }
+    }
+
+    this._clearMacros();
+  }
+};
+
+Locale.prototype._applyMacros = function() {
+  var macros = this._macros.slice(0);
+  for (var i = 0; i < macros.length; i += 1) {
+    var macro = macros[i];
+    if (macro.keyCombo.check(this.pressedKeys)) {
+      if (macro.handler) {
+        macro.keyNames = macro.handler(this.pressedKeys);
+      }
+      for (var j = 0; j < macro.keyNames.length; j += 1) {
+        if (this.pressedKeys.indexOf(macro.keyNames[j]) === -1) {
+          this.pressedKeys.push(macro.keyNames[j]);
+        }
+      }
+      this._appliedMacros.push(macro);
+    }
+  }
+};
+
+Locale.prototype._clearMacros = function() {
+  for (var i = 0; i < this._appliedMacros.length; i += 1) {
+    var macro = this._appliedMacros[i];
+    if (!macro.keyCombo.check(this.pressedKeys)) {
+      for (var j = 0; j < macro.keyNames.length; j += 1) {
+        var index = this.pressedKeys.indexOf(macro.keyNames[j]);
+        if (index > -1) {
+          this.pressedKeys.splice(index, 1);
+        }
+      }
+      if (macro.handler) {
+        macro.keyNames = null;
+      }
+      this._appliedMacros.splice(i, 1);
+      i -= 1;
+    }
+  }
+};
+
+
+module.exports = Locale;
+
+},{"./key-combo":4}],7:[function(require,module,exports){
+
+module.exports = function(locale, platform, userAgent) {
+
+  // general
+  locale.bindKeyCode(3,   ['cancel']);
+  locale.bindKeyCode(8,   ['backspace']);
+  locale.bindKeyCode(9,   ['tab']);
+  locale.bindKeyCode(12,  ['clear']);
+  locale.bindKeyCode(13,  ['enter']);
+  locale.bindKeyCode(16,  ['shift']);
+  locale.bindKeyCode(17,  ['ctrl']);
+  locale.bindKeyCode(18,  ['alt', 'menu']);
+  locale.bindKeyCode(19,  ['pause', 'break']);
+  locale.bindKeyCode(20,  ['capslock']);
+  locale.bindKeyCode(27,  ['escape', 'esc']);
+  locale.bindKeyCode(32,  ['space', 'spacebar']);
+  locale.bindKeyCode(33,  ['pageup']);
+  locale.bindKeyCode(34,  ['pagedown']);
+  locale.bindKeyCode(35,  ['end']);
+  locale.bindKeyCode(36,  ['home']);
+  locale.bindKeyCode(37,  ['left']);
+  locale.bindKeyCode(38,  ['up']);
+  locale.bindKeyCode(39,  ['right']);
+  locale.bindKeyCode(40,  ['down']);
+  locale.bindKeyCode(41,  ['select']);
+  locale.bindKeyCode(42,  ['printscreen']);
+  locale.bindKeyCode(43,  ['execute']);
+  locale.bindKeyCode(44,  ['snapshot']);
+  locale.bindKeyCode(45,  ['insert', 'ins']);
+  locale.bindKeyCode(46,  ['delete', 'del']);
+  locale.bindKeyCode(47,  ['help']);
+  locale.bindKeyCode(145, ['scrolllock', 'scroll']);
+  locale.bindKeyCode(187, ['equal', 'equalsign', '=']);
+  locale.bindKeyCode(188, ['comma', ',']);
+  locale.bindKeyCode(190, ['period', '.']);
+  locale.bindKeyCode(191, ['slash', 'forwardslash', '/']);
+  locale.bindKeyCode(192, ['graveaccent', '`']);
+  locale.bindKeyCode(219, ['openbracket', '[']);
+  locale.bindKeyCode(220, ['backslash', '\\']);
+  locale.bindKeyCode(221, ['closebracket', ']']);
+  locale.bindKeyCode(222, ['apostrophe', '\'']);
+
+  // 0-9
+  locale.bindKeyCode(48, ['zero', '0']);
+  locale.bindKeyCode(49, ['one', '1']);
+  locale.bindKeyCode(50, ['two', '2']);
+  locale.bindKeyCode(51, ['three', '3']);
+  locale.bindKeyCode(52, ['four', '4']);
+  locale.bindKeyCode(53, ['five', '5']);
+  locale.bindKeyCode(54, ['six', '6']);
+  locale.bindKeyCode(55, ['seven', '7']);
+  locale.bindKeyCode(56, ['eight', '8']);
+  locale.bindKeyCode(57, ['nine', '9']);
+
+  // numpad
+  locale.bindKeyCode(96, ['numzero', 'num0']);
+  locale.bindKeyCode(97, ['numone', 'num1']);
+  locale.bindKeyCode(98, ['numtwo', 'num2']);
+  locale.bindKeyCode(99, ['numthree', 'num3']);
+  locale.bindKeyCode(100, ['numfour', 'num4']);
+  locale.bindKeyCode(101, ['numfive', 'num5']);
+  locale.bindKeyCode(102, ['numsix', 'num6']);
+  locale.bindKeyCode(103, ['numseven', 'num7']);
+  locale.bindKeyCode(104, ['numeight', 'num8']);
+  locale.bindKeyCode(105, ['numnine', 'num9']);
+  locale.bindKeyCode(106, ['nummultiply', 'num*']);
+  locale.bindKeyCode(107, ['numadd', 'num+']);
+  locale.bindKeyCode(108, ['numenter']);
+  locale.bindKeyCode(109, ['numsubtract', 'num-']);
+  locale.bindKeyCode(110, ['numdecimal', 'num.']);
+  locale.bindKeyCode(111, ['numdivide', 'num/']);
+  locale.bindKeyCode(144, ['numlock', 'num']);
+
+  // function keys
+  locale.bindKeyCode(112, ['f1']);
+  locale.bindKeyCode(113, ['f2']);
+  locale.bindKeyCode(114, ['f3']);
+  locale.bindKeyCode(115, ['f4']);
+  locale.bindKeyCode(116, ['f5']);
+  locale.bindKeyCode(117, ['f6']);
+  locale.bindKeyCode(118, ['f7']);
+  locale.bindKeyCode(119, ['f8']);
+  locale.bindKeyCode(120, ['f9']);
+  locale.bindKeyCode(121, ['f10']);
+  locale.bindKeyCode(122, ['f11']);
+  locale.bindKeyCode(123, ['f12']);
+
+  // secondary key symbols
+  locale.bindMacro('shift + `', ['tilde', '~']);
+  locale.bindMacro('shift + 1', ['exclamation', 'exclamationpoint', '!']);
+  locale.bindMacro('shift + 2', ['at', '@']);
+  locale.bindMacro('shift + 3', ['number', '#']);
+  locale.bindMacro('shift + 4', ['dollar', 'dollars', 'dollarsign', '$']);
+  locale.bindMacro('shift + 5', ['percent', '%']);
+  locale.bindMacro('shift + 6', ['caret', '^']);
+  locale.bindMacro('shift + 7', ['ampersand', 'and', '&']);
+  locale.bindMacro('shift + 8', ['asterisk', '*']);
+  locale.bindMacro('shift + 9', ['openparen', '(']);
+  locale.bindMacro('shift + 0', ['closeparen', ')']);
+  locale.bindMacro('shift + -', ['underscore', '_']);
+  locale.bindMacro('shift + =', ['plus', '+']);
+  locale.bindMacro('shift + [', ['opencurlybrace', 'opencurlybracket', '{']);
+  locale.bindMacro('shift + ]', ['closecurlybrace', 'closecurlybracket', '}']);
+  locale.bindMacro('shift + \\', ['verticalbar', '|']);
+  locale.bindMacro('shift + ;', ['colon', ':']);
+  locale.bindMacro('shift + \'', ['quotationmark', '\'']);
+  locale.bindMacro('shift + !,', ['openanglebracket', '<']);
+  locale.bindMacro('shift + .', ['closeanglebracket', '>']);
+  locale.bindMacro('shift + /', ['questionmark', '?']);
+
+  //a-z and A-Z
+  for (var keyCode = 65; keyCode <= 90; keyCode += 1) {
+    var keyName = String.fromCharCode(keyCode + 32);
+    var capitalKeyName = String.fromCharCode(keyCode);
+  	locale.bindKeyCode(keyCode, keyName);
+  	locale.bindMacro('shift + ' + keyName, capitalKeyName);
+  	locale.bindMacro('capslock + ' + keyName, capitalKeyName);
+  }
+
+  // browser caveats
+  var semicolonKeyCode = userAgent.match('Firefox') ? 59  : 186;
+  var dashKeyCode      = userAgent.match('Firefox') ? 173 : 189;
+  var leftCommandKeyCode;
+  var rightCommandKeyCode;
+  if (platform.match('Mac') && (userAgent.match('Safari') || userAgent.match('Chrome'))) {
+    leftCommandKeyCode  = 91;
+    rightCommandKeyCode = 93;
+  } else if(platform.match('Mac') && userAgent.match('Opera')) {
+    leftCommandKeyCode  = 17;
+    rightCommandKeyCode = 17;
+  } else if(platform.match('Mac') && userAgent.match('Firefox')) {
+    leftCommandKeyCode  = 224;
+    rightCommandKeyCode = 224;
+  }
+  locale.bindKeyCode(semicolonKeyCode,    ['semicolon', ';']);
+  locale.bindKeyCode(dashKeyCode,         ['dash', '-']);
+  locale.bindKeyCode(leftCommandKeyCode,  ['command', 'windows', 'win', 'super', 'leftcommand', 'leftwindows', 'leftwin', 'leftsuper']);
+  locale.bindKeyCode(rightCommandKeyCode, ['command', 'windows', 'win', 'super', 'rightcommand', 'rightwindows', 'rightwin', 'rightsuper']);
+
+  // kill keys
+  locale.setKillKey('command');
+};
+
+},{}],8:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -1379,7 +1203,7 @@ module.exports = extractAnnotations;
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.14.0';
+  var VERSION = '4.15.0';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -1496,11 +1320,12 @@ module.exports = extractAnnotations;
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
       reIsPlainProp = /^\w*$/,
-      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
+      reLeadingDot = /^\./,
+      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 
   /**
    * Used to match `RegExp`
-   * [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns).
+   * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
    */
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g,
       reHasRegExpChar = RegExp(reRegExpChar.source);
@@ -1515,15 +1340,15 @@ module.exports = extractAnnotations;
       reWrapDetails = /\{\n\/\* \[wrapped with (.+)\] \*/,
       reSplitDetails = /,? & /;
 
-  /** Used to match non-compound words composed of alphanumeric characters. */
-  var reBasicWord = /[a-zA-Z0-9]+/g;
+  /** Used to match words composed of alphanumeric characters. */
+  var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
 
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;
 
   /**
    * Used to match
-   * [ES template delimiters](http://ecma-international.org/ecma-262/6.0/#sec-template-literal-lexical-components).
+   * [ES template delimiters](http://ecma-international.org/ecma-262/7.0/#sec-template-literal-lexical-components).
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
@@ -1548,8 +1373,8 @@ module.exports = extractAnnotations;
   /** Used to detect unsigned integer values. */
   var reIsUint = /^(?:0|[1-9]\d*)$/;
 
-  /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
-  var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
+  /** Used to match Latin Unicode letters (excluding mathematical operators). */
+  var reLatin = /[\xc0-\xd6\xd8-\xf6\xf8-\xff\u0100-\u017f]/g;
 
   /** Used to ensure capturing order of template delimiters. */
   var reNoMatch = /($^)/;
@@ -1610,10 +1435,10 @@ module.exports = extractAnnotations;
   var reComboMark = RegExp(rsCombo, 'g');
 
   /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
-  var reComplexSymbol = RegExp(rsFitz + '(?=' + rsFitz + ')|' + rsSymbol + rsSeq, 'g');
+  var reUnicode = RegExp(rsFitz + '(?=' + rsFitz + ')|' + rsSymbol + rsSeq, 'g');
 
   /** Used to match complex or compound words. */
-  var reComplexWord = RegExp([
+  var reUnicodeWord = RegExp([
     rsUpper + '?' + rsLower + '+' + rsOptLowerContr + '(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
     rsUpperMisc + '+' + rsOptUpperContr + '(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
     rsUpper + '?' + rsLowerMisc + '+' + rsOptLowerContr,
@@ -1623,17 +1448,17 @@ module.exports = extractAnnotations;
   ].join('|'), 'g');
 
   /** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-  var reHasComplexSymbol = RegExp('[' + rsZWJ + rsAstralRange  + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + ']');
+  var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + ']');
 
   /** Used to detect strings that need a more robust regexp to match words. */
-  var reHasComplexWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
     'Array', 'Buffer', 'DataView', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Map', 'Math', 'Object',
-    'Promise', 'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError',
-    'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
+    'Promise', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
+    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
     '_', 'clearTimeout', 'isFinite', 'parseInt', 'setTimeout'
   ];
 
@@ -1672,16 +1497,17 @@ module.exports = extractAnnotations;
   cloneableTags[errorTag] = cloneableTags[funcTag] =
   cloneableTags[weakMapTag] = false;
 
-  /** Used to map latin-1 supplementary letters to basic latin letters. */
+  /** Used to map Latin Unicode letters to basic Latin letters. */
   var deburredLetters = {
+    // Latin-1 Supplement block.
     '\xc0': 'A',  '\xc1': 'A', '\xc2': 'A', '\xc3': 'A', '\xc4': 'A', '\xc5': 'A',
     '\xe0': 'a',  '\xe1': 'a', '\xe2': 'a', '\xe3': 'a', '\xe4': 'a', '\xe5': 'a',
     '\xc7': 'C',  '\xe7': 'c',
     '\xd0': 'D',  '\xf0': 'd',
     '\xc8': 'E',  '\xc9': 'E', '\xca': 'E', '\xcb': 'E',
     '\xe8': 'e',  '\xe9': 'e', '\xea': 'e', '\xeb': 'e',
-    '\xcC': 'I',  '\xcd': 'I', '\xce': 'I', '\xcf': 'I',
-    '\xeC': 'i',  '\xed': 'i', '\xee': 'i', '\xef': 'i',
+    '\xcc': 'I',  '\xcd': 'I', '\xce': 'I', '\xcf': 'I',
+    '\xec': 'i',  '\xed': 'i', '\xee': 'i', '\xef': 'i',
     '\xd1': 'N',  '\xf1': 'n',
     '\xd2': 'O',  '\xd3': 'O', '\xd4': 'O', '\xd5': 'O', '\xd6': 'O', '\xd8': 'O',
     '\xf2': 'o',  '\xf3': 'o', '\xf4': 'o', '\xf5': 'o', '\xf6': 'o', '\xf8': 'o',
@@ -1690,7 +1516,43 @@ module.exports = extractAnnotations;
     '\xdd': 'Y',  '\xfd': 'y', '\xff': 'y',
     '\xc6': 'Ae', '\xe6': 'ae',
     '\xde': 'Th', '\xfe': 'th',
-    '\xdf': 'ss'
+    '\xdf': 'ss',
+    // Latin Extended-A block.
+    '\u0100': 'A',  '\u0102': 'A', '\u0104': 'A',
+    '\u0101': 'a',  '\u0103': 'a', '\u0105': 'a',
+    '\u0106': 'C',  '\u0108': 'C', '\u010a': 'C', '\u010c': 'C',
+    '\u0107': 'c',  '\u0109': 'c', '\u010b': 'c', '\u010d': 'c',
+    '\u010e': 'D',  '\u0110': 'D', '\u010f': 'd', '\u0111': 'd',
+    '\u0112': 'E',  '\u0114': 'E', '\u0116': 'E', '\u0118': 'E', '\u011a': 'E',
+    '\u0113': 'e',  '\u0115': 'e', '\u0117': 'e', '\u0119': 'e', '\u011b': 'e',
+    '\u011c': 'G',  '\u011e': 'G', '\u0120': 'G', '\u0122': 'G',
+    '\u011d': 'g',  '\u011f': 'g', '\u0121': 'g', '\u0123': 'g',
+    '\u0124': 'H',  '\u0126': 'H', '\u0125': 'h', '\u0127': 'h',
+    '\u0128': 'I',  '\u012a': 'I', '\u012c': 'I', '\u012e': 'I', '\u0130': 'I',
+    '\u0129': 'i',  '\u012b': 'i', '\u012d': 'i', '\u012f': 'i', '\u0131': 'i',
+    '\u0134': 'J',  '\u0135': 'j',
+    '\u0136': 'K',  '\u0137': 'k', '\u0138': 'k',
+    '\u0139': 'L',  '\u013b': 'L', '\u013d': 'L', '\u013f': 'L', '\u0141': 'L',
+    '\u013a': 'l',  '\u013c': 'l', '\u013e': 'l', '\u0140': 'l', '\u0142': 'l',
+    '\u0143': 'N',  '\u0145': 'N', '\u0147': 'N', '\u014a': 'N',
+    '\u0144': 'n',  '\u0146': 'n', '\u0148': 'n', '\u014b': 'n',
+    '\u014c': 'O',  '\u014e': 'O', '\u0150': 'O',
+    '\u014d': 'o',  '\u014f': 'o', '\u0151': 'o',
+    '\u0154': 'R',  '\u0156': 'R', '\u0158': 'R',
+    '\u0155': 'r',  '\u0157': 'r', '\u0159': 'r',
+    '\u015a': 'S',  '\u015c': 'S', '\u015e': 'S', '\u0160': 'S',
+    '\u015b': 's',  '\u015d': 's', '\u015f': 's', '\u0161': 's',
+    '\u0162': 'T',  '\u0164': 'T', '\u0166': 'T',
+    '\u0163': 't',  '\u0165': 't', '\u0167': 't',
+    '\u0168': 'U',  '\u016a': 'U', '\u016c': 'U', '\u016e': 'U', '\u0170': 'U', '\u0172': 'U',
+    '\u0169': 'u',  '\u016b': 'u', '\u016d': 'u', '\u016f': 'u', '\u0171': 'u', '\u0173': 'u',
+    '\u0174': 'W',  '\u0175': 'w',
+    '\u0176': 'Y',  '\u0177': 'y', '\u0178': 'Y',
+    '\u0179': 'Z',  '\u017b': 'Z', '\u017d': 'Z',
+    '\u017a': 'z',  '\u017c': 'z', '\u017e': 'z',
+    '\u0132': 'IJ', '\u0133': 'ij',
+    '\u0152': 'Oe', '\u0153': 'oe',
+    '\u0149': "'n", '\u017f': 'ss'
   };
 
   /** Used to map characters to HTML entities. */
@@ -1737,10 +1599,10 @@ module.exports = extractAnnotations;
   var root = freeGlobal || freeSelf || Function('return this')();
 
   /** Detect free variable `exports`. */
-  var freeExports = freeGlobal && typeof exports == 'object' && exports;
+  var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
 
   /** Detect free variable `module`. */
-  var freeModule = freeExports && typeof module == 'object' && module;
+  var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
 
   /** Detect the popular CommonJS extension `module.exports`. */
   var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -1926,7 +1788,7 @@ module.exports = extractAnnotations;
    * specifying an index to search from.
    *
    * @private
-   * @param {Array} [array] The array to search.
+   * @param {Array} [array] The array to inspect.
    * @param {*} target The value to search for.
    * @returns {boolean} Returns `true` if `target` is found, else `false`.
    */
@@ -1939,7 +1801,7 @@ module.exports = extractAnnotations;
    * This function is like `arrayIncludes` except that it accepts a comparator.
    *
    * @private
-   * @param {Array} [array] The array to search.
+   * @param {Array} [array] The array to inspect.
    * @param {*} target The value to search for.
    * @param {Function} comparator The comparator invoked per element.
    * @returns {boolean} Returns `true` if `target` is found, else `false`.
@@ -2066,12 +1928,43 @@ module.exports = extractAnnotations;
   }
 
   /**
+   * Gets the size of an ASCII `string`.
+   *
+   * @private
+   * @param {string} string The string inspect.
+   * @returns {number} Returns the string size.
+   */
+  var asciiSize = baseProperty('length');
+
+  /**
+   * Converts an ASCII `string` to an array.
+   *
+   * @private
+   * @param {string} string The string to convert.
+   * @returns {Array} Returns the converted array.
+   */
+  function asciiToArray(string) {
+    return string.split('');
+  }
+
+  /**
+   * Splits an ASCII `string` into an array of its words.
+   *
+   * @private
+   * @param {string} The string to inspect.
+   * @returns {Array} Returns the words of `string`.
+   */
+  function asciiWords(string) {
+    return string.match(reAsciiWord) || [];
+  }
+
+  /**
    * The base implementation of methods like `_.findKey` and `_.findLastKey`,
    * without support for iteratee shorthands, which iterates over `collection`
    * using `eachFunc`.
    *
    * @private
-   * @param {Array|Object} collection The collection to search.
+   * @param {Array|Object} collection The collection to inspect.
    * @param {Function} predicate The function invoked per iteration.
    * @param {Function} eachFunc The function to iterate over `collection`.
    * @returns {*} Returns the found element or its key, else `undefined`.
@@ -2092,7 +1985,7 @@ module.exports = extractAnnotations;
    * support for iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {Function} predicate The function invoked per iteration.
    * @param {number} fromIndex The index to search from.
    * @param {boolean} [fromRight] Specify iterating from right to left.
@@ -2114,7 +2007,7 @@ module.exports = extractAnnotations;
    * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
    *
    * @private
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {*} value The value to search for.
    * @param {number} fromIndex The index to search from.
    * @returns {number} Returns the index of the matched value, else `-1`.
@@ -2138,7 +2031,7 @@ module.exports = extractAnnotations;
    * This function is like `baseIndexOf` except that it accepts a comparator.
    *
    * @private
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {*} value The value to search for.
    * @param {number} fromIndex The index to search from.
    * @param {Function} comparator The comparator invoked per element.
@@ -2401,7 +2294,8 @@ module.exports = extractAnnotations;
   }
 
   /**
-   * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
+   * Used by `_.deburr` to convert Latin-1 Supplement and Latin Extended-A
+   * letters to basic Latin letters.
    *
    * @private
    * @param {string} letter The matched letter to deburr.
@@ -2439,6 +2333,28 @@ module.exports = extractAnnotations;
    */
   function getValue(object, key) {
     return object == null ? undefined : object[key];
+  }
+
+  /**
+   * Checks if `string` contains Unicode symbols.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {boolean} Returns `true` if a symbol is found, else `false`.
+   */
+  function hasUnicode(string) {
+    return reHasUnicode.test(string);
+  }
+
+  /**
+   * Checks if `string` contains a word composed of Unicode symbols.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {boolean} Returns `true` if a word is found, else `false`.
+   */
+  function hasUnicodeWord(string) {
+    return reHasUnicodeWord.test(string);
   }
 
   /**
@@ -2495,7 +2411,7 @@ module.exports = extractAnnotations;
   }
 
   /**
-   * Creates a function that invokes `func` with its first argument transformed.
+   * Creates a unary function that invokes `func` with its argument transformed.
    *
    * @private
    * @param {Function} func The function to wrap.
@@ -2575,14 +2491,9 @@ module.exports = extractAnnotations;
    * @returns {number} Returns the string size.
    */
   function stringSize(string) {
-    if (!(string && reHasComplexSymbol.test(string))) {
-      return string.length;
-    }
-    var result = reComplexSymbol.lastIndex = 0;
-    while (reComplexSymbol.test(string)) {
-      result++;
-    }
-    return result;
+    return hasUnicode(string)
+      ? unicodeSize(string)
+      : asciiSize(string);
   }
 
   /**
@@ -2593,7 +2504,9 @@ module.exports = extractAnnotations;
    * @returns {Array} Returns the converted array.
    */
   function stringToArray(string) {
-    return string.match(reComplexSymbol);
+    return hasUnicode(string)
+      ? unicodeToArray(string)
+      : asciiToArray(string);
   }
 
   /**
@@ -2604,6 +2517,43 @@ module.exports = extractAnnotations;
    * @returns {string} Returns the unescaped character.
    */
   var unescapeHtmlChar = basePropertyOf(htmlUnescapes);
+
+  /**
+   * Gets the size of a Unicode `string`.
+   *
+   * @private
+   * @param {string} string The string inspect.
+   * @returns {number} Returns the string size.
+   */
+  function unicodeSize(string) {
+    var result = reUnicode.lastIndex = 0;
+    while (reUnicode.test(string)) {
+      result++;
+    }
+    return result;
+  }
+
+  /**
+   * Converts a Unicode `string` to an array.
+   *
+   * @private
+   * @param {string} string The string to convert.
+   * @returns {Array} Returns the converted array.
+   */
+  function unicodeToArray(string) {
+    return string.match(reUnicode) || [];
+  }
+
+  /**
+   * Splits a Unicode `string` into an array of its words.
+   *
+   * @private
+   * @param {string} The string to inspect.
+   * @returns {Array} Returns the words of `string`.
+   */
+  function unicodeWords(string) {
+    return string.match(reUnicodeWord) || [];
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -2644,20 +2594,23 @@ module.exports = extractAnnotations;
    * var defer = _.runInContext({ 'setTimeout': setImmediate }).defer;
    */
   function runInContext(context) {
-    context = context ? _.defaults({}, context, _.pick(root, contextProps)) : root;
+    context = context ? _.defaults(root.Object(), context, _.pick(root, contextProps)) : root;
 
     /** Built-in constructor references. */
     var Array = context.Array,
         Date = context.Date,
         Error = context.Error,
+        Function = context.Function,
         Math = context.Math,
+        Object = context.Object,
         RegExp = context.RegExp,
+        String = context.String,
         TypeError = context.TypeError;
 
     /** Used for built-in method references. */
-    var arrayProto = context.Array.prototype,
-        objectProto = context.Object.prototype,
-        stringProto = context.String.prototype;
+    var arrayProto = Array.prototype,
+        funcProto = Function.prototype,
+        objectProto = Object.prototype;
 
     /** Used to detect overreaching core-js shims. */
     var coreJsData = context['__core-js_shared__'];
@@ -2669,7 +2622,7 @@ module.exports = extractAnnotations;
     }());
 
     /** Used to resolve the decompiled source of functions. */
-    var funcToString = context.Function.prototype.toString;
+    var funcToString = funcProto.toString;
 
     /** Used to check objects for own properties. */
     var hasOwnProperty = objectProto.hasOwnProperty;
@@ -2682,7 +2635,7 @@ module.exports = extractAnnotations;
 
     /**
      * Used to resolve the
-     * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+     * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
      * of values.
      */
     var objectToString = objectProto.toString;
@@ -2698,36 +2651,33 @@ module.exports = extractAnnotations;
 
     /** Built-in value references. */
     var Buffer = moduleExports ? context.Buffer : undefined,
-        Reflect = context.Reflect,
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
-        enumerate = Reflect ? Reflect.enumerate : undefined,
+        getPrototype = overArg(Object.getPrototypeOf, Object),
         iteratorSymbol = Symbol ? Symbol.iterator : undefined,
-        objectCreate = context.Object.create,
+        objectCreate = Object.create,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         splice = arrayProto.splice,
         spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
 
-    /** Built-in method references that are mockable. */
-    var clearTimeout = function(id) { return context.clearTimeout.call(root, id); },
-        setTimeout = function(func, wait) { return context.setTimeout.call(root, func, wait); };
+    /** Mocked built-ins. */
+    var ctxClearTimeout = context.clearTimeout !== root.clearTimeout && context.clearTimeout,
+        ctxNow = Date && Date.now !== root.Date.now && Date.now,
+        ctxSetTimeout = context.setTimeout !== root.setTimeout && context.setTimeout;
 
     /* Built-in method references for those with the same name as other `lodash` methods. */
     var nativeCeil = Math.ceil,
         nativeFloor = Math.floor,
-        nativeGetPrototype = Object.getPrototypeOf,
         nativeGetSymbols = Object.getOwnPropertySymbols,
         nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined,
         nativeIsFinite = context.isFinite,
         nativeJoin = arrayProto.join,
-        nativeKeys = Object.keys,
+        nativeKeys = overArg(Object.keys, Object),
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeReplace = stringProto.replace,
-        nativeReverse = arrayProto.reverse,
-        nativeSplit = stringProto.split;
+        nativeReverse = arrayProto.reverse;
 
     /* Built-in method references that are verified to be native. */
     var DataView = getNative(context, 'DataView'),
@@ -2735,11 +2685,11 @@ module.exports = extractAnnotations;
         Promise = getNative(context, 'Promise'),
         Set = getNative(context, 'Set'),
         WeakMap = getNative(context, 'WeakMap'),
-        nativeCreate = getNative(context.Object, 'create');
+        nativeCreate = getNative(Object, 'create');
 
     /* Used to set `toString` methods. */
     var defineProperty = (function() {
-      var func = getNative(context.Object, 'defineProperty'),
+      var func = getNative(Object, 'defineProperty'),
           name = getNative.name;
 
       return (name && name.length > 2) ? func : undefined;
@@ -3568,6 +3518,33 @@ module.exports = extractAnnotations;
     /*------------------------------------------------------------------------*/
 
     /**
+     * Creates an array of the enumerable property names of the array-like `value`.
+     *
+     * @private
+     * @param {*} value The value to query.
+     * @param {boolean} inherited Specify returning inherited property names.
+     * @returns {Array} Returns the array of property names.
+     */
+    function arrayLikeKeys(value, inherited) {
+      // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+      // Safari 9 makes `arguments.length` enumerable in strict mode.
+      var result = (isArray(value) || isArguments(value))
+        ? baseTimes(value.length, String)
+        : [];
+
+      var length = result.length,
+          skipIndexes = !!length;
+
+      for (var key in value) {
+        if ((inherited || hasOwnProperty.call(value, key)) &&
+            !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
+          result.push(key);
+        }
+      }
+      return result;
+    }
+
+    /**
      * Used by `_.defaults` to customize its `_.assignIn` use.
      *
      * @private
@@ -3603,7 +3580,7 @@ module.exports = extractAnnotations;
 
     /**
      * Assigns `value` to `key` of `object` if the existing value is not equivalent
-     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons.
      *
      * @private
@@ -3623,7 +3600,7 @@ module.exports = extractAnnotations;
      * Gets the index at which the `key` is found in `array` of key-value pairs.
      *
      * @private
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to inspect.
      * @param {*} key The key to search for.
      * @returns {number} Returns the index of the matched value, else `-1`.
      */
@@ -3781,9 +3758,6 @@ module.exports = extractAnnotations;
         // Recursively populate clone (susceptible to call stack limits).
         assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
       });
-      if (!isFull) {
-        stack['delete'](value);
-      }
       return result;
     }
 
@@ -3814,14 +3788,13 @@ module.exports = extractAnnotations;
       if (object == null) {
         return !length;
       }
-      var index = length;
-      while (index--) {
-        var key = props[index],
+      object = Object(object);
+      while (length--) {
+        var key = props[length],
             predicate = source[key],
             value = object[key];
 
-        if ((value === undefined &&
-            !(key in Object(object))) || !predicate(value)) {
+        if ((value === undefined && !(key in object)) || !predicate(value)) {
           return false;
         }
       }
@@ -3848,7 +3821,7 @@ module.exports = extractAnnotations;
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay invocation.
      * @param {Array} args The arguments to provide to `func`.
-     * @returns {number} Returns the timer id.
+     * @returns {number|Object} Returns the timer id or timeout object.
      */
     function baseDelay(func, wait, args) {
       if (typeof func != 'function') {
@@ -4193,12 +4166,7 @@ module.exports = extractAnnotations;
      * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHas(object, key) {
-      // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
-      // that are composed entirely of index properties, return `false` for
-      // `hasOwnProperty` checks of them.
-      return object != null &&
-        (hasOwnProperty.call(object, key) ||
-          (typeof object == 'object' && key in object && getPrototype(object) === null));
+      return object != null && hasOwnProperty.call(object, key);
     }
 
     /**
@@ -4572,38 +4540,45 @@ module.exports = extractAnnotations;
     }
 
     /**
-     * The base implementation of `_.keys` which doesn't skip the constructor
-     * property of prototypes or treat sparse arrays as dense.
+     * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
      *
      * @private
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of property names.
      */
-    var baseKeys = overArg(nativeKeys, Object);
+    function baseKeys(object) {
+      if (!isPrototype(object)) {
+        return nativeKeys(object);
+      }
+      var result = [];
+      for (var key in Object(object)) {
+        if (hasOwnProperty.call(object, key) && key != 'constructor') {
+          result.push(key);
+        }
+      }
+      return result;
+    }
 
     /**
-     * The base implementation of `_.keysIn` which doesn't skip the constructor
-     * property of prototypes or treat sparse arrays as dense.
+     * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
      *
      * @private
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of property names.
      */
     function baseKeysIn(object) {
-      object = object == null ? object : Object(object);
+      if (!isObject(object)) {
+        return nativeKeysIn(object);
+      }
+      var isProto = isPrototype(object),
+          result = [];
 
-      var result = [];
       for (var key in object) {
-        result.push(key);
+        if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+          result.push(key);
+        }
       }
       return result;
-    }
-
-    // Fallback for IE < 9 with es6-shim.
-    if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
-      baseKeysIn = function(object) {
-        return iteratorToArray(enumerate(object));
-      };
     }
 
     /**
@@ -4690,7 +4665,7 @@ module.exports = extractAnnotations;
         return;
       }
       if (!(isArray(source) || isTypedArray(source))) {
-        var props = keysIn(source);
+        var props = baseKeysIn(source);
       }
       arrayEach(props || source, function(srcValue, key) {
         if (props) {
@@ -5050,13 +5025,16 @@ module.exports = extractAnnotations;
      * The base implementation of `_.set`.
      *
      * @private
-     * @param {Object} object The object to query.
+     * @param {Object} object The object to modify.
      * @param {Array|string} path The path of the property to set.
      * @param {*} value The value to set.
      * @param {Function} [customizer] The function to customize path creation.
      * @returns {Object} Returns `object`.
      */
     function baseSet(object, path, value, customizer) {
+      if (!isObject(object)) {
+        return object;
+      }
       path = isKey(path, object) ? [path] : castPath(path);
 
       var index = -1,
@@ -5065,20 +5043,19 @@ module.exports = extractAnnotations;
           nested = object;
 
       while (nested != null && ++index < length) {
-        var key = toKey(path[index]);
-        if (isObject(nested)) {
-          var newValue = value;
-          if (index != lastIndex) {
-            var objValue = nested[key];
-            newValue = customizer ? customizer(objValue, key, nested) : undefined;
-            if (newValue === undefined) {
-              newValue = objValue == null
-                ? (isIndex(path[index + 1]) ? [] : {})
-                : objValue;
-            }
+        var key = toKey(path[index]),
+            newValue = value;
+
+        if (index != lastIndex) {
+          var objValue = nested[key];
+          newValue = customizer ? customizer(objValue, key, nested) : undefined;
+          if (newValue === undefined) {
+            newValue = isObject(objValue)
+              ? objValue
+              : (isIndex(path[index + 1]) ? [] : {});
           }
-          assignValue(nested, key, newValue);
         }
+        assignValue(nested, key, newValue);
         nested = nested[key];
       }
       return object;
@@ -5371,14 +5348,14 @@ module.exports = extractAnnotations;
       object = parent(object, path);
 
       var key = toKey(last(path));
-      return !(object != null && baseHas(object, key)) || delete object[key];
+      return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
     }
 
     /**
      * The base implementation of `_.update`.
      *
      * @private
-     * @param {Object} object The object to query.
+     * @param {Object} object The object to modify.
      * @param {Array|string} path The path of the property to update.
      * @param {Function} updater The function to produce the updated value.
      * @param {Function} [customizer] The function to customize path creation.
@@ -5525,6 +5502,16 @@ module.exports = extractAnnotations;
       end = end === undefined ? length : end;
       return (!start && end >= length) ? array : baseSlice(array, start, end);
     }
+
+    /**
+     * A simple wrapper around the global [`clearTimeout`](https://mdn.io/clearTimeout).
+     *
+     * @private
+     * @param {number|Object} id The timer id or timeout object of the timer to clear.
+     */
+    var clearTimeout = ctxClearTimeout || function(id) {
+      return root.clearTimeout(id);
+    };
 
     /**
      * Creates a clone of  `buffer`.
@@ -5979,7 +5966,7 @@ module.exports = extractAnnotations;
       return function(string) {
         string = toString(string);
 
-        var strSymbols = reHasComplexSymbol.test(string)
+        var strSymbols = hasUnicode(string)
           ? stringToArray(string)
           : undefined;
 
@@ -6019,7 +6006,7 @@ module.exports = extractAnnotations;
     function createCtor(Ctor) {
       return function() {
         // Use a `switch` statement to work with class constructors. See
-        // http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
+        // http://ecma-international.org/ecma-262/7.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
         // for more details.
         var args = arguments;
         switch (args.length) {
@@ -6322,7 +6309,7 @@ module.exports = extractAnnotations;
         return charsLength ? baseRepeat(chars, length) : chars;
       }
       var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
-      return reHasComplexSymbol.test(chars)
+      return hasUnicode(chars)
         ? castSlice(stringToArray(result), 0, length).join('')
         : result.slice(0, length);
     }
@@ -6375,15 +6362,14 @@ module.exports = extractAnnotations;
           end = step = undefined;
         }
         // Ensure the sign of `-0` is preserved.
-        start = toNumber(start);
-        start = start === start ? start : 0;
+        start = toFinite(start);
         if (end === undefined) {
           end = start;
           start = 0;
         } else {
-          end = toNumber(end) || 0;
+          end = toFinite(end);
         }
-        step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
+        step = step === undefined ? (start < end ? 1 : -1) : toFinite(step);
         return baseRange(start, end, step, fromRight);
       };
     }
@@ -6656,6 +6642,7 @@ module.exports = extractAnnotations;
         }
       }
       stack['delete'](array);
+      stack['delete'](other);
       return result;
     }
 
@@ -6707,7 +6694,7 @@ module.exports = extractAnnotations;
         case regexpTag:
         case stringTag:
           // Coerce regexes to strings and treat strings, primitives and objects,
-          // as equal. See http://www.ecma-international.org/ecma-262/6.0/#sec-regexp.prototype.tostring
+          // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
           // for more details.
           return object == (other + '');
 
@@ -6769,7 +6756,7 @@ module.exports = extractAnnotations;
       var index = objLength;
       while (index--) {
         var key = objProps[index];
-        if (!(isPartial ? key in other : baseHas(other, key))) {
+        if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
           return false;
         }
       }
@@ -6816,6 +6803,7 @@ module.exports = extractAnnotations;
         }
       }
       stack['delete'](object);
+      stack['delete'](other);
       return result;
     }
 
@@ -6905,19 +6893,6 @@ module.exports = extractAnnotations;
     }
 
     /**
-     * Gets the "length" property value of `object`.
-     *
-     * **Note:** This function is used to avoid a
-     * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
-     * Safari on at least iOS 8.1-8.3 ARM64.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @returns {*} Returns the "length" value.
-     */
-    var getLength = baseProperty('length');
-
-    /**
      * Gets the data for `map`.
      *
      * @private
@@ -6966,15 +6941,6 @@ module.exports = extractAnnotations;
     }
 
     /**
-     * Gets the `[[Prototype]]` of `value`.
-     *
-     * @private
-     * @param {*} value The value to query.
-     * @returns {null|Object} Returns the `[[Prototype]]`.
-     */
-    var getPrototype = overArg(nativeGetPrototype, Object);
-
-    /**
      * Creates an array of the own enumerable symbol properties of `object`.
      *
      * @private
@@ -6991,7 +6957,7 @@ module.exports = extractAnnotations;
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of symbols.
      */
-    var getSymbolsIn = !nativeGetSymbols ? getSymbols : function(object) {
+    var getSymbolsIn = !nativeGetSymbols ? stubArray : function(object) {
       var result = [];
       while (object) {
         arrayPush(result, getSymbols(object));
@@ -7010,7 +6976,7 @@ module.exports = extractAnnotations;
     var getTag = baseGetTag;
 
     // Fallback for data views, maps, sets, and weak maps in IE 11,
-    // for data views in Edge, and promises in Node.js.
+    // for data views in Edge < 14, and promises in Node.js.
     if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
         (Map && getTag(new Map) != mapTag) ||
         (Promise && getTag(Promise.resolve()) != promiseTag) ||
@@ -7102,7 +7068,7 @@ module.exports = extractAnnotations;
       }
       var length = object ? object.length : 0;
       return !!length && isLength(length) && isIndex(key, length) &&
-        (isArray(object) || isString(object) || isArguments(object));
+        (isArray(object) || isArguments(object));
     }
 
     /**
@@ -7187,23 +7153,6 @@ module.exports = extractAnnotations;
     }
 
     /**
-     * Creates an array of index keys for `object` values of arrays,
-     * `arguments` objects, and strings, otherwise `null` is returned.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @returns {Array|null} Returns index keys, else `null`.
-     */
-    function indexKeys(object) {
-      var length = object ? object.length : undefined;
-      if (isLength(length) &&
-          (isArray(object) || isString(object) || isArguments(object))) {
-        return baseTimes(length, String);
-      }
-      return null;
-    }
-
-    /**
      * Inserts wrapper `details` in a comment at the top of the `source` body.
      *
      * @private
@@ -7229,7 +7178,7 @@ module.exports = extractAnnotations;
      */
     function isFlattenable(value) {
       return isArray(value) || isArguments(value) ||
-        !!(spreadableSymbol && value && value[spreadableSymbol])
+        !!(spreadableSymbol && value && value[spreadableSymbol]);
     }
 
     /**
@@ -7488,6 +7437,25 @@ module.exports = extractAnnotations;
     }
 
     /**
+     * This function is like
+     * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+     * except that it includes inherited enumerable properties.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the array of property names.
+     */
+    function nativeKeysIn(object) {
+      var result = [];
+      if (object != null) {
+        for (var key in Object(object)) {
+          result.push(key);
+        }
+      }
+      return result;
+    }
+
+    /**
      * Gets the parent value at `path` of `object`.
      *
      * @private
@@ -7556,6 +7524,18 @@ module.exports = extractAnnotations;
     }());
 
     /**
+     * A simple wrapper around the global [`setTimeout`](https://mdn.io/setTimeout).
+     *
+     * @private
+     * @param {Function} func The function to delay.
+     * @param {number} wait The number of milliseconds to delay invocation.
+     * @returns {number|Object} Returns the timer id or timeout object.
+     */
+    var setTimeout = ctxSetTimeout || function(func, wait) {
+      return root.setTimeout(func, wait);
+    };
+
+    /**
      * Sets the `toString` method of `wrapper` to mimic the source of `reference`
      * with wrapper details in a comment at the top of the source body.
      *
@@ -7582,8 +7562,13 @@ module.exports = extractAnnotations;
      * @returns {Array} Returns the property path array.
      */
     var stringToPath = memoize(function(string) {
+      string = toString(string);
+
       var result = [];
-      toString(string).replace(rePropName, function(match, number, quote, string) {
+      if (reLeadingDot.test(string)) {
+        result.push('');
+      }
+      string.replace(rePropName, function(match, number, quote, string) {
         result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
       });
       return result;
@@ -7770,7 +7755,7 @@ module.exports = extractAnnotations;
 
     /**
      * Creates an array of `array` values not included in the other given arrays
-     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons. The order of result values is determined by the
      * order they occur in the first array.
      *
@@ -8064,7 +8049,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 1.1.0
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to inspect.
      * @param {Function} [predicate=_.identity]
      *  The function invoked per iteration.
      * @param {number} [fromIndex=0] The index to search from.
@@ -8112,7 +8097,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 2.0.0
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to inspect.
      * @param {Function} [predicate=_.identity]
      *  The function invoked per iteration.
      * @param {number} [fromIndex=array.length-1] The index to search from.
@@ -8273,7 +8258,7 @@ module.exports = extractAnnotations;
 
     /**
      * Gets the index at which the first occurrence of `value` is found in `array`
-     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons. If `fromIndex` is negative, it's used as the
      * offset from the end of `array`.
      *
@@ -8281,7 +8266,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 0.1.0
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to inspect.
      * @param {*} value The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
      * @returns {number} Returns the index of the matched value, else `-1`.
@@ -8321,12 +8306,13 @@ module.exports = extractAnnotations;
      * // => [1, 2]
      */
     function initial(array) {
-      return dropRight(array, 1);
+      var length = array ? array.length : 0;
+      return length ? baseSlice(array, 0, -1) : [];
     }
 
     /**
      * Creates an array of unique values that are included in all given arrays
-     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons. The order of result values is determined by the
      * order they occur in the first array.
      *
@@ -8465,7 +8451,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 0.1.0
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to inspect.
      * @param {*} value The value to search for.
      * @param {number} [fromIndex=array.length-1] The index to search from.
      * @returns {number} Returns the index of the matched value, else `-1`.
@@ -8530,7 +8516,7 @@ module.exports = extractAnnotations;
 
     /**
      * Removes all given values from `array` using
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons.
      *
      * **Note:** Unlike `_.without`, this method mutates `array`. Use `_.remove`
@@ -8843,7 +8829,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 4.0.0
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to inspect.
      * @param {*} value The value to search for.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
@@ -8922,7 +8908,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 4.0.0
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to inspect.
      * @param {*} value The value to search for.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
@@ -8999,7 +8985,8 @@ module.exports = extractAnnotations;
      * // => [2, 3]
      */
     function tail(array) {
-      return drop(array, 1);
+      var length = array ? array.length : 0;
+      return length ? baseSlice(array, 1, length) : [];
     }
 
     /**
@@ -9156,7 +9143,7 @@ module.exports = extractAnnotations;
 
     /**
      * Creates an array of unique values, in order, from all given arrays using
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons.
      *
      * @static
@@ -9237,7 +9224,7 @@ module.exports = extractAnnotations;
 
     /**
      * Creates a duplicate-free version of an array, using
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons, in which only the first occurrence of each
      * element is kept.
      *
@@ -9382,7 +9369,7 @@ module.exports = extractAnnotations;
 
     /**
      * Creates an array excluding all given values using
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons.
      *
      * **Note:** Unlike `_.pull`, this method returns a new array.
@@ -9953,6 +9940,11 @@ module.exports = extractAnnotations;
      * Iteration is stopped once `predicate` returns falsey. The predicate is
      * invoked with three arguments: (value, index|key, collection).
      *
+     * **Note:** This method returns `true` for
+     * [empty collections](https://en.wikipedia.org/wiki/Empty_set) because
+     * [everything is true](https://en.wikipedia.org/wiki/Vacuous_truth) of
+     * elements of empty collections.
+     *
      * @static
      * @memberOf _
      * @since 0.1.0
@@ -10045,7 +10037,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 0.1.0
      * @category Collection
-     * @param {Array|Object} collection The collection to search.
+     * @param {Array|Object} collection The collection to inspect.
      * @param {Function} [predicate=_.identity]
      *  The function invoked per iteration.
      * @param {number} [fromIndex=0] The index to search from.
@@ -10083,7 +10075,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 2.0.0
      * @category Collection
-     * @param {Array|Object} collection The collection to search.
+     * @param {Array|Object} collection The collection to inspect.
      * @param {Function} [predicate=_.identity]
      *  The function invoked per iteration.
      * @param {number} [fromIndex=collection.length-1] The index to search from.
@@ -10270,7 +10262,7 @@ module.exports = extractAnnotations;
     /**
      * Checks if `value` is in `collection`. If `collection` is a string, it's
      * checked for a substring of `value`, otherwise
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * is used for equality comparisons. If `fromIndex` is negative, it's used as
      * the offset from the end of `collection`.
      *
@@ -10278,7 +10270,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 0.1.0
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to inspect.
      * @param {*} value The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
      * @param- {Object} [guard] Enables use as an iteratee for methods like `_.reduce`.
@@ -10711,7 +10703,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 0.1.0
      * @category Collection
-     * @param {Array|Object} collection The collection to inspect.
+     * @param {Array|Object|string} collection The collection to inspect.
      * @returns {number} Returns the collection size.
      * @example
      *
@@ -10729,16 +10721,13 @@ module.exports = extractAnnotations;
         return 0;
       }
       if (isArrayLike(collection)) {
-        var result = collection.length;
-        return (result && isString(collection)) ? stringSize(collection) : result;
+        return isString(collection) ? stringSize(collection) : collection.length;
       }
-      if (isObjectLike(collection)) {
-        var tag = getTag(collection);
-        if (tag == mapTag || tag == setTag) {
-          return collection.size;
-        }
+      var tag = getTag(collection);
+      if (tag == mapTag || tag == setTag) {
+        return collection.size;
       }
-      return keys(collection).length;
+      return baseKeys(collection).length;
     }
 
     /**
@@ -10850,9 +10839,9 @@ module.exports = extractAnnotations;
      * }, _.now());
      * // => Logs the number of milliseconds it took for the deferred invocation.
      */
-    function now() {
-      return Date.now();
-    }
+    var now = ctxNow || function() {
+      return root.Date.now();
+    };
 
     /*------------------------------------------------------------------------*/
 
@@ -11145,14 +11134,18 @@ module.exports = extractAnnotations;
      * milliseconds have elapsed since the last time the debounced function was
      * invoked. The debounced function comes with a `cancel` method to cancel
      * delayed `func` invocations and a `flush` method to immediately invoke them.
-     * Provide an options object to indicate whether `func` should be invoked on
-     * the leading and/or trailing edge of the `wait` timeout. The `func` is invoked
-     * with the last arguments provided to the debounced function. Subsequent calls
-     * to the debounced function return the result of the last `func` invocation.
+     * Provide `options` to indicate whether `func` should be invoked on the
+     * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+     * with the last arguments provided to the debounced function. Subsequent
+     * calls to the debounced function return the result of the last `func`
+     * invocation.
      *
-     * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
-     * on the trailing edge of the timeout only if the debounced function is
-     * invoked more than once during the `wait` timeout.
+     * **Note:** If `leading` and `trailing` options are `true`, `func` is
+     * invoked on the trailing edge of the timeout only if the debounced function
+     * is invoked more than once during the `wait` timeout.
+     *
+     * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+     * until to the next tick, similar to `setTimeout` with a timeout of `0`.
      *
      * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
      * for details over the differences between `_.debounce` and `_.throttle`.
@@ -11389,7 +11382,7 @@ module.exports = extractAnnotations;
      * **Note:** The cache is exposed as the `cache` property on the memoized
      * function. Its creation may be customized by replacing the `_.memoize.Cache`
      * constructor with one whose instances implement the
-     * [`Map`](http://ecma-international.org/ecma-262/6.0/#sec-properties-of-the-map-prototype-object)
+     * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
      * method interface of `delete`, `get`, `has`, and `set`.
      *
      * @static
@@ -11689,7 +11682,7 @@ module.exports = extractAnnotations;
     /**
      * Creates a function that invokes `func` with the `this` binding of the
      * create function and an array of arguments much like
-     * [`Function#apply`](http://www.ecma-international.org/ecma-262/6.0/#sec-function.prototype.apply).
+     * [`Function#apply`](http://www.ecma-international.org/ecma-262/7.0/#sec-function.prototype.apply).
      *
      * **Note:** This method is based on the
      * [spread operator](https://mdn.io/spread_operator).
@@ -11740,8 +11733,8 @@ module.exports = extractAnnotations;
      * Creates a throttled function that only invokes `func` at most once per
      * every `wait` milliseconds. The throttled function comes with a `cancel`
      * method to cancel delayed `func` invocations and a `flush` method to
-     * immediately invoke them. Provide an options object to indicate whether
-     * `func` should be invoked on the leading and/or trailing edge of the `wait`
+     * immediately invoke them. Provide `options` to indicate whether `func`
+     * should be invoked on the leading and/or trailing edge of the `wait`
      * timeout. The `func` is invoked with the last arguments provided to the
      * throttled function. Subsequent calls to the throttled function return the
      * result of the last `func` invocation.
@@ -11749,6 +11742,9 @@ module.exports = extractAnnotations;
      * **Note:** If `leading` and `trailing` options are `true`, `func` is
      * invoked on the trailing edge of the timeout only if the throttled function
      * is invoked more than once during the `wait` timeout.
+     *
+     * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+     * until to the next tick, similar to `setTimeout` with a timeout of `0`.
      *
      * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
      * for details over the differences between `_.throttle` and `_.debounce`.
@@ -12004,9 +12000,11 @@ module.exports = extractAnnotations;
     }
 
     /**
-     * Checks if `object` conforms to `source` by invoking the predicate properties
-     * of `source` with the corresponding property values of `object`. This method
-     * is equivalent to a `_.conforms` function when `source` is partially applied.
+     * Checks if `object` conforms to `source` by invoking the predicate
+     * properties of `source` with the corresponding property values of `object`.
+     *
+     * **Note:** This method is equivalent to `_.conforms` when `source` is
+     * partially applied.
      *
      * @static
      * @memberOf _
@@ -12031,7 +12029,7 @@ module.exports = extractAnnotations;
 
     /**
      * Performs a
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * comparison between two values to determine if they are equivalent.
      *
      * @static
@@ -12136,7 +12134,7 @@ module.exports = extractAnnotations;
      * // => false
      */
     function isArguments(value) {
-      // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+      // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
       return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
         (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
     }
@@ -12211,7 +12209,7 @@ module.exports = extractAnnotations;
      * // => false
      */
     function isArrayLike(value) {
-      return value != null && isLength(getLength(value)) && !isFunction(value);
+      return value != null && isLength(value.length) && !isFunction(value);
     }
 
     /**
@@ -12311,8 +12309,7 @@ module.exports = extractAnnotations;
      * @since 0.1.0
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a DOM element,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if `value` is a DOM element, else `false`.
      * @example
      *
      * _.isElement(document.body);
@@ -12360,22 +12357,23 @@ module.exports = extractAnnotations;
      */
     function isEmpty(value) {
       if (isArrayLike(value) &&
-          (isArray(value) || isString(value) || isFunction(value.splice) ||
-            isArguments(value) || isBuffer(value))) {
+          (isArray(value) || typeof value == 'string' ||
+            typeof value.splice == 'function' || isBuffer(value) || isArguments(value))) {
         return !value.length;
       }
-      if (isObjectLike(value)) {
-        var tag = getTag(value);
-        if (tag == mapTag || tag == setTag) {
-          return !value.size;
-        }
+      var tag = getTag(value);
+      if (tag == mapTag || tag == setTag) {
+        return !value.size;
+      }
+      if (nonEnumShadows || isPrototype(value)) {
+        return !nativeKeys(value).length;
       }
       for (var key in value) {
         if (hasOwnProperty.call(value, key)) {
           return false;
         }
       }
-      return !(nonEnumShadows && keys(value).length);
+      return true;
     }
 
     /**
@@ -12394,8 +12392,7 @@ module.exports = extractAnnotations;
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
-     * @returns {boolean} Returns `true` if the values are equivalent,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
      * var object = { 'a': 1 };
@@ -12424,8 +12421,7 @@ module.exports = extractAnnotations;
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
      * @param {Function} [customizer] The function to customize comparisons.
-     * @returns {boolean} Returns `true` if the values are equivalent,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
      * function isGreeting(value) {
@@ -12459,8 +12455,7 @@ module.exports = extractAnnotations;
      * @since 3.0.0
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an error object,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
      * @example
      *
      * _.isError(new Error);
@@ -12488,8 +12483,7 @@ module.exports = extractAnnotations;
      * @since 0.1.0
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a finite number,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if `value` is a finite number, else `false`.
      * @example
      *
      * _.isFinite(3);
@@ -12527,8 +12521,7 @@ module.exports = extractAnnotations;
      */
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
-      // in Safari 8 which returns 'object' for typed array and weak map constructors,
-      // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+      // in Safari 8-9 which returns 'object' for typed array and other constructors.
       var tag = isObject(value) ? objectToString.call(value) : '';
       return tag == funcTag || tag == genTag;
     }
@@ -12566,16 +12559,15 @@ module.exports = extractAnnotations;
     /**
      * Checks if `value` is a valid array-like length.
      *
-     * **Note:** This function is loosely based on
-     * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     * **Note:** This method is loosely based on
+     * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
      *
      * @static
      * @memberOf _
      * @since 4.0.0
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a valid length,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
      * @example
      *
      * _.isLength(3);
@@ -12597,7 +12589,7 @@ module.exports = extractAnnotations;
 
     /**
      * Checks if `value` is the
-     * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+     * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
      * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
      * @static
@@ -12674,10 +12666,14 @@ module.exports = extractAnnotations;
 
     /**
      * Performs a partial deep comparison between `object` and `source` to
-     * determine if `object` contains equivalent property values. This method is
-     * equivalent to a `_.matches` function when `source` is partially applied.
+     * determine if `object` contains equivalent property values.
      *
-     * **Note:** This method supports comparing the same values as `_.isEqual`.
+     * **Note:** This method is equivalent to `_.matches` when `source` is
+     * partially applied.
+     *
+     * Partial comparisons will match empty array and empty object `source`
+     * values against any array or object value, respectively. See `_.isEqual`
+     * for a list of supported value comparisons.
      *
      * @static
      * @memberOf _
@@ -12890,8 +12886,7 @@ module.exports = extractAnnotations;
      * @since 0.8.0
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a plain object,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
      * @example
      *
      * function Foo() {
@@ -12955,8 +12950,7 @@ module.exports = extractAnnotations;
      * @since 4.0.0
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a safe integer,
-     *  else `false`.
+     * @returns {boolean} Returns `true` if `value` is a safe integer, else `false`.
      * @example
      *
      * _.isSafeInteger(3);
@@ -13250,7 +13244,7 @@ module.exports = extractAnnotations;
      * Converts `value` to an integer.
      *
      * **Note:** This method is loosely based on
-     * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
+     * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).
      *
      * @static
      * @memberOf _
@@ -13284,7 +13278,7 @@ module.exports = extractAnnotations;
      * array-like object.
      *
      * **Note:** This method is based on
-     * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
      *
      * @static
      * @memberOf _
@@ -13341,7 +13335,7 @@ module.exports = extractAnnotations;
         return NAN;
       }
       if (isObject(value)) {
-        var other = isFunction(value.valueOf) ? value.valueOf() : value;
+        var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
         value = isObject(other) ? (other + '') : other;
       }
       if (typeof value != 'string') {
@@ -13513,13 +13507,7 @@ module.exports = extractAnnotations;
      * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
      */
     var assignIn = createAssigner(function(object, source) {
-      if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
-        copyObject(source, keysIn(source), object);
-        return;
-      }
-      for (var key in source) {
-        assignValue(object, key, source[key]);
-      }
+      copyObject(source, keysIn(source), object);
     });
 
     /**
@@ -13705,7 +13693,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 1.1.0
      * @category Object
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to inspect.
      * @param {Function} [predicate=_.identity] The function invoked per iteration.
      * @returns {string|undefined} Returns the key of the matched element,
      *  else `undefined`.
@@ -13744,7 +13732,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 2.0.0
      * @category Object
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to inspect.
      * @param {Function} [predicate=_.identity] The function invoked per iteration.
      * @returns {string|undefined} Returns the key of the matched element,
      *  else `undefined`.
@@ -14128,7 +14116,7 @@ module.exports = extractAnnotations;
      * Creates an array of the own enumerable property names of `object`.
      *
      * **Note:** Non-object values are coerced to objects. See the
-     * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+     * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
      * for more details.
      *
      * @static
@@ -14153,23 +14141,7 @@ module.exports = extractAnnotations;
      * // => ['0', '1']
      */
     function keys(object) {
-      var isProto = isPrototype(object);
-      if (!(isProto || isArrayLike(object))) {
-        return baseKeys(object);
-      }
-      var indexes = indexKeys(object),
-          skipIndexes = !!indexes,
-          result = indexes || [],
-          length = result.length;
-
-      for (var key in object) {
-        if (baseHas(object, key) &&
-            !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-            !(isProto && key == 'constructor')) {
-          result.push(key);
-        }
-      }
-      return result;
+      return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
     }
 
     /**
@@ -14196,23 +14168,7 @@ module.exports = extractAnnotations;
      * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
      */
     function keysIn(object) {
-      var index = -1,
-          isProto = isPrototype(object),
-          props = baseKeysIn(object),
-          propsLength = props.length,
-          indexes = indexKeys(object),
-          skipIndexes = !!indexes,
-          result = indexes || [],
-          length = result.length;
-
-      while (++index < propsLength) {
-        var key = props[index];
-        if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-            !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-          result.push(key);
-        }
-      }
-      return result;
+      return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
     }
 
     /**
@@ -14889,12 +14845,12 @@ module.exports = extractAnnotations;
      * // => true
      */
     function inRange(number, start, end) {
-      start = toNumber(start) || 0;
+      start = toFinite(start);
       if (end === undefined) {
         end = start;
         start = 0;
       } else {
-        end = toNumber(end) || 0;
+        end = toFinite(end);
       }
       number = toNumber(number);
       return baseInRange(number, start, end);
@@ -14950,12 +14906,12 @@ module.exports = extractAnnotations;
         upper = 1;
       }
       else {
-        lower = toNumber(lower) || 0;
+        lower = toFinite(lower);
         if (upper === undefined) {
           upper = lower;
           lower = 0;
         } else {
-          upper = toNumber(upper) || 0;
+          upper = toFinite(upper);
         }
       }
       if (lower > upper) {
@@ -15018,8 +14974,9 @@ module.exports = extractAnnotations;
 
     /**
      * Deburrs `string` by converting
-     * [latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
-     * to basic latin letters and removing
+     * [Latin-1 Supplement](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
+     * and [Latin Extended-A](https://en.wikipedia.org/wiki/Latin_Extended-A)
+     * letters to basic Latin letters and removing
      * [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
      *
      * @static
@@ -15035,7 +14992,7 @@ module.exports = extractAnnotations;
      */
     function deburr(string) {
       string = toString(string);
-      return string && string.replace(reLatin1, deburrLetter).replace(reComboMark, '');
+      return string && string.replace(reLatin, deburrLetter).replace(reComboMark, '');
     }
 
     /**
@@ -15045,7 +15002,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 3.0.0
      * @category String
-     * @param {string} [string=''] The string to search.
+     * @param {string} [string=''] The string to inspect.
      * @param {string} [target] The string to search for.
      * @param {number} [position=string.length] The position to search up to.
      * @returns {boolean} Returns `true` if `string` ends with `target`,
@@ -15401,7 +15358,7 @@ module.exports = extractAnnotations;
       var args = arguments,
           string = toString(args[0]);
 
-      return args.length < 3 ? string : nativeReplace.call(string, args[1], args[2]);
+      return args.length < 3 ? string : string.replace(args[1], args[2]);
     }
 
     /**
@@ -15462,11 +15419,11 @@ module.exports = extractAnnotations;
             (separator != null && !isRegExp(separator))
           )) {
         separator = baseToString(separator);
-        if (separator == '' && reHasComplexSymbol.test(string)) {
+        if (!separator && hasUnicode(string)) {
           return castSlice(stringToArray(string), 0, limit);
         }
       }
-      return nativeSplit.call(string, separator, limit);
+      return string.split(separator, limit);
     }
 
     /**
@@ -15501,7 +15458,7 @@ module.exports = extractAnnotations;
      * @memberOf _
      * @since 3.0.0
      * @category String
-     * @param {string} [string=''] The string to search.
+     * @param {string} [string=''] The string to inspect.
      * @param {string} [target] The string to search for.
      * @param {number} [position=0] The position to search from.
      * @returns {boolean} Returns `true` if `string` starts with `target`,
@@ -15938,7 +15895,7 @@ module.exports = extractAnnotations;
       string = toString(string);
 
       var strLength = string.length;
-      if (reHasComplexSymbol.test(string)) {
+      if (hasUnicode(string)) {
         var strSymbols = stringToArray(string);
         strLength = strSymbols.length;
       }
@@ -16075,7 +16032,7 @@ module.exports = extractAnnotations;
       pattern = guard ? undefined : pattern;
 
       if (pattern === undefined) {
-        pattern = reHasComplexWord.test(string) ? reComplexWord : reBasicWord;
+        return hasUnicodeWord(string) ? unicodeWords(string) : asciiWords(string);
       }
       return string.match(pattern) || [];
     }
@@ -16201,6 +16158,9 @@ module.exports = extractAnnotations;
      * Creates a function that invokes the predicate properties of `source` with
      * the corresponding property values of a given object, returning `true` if
      * all predicates return truthy, else `false`.
+     *
+     * **Note:** The created function is equivalent to `_.conformsTo` with
+     * `source` partially applied.
      *
      * @static
      * @memberOf _
@@ -16387,10 +16347,14 @@ module.exports = extractAnnotations;
     /**
      * Creates a function that performs a partial deep comparison between a given
      * object and `source`, returning `true` if the given object has equivalent
-     * property values, else `false`. The created function is equivalent to
-     * `_.isMatch` with a `source` partially applied.
+     * property values, else `false`.
      *
-     * **Note:** This method supports comparing the same values as `_.isEqual`.
+     * **Note:** The created function is equivalent to `_.isMatch` with `source`
+     * partially applied.
+     *
+     * Partial comparisons will match empty array and empty object `source`
+     * values against any array or object value, respectively. See `_.isEqual`
+     * for a list of supported value comparisons.
      *
      * @static
      * @memberOf _
@@ -16417,7 +16381,9 @@ module.exports = extractAnnotations;
      * value at `path` of a given object to `srcValue`, returning `true` if the
      * object value is equivalent, else `false`.
      *
-     * **Note:** This method supports comparing the same values as `_.isEqual`.
+     * **Note:** Partial comparisons will match empty array and empty object
+     * `srcValue` values against any array or object value, respectively. See
+     * `_.isEqual` for a list of supported value comparisons.
      *
      * @static
      * @memberOf _
@@ -17958,7 +17924,7 @@ module.exports = extractAnnotations;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
@@ -18032,7 +17998,7 @@ module.exports = {
     updateDomTranslation: updateDomTranslation
 };
 
-},{"./gettext.js":6}],6:[function(require,module,exports){
+},{"./gettext.js":10}],10:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
@@ -18149,7 +18115,7 @@ module.exports = {
     setBestMatchingLocale: setBestMatchingLocale
 };
 
-},{"./helpers.js":7}],7:[function(require,module,exports){
+},{"./helpers.js":11}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
@@ -18384,7 +18350,7 @@ module.exports = {
     findBestMatchingLocale: findBestMatchingLocale
 };
 
-},{}],8:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
  * All rights reserved.
@@ -18449,7 +18415,7 @@ module.exports = {
     updateDomTranslation: dom.updateDomTranslation
 };
 
-},{"./dom.js":5,"./gettext.js":6,"./helpers.js":7}],9:[function(require,module,exports){
+},{"./dom.js":9,"./gettext.js":10,"./helpers.js":11}],13:[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -18484,7 +18450,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -18669,7 +18635,7 @@ uuid.unparse = unparse;
 
 module.exports = uuid;
 
-},{"./rng":9}],11:[function(require,module,exports){
+},{"./rng":13}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -18981,7 +18947,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":26,"abitbol":1,"uuid":10}],12:[function(require,module,exports){
+},{"./helpers.js":30,"abitbol":1,"uuid":14}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19243,7 +19209,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":21,"../interactive/button.js":27,"../interactive/colorpalette.js":29,"../layout/boxlayout.js":39,"../nonvisual/color.js":46,"./colorpickerdialog.js":13,"stonejs":8}],13:[function(require,module,exports){
+},{"../container/popupwindow.js":25,"../interactive/button.js":31,"../interactive/colorpalette.js":33,"../layout/boxlayout.js":43,"../nonvisual/color.js":50,"./colorpickerdialog.js":17,"stonejs":12}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19652,7 +19618,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":19,"../interactive/button.js":27,"../interactive/colorpalette.js":29,"../interactive/colorpicker.js":30,"../interactive/slider.js":34,"../layout/boxlayout.js":39,"../layout/gridlayout.js":41,"../nonvisual/color.js":46,"../visual/faicon.js":55,"../visual/label.js":57,"../visual/separator.js":59,"stonejs":8}],14:[function(require,module,exports){
+},{"../container/dialog.js":23,"../interactive/button.js":31,"../interactive/colorpalette.js":33,"../interactive/colorpicker.js":34,"../interactive/slider.js":38,"../layout/boxlayout.js":43,"../layout/gridlayout.js":45,"../nonvisual/color.js":50,"../visual/faicon.js":59,"../visual/label.js":61,"../visual/separator.js":63,"stonejs":12}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19787,7 +19753,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":20,"./select.js":16,"stonejs":8}],15:[function(require,module,exports){
+},{"../container/menuitem.js":24,"./select.js":20,"stonejs":12}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19905,7 +19871,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":21,"../layout/menu.js":43}],16:[function(require,module,exports){
+},{"../container/popupwindow.js":25,"../layout/menu.js":47}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20313,7 +20279,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":20,"../helpers.js":26,"../widget.js":63,"./popupmenu.js":15,"stonejs":8}],17:[function(require,module,exports){
+},{"../container/menuitem.js":24,"../helpers.js":30,"../widget.js":67,"./popupmenu.js":19,"stonejs":12}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20685,7 +20651,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":63,"./container.js":18}],18:[function(require,module,exports){
+},{"../widget.js":67,"./container.js":22}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20912,7 +20878,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":63}],19:[function(require,module,exports){
+},{"../widget.js":67}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21163,7 +21129,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":26,"../widget.js":63,"./window.js":25}],20:[function(require,module,exports){
+},{"../helpers.js":30,"../widget.js":67,"./window.js":29}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21395,7 +21361,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":26,"../visual/baseicon.js":53,"../widget.js":63,"./container.js":18}],21:[function(require,module,exports){
+},{"../helpers.js":30,"../visual/baseicon.js":57,"../widget.js":67,"./container.js":22}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21568,7 +21534,7 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":17}],22:[function(require,module,exports){
+},{"./basewindow.js":21}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21717,7 +21683,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":43,"../widget.js":63,"./menuitem.js":20}],23:[function(require,module,exports){
+},{"../layout/menu.js":47,"../widget.js":67,"./menuitem.js":24}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22105,7 +22071,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":26,"../interactive/iconbutton.js":32,"../visual/baseicon.js":53,"../widget.js":63,"./container.js":18}],24:[function(require,module,exports){
+},{"../helpers.js":30,"../interactive/iconbutton.js":36,"../visual/baseicon.js":57,"../widget.js":67,"./container.js":22}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22497,7 +22463,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":26,"./container.js":18}],25:[function(require,module,exports){
+},{"../helpers.js":30,"./container.js":22}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22990,7 +22956,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
 module.exports = Window;
 
-},{"../helpers.js":26,"../widget.js":63,"./basewindow.js":17,"stonejs":8}],26:[function(require,module,exports){
+},{"../helpers.js":30,"../widget.js":67,"./basewindow.js":21,"stonejs":12}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23185,7 +23151,7 @@ Helpers.log = function (level, message) {
 
 module.exports = Helpers;
 
-},{"uuid":10}],27:[function(require,module,exports){
+},{"uuid":14}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23604,7 +23570,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":26,"../visual/baseicon.js":53,"../widget.js":63}],28:[function(require,module,exports){
+},{"../helpers.js":30,"../visual/baseicon.js":57,"../widget.js":67}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23786,7 +23752,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":63}],29:[function(require,module,exports){
+},{"../widget.js":67}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23991,7 +23957,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":26,"../nonvisual/color.js":46,"../widget.js":63}],30:[function(require,module,exports){
+},{"../helpers.js":30,"../nonvisual/color.js":50,"../widget.js":67}],34:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24509,7 +24475,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":26,"../nonvisual/color.js":46,"../nonvisual/mousemanager.js":49,"../widget.js":63}],31:[function(require,module,exports){
+},{"../helpers.js":30,"../nonvisual/color.js":50,"../nonvisual/mousemanager.js":53,"../widget.js":67}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24700,7 +24666,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":63}],32:[function(require,module,exports){
+},{"../widget.js":67}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24907,7 +24873,7 @@ var IconButton = Widget.$extend({
 
 module.exports = IconButton;
 
-},{"../helpers.js":26,"../visual/baseicon.js":53,"../widget.js":63}],33:[function(require,module,exports){
+},{"../helpers.js":30,"../visual/baseicon.js":57,"../widget.js":67}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25273,7 +25239,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":31}],34:[function(require,module,exports){
+},{"./field.js":35}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25634,7 +25600,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":26,"./numericfield.js":33}],35:[function(require,module,exports){
+},{"../helpers.js":30,"./numericfield.js":37}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25694,7 +25660,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":28}],36:[function(require,module,exports){
+},{"./checkbox.js":32}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25808,7 +25774,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":31}],37:[function(require,module,exports){
+},{"./field.js":35}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25922,7 +25888,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":31}],38:[function(require,module,exports){
+},{"./field.js":35}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26015,7 +25981,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":27,"./checkbox.js":28}],39:[function(require,module,exports){
+},{"./button.js":31,"./checkbox.js":32}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26386,7 +26352,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":26,"./layout.js":42}],40:[function(require,module,exports){
+},{"../helpers.js":30,"./layout.js":46}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26768,7 +26734,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":26,"./layout.js":42}],41:[function(require,module,exports){
+},{"../helpers.js":30,"./layout.js":46}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27412,7 +27378,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":26,"./layout.js":42}],42:[function(require,module,exports){
+},{"../helpers.js":30,"./layout.js":46}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27698,7 +27664,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":18,"../widget.js":63}],43:[function(require,module,exports){
+},{"../container/container.js":22,"../widget.js":67}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27838,7 +27804,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":26,"./layout.js":42}],44:[function(require,module,exports){
+},{"../helpers.js":30,"./layout.js":46}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28140,7 +28106,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":23,"../helpers.js":26,"../widget.js":63,"./layout.js":42}],45:[function(require,module,exports){
+},{"../container/tabitem.js":27,"../helpers.js":30,"../widget.js":67,"./layout.js":46}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28242,9 +28208,9 @@ var AccelManager = Base.$extend({
         this.__kbd[id] = {
             keys: keys,
             safe: ((safe === undefined) ? true : safe),
-            callback: callback,
-            binding: KeyboardJS.on(keys, this.__onAccell.bind(this))
+            callback: callback
         };
+        KeyboardJS.bind(keys, this.__onAccell.bind(this, id));
     },
 
     /**
@@ -28257,7 +28223,7 @@ var AccelManager = Base.$extend({
         if (!this.__kbd[id]) {
             return;
         }
-        this.__kbd[id].binding.clear();
+        KeyboardJS.unbind(this.__kbd[id].keys);
         delete this.__kbd[id];
     },
 
@@ -28279,31 +28245,28 @@ var AccelManager = Base.$extend({
      * @param keys
      * @param combo
      */
-    __onAccell: function (event, keys, combo) {
-        for (var id in this.__kbd) {
-            if (this.__kbd[id].keys != combo) {
-                continue;
-            }
-
-            if (this.__kbd[id].safe) {
-                if (document.activeElement instanceof HTMLInputElement ||
-                    document.activeElement instanceof HTMLSelectElement ||
-                    document.activeElement instanceof HTMLTextAreaElement) {
-                    continue;
-                }
-            }
-
-            this.__kbd[id].callback();
-            event.stopPropagation();
-            event.preventDefault();
+    __onAccell: function (id, event) {
+        if (!this.__kbd[id]) {
+            return;
         }
+
+        if (this.__kbd[id].safe) {
+            if (document.activeElement instanceof HTMLInputElement ||
+                document.activeElement instanceof HTMLSelectElement ||
+                document.activeElement instanceof HTMLTextAreaElement) {
+            }
+        }
+
+        this.__kbd[id].callback();
+        event.stopPropagation();
+        event.preventDefault();
     }
 
 });
 
 module.exports = AccelManager;
 
-},{"../base.js":11,"keyboardjs":3}],46:[function(require,module,exports){
+},{"../base.js":15,"keyboardjs":3}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28790,7 +28753,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":11}],47:[function(require,module,exports){
+},{"../base.js":15}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29107,7 +29070,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":11}],48:[function(require,module,exports){
+},{"../base.js":15}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29620,7 +29583,7 @@ var KeyboardManager = Base.$extend({
 
 module.exports = KeyboardManager;
 
-},{"../base.js":11,"../helpers.js":26,"../widget.js":63}],49:[function(require,module,exports){
+},{"../base.js":15,"../helpers.js":30,"../widget.js":67}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30351,7 +30314,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":11,"../helpers.js":26,"../widget.js":63}],50:[function(require,module,exports){
+},{"../base.js":15,"../helpers.js":30,"../widget.js":67}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30577,7 +30540,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":11}],51:[function(require,module,exports){
+},{"../base.js":15}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30752,7 +30715,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":11,"stonejs":8}],52:[function(require,module,exports){
+},{"../base.js":15,"stonejs":12}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30865,7 +30828,7 @@ photonui.Template = require("./visual/template.js");
 
 module.exports = photonui;
 
-},{"./base.js":11,"./composite/colorbutton.js":12,"./composite/colorpickerdialog.js":13,"./composite/fontselect.js":14,"./composite/popupmenu.js":15,"./composite/select.js":16,"./container/basewindow.js":17,"./container/container.js":18,"./container/dialog.js":19,"./container/menuitem.js":20,"./container/popupwindow.js":21,"./container/submenuitem.js":22,"./container/tabitem.js":23,"./container/viewport.js":24,"./container/window.js":25,"./helpers.js":26,"./interactive/button.js":27,"./interactive/checkbox.js":28,"./interactive/colorpalette.js":29,"./interactive/colorpicker.js":30,"./interactive/field.js":31,"./interactive/iconbutton.js":32,"./interactive/numericfield.js":33,"./interactive/slider.js":34,"./interactive/switch.js":35,"./interactive/textareafield.js":36,"./interactive/textfield.js":37,"./interactive/togglebutton.js":38,"./layout/boxlayout.js":39,"./layout/fluidlayout.js":40,"./layout/gridlayout.js":41,"./layout/layout.js":42,"./layout/menu.js":43,"./layout/tablayout.js":44,"./nonvisual/accelmanager.js":45,"./nonvisual/color.js":46,"./nonvisual/filemanager.js":47,"./nonvisual/keyboardmanager.js":48,"./nonvisual/mousemanager.js":49,"./nonvisual/spritesheet.js":50,"./nonvisual/translation.js":51,"./visual/baseicon.js":53,"./visual/canvas.js":54,"./visual/faicon.js":55,"./visual/image.js":56,"./visual/label.js":57,"./visual/progressbar.js":58,"./visual/separator.js":59,"./visual/spriteicon.js":60,"./visual/template.js":61,"./visual/text.js":62,"./widget.js":63,"abitbol":1,"keyboardjs":3,"lodash":4,"stonejs":8,"uuid":10}],53:[function(require,module,exports){
+},{"./base.js":15,"./composite/colorbutton.js":16,"./composite/colorpickerdialog.js":17,"./composite/fontselect.js":18,"./composite/popupmenu.js":19,"./composite/select.js":20,"./container/basewindow.js":21,"./container/container.js":22,"./container/dialog.js":23,"./container/menuitem.js":24,"./container/popupwindow.js":25,"./container/submenuitem.js":26,"./container/tabitem.js":27,"./container/viewport.js":28,"./container/window.js":29,"./helpers.js":30,"./interactive/button.js":31,"./interactive/checkbox.js":32,"./interactive/colorpalette.js":33,"./interactive/colorpicker.js":34,"./interactive/field.js":35,"./interactive/iconbutton.js":36,"./interactive/numericfield.js":37,"./interactive/slider.js":38,"./interactive/switch.js":39,"./interactive/textareafield.js":40,"./interactive/textfield.js":41,"./interactive/togglebutton.js":42,"./layout/boxlayout.js":43,"./layout/fluidlayout.js":44,"./layout/gridlayout.js":45,"./layout/layout.js":46,"./layout/menu.js":47,"./layout/tablayout.js":48,"./nonvisual/accelmanager.js":49,"./nonvisual/color.js":50,"./nonvisual/filemanager.js":51,"./nonvisual/keyboardmanager.js":52,"./nonvisual/mousemanager.js":53,"./nonvisual/spritesheet.js":54,"./nonvisual/translation.js":55,"./visual/baseicon.js":57,"./visual/canvas.js":58,"./visual/faicon.js":59,"./visual/image.js":60,"./visual/label.js":61,"./visual/progressbar.js":62,"./visual/separator.js":63,"./visual/spriteicon.js":64,"./visual/template.js":65,"./visual/text.js":66,"./widget.js":67,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":14}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30933,7 +30896,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":63}],54:[function(require,module,exports){
+},{"../widget.js":67}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31214,7 +31177,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":63}],55:[function(require,module,exports){
+},{"../widget.js":67}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31387,7 +31350,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":53}],56:[function(require,module,exports){
+},{"./baseicon.js":57}],60:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31542,7 +31505,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":63}],57:[function(require,module,exports){
+},{"../widget.js":67}],61:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31752,7 +31715,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":26,"../widget.js":63}],58:[function(require,module,exports){
+},{"../helpers.js":30,"../widget.js":67}],62:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31982,7 +31945,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":63}],59:[function(require,module,exports){
+},{"../widget.js":67}],63:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32123,7 +32086,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":63}],60:[function(require,module,exports){
+},{"../widget.js":67}],64:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32305,7 +32268,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":50,"./baseicon.js":53}],61:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":54,"./baseicon.js":57}],65:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32462,7 +32425,7 @@ var Template = Widget.$extend({
 
 module.exports = Template;
 
-},{"../helpers.js":26,"../widget.js":63,"lodash":4}],62:[function(require,module,exports){
+},{"../helpers.js":30,"../widget.js":67,"lodash":8}],66:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32608,7 +32571,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":26,"../widget.js":63,"stonejs":8}],63:[function(require,module,exports){
+},{"../helpers.js":30,"../widget.js":67,"stonejs":12}],67:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33141,5 +33104,5 @@ var Widget = Base.$extend({
 
 module.exports = Widget;
 
-},{"./base.js":11,"./container/popupwindow.js":21,"./helpers.js":26,"stonejs":8,"uuid":10}]},{},[52])(52)
+},{"./base.js":15,"./container/popupwindow.js":25,"./helpers.js":30,"stonejs":12,"uuid":14}]},{},[56])(56)
 });
