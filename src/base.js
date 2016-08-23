@@ -72,6 +72,16 @@ var Base = Class.$extend({
             }
         }
 
+        // Update properties
+        for (var propName in this.$map.computedProperties) {
+            var prop = this.$map.computedProperties[propName];
+            if (params[propName] === undefined &&
+                prop.annotations["photonui-update"] &&
+                prop.get && prop.set) {
+                this[propName] = this[propName];
+            }
+        }
+
         // Register callbacks
         var ev = null;
         var i = 0;
@@ -199,11 +209,18 @@ var Base = Class.$extend({
     /**
      * Force the update of the given properties.
      *
+     * This method is deprecated.
+     * One should use '@photonui-update' abitbol's annotation on concerned properties.
+     *
      * @method _updateProperties
      * @private
+     * @deprecated
      * @param {Array} properties The properties to update.
      */
     _updateProperties: function (properties) {
+        Helpers.log("warn", "'photonui.Base._updateProperties()' is deprecated." +
+                            " One should use '@photonui-update' abitbol's annotation on concerned properties.");
+
         for (var i = 0 ; i < properties.length ; i++) {
             this[properties[i]] = this[properties[i]];
         }

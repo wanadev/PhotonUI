@@ -66,7 +66,6 @@ var Label = Widget.$extend({
             params.layoutOptions.verticalExpansion = false;
         }
         this.$super(params);
-        this._updateProperties(["text", "textAlign", "forInputName"]);
     },
 
     //////////////////////////////////////////
@@ -85,6 +84,7 @@ var Label = Widget.$extend({
     _text: "Label",
 
     getText: function () {
+        "@photonui-update";
         return this._text;
     },
 
@@ -117,6 +117,7 @@ var Label = Widget.$extend({
     _textAlign: "left",
 
     getTextAlign: function () {
+        "@photonui-update";
         return this._textAlign;
     },
 
@@ -138,6 +139,7 @@ var Label = Widget.$extend({
     _forInputName: null,
 
     getForInputName: function () {
+        "@photonui-update";
         return this._forInputName;
     },
 

@@ -51,8 +51,6 @@ var Container = Widget.$extend({
     __init__: function (params) {
         this.$super(params);
 
-        this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
-
         // Force to update the parent of the child
         if (this._childName) {
             this.child._parentName = this.name;
@@ -75,6 +73,7 @@ var Container = Widget.$extend({
     _horizontalChildExpansion: true,
 
     getHorizontalChildExpansion: function () {
+        "@photonui-update";
         return this._horizontalChildExpansion;
     },
 
@@ -100,6 +99,7 @@ var Container = Widget.$extend({
     _verticalChildExpansion: false,
 
     getVerticalChildExpansion: function () {
+        "@photonui-update";
         return this._verticalChildExpansion;
     },
 

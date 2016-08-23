@@ -80,9 +80,6 @@ var Widget = Base.$extend({
         // Parent constructor
         this.$super(params);
 
-        // Update properties
-        this._updateProperties(["visible"]);
-
         // Default name
         if (!this.name) {
             this.name = "widget-" + uuid.v4();
@@ -167,6 +164,7 @@ var Widget = Base.$extend({
     _visible: true,
 
     isVisible: function () {
+        "@photonui-update";
         return this._visible;
     },
 

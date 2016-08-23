@@ -51,11 +51,6 @@ var Viewport = Container.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties([
-            "padding", "verticalScrollbar", "horizontalScrollbar",
-            "minWidth", "maxWidth", "width",
-            "minHeight", "maxHeight", "height"
-        ]);
     },
 
     //////////////////////////////////////////
@@ -74,6 +69,7 @@ var Viewport = Container.$extend({
     _padding: 0,
 
     getPadding: function () {
+        "@photonui-update";
         return this._padding;
     },
 
@@ -96,6 +92,7 @@ var Viewport = Container.$extend({
     _verticalScrollbar: null,
 
     getVerticalScrollbar: function () {
+        "@photonui-update";
         return this._verticalScrollbar;
     },
 
@@ -124,6 +121,7 @@ var Viewport = Container.$extend({
     _horizontalScrollbar: null,
 
     getHorizontalScrollbar: function () {
+        "@photonui-update";
         return this._horizontalScrollbar;
     },
 
@@ -152,6 +150,7 @@ var Viewport = Container.$extend({
     _minWidth: null,
 
     getMinWidth: function () {
+        "@photonui-update";
         return this._minWidth;
     },
 
@@ -174,6 +173,7 @@ var Viewport = Container.$extend({
     _maxWidth: null,
 
     getMaxWidth: function () {
+        "@photonui-update";
         return this._maxWidth;
     },
 
@@ -196,6 +196,7 @@ var Viewport = Container.$extend({
     _width: Infinity,
 
     getWidth: function () {
+        "@photonui-update";
         return this._width;
     },
 
@@ -218,6 +219,7 @@ var Viewport = Container.$extend({
     _minHeight: null,
 
     getMinHeight: function () {
+        "@photonui-update";
         return this._minHeight;
     },
 
@@ -240,6 +242,7 @@ var Viewport = Container.$extend({
     _maxHeight: null,
 
     getMaxHeight: function () {
+        "@photonui-update";
         return this._maxHeight;
     },
 
@@ -262,6 +265,7 @@ var Viewport = Container.$extend({
     _height: Infinity,
 
     getHeight: function () {
+        "@photonui-update";
         return this._height;
     },
 

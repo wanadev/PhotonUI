@@ -56,8 +56,6 @@ var Slider = NumericField.$extend({
         this.inputId = this.name + "-field";
         this.__html.field.id = this.inputId;
 
-        this._updateProperties(["fieldVisible"]);
-
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
         this._bindEvent("slider-touchstart", this.__html.slider, "touchstart", this.__onSliderTouchStart.bind(this));
 
@@ -89,6 +87,7 @@ var Slider = NumericField.$extend({
     _fieldVisible: true,
 
     isFieldVisible: function () {
+        "@photonui-update";
         return this._fieldVisible;
     },
 

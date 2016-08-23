@@ -18744,6 +18744,16 @@ var Base = Class.$extend({
             }
         }
 
+        // Update properties
+        for (var propName in this.$map.computedProperties) {
+            var prop = this.$map.computedProperties[propName];
+            if (params[propName] === undefined &&
+                prop.annotations["photonui-update"] &&
+                prop.get && prop.set) {
+                this[propName] = this[propName];
+            }
+        }
+
         // Register callbacks
         var ev = null;
         var i = 0;
@@ -18871,11 +18881,18 @@ var Base = Class.$extend({
     /**
      * Force the update of the given properties.
      *
+     * This method is deprecated.
+     * One should use '@photonui-update' abitbol's annotation on concerned properties.
+     *
      * @method _updateProperties
      * @private
+     * @deprecated
      * @param {Array} properties The properties to update.
      */
     _updateProperties: function (properties) {
+        Helpers.log("warn", "'photonui.Base._updateProperties()' is deprecated." +
+                            " One should use '@photonui-update' abitbol's annotation on concerned properties.");
+
         for (var i = 0 ; i < properties.length ; i++) {
             this[properties[i]] = this[properties[i]];
         }
@@ -19033,7 +19050,6 @@ var ColorButton = Button.$extend({
         this._registerWEvents(["value-changed"]);
         this.$super(params);
         this._buildUi();
-        this._updateProperties(["color"]);
     },
 
     //////////////////////////////////////////
@@ -19065,6 +19081,7 @@ var ColorButton = Button.$extend({
     _color: null,
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 
@@ -19308,7 +19325,6 @@ var ColorPickerDialog = Dialog.$extend({
         this.$super(params);
 
         this._buildUi();
-        this._updateProperties(["color"]);
     },
 
     //////////////////////////////////////////
@@ -19328,6 +19344,7 @@ var ColorPickerDialog = Dialog.$extend({
     _color: null,
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 
@@ -19339,8 +19356,8 @@ var ColorPickerDialog = Dialog.$extend({
             this._color = color;
             this._color.registerCallback("photonui.colorpickerdialog.value-changed::" + this.name, "value-changed",
                                          this.__onColorChanged, this);
+            this.__onColorChanged();
         }
-        this.__onColorChanged();
     },
 
     /**
@@ -19394,6 +19411,13 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Color Picker
         this.__widgets.colorPicker = new ColorPicker();
+        if (this._color !== null) {
+            this.__widgets.colorPicker.color.setHSB(
+                    this._color.hue,
+                    this._color.saturation,
+                    this._color.brightness
+            );
+        }
         this.__widgets.hbox.addChild(this.__widgets.colorPicker);
 
         // Color Palette
@@ -19614,6 +19638,10 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     __onColorChanged: function () {
+        if (!this.__widgets.colorPicker) {
+            return;
+        }
+
         this.__widgets.colorPicker.color.setHSB(
                 this._color.hue,
                 this._color.saturation,
@@ -19951,7 +19979,6 @@ var Select = Widget.$extend({
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
         this._bindEvent("mouse-down", this.html, "mousedown", this.__onMouseDown.bind(this));
 
@@ -19974,6 +20001,7 @@ var Select = Widget.$extend({
     _value: "",
 
     getValue: function () {
+        "@photonui-update";
         return this._value;
     },
 
@@ -20138,7 +20166,10 @@ var Select = Widget.$extend({
      * @type Boolean
      * @default: false
      */
-    isIconVisible: function () { return this.__popupMenu.isIconVisible(); },
+    isIconVisible: function () {
+        "@photonui-update";
+        return this.__popupMenu.isIconVisible();
+    },
     setIconVisible: function (p) {
         if (!p) {
             this.addClass("photonui-select-noicon");
@@ -20352,12 +20383,6 @@ var BaseWindow = Container.$extend({
 
         // Insert the window in the DOM tree
         Widget.domInsert(this);
-
-        // Update properties
-        this._updateProperties([
-            "position", "width", "height", "minWidth", "minHeight",
-            "maxWidth", "maxHeight", "padding"
-        ]);
     },
 
     //////////////////////////////////////////
@@ -20376,6 +20401,7 @@ var BaseWindow = Container.$extend({
      * @default {x: 0, y: 0}
      */
     getPosition: function () {
+        "@photonui-update";
         if (this.visible && this.html.parentNode) {
             return this.absolutePosition;
         }
@@ -20445,6 +20471,7 @@ var BaseWindow = Container.$extend({
     _width: null,
 
     getWidth: function () {
+        "@photonui-update";
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetWidth;
         }
@@ -20470,6 +20497,7 @@ var BaseWindow = Container.$extend({
     _height: null,
 
     getHeight: function () {
+        "@photonui-update";
         if (this.visible && this.html.parenNode) {
             return this.containerNode.offsetHeight;
         }
@@ -20495,6 +20523,7 @@ var BaseWindow = Container.$extend({
     _minWidth: null,
 
     getMinWidth: function () {
+        "@photonui-update";
         return this._minWidth;
     },
 
@@ -20517,6 +20546,7 @@ var BaseWindow = Container.$extend({
     _minHeight: null,
 
     getMinHeight: function () {
+        "@photonui-update";
         return this._minHeight;
     },
 
@@ -20539,6 +20569,7 @@ var BaseWindow = Container.$extend({
     _maxWidth: null,
 
     getMaxWidth: function () {
+        "@photonui-update";
         return this._maxWidth;
     },
 
@@ -20561,6 +20592,7 @@ var BaseWindow = Container.$extend({
     _maxHeight: null,
 
     getMaxHeight: function () {
+        "@photonui-update";
         return this._maxHeight;
     },
 
@@ -20583,6 +20615,7 @@ var BaseWindow = Container.$extend({
     _padding: 0,
 
     getPadding: function () {
+        "@photonui-update";
         return this._padding;
     },
 
@@ -20706,8 +20739,6 @@ var Container = Widget.$extend({
     __init__: function (params) {
         this.$super(params);
 
-        this._updateProperties(["horizontalChildExpansion", "verticalChildExpansion"]);
-
         // Force to update the parent of the child
         if (this._childName) {
             this.child._parentName = this.name;
@@ -20730,6 +20761,7 @@ var Container = Widget.$extend({
     _horizontalChildExpansion: true,
 
     getHorizontalChildExpansion: function () {
+        "@photonui-update";
         return this._horizontalChildExpansion;
     },
 
@@ -20755,6 +20787,7 @@ var Container = Widget.$extend({
     _verticalChildExpansion: false,
 
     getVerticalChildExpansion: function () {
+        "@photonui-update";
         return this._verticalChildExpansion;
     },
 
@@ -21187,7 +21220,6 @@ var MenuItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["text", "icon", "active"]);
 
         this._bindEvent("click", this.__html.outer, "click", function (event) {
             this._callCallbacks("click", [event]);
@@ -21227,6 +21259,7 @@ var MenuItem = Container.$extend({
     _text: "Menu Item",
 
     getText: function () {
+        "@photonui-update";
         return this._text;
     },
 
@@ -21265,6 +21298,7 @@ var MenuItem = Container.$extend({
      * @default: null
      */
     getIcon: function () {
+        "@photonui-update";
         return Widget.getWidget(this._iconName);
     },
 
@@ -21286,6 +21320,7 @@ var MenuItem = Container.$extend({
     _active: false,
 
     getActive: function () {
+        "@photonui-update";
         return this._active;
     },
 
@@ -21590,7 +21625,6 @@ var SubMenuItem = MenuItem.$extend({
         this.$super(params);
         this.addClass("photonui-submenuitem");
         this.registerCallback("toggle-folding", "click", this.__onItemClicked, this);
-        this._updateProperties(["menuName"]);
     },
 
     //////////////////////////////////////////
@@ -21609,6 +21643,7 @@ var SubMenuItem = MenuItem.$extend({
     _menuName: null,
 
     getMenuName: function () {
+        "@photonui-update";
         return this._menuName;
     },
 
@@ -21747,7 +21782,6 @@ var TabItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["title", "leftIconName", "rightIconName"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
         this._update();
@@ -21769,6 +21803,7 @@ var TabItem = Container.$extend({
     _title: "Tab",
 
     getTitle: function () {
+        "@photonui-update";
         return this._title;
     },
 
@@ -21881,6 +21916,7 @@ var TabItem = Container.$extend({
     _leftIconName: null,
 
     getLeftIconName: function () {
+        "@photonui-update";
         return this._leftIconName;
     },
 
@@ -21941,6 +21977,7 @@ var TabItem = Container.$extend({
     _rightIconName: null,
 
     getRightIconName: function () {
+        "@photonui-update";
         return this._rightIconName;
     },
 
@@ -22122,11 +22159,6 @@ var Viewport = Container.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties([
-            "padding", "verticalScrollbar", "horizontalScrollbar",
-            "minWidth", "maxWidth", "width",
-            "minHeight", "maxHeight", "height"
-        ]);
     },
 
     //////////////////////////////////////////
@@ -22145,6 +22177,7 @@ var Viewport = Container.$extend({
     _padding: 0,
 
     getPadding: function () {
+        "@photonui-update";
         return this._padding;
     },
 
@@ -22167,6 +22200,7 @@ var Viewport = Container.$extend({
     _verticalScrollbar: null,
 
     getVerticalScrollbar: function () {
+        "@photonui-update";
         return this._verticalScrollbar;
     },
 
@@ -22195,6 +22229,7 @@ var Viewport = Container.$extend({
     _horizontalScrollbar: null,
 
     getHorizontalScrollbar: function () {
+        "@photonui-update";
         return this._horizontalScrollbar;
     },
 
@@ -22223,6 +22258,7 @@ var Viewport = Container.$extend({
     _minWidth: null,
 
     getMinWidth: function () {
+        "@photonui-update";
         return this._minWidth;
     },
 
@@ -22245,6 +22281,7 @@ var Viewport = Container.$extend({
     _maxWidth: null,
 
     getMaxWidth: function () {
+        "@photonui-update";
         return this._maxWidth;
     },
 
@@ -22267,6 +22304,7 @@ var Viewport = Container.$extend({
     _width: Infinity,
 
     getWidth: function () {
+        "@photonui-update";
         return this._width;
     },
 
@@ -22289,6 +22327,7 @@ var Viewport = Container.$extend({
     _minHeight: null,
 
     getMinHeight: function () {
+        "@photonui-update";
         return this._minHeight;
     },
 
@@ -22311,6 +22350,7 @@ var Viewport = Container.$extend({
     _maxHeight: null,
 
     getMaxHeight: function () {
+        "@photonui-update";
         return this._maxHeight;
     },
 
@@ -22333,6 +22373,7 @@ var Viewport = Container.$extend({
     _height: Infinity,
 
     getHeight: function () {
+        "@photonui-update";
         return this._height;
     },
 
@@ -22534,7 +22575,6 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
                         function (event) { event.stopPropagation(); });
 
         // Update Properties
-        this._updateProperties(["title", "closeButtonVisible"]);
         this.moveToFront();
     },
 
@@ -22554,6 +22594,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
     _title: "Window",
 
     getTitle: function () {
+        "@photonui-update";
         return this._title;
     },
 
@@ -22612,6 +22653,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
     _closeButtonVisible: true,
 
     getCloseButtonVisible: function () {
+        "@photonui-update";
         return this._closeButtonVisible;
     },
 
@@ -23210,7 +23252,6 @@ var Button = Widget.$extend({
         this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
 
         // Update properties
-        this._updateProperties(["text", "leftIconName", "rightIconName"]);
         this._update();
     },
 
@@ -23230,6 +23271,7 @@ var Button = Widget.$extend({
     _text: "Button",
 
     getText: function () {
+        "@photonui-update";
         return this._text;
     },
 
@@ -23267,6 +23309,7 @@ var Button = Widget.$extend({
     _leftIconName: null,
 
     getLeftIconName: function () {
+        "@photonui-update";
         return this._leftIconName;
     },
 
@@ -23326,6 +23369,7 @@ var Button = Widget.$extend({
     _rightIconName: null,
 
     getRightIconName: function () {
+        "@photonui-update";
         return this._rightIconName;
     },
 
@@ -23806,7 +23850,6 @@ var ColorPalette = Widget.$extend({
         this._color = new Color(ColorPalette.palette[0][0]);
         this._registerWEvents(["value-changed"]);
         this.$super(params);
-        this._updateProperties(["palette", "value"]);
     },
 
     //////////////////////////////////////////
@@ -23822,6 +23865,7 @@ var ColorPalette = Widget.$extend({
      * @type String
      */
     getValue: function () {
+        "@photonui-update";
         return this.color.hexString;
     },
 
@@ -23857,6 +23901,7 @@ var ColorPalette = Widget.$extend({
     _palette: null,
 
     getPalette: function () {
+        "@photonui-update";
         return this._palette || ColorPalette.palette;
     },
 
@@ -24024,7 +24069,6 @@ var ColorPicker = Widget.$extend({
         this._updateSB();
         this._updateSBmask();
         this._updateCanvas();
-        this._updateProperties(["color"]);
 
         this.__mouseManager = new MouseManager(this.__html.canvas);
 
@@ -24067,6 +24111,7 @@ var ColorPicker = Widget.$extend({
     _color: null,
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 
@@ -24543,7 +24588,6 @@ var Field = Widget.$extend({
             "selection-changed"
         ]);
         this.$super(params);
-        this._updateProperties(["value", "placeholder"]);
         this.__html.field.name = this.name;
     },
 
@@ -24561,6 +24605,7 @@ var Field = Widget.$extend({
      * @default ""
      */
     getValue: function () {
+        "@photonui-update";
         return this.__html.field.value;
     },
 
@@ -24578,6 +24623,7 @@ var Field = Widget.$extend({
     _placeholder: "",
 
     getPlaceholder: function () {
+        "@photonui-update";
         return this._placeholder;
     },
 
@@ -24717,7 +24763,6 @@ var IconButton = Widget.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["width", "height"]);
 
         this._bindEvent("click", this.__html.div, "click", this.__onButtonClicked.bind(this));
     },
@@ -24738,6 +24783,7 @@ var IconButton = Widget.$extend({
     _width: 16,
 
     getWidth: function () {
+        "@photonui-update";
         return this._width;
     },
 
@@ -24758,6 +24804,7 @@ var IconButton = Widget.$extend({
     _height: 16,
 
     getHeight: function () {
+        "@photonui-update";
         return this._height;
     },
 
@@ -24913,7 +24960,6 @@ var NumericField = Field.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["value"]);
         this._bindFieldEvents();
         this._unbindEvent("value-changed");
         this._bindEvent("keypress", this.__html.field, "keypress", this.__onKeypress.bind(this));
@@ -25025,6 +25071,7 @@ var NumericField = Field.$extend({
     _value: 0,
 
     getValue: function () {
+        "@photonui-update";
         return parseFloat(this._value);
     },
 
@@ -25285,8 +25332,6 @@ var Slider = NumericField.$extend({
         this.inputId = this.name + "-field";
         this.__html.field.id = this.inputId;
 
-        this._updateProperties(["fieldVisible"]);
-
         this._bindEvent("slider-mousedown", this.__html.slider, "mousedown", this.__onSliderMouseDown.bind(this));
         this._bindEvent("slider-touchstart", this.__html.slider, "touchstart", this.__onSliderTouchStart.bind(this));
 
@@ -25318,6 +25363,7 @@ var Slider = NumericField.$extend({
     _fieldVisible: true,
 
     isFieldVisible: function () {
+        "@photonui-update";
         return this._fieldVisible;
     },
 
@@ -25940,8 +25986,6 @@ var ToggleButton = CheckBox.$extend({
 
     // photonui.Button constructor (without the call to $super)
     __buttonInit: function () {
-        // Update properties
-        this._updateProperties(["text", "leftIconName", "rightIconName"]);
         this._update();
     },
 
@@ -26041,7 +26085,6 @@ var BoxLayout = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation", "stretchToParentHeight"]);
     },
 
     //////////////////////////////////////////
@@ -26060,6 +26103,7 @@ var BoxLayout = Layout.$extend({
     _orientation: "vertical",
 
     getOrientation: function () {
+        "@photonui-update";
         return this._orientation;
     },
 
@@ -26071,7 +26115,7 @@ var BoxLayout = Layout.$extend({
         this.removeClass("photonui-layout-orientation-vertical");
         this.removeClass("photonui-layout-orientation-horizontal");
         this.addClass("photonui-layout-orientation-" + this.orientation);
-        this._updateProperties(["spacing"]);
+        this.spacing = this.spacing;
     },
 
     /**
@@ -26172,6 +26216,7 @@ var BoxLayout = Layout.$extend({
     _stretchToParentHeight: true,
 
     getStretchToParentHeight: function () {
+        "@photonui-update";
         return this._stretchToParentHeight;
     },
 
@@ -26268,8 +26313,7 @@ var BoxLayout = Layout.$extend({
         }
 
         this.__html.outerbox.appendChild(fragment);
-
-        this._updateProperties(["spacing"]);
+        this.spacing = this.spacing;
     },
 
     /**
@@ -26800,7 +26844,6 @@ var GridLayout = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["verticalSpacing"]);
 
         // XXX Sizing Hack
         if (window.MutationObserver) {
@@ -26870,6 +26913,7 @@ var GridLayout = Layout.$extend({
     _verticalSpacing: 5,
 
     getVerticalSpacing: function () {
+        "@photonui-update";
         return this._verticalSpacing;
     },
 
@@ -27708,7 +27752,6 @@ var Menu = Layout.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["iconVisible"]);
     },
 
     //////////////////////////////////////////
@@ -27727,6 +27770,7 @@ var Menu = Layout.$extend({
     _iconVisible: true,
 
     isIconVisible: function () {
+        "@photonui-update";
         return this._iconVisible;
     },
 
@@ -27852,7 +27896,7 @@ var TabLayout = Layout.$extend({
     __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
-        this._updateProperties(["activeTab", "tabsPosition", "padding"]);
+        this.activeTab = this.activeTab;
     },
 
     //////////////////////////////////////////
@@ -27876,6 +27920,7 @@ var TabLayout = Layout.$extend({
     _tabsPosition: "top",
 
     getTabsPosition: function () {
+        "@photonui-update";
         return this._tabsPosition;
     },
 
@@ -27945,6 +27990,7 @@ var TabLayout = Layout.$extend({
     _padding: 10,
 
     getPadding: function () {
+        "@photonui-update";
         return this._padding;
     },
 
@@ -29151,7 +29197,6 @@ var KeyboardManager = Base.$extend({
         } else {
             this.$super(element);
         }
-        this._updateProperties(["safe", "noPreventDefault"]);
 
         this._initKeyCache();
 
@@ -29177,6 +29222,7 @@ var KeyboardManager = Base.$extend({
     _safe: true,
 
     getSafe: function () {
+        "@photonui-update";
         return this._safe;
     },
 
@@ -29194,6 +29240,7 @@ var KeyboardManager = Base.$extend({
     _noPreventDefault: false,
 
     getNoPreventDefault: function () {
+        "@photonui-update";
         return this._noPreventDefault;
     },
 
@@ -30360,7 +30407,6 @@ var SpriteSheet = Base.$extend({
     __init__: function (params) {
         this._icons = {};
         this.$super(params);
-        this._updateProperties(["name"]);
     },
 
     //////////////////////////////////////////
@@ -30379,6 +30425,7 @@ var SpriteSheet = Base.$extend({
     _name: "default",
 
     getName: function () {
+        "@photonui-update";
         return this._name;
     },
 
@@ -30940,7 +30987,6 @@ var Canvas = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["width", "height"]);
 
         // --- Canvas methods proxies ---
 
@@ -31073,6 +31119,7 @@ var Canvas = Widget.$extend({
      * default 300
      */
     getWidth: function () {
+        "@photonui-update";
         return this.__html.canvas.width;
     },
 
@@ -31088,6 +31135,7 @@ var Canvas = Widget.$extend({
      * default 150
      */
     getHeight: function () {
+        "@photonui-update";
         return this.__html.canvas.height;
     },
 
@@ -31235,7 +31283,6 @@ var FAIcon = BaseIcon.$extend({
             params = params1;
         }
         this.$super(params);
-        this._updateProperties(["iconName", "size", "color"]);
     },
 
     //////////////////////////////////////////
@@ -31256,6 +31303,7 @@ var FAIcon = BaseIcon.$extend({
     _iconName: "",
 
     getIconName: function () {
+        "@photonui-update";
         return this._iconName;
     },
 
@@ -31276,6 +31324,7 @@ var FAIcon = BaseIcon.$extend({
     _size: "",
 
     getSize: function () {
+        "@photonui-update";
         return this._size;
     },
 
@@ -31294,6 +31343,7 @@ var FAIcon = BaseIcon.$extend({
     _color: "inherit",
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 
@@ -31561,7 +31611,6 @@ var Label = Widget.$extend({
             params.layoutOptions.verticalExpansion = false;
         }
         this.$super(params);
-        this._updateProperties(["text", "textAlign", "forInputName"]);
     },
 
     //////////////////////////////////////////
@@ -31580,6 +31629,7 @@ var Label = Widget.$extend({
     _text: "Label",
 
     getText: function () {
+        "@photonui-update";
         return this._text;
     },
 
@@ -31612,6 +31662,7 @@ var Label = Widget.$extend({
     _textAlign: "left",
 
     getTextAlign: function () {
+        "@photonui-update";
         return this._textAlign;
     },
 
@@ -31633,6 +31684,7 @@ var Label = Widget.$extend({
     _forInputName: null,
 
     getForInputName: function () {
+        "@photonui-update";
         return this._forInputName;
     },
 
@@ -31753,7 +31805,6 @@ var ProgressBar = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation", "value", "pulsate"]);
     },
 
     //////////////////////////////////////////
@@ -31790,6 +31841,7 @@ var ProgressBar = Widget.$extend({
     _value: 0,
 
     getValue: function () {
+        "@photonui-update";
         return this._value;
     },
 
@@ -31815,6 +31867,7 @@ var ProgressBar = Widget.$extend({
     _orientation: "horizontal",
 
     getOrientation: function () {
+        "@photonui-update";
         return this._orientation;
     },
 
@@ -31841,6 +31894,7 @@ var ProgressBar = Widget.$extend({
     _pulsate: false,
 
     isPulsate: function () {
+        "@photonui-update";
         return this._pulsate;
     },
 
@@ -31981,7 +32035,6 @@ var Separator = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation"]);
     },
 
     //////////////////////////////////////////
@@ -32000,6 +32053,7 @@ var Separator = Widget.$extend({
     _orientation: "horizontal",
 
     getOrientation: function () {
+        "@photonui-update";
         return this._orientation;
     },
 
@@ -32637,9 +32691,6 @@ var Widget = Base.$extend({
         // Parent constructor
         this.$super(params);
 
-        // Update properties
-        this._updateProperties(["visible"]);
-
         // Default name
         if (!this.name) {
             this.name = "widget-" + uuid.v4();
@@ -32724,6 +32775,7 @@ var Widget = Base.$extend({
     _visible: true,
 
     isVisible: function () {
+        "@photonui-update";
         return this._visible;
     },
 

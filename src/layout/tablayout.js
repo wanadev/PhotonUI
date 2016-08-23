@@ -55,7 +55,7 @@ var TabLayout = Layout.$extend({
     __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
-        this._updateProperties(["activeTab", "tabsPosition", "padding"]);
+        this.activeTab = this.activeTab;
     },
 
     //////////////////////////////////////////
@@ -79,6 +79,7 @@ var TabLayout = Layout.$extend({
     _tabsPosition: "top",
 
     getTabsPosition: function () {
+        "@photonui-update";
         return this._tabsPosition;
     },
 
@@ -148,6 +149,7 @@ var TabLayout = Layout.$extend({
     _padding: 10,
 
     getPadding: function () {
+        "@photonui-update";
         return this._padding;
     },
 

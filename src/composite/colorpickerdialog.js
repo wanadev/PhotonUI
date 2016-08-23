@@ -79,7 +79,6 @@ var ColorPickerDialog = Dialog.$extend({
         this.$super(params);
 
         this._buildUi();
-        this._updateProperties(["color"]);
     },
 
     //////////////////////////////////////////
@@ -99,6 +98,7 @@ var ColorPickerDialog = Dialog.$extend({
     _color: null,
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 
@@ -110,8 +110,8 @@ var ColorPickerDialog = Dialog.$extend({
             this._color = color;
             this._color.registerCallback("photonui.colorpickerdialog.value-changed::" + this.name, "value-changed",
                                          this.__onColorChanged, this);
+            this.__onColorChanged();
         }
-        this.__onColorChanged();
     },
 
     /**
@@ -165,6 +165,13 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Color Picker
         this.__widgets.colorPicker = new ColorPicker();
+        if (this._color !== null) {
+            this.__widgets.colorPicker.color.setHSB(
+                    this._color.hue,
+                    this._color.saturation,
+                    this._color.brightness
+            );
+        }
         this.__widgets.hbox.addChild(this.__widgets.colorPicker);
 
         // Color Palette
@@ -385,6 +392,10 @@ var ColorPickerDialog = Dialog.$extend({
      * @private
      */
     __onColorChanged: function () {
+        if (!this.__widgets.colorPicker) {
+            return;
+        }
+
         this.__widgets.colorPicker.color.setHSB(
                 this._color.hue,
                 this._color.saturation,

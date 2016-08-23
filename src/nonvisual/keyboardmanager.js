@@ -87,7 +87,6 @@ var KeyboardManager = Base.$extend({
         } else {
             this.$super(element);
         }
-        this._updateProperties(["safe", "noPreventDefault"]);
 
         this._initKeyCache();
 
@@ -113,6 +112,7 @@ var KeyboardManager = Base.$extend({
     _safe: true,
 
     getSafe: function () {
+        "@photonui-update";
         return this._safe;
     },
 
@@ -130,6 +130,7 @@ var KeyboardManager = Base.$extend({
     _noPreventDefault: false,
 
     getNoPreventDefault: function () {
+        "@photonui-update";
         return this._noPreventDefault;
     },
 

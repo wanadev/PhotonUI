@@ -999,7 +999,8 @@ var win2 = new photonui.Window({
 new photonui.ColorPickerDialog({
     x: 10,
     y: 10,
-    visible: true
+    visible: true,
+    color: new photonui.Color("green")
 });
 
 
