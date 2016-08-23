@@ -43,6 +43,15 @@ var Container = require("./container.js");
 /**
  * Expander container.
  *
+ * wEvents:
+ *
+ *   * folded:
+ *     - description: called when the expander is folded.
+ *     - callback:    function(widget, event)
+ *   * unfolded:
+ *     - description: called when the expander is unfolded.
+ *     - callback:    function(widget, event)
+ *
  * @class Expander
  * @constructor
  * @extends photonui.Container
@@ -51,10 +60,11 @@ var Expander = Container.$extend({
 
     // Constructor
     __init__: function (params) {
-        this._registerWEvents(["click"]);
+        this._registerWEvents(["folded", "unfolded"]);
         this.$super(params);
+
+        this._bindEvent("keypress", this.__html.title, "keypress", this.__onTitleKeyPress);
         this._bindEvent("click", this.__html.title, "click", this.__onTitleClicked);
-        this._updateProperties(["title", "folded", "padding"]);
     },
 
     //////////////////////////////////////////
@@ -73,6 +83,7 @@ var Expander = Container.$extend({
     _title: "Expander",
 
     getTitle: function () {
+        "@photonui-update";
         return this._title;
     },
 
@@ -92,6 +103,7 @@ var Expander = Container.$extend({
     _folded: false,
 
     getFolded: function () {
+        "@photonui-update";
         return this._folded;
     },
 
@@ -99,13 +111,15 @@ var Expander = Container.$extend({
         this._folded = folded;
 
         if (this._folded) {
+            if (this.__html.outer.contains(this.__html.content)) {
+                this.__html.outer.removeChild(this.__html.content);
+            }
             this.addClass("photonui-expander-folded");
         } else {
+            if (!this.__html.outer.contains(this.__html.content)) {
+                this.__html.outer.appendChild(this.__html.content);
+            }
             this.removeClass("photonui-expander-folded");
-        }
-
-        if (this.child !== null) {
-            this.child.visible = !folded;
         }
     },
 
@@ -119,6 +133,7 @@ var Expander = Container.$extend({
     _padding: 0,
 
     getPadding: function () {
+        "@photonui-update";
         return this._padding;
     },
 
@@ -156,6 +171,22 @@ var Expander = Container.$extend({
 
     // ====== Public methods ======
 
+    /**
+     * Switch current folded state and sends and event.
+     *
+     * @method switchFolded
+     * @param {Event} event
+     */
+    switchFolded: function (event) {
+        this.folded = !this._folded;
+
+        if (this._folded) {
+            this._callCallbacks("folded", [event]);
+        } else {
+            this._callCallbacks("unfolded", [event]);
+        }
+    },
+
     // ====== Private methods ======
 
     /**
@@ -170,11 +201,11 @@ var Expander = Container.$extend({
 
         this.__html.title = document.createElement("div");
         this.__html.title.className = "photonui-expander-title";
+        this.__html.title.tabIndex = "0";
         this.__html.outer.appendChild(this.__html.title);
 
         this.__html.content = document.createElement("div");
         this.__html.content.className = "photonui-expander-content";
-        this.__html.outer.appendChild(this.__html.content);
     },
 
     /**
@@ -182,8 +213,17 @@ var Expander = Container.$extend({
      * @private
      */
     __onTitleClicked: function (widget, event) {
-        this.folded = !this._folded;
-        this._callCallbacks("click", [event, this._folded]);
+        this.switchFolded(event);
+    },
+
+    /**
+     * @method __onTitleKeyPress
+     * @private
+     */
+    __onTitleKeyPress: function (event) {
+        if (event.charCode == 32 || event.keyCode == 13) {
+            this.switchFolded(event);
+        }
     }
 
 });
