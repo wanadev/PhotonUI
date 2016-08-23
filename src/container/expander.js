@@ -111,14 +111,10 @@ var Expander = Container.$extend({
         this._folded = folded;
 
         if (this._folded) {
-            if (this.__html.outer.contains(this.__html.content)) {
-                this.__html.outer.removeChild(this.__html.content);
-            }
+            this.__html.content.style.display = "none";
             this.addClass("photonui-expander-folded");
         } else {
-            if (!this.__html.outer.contains(this.__html.content)) {
-                this.__html.outer.appendChild(this.__html.content);
-            }
+            this.__html.content.style.display = "block";
             this.removeClass("photonui-expander-folded");
         }
     },
@@ -206,6 +202,7 @@ var Expander = Container.$extend({
 
         this.__html.content = document.createElement("div");
         this.__html.content.className = "photonui-expander-content";
+        this.__html.outer.appendChild(this.__html.content);
     },
 
     /**

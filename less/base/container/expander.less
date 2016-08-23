@@ -31,13 +31,11 @@
 
 .photonui-expander {
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    display: block;
 
     &-title {
-        cursor: default;
         display: block;
+        cursor: default;
         text-align: left;
         overflow: hidden;
         white-space: nowrap;
@@ -46,7 +44,8 @@
     }
 
     &-content {
-        width: 100%;
+        display: block;
         box-sizing: border-box;
+        width: 100%;
     }
 }
