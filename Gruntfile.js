@@ -135,7 +135,7 @@ module.exports = function(grunt) {
         },
 
         shell: {
-            "update-credits": "brlicenses -m font-awesome -b src/photonui.js -f full -o CREDITS.txt"
+            "update-credits": "npm run update-credits"
         }
 
     });

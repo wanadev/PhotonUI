@@ -19,7 +19,8 @@
     }
   ],
   "scripts": {
-    "test": "grunt test && grunt && karma start"
+    "test": "grunt test && grunt && karma start",
+    "update-credits": "brlicenses -m font-awesome -b src/photonui.js -f full -o CREDITS.txt"
   },
   "repository": {
     "type": "git",
@@ -34,7 +35,7 @@
     "uuid": "^2.0.1"
   },
   "devDependencies": {
-    "browserify-licenses": "^1.4.1",
+    "browserify-licenses": "^1.4.2",
     "grunt": "^1.0.1",
     "grunt-browserify": ">=3.5.0",
     "grunt-cli": "^1.2.0",
