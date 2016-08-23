@@ -53,7 +53,6 @@ var SpriteSheet = Base.$extend({
     __init__: function (params) {
         this._icons = {};
         this.$super(params);
-        this._updateProperties(["name"]);
     },
 
     //////////////////////////////////////////
@@ -72,6 +71,7 @@ var SpriteSheet = Base.$extend({
     _name: "default",
 
     getName: function () {
+        "@photonui-update";
         return this._name;
     },
 

@@ -61,8 +61,6 @@ var ToggleButton = CheckBox.$extend({
 
     // photonui.Button constructor (without the call to $super)
     __buttonInit: function () {
-        // Update properties
-        this._updateProperties(["text", "leftIconName", "rightIconName"]);
         this._update();
     },
 

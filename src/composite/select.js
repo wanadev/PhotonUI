@@ -71,7 +71,6 @@ var Select = Widget.$extend({
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
         this._bindEvent("mouse-down", this.html, "mousedown", this.__onMouseDown.bind(this));
 
@@ -94,6 +93,7 @@ var Select = Widget.$extend({
     _value: "",
 
     getValue: function () {
+        "@photonui-update";
         return this._value;
     },
 
@@ -258,7 +258,10 @@ var Select = Widget.$extend({
      * @type Boolean
      * @default: false
      */
-    isIconVisible: function () { return this.__popupMenu.isIconVisible(); },
+    isIconVisible: function () {
+        "@photonui-update";
+        return this.__popupMenu.isIconVisible();
+    },
     setIconVisible: function (p) {
         if (!p) {
             this.addClass("photonui-select-noicon");

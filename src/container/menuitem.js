@@ -54,7 +54,6 @@ var MenuItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["text", "icon", "active"]);
 
         this._bindEvent("click", this.__html.outer, "click", function (event) {
             this._callCallbacks("click", [event]);
@@ -94,6 +93,7 @@ var MenuItem = Container.$extend({
     _text: "Menu Item",
 
     getText: function () {
+        "@photonui-update";
         return this._text;
     },
 
@@ -132,6 +132,7 @@ var MenuItem = Container.$extend({
      * @default: null
      */
     getIcon: function () {
+        "@photonui-update";
         return Widget.getWidget(this._iconName);
     },
 
@@ -153,6 +154,7 @@ var MenuItem = Container.$extend({
     _active: false,
 
     getActive: function () {
+        "@photonui-update";
         return this._active;
     },
 

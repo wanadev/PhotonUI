@@ -51,7 +51,6 @@ var Canvas = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["width", "height"]);
 
         // --- Canvas methods proxies ---
 
@@ -184,6 +183,7 @@ var Canvas = Widget.$extend({
      * default 300
      */
     getWidth: function () {
+        "@photonui-update";
         return this.__html.canvas.width;
     },
 
@@ -199,6 +199,7 @@ var Canvas = Widget.$extend({
      * default 150
      */
     getHeight: function () {
+        "@photonui-update";
         return this.__html.canvas.height;
     },
 

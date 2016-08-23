@@ -64,7 +64,6 @@ var Button = Widget.$extend({
         this._bindEvent("click", this.__html.button, "click", this.__onButtonClicked.bind(this));
 
         // Update properties
-        this._updateProperties(["text", "leftIconName", "rightIconName"]);
         this._update();
     },
 
@@ -84,6 +83,7 @@ var Button = Widget.$extend({
     _text: "Button",
 
     getText: function () {
+        "@photonui-update";
         return this._text;
     },
 
@@ -121,6 +121,7 @@ var Button = Widget.$extend({
     _leftIconName: null,
 
     getLeftIconName: function () {
+        "@photonui-update";
         return this._leftIconName;
     },
 
@@ -180,6 +181,7 @@ var Button = Widget.$extend({
     _rightIconName: null,
 
     getRightIconName: function () {
+        "@photonui-update";
         return this._rightIconName;
     },
 

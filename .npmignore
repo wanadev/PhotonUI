@@ -2,7 +2,6 @@ demo
 doc
 test
 gruntfile.js
-dist/*.js
 .jscsrc
 karma.conf.js
 .travis.yml

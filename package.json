@@ -27,12 +27,14 @@
   },
   "dependencies": {
     "abitbol": "^1.0.3",
+    "font-awesome": "^4.6.3",
     "keyboardjs": "flozz/KeyboardJS",
     "lodash": "^4.5.1",
     "stonejs": ">=2.1.0",
     "uuid": "^2.0.1"
   },
   "devDependencies": {
+    "browserify-licenses": "^1.4.1",
     "grunt": "^1.0.1",
     "grunt-browserify": ">=3.5.0",
     "grunt-cli": "^1.2.0",
@@ -46,6 +48,7 @@
     "grunt-contrib-yuidoc": ">=0.7.0",
     "grunt-githooks": "^0.6.0",
     "grunt-jscs": "^1.8.0",
+    "grunt-shell": "^1.3.1",
     "jasmine-core": "^2.4.1",
     "karma": "^1.1.2",
     "karma-chrome-launcher": "^2.0.0",

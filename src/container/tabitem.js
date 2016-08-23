@@ -62,7 +62,6 @@ var TabItem = Container.$extend({
     __init__: function (params) {
         this._registerWEvents(["click"]);
         this.$super(params);
-        this._updateProperties(["title", "leftIconName", "rightIconName"]);
 
         this._bindEvent("tab-click", this.__html.tab, "click", this.__onClick.bind(this));
         this._update();
@@ -84,6 +83,7 @@ var TabItem = Container.$extend({
     _title: "Tab",
 
     getTitle: function () {
+        "@photonui-update";
         return this._title;
     },
 
@@ -196,6 +196,7 @@ var TabItem = Container.$extend({
     _leftIconName: null,
 
     getLeftIconName: function () {
+        "@photonui-update";
         return this._leftIconName;
     },
 
@@ -256,6 +257,7 @@ var TabItem = Container.$extend({
     _rightIconName: null,
 
     getRightIconName: function () {
+        "@photonui-update";
         return this._rightIconName;
     },
 
