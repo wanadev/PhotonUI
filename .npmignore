@@ -1,9 +1,10 @@
 demo
 doc
 test
-gruntfile.js
+Gruntfile.js
 .jscsrc
 karma.conf.js
 .travis.yml
 .jshintrc
 .tern-project
+screenshot.png
