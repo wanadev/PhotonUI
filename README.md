@@ -168,9 +168,12 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.6.1:**
+  * Fixes wrong import path of fontawesome files when importing photonui less files from the module.
+
 * **1.6.0:**
-  * New widget: `photonui.Expender` (thx @Breush),
-  * `Base.prototype._updateProperties()` is now deprecated: the `@photonui-update` annotation now replace it (#55),
+  * New widget: `photonui.Expander` (thx @Breush),
+  * `Base.prototype._updateProperties()` is now deprecated: the `@photonui-update` annotation replaces it (#55),
   * Various fixes (issue #51, issue #58, issue #60, PR #53,...).
 
 * **1.5.1:**
