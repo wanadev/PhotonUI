@@ -12,6 +12,8 @@ PhotonUI javascript framework to create rich web user interfaces without having 
 * **Website:** http://wanadev.github.io/PhotonUI/
 * **Quick start:** http://wanadev.github.io/PhotonUI/doc/quick-start.html
 
+![Screenshot](./screenshot.png)
+
 
 ## Getting Started
 
@@ -37,8 +39,8 @@ in your page:
         <link type="text/css" rel="stylesheet" href="dist/photonui-base.css" />
         <link type="text/css" rel="stylesheet" href="dist/photonui-theme-particle.css" />
         <script src="dist/photonui.js"></script>
-
     </head>
+
     <body>
     </body>
 </html>
@@ -219,3 +221,4 @@ creates all required files for you:
 [phantomjs]: http://phantomjs.org/
 [yo]: http://yeoman.io/
 [codestyle-yandex]: https://github.com/yandex/codestyle/blob/master/javascript.md
+
