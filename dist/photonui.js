@@ -19399,6 +19399,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Red field + label
         this.__widgets.fieldRed = new Slider({
+            value: (this._color) ? this._color.red : undefined,
             min: 0,
             max: 255,
             decimalDigits: 0
@@ -19414,6 +19415,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Green field + label
         this.__widgets.fieldGreen = new Slider({
+            value: (this._color) ? this._color.green : undefined,
             min: 0,
             max: 255,
             decimalDigits: 0
@@ -19429,6 +19431,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Blue field + label
         this.__widgets.fieldBlue = new Slider({
+            value: (this._color) ? this._color.blue : undefined,
             min: 0,
             max: 255,
             decimalDigits: 0
@@ -19453,6 +19456,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Hue field + label
         this.__widgets.fieldHue = new Slider({
+            value: (this._color) ? this._color.hue : undefined,
             min: 0,
             max: 360,
             decimalDigits: 0
@@ -19468,6 +19472,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Saturation field + label
         this.__widgets.fieldSaturation = new Slider({
+            value: (this._color) ? this._color.saturation : undefined,
             min: 0,
             max: 100,
             decimalDigits: 0
@@ -19483,6 +19488,7 @@ var ColorPickerDialog = Dialog.$extend({
 
         // Brightness field + label
         this.__widgets.fieldBrightness = new Slider({
+            value: (this._color) ? this._color.brightness : undefined,
             min: 0,
             max: 100,
             decimalDigits: 0
@@ -27058,6 +27064,7 @@ var GridLayout = Layout.$extend({
             this.__sizinghack_observer = new MutationObserver(this._sizingHack.bind(this));
             this.__sizinghack_observer_params = {attributes: true, childList: true, characterData: true, subtree: true};
             this.__sizinghack_observer.observe(this.__html.gridBody, this.__sizinghack_observer_params);
+            this._updateLayout();
         }
     },
 
@@ -27127,10 +27134,6 @@ var GridLayout = Layout.$extend({
 
     setVerticalSpacing: function (verticalSpacing) {
         this._verticalSpacing = verticalSpacing;
-        //this._updatingLayout = true;
-        //this._updateSpacing();
-        //this._updatingLayout = false;
-        //this._sizingHack();
         this._updateLayout();
     },
 
@@ -27149,10 +27152,6 @@ var GridLayout = Layout.$extend({
 
     setHorizontalSpacing: function (horizontalSpacing) {
         this._horizontalSpacing = horizontalSpacing;
-        //this._updatingLayout = true;
-        //this._updateSpacing();
-        //this._updatingLayout = false;
-        //this._sizingHack();
         this._updateLayout();
     },
 
