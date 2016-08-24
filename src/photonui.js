@@ -99,6 +99,7 @@ photonui.BaseWindow = require("./container/basewindow.js");
 photonui.Window = require("./container/window.js");
 photonui.PopupWindow = require("./container/popupwindow.js");
 photonui.Dialog = require("./container/dialog.js");
+photonui.Expander = require("./container/expander.js");
 photonui.ColorPickerDialog = require("./composite/colorpickerdialog.js");
 photonui.PopupMenu = require("./composite/popupmenu.js");
 photonui.TabItem = require("./container/tabitem.js");

@@ -1,6 +1,6 @@
 {
   "name": "photonui",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "A javascript framework to create user interfaces",
   "homepage": "http://wanadev.github.io/PhotonUI/",
   "author": "Wanadev (http://wanadev.fr/)",
@@ -19,7 +19,8 @@
     }
   ],
   "scripts": {
-    "test": "grunt test && grunt && karma start"
+    "test": "grunt test && grunt && karma start",
+    "update-credits": "brlicenses -m font-awesome -b src/photonui.js -f full -o CREDITS.txt"
   },
   "repository": {
     "type": "git",
@@ -27,12 +28,14 @@
   },
   "dependencies": {
     "abitbol": "^1.0.3",
-    "keyboardjs": "flozz/KeyboardJS",
+    "font-awesome": "^4.6.3",
+    "keyboardjs": "^2.3.1",
     "lodash": "^4.5.1",
     "stonejs": ">=2.1.0",
     "uuid": "^2.0.1"
   },
   "devDependencies": {
+    "browserify-licenses": "^1.4.2",
     "grunt": "^1.0.1",
     "grunt-browserify": ">=3.5.0",
     "grunt-cli": "^1.2.0",
@@ -46,9 +49,10 @@
     "grunt-contrib-yuidoc": ">=0.7.0",
     "grunt-githooks": "^0.6.0",
     "grunt-jscs": "^1.8.0",
+    "grunt-shell": "^1.3.1",
     "jasmine-core": "^2.4.1",
     "karma": "^1.1.2",
-    "karma-chrome-launcher": "^1.0.1",
+    "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-spec-reporter": "0.0.26",

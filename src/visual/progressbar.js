@@ -50,7 +50,6 @@ var ProgressBar = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["orientation", "value", "pulsate"]);
     },
 
     //////////////////////////////////////////
@@ -87,6 +86,7 @@ var ProgressBar = Widget.$extend({
     _value: 0,
 
     getValue: function () {
+        "@photonui-update";
         return this._value;
     },
 
@@ -112,6 +112,7 @@ var ProgressBar = Widget.$extend({
     _orientation: "horizontal",
 
     getOrientation: function () {
+        "@photonui-update";
         return this._orientation;
     },
 
@@ -138,6 +139,7 @@ var ProgressBar = Widget.$extend({
     _pulsate: false,
 
     isPulsate: function () {
+        "@photonui-update";
         return this._pulsate;
     },
 

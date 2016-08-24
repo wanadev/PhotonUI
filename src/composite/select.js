@@ -71,8 +71,8 @@ var Select = Widget.$extend({
         this._registerWEvents(["value-changed"]);
         this.$super(params);
 
-        this._updateProperties(["value", "iconVisible"]);
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
+        this._bindEvent("mouse-down", this.html, "mousedown", this.__onMouseDown.bind(this));
 
         this.setValue(params.value || this.value, true);
     },
@@ -93,6 +93,7 @@ var Select = Widget.$extend({
     _value: "",
 
     getValue: function () {
+        "@photonui-update";
         return this._value;
     },
 
@@ -257,7 +258,10 @@ var Select = Widget.$extend({
      * @type Boolean
      * @default: false
      */
-    isIconVisible: function () { return this.__popupMenu.isIconVisible(); },
+    isIconVisible: function () {
+        "@photonui-update";
+        return this.__popupMenu.isIconVisible();
+    },
     setIconVisible: function (p) {
         if (!p) {
             this.addClass("photonui-select-noicon");
@@ -265,6 +269,13 @@ var Select = Widget.$extend({
             this.removeClass("photonui-select-noicon");
         }
         this.__popupMenu.setIconVisible(p);
+    },
+
+    setVisible: function (visible) {
+        this.$super(visible);
+        if (!visible) {
+            this.__popupMenu.hide();
+        }
     },
 
     /**
@@ -278,6 +289,8 @@ var Select = Widget.$extend({
     getHtml: function () {
         return this.__html.select;
     },
+
+    // ====== Private properties ======
 
     /**
      * The popupMenu.
@@ -360,7 +373,22 @@ var Select = Widget.$extend({
         if (!this._minWidthDefined) {
             this.popupMinWidth = this.offsetWidth;
         }
-        this.__popupMenu.popupWidget(this);
+        if (this.__popupMenu.visible) {
+            this.__popupMenu.hide();
+        } else {
+            this.__popupMenu.popupWidget(this);
+        }
+    },
+
+    /**
+     * @method __onMouseDown
+     * @private
+     * @param event
+     */
+    __onMouseDown: function (event) {
+        if (this.__popupMenu.visible) {
+            event.stopPropagation();
+        }
     },
 
     /**
@@ -372,6 +400,7 @@ var Select = Widget.$extend({
         this.value = widget.value;
         this._callCallbacks("value-changed", [this.value]);
     }
+
 });
 
 module.exports = Select;

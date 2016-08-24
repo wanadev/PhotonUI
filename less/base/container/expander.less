@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,55 +25,27 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Authored by: Fabien LOISON <http://flozz.fr/>
+ * Authored by: Alexis BREUST
  */
 
 
-.photonui-boxlayout {
-    display: -webkit-flex !important;
-    display: flex !important;
+.photonui-expander {
     box-sizing: border-box;
-}
-
-.photonui-boxlayout.photonui-layout-orientation-horizontal {
-    -webkit-flex-direction: row;
-    flex-direction: row;
-}
-
-.photonui-boxlayout.photonui-layout-orientation-vertical {
-    -webkit-flex-direction: column;
-    flex-direction: column;
-}
-
-.photonui-boxlayout > .photonui-boxlayout-item {
-    -webit-flex-grow: 1;
-    flex-grow: 1;
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-}
-
-.photonui-boxlayout > .photonui-boxlayout-item > * {
     display: block;
-    width: 100%;
-}
 
-.photonui-boxlayout > .photonui-layout-align-stretch {
-    -webkit-align-self: stretch;
-    align-self: stretch;
-}
+    &-title {
+        display: block;
+        cursor: default;
+        text-align: left;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
 
-.photonui-boxlayout > .photonui-layout-align-start {
-    -webkit-align-self: flex-start;
-    align-self: flex-start;
-}
-
-.photonui-boxlayout > .photonui-layout-align-center {
-    -webkit-align-self: center;
-    align-self: center;
-}
-
-.photonui-boxlayout > .photonui-layout-align-end {
-    -webkit-align-self: flex-end;
-    align-self: flex-end;
+    &-content {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+    }
 }

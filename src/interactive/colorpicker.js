@@ -75,7 +75,6 @@ var ColorPicker = Widget.$extend({
         this._updateSB();
         this._updateSBmask();
         this._updateCanvas();
-        this._updateProperties(["color"]);
 
         this.__mouseManager = new MouseManager(this.__html.canvas);
 
@@ -118,6 +117,7 @@ var ColorPicker = Widget.$extend({
     _color: null,
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 

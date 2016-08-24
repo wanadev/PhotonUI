@@ -76,7 +76,6 @@ var Field = Widget.$extend({
             "selection-changed"
         ]);
         this.$super(params);
-        this._updateProperties(["value", "placeholder"]);
         this.__html.field.name = this.name;
     },
 
@@ -94,6 +93,7 @@ var Field = Widget.$extend({
      * @default ""
      */
     getValue: function () {
+        "@photonui-update";
         return this.__html.field.value;
     },
 
@@ -111,6 +111,7 @@ var Field = Widget.$extend({
     _placeholder: "",
 
     getPlaceholder: function () {
+        "@photonui-update";
         return this._placeholder;
     },
 

@@ -89,7 +89,7 @@ module.exports = function(grunt) {
                 expand: true,
                 flatten: true,
                 filter: "isFile",
-                cwd: "src/assets/",
+                cwd: "./node_modules/font-awesome/fonts/",
                 src: "**",
                 dest: "dist/assets/"
             }
@@ -132,7 +132,12 @@ module.exports = function(grunt) {
                 },
                 "pre-commit": "test"
             }
+        },
+
+        shell: {
+            "update-credits": "npm run update-credits"
         }
+
     });
 
     // Load the grunt plugins.
@@ -146,9 +151,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-githooks");
+    grunt.loadNpmTasks("grunt-shell");
 
     // Register runnable tasks.
-    grunt.registerTask("default", ["gen-js", "gen-docs", "gen-css"]);
+    grunt.registerTask("default", ["gen-js", "gen-docs", "gen-css", "shell:update-credits"]);
     grunt.registerTask("gen-js", ["browserify", "uglify"]);
     grunt.registerTask("gen-css", ["less:less_base", "less:less_theme", "clean:assets", "copy:assets"]);
     grunt.registerTask("gen-docs", ["clean:docs", "yuidoc"]);

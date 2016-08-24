@@ -24,12 +24,12 @@ var DummyWidget = photonui.Widget.$extend({
 
     __init__: function(params) {
         this.$super(params);
-        this._updateProperties(["text"]);
     },
 
     _text: "Widget",
 
     getText: function() {
+        "@photonui-update";
         return this._text;
     },
 

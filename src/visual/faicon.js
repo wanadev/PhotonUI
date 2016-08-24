@@ -66,7 +66,6 @@ var FAIcon = BaseIcon.$extend({
             params = params1;
         }
         this.$super(params);
-        this._updateProperties(["iconName", "size", "color"]);
     },
 
     //////////////////////////////////////////
@@ -87,6 +86,7 @@ var FAIcon = BaseIcon.$extend({
     _iconName: "",
 
     getIconName: function () {
+        "@photonui-update";
         return this._iconName;
     },
 
@@ -107,6 +107,7 @@ var FAIcon = BaseIcon.$extend({
     _size: "",
 
     getSize: function () {
+        "@photonui-update";
         return this._size;
     },
 
@@ -125,6 +126,7 @@ var FAIcon = BaseIcon.$extend({
     _color: "inherit",
 
     getColor: function () {
+        "@photonui-update";
         return this._color;
     },
 

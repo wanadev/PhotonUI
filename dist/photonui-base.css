@@ -27,7 +27,7 @@
  *
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
-/** Variables for the PhotonUI Base theme. **/
+/** Variables for the PhotonUI Base style. **/
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -311,6 +311,53 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   white-space: nowrap;
 }
 /*
+ * Copyright (c) 2016, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Alexis BREUST
+ */
+.photonui-expander {
+  box-sizing: border-box;
+  display: block;
+}
+.photonui-expander-title {
+  display: block;
+  cursor: default;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.photonui-expander-content {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+}
+/*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
@@ -548,7 +595,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   display: -ms-flexbox !important;
   display: flex !important;
   box-sizing: border-box;
-  height: 100%;
 }
 .photonui-boxlayout.photonui-layout-orientation-horizontal {
   -ms-flex-direction: row;
@@ -1453,16 +1499,248 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   vertical-align: text-bottom;
   background: gray;
 }
-/*!
- *  Font Awesome 4.5.0 by @davegandy - http://fontawesome.io - @fontawesome
- *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
  */
-/* FONT PATH
- * -------------------------- */
+/* All the style is in ../layout/tablayout.less */
+.photonui-tabitem-tab span + span {
+  margin-left: 5px;
+}
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+.photonui-tablayout {
+  display: inline-block;
+  height: 100%;
+  box-sizing: border-box;
+}
+.photonui-tablayout .photonui-tablayout-innerbox {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  width: 100%;
+  height: 100%;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+  display: -ms-flexbox;
+  display: flex;
+  box-sizing: border-box;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab {
+  display: -ms-flexbox;
+  display: flex;
+  box-sizing: border-box;
+  min-width: 10px;
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  -wibkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-lefticon > .photonui-iconbutton > .photonui-faicon,
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-righticon > .photonui-iconbutton > .photonui-faicon {
+  vertical-align: baseline;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content {
+  box-sizing: border-box;
+  min-height: 20px;
+  min-width: 20px;
+  -ms-flex-positive: 1;
+      flex-grow: 1;
+}
+.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content > * {
+  height: 100%;
+  width: 100%;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox {
+  -ms-flex-direction: column;
+      flex-direction: column;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
+  -ms-flex-direction: row;
+      flex-direction: row;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox {
+  -ms-flex-direction: column-reverse;
+      flex-direction: column-reverse;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
+  -ms-flex-direction: row;
+      flex-direction: row;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox {
+  -ms-flex-direction: row;
+      flex-direction: row;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
+  -ms-flex-direction: column;
+      flex-direction: column;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox {
+  -ms-flex-direction: row-reverse;
+      flex-direction: row-reverse;
+}
+.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
+  -ms-flex-direction: column;
+      flex-direction: column;
+}
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+.photonui-fontselect {
+  /* ... */
+}
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
+.photonui-text {
+  /* ... */
+}
+/*
+ * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON <https://github.com/flozz>
+ */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('assets/fontawesome-webfont.eot?v=4.5.0');
-  src: url('assets/fontawesome-webfont.eot?#iefix&v=4.5.0') format('embedded-opentype'), url('assets/fontawesome-webfont.woff2?v=4.5.0') format('woff2'), url('assets/fontawesome-webfont.woff?v=4.5.0') format('woff'), url('assets/fontawesome-webfont.ttf?v=4.5.0') format('truetype'), url('assets/fontawesome-webfont.svg?v=4.5.0#fontawesomeregular') format('svg');
+  src: url('assets/fontawesome-webfont.eot?v=4.6.3');
+  src: url('assets/fontawesome-webfont.eot?#iefix&v=4.6.3') format('embedded-opentype'), url('assets/fontawesome-webfont.woff2?v=4.6.3') format('woff2'), url('assets/fontawesome-webfont.woff?v=4.6.3') format('woff'), url('assets/fontawesome-webfont.ttf?v=4.6.3') format('truetype'), url('assets/fontawesome-webfont.svg?v=4.6.3#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -1559,23 +1837,23 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   }
 }
 .fa-rotate-90 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
   transform: rotate(90deg);
 }
 .fa-rotate-180 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
   transform: rotate(180deg);
 }
 .fa-rotate-270 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
   transform: rotate(270deg);
 }
 .fa-flip-horizontal {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
   transform: scale(-1, 1);
 }
 .fa-flip-vertical {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
   transform: scale(1, -1);
 }
 :root .fa-rotate-90,
@@ -2815,7 +3093,7 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .fa-digg:before {
   content: "\f1a6";
 }
-.fa-pied-piper:before {
+.fa-pied-piper-pp:before {
   content: "\f1a7";
 }
 .fa-pied-piper-alt:before {
@@ -2941,6 +3219,7 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   content: "\f1ce";
 }
 .fa-ra:before,
+.fa-resistance:before,
 .fa-rebel:before {
   content: "\f1d0";
 }
@@ -3516,246 +3795,117 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .fa-percent:before {
   content: "\f295";
 }
-/*
- * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of Wanadev nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Authored by: Fabien LOISON <https://github.com/flozz>
- */
-/* All the style is in ../layout/tablayout.less */
-.photonui-tabitem-tab span + span {
-  margin-left: 5px;
+.fa-gitlab:before {
+  content: "\f296";
 }
-/*
- * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of Wanadev nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Authored by: Fabien LOISON <https://github.com/flozz>
- */
-.photonui-tablayout {
-  display: inline-block;
-  height: 100%;
-  box-sizing: border-box;
+.fa-wpbeginner:before {
+  content: "\f297";
 }
-.photonui-tablayout .photonui-tablayout-innerbox {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: nowrap;
-      flex-wrap: nowrap;
-  width: 100%;
-  height: 100%;
+.fa-wpforms:before {
+  content: "\f298";
 }
-.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs {
-  display: -ms-flexbox;
-  display: flex;
-  box-sizing: border-box;
+.fa-envira:before {
+  content: "\f299";
 }
-.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab {
-  display: -ms-flexbox;
-  display: flex;
-  box-sizing: border-box;
-  min-width: 10px;
-  max-width: 150px;
+.fa-universal-access:before {
+  content: "\f29a";
+}
+.fa-wheelchair-alt:before {
+  content: "\f29b";
+}
+.fa-question-circle-o:before {
+  content: "\f29c";
+}
+.fa-blind:before {
+  content: "\f29d";
+}
+.fa-audio-description:before {
+  content: "\f29e";
+}
+.fa-volume-control-phone:before {
+  content: "\f2a0";
+}
+.fa-braille:before {
+  content: "\f2a1";
+}
+.fa-assistive-listening-systems:before {
+  content: "\f2a2";
+}
+.fa-asl-interpreting:before,
+.fa-american-sign-language-interpreting:before {
+  content: "\f2a3";
+}
+.fa-deafness:before,
+.fa-hard-of-hearing:before,
+.fa-deaf:before {
+  content: "\f2a4";
+}
+.fa-glide:before {
+  content: "\f2a5";
+}
+.fa-glide-g:before {
+  content: "\f2a6";
+}
+.fa-signing:before,
+.fa-sign-language:before {
+  content: "\f2a7";
+}
+.fa-low-vision:before {
+  content: "\f2a8";
+}
+.fa-viadeo:before {
+  content: "\f2a9";
+}
+.fa-viadeo-square:before {
+  content: "\f2aa";
+}
+.fa-snapchat:before {
+  content: "\f2ab";
+}
+.fa-snapchat-ghost:before {
+  content: "\f2ac";
+}
+.fa-snapchat-square:before {
+  content: "\f2ad";
+}
+.fa-pied-piper:before {
+  content: "\f2ae";
+}
+.fa-first-order:before {
+  content: "\f2b0";
+}
+.fa-yoast:before {
+  content: "\f2b1";
+}
+.fa-themeisle:before {
+  content: "\f2b2";
+}
+.fa-google-plus-circle:before,
+.fa-google-plus-official:before {
+  content: "\f2b3";
+}
+.fa-fa:before,
+.fa-font-awesome:before {
+  content: "\f2b4";
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  white-space: nowrap;
-  -wibkit-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
-.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-lefticon > .photonui-iconbutton > .photonui-faicon,
-.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab .photonui-tabitem-righticon > .photonui-iconbutton > .photonui-faicon {
-  vertical-align: baseline;
-}
-.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content {
-  box-sizing: border-box;
-  min-height: 20px;
-  min-width: 20px;
-  -ms-flex-positive: 1;
-      flex-grow: 1;
-}
-.photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content > * {
-  height: 100%;
-  width: 100%;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox {
-  -ms-flex-direction: column;
-      flex-direction: column;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: row;
-      flex-direction: row;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox {
-  -ms-flex-direction: column-reverse;
-      flex-direction: column-reverse;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: row;
-      flex-direction: row;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox {
-  -ms-flex-direction: row;
-      flex-direction: row;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: column;
-      flex-direction: column;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox {
-  -ms-flex-direction: row-reverse;
-      flex-direction: row-reverse;
-}
-.photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: column;
-      flex-direction: column;
-}
-/*
- * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of Wanadev nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Authored by: Fabien LOISON <https://github.com/flozz>
- */
-.photonui-fontselect {
-  /* ... */
-}
-/*
- * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of Wanadev nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Authored by: Fabien LOISON <https://github.com/flozz>
- */
-.photonui-text {
-  /* ... */
-}
-/*
- * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *   * Neither the name of Wanadev nor the names of its contributors may be used
- *     to endorse or promote products derived from this software without specific
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Authored by: Fabien LOISON <https://github.com/flozz>
- */
-.photonui-faicon {
-  /* ... */
+.sr-only-focusable:active,
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
 }
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>

@@ -54,7 +54,6 @@ var SubMenuItem = MenuItem.$extend({
         this.$super(params);
         this.addClass("photonui-submenuitem");
         this.registerCallback("toggle-folding", "click", this.__onItemClicked, this);
-        this._updateProperties(["menuName"]);
     },
 
     //////////////////////////////////////////
@@ -73,6 +72,7 @@ var SubMenuItem = MenuItem.$extend({
     _menuName: null,
 
     getMenuName: function () {
+        "@photonui-update";
         return this._menuName;
     },
 

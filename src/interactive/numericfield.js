@@ -50,7 +50,6 @@ var NumericField = Field.$extend({
     // Constructor
     __init__: function (params) {
         this.$super(params);
-        this._updateProperties(["value"]);
         this._bindFieldEvents();
         this._unbindEvent("value-changed");
         this._bindEvent("keypress", this.__html.field, "keypress", this.__onKeypress.bind(this));
@@ -81,7 +80,10 @@ var NumericField = Field.$extend({
     },
 
     setMin: function (min) {
+        "@photonui-update";
         this._min = min;
+        this._updateValue(this.value);
+        this._updateFieldValue();
     },
 
     /**
@@ -98,7 +100,10 @@ var NumericField = Field.$extend({
     },
 
     setMax: function (max) {
+        "@photonui-update";
         this._max = max;
+        this._updateValue(this.value);
+        this._updateFieldValue();
     },
 
     /**
@@ -128,11 +133,14 @@ var NumericField = Field.$extend({
     _decimalDigits: null,
 
     getDecimalDigits: function () {
+        "@photonui-update";
         return this._decimalDigits;
     },
 
     setDecimalDigits: function (decimalDigits) {
         this._decimalDigits = decimalDigits;
+        this._updateValue(this.value);
+        this._updateFieldValue();
     },
 
     /**
@@ -145,11 +153,14 @@ var NumericField = Field.$extend({
     _decimalSymbol: ".",
 
     getDecimalSymbol: function () {
+        "@photonui-update";
         return this._decimalSymbol;
     },
 
     setDecimalSymbol: function (decimalSymbol) {
         this._decimalSymbol = decimalSymbol;
+        this._updateValue(this.value);
+        this._updateFieldValue();
     },
 
     /**
@@ -162,6 +173,7 @@ var NumericField = Field.$extend({
     _value: 0,
 
     getValue: function () {
+        "@photonui-update";
         return parseFloat(this._value);
     },
 
