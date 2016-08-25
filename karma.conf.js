@@ -25,6 +25,7 @@ module.exports = function(config) {
         browsers: ["Firefox", "Chrome"],
         captureTimeout: 60000,
         singleRun: true,
+        concurrency: 1,
 
         customLaunchers: {
             Chrome_travis_ci: {
