@@ -168,6 +168,9 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.6.2:**
+  * Fixes regression in the `photonui.ColorPicker` widget (#68)
+
 * **1.6.1:**
   * Fixes wrong import path of fontawesome files when importing photonui less files from the module.
 

@@ -24268,8 +24268,8 @@ var ColorPicker = Widget.$extend({
         this.__buffSBmask.height = 100;
         this.$super(params);
         this._updateH();
-        this._updateSB();
         this._updateSBmask();
+        this._updateSB();
         this._updateCanvas();
 
         this.__mouseManager = new MouseManager(this.__html.canvas);
