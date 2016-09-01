@@ -106,12 +106,16 @@ Helpers.getAbsolutePosition = function (element) {
     if (!(element instanceof Element)) {
         return {x: 0, y: 0};
     }
+
     var css;
+    var origElement = element;
+
     try {
         css = getComputedStyle(element);
     } catch (e) {
         return {x: 0, y: 0};
     }
+
     if (!css) {
         return {x: 0, y: 0};
     }
@@ -129,6 +133,14 @@ Helpers.getAbsolutePosition = function (element) {
         y += parseInt(css.borderTopWidth);
 
         element = element.offsetParent;
+    }
+
+    element = origElement;
+
+    while (element.parentNode && !(element instanceof HTMLBodyElement)) {
+        x -= element.scrollLeft || 0;
+        y -= element.scrollTop || 0;
+        element = element.parentNode;
     }
 
     return {x: x, y: y};
