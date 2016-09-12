@@ -399,6 +399,15 @@ var Select = Widget.$extend({
     __onItemClicked: function (widget) {
         this.value = widget.value;
         this._callCallbacks("value-changed", [this.value]);
+    },
+
+    /**
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function () {
+        this.$super();
+        this.setValue(this.value, true);
     }
 
 });
