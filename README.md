@@ -168,6 +168,11 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.6.3:**
+  * Fixes an issue when unregistering a callback in `photonui.AccelManager` (#73)
+  * Fixes translation not updated on selected elements of `photonui.Select` widget (#71)
+  * Fixes absolute widget calculation (partially fixes #70)
+
 * **1.6.2:**
   * Fixes regression in the `photonui.ColorPicker` widget (#68)
 

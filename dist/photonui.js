@@ -20279,6 +20279,15 @@ var Select = Widget.$extend({
     __onItemClicked: function (widget) {
         this.value = widget.value;
         this._callCallbacks("value-changed", [this.value]);
+    },
+
+    /**
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function () {
+        this.$super();
+        this.setValue(this.value, true);
     }
 
 });
@@ -23301,12 +23310,16 @@ Helpers.getAbsolutePosition = function (element) {
     if (!(element instanceof Element)) {
         return {x: 0, y: 0};
     }
+
     var css;
+    var origElement = element;
+
     try {
         css = getComputedStyle(element);
     } catch (e) {
         return {x: 0, y: 0};
     }
+
     if (!css) {
         return {x: 0, y: 0};
     }
@@ -23324,6 +23337,14 @@ Helpers.getAbsolutePosition = function (element) {
         y += parseInt(css.borderTopWidth);
 
         element = element.offsetParent;
+    }
+
+    element = origElement;
+
+    while (element.parentNode && !(element instanceof HTMLBodyElement)) {
+        x -= element.scrollLeft || 0;
+        y -= element.scrollTop || 0;
+        element = element.parentNode;
     }
 
     return {x: x, y: y};
@@ -28401,6 +28422,7 @@ var AccelManager = Base.$extend({
 
     // Constructor
     __init__: function () {
+        this.__keys = {};
         this.__kbd = {};
         this.$super();
     },
@@ -28410,6 +28432,20 @@ var AccelManager = Base.$extend({
     //////////////////////////////////////////
 
     // ====== Private properties ======
+
+    /**
+     * Registered keys.
+     *
+     *     {
+     *         "key": [ "id", "id", ... ]
+     *         ...
+     *     }
+     *
+     * @property __keys
+     * @private
+     * @type Object
+     */
+    __keys: null,
 
     /**
      * Keyboard bindings.
@@ -28424,6 +28460,7 @@ var AccelManager = Base.$extend({
      *     }
      *
      * @property __kbd
+     * @private
      * @type Object
      */
     __kbd: null,
@@ -28451,7 +28488,12 @@ var AccelManager = Base.$extend({
             safe: ((safe === undefined) ? true : safe),
             callback: callback
         };
-        KeyboardJS.bind(keys, this.__onAccell.bind(this, id));
+
+        if (!this.__keys[keys]) {
+            KeyboardJS.bind(keys, this.__onAccel.bind(this, keys));
+            this.__keys[keys] = [];
+        }
+        this.__keys[keys].push(id);
     },
 
     /**
@@ -28461,10 +28503,17 @@ var AccelManager = Base.$extend({
      * @param {String} id the accelerator id.
      */
     removeAccel: function (id) {
-        if (!this.__kbd[id]) {
+        var bd = this.__kbd[id];
+        if (!bd) {
             return;
         }
-        KeyboardJS.unbind(this.__kbd[id].keys);
+
+        var keys = this.__keys[bd.keys];
+        keys.splice(keys.indexOf(id), 1);
+        if (keys.length === 0) {
+            KeyboardJS.unbind(this.__kbd[id].keys);
+            delete this.__keys[bd.keys];
+        }
         delete this.__kbd[id];
     },
 
@@ -28480,28 +28529,31 @@ var AccelManager = Base.$extend({
     //////////////////////////////////////////
 
     /**
-     * @method __onAccell
+     * @method __onAccel
      * @private
-     * @param event
-     * @param keys
-     * @param combo
+     * @param {String} keys
+     * @param {Event} event
      */
-    __onAccell: function (id, event) {
-        if (!this.__kbd[id]) {
+    __onAccel: function (keys, event) {
+        if (!this.__keys[keys]) {
             return;
         }
 
-        if (this.__kbd[id].safe) {
-            if (document.activeElement instanceof HTMLInputElement ||
-                document.activeElement instanceof HTMLSelectElement ||
-                document.activeElement instanceof HTMLTextAreaElement) {
-                return;
-            }
-        }
+        for (var i = 0; i < this.__keys[keys].length; ++i) {
+            var id = this.__keys[keys][i];
 
-        this.__kbd[id].callback();
-        event.stopPropagation();
-        event.preventDefault();
+            if (this.__kbd[id].safe) {
+                if (document.activeElement instanceof HTMLInputElement ||
+                    document.activeElement instanceof HTMLSelectElement ||
+                    document.activeElement instanceof HTMLTextAreaElement) {
+                    continue;
+                }
+            }
+
+            this.__kbd[id].callback();
+            event.stopPropagation();
+            event.preventDefault();
+        }
     }
 
 });
