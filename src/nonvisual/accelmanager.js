@@ -175,7 +175,7 @@ var AccelManager = Base.$extend({
                 if (document.activeElement instanceof HTMLInputElement ||
                     document.activeElement instanceof HTMLSelectElement ||
                     document.activeElement instanceof HTMLTextAreaElement) {
-                    return;
+                    continue;
                 }
             }
 
