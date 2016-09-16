@@ -220,6 +220,7 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-mousemove");
         this._unbindEvent("slider-mouseup");
         this._updateFromMouseEvent(event);
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -252,6 +253,7 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-touchmove");
         this._unbindEvent("slider-touchend");
         this._unbindEvent("slider-touchcancel");
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -288,11 +290,13 @@ var Slider = NumericField.$extend({
             event.stopPropagation();
             this.value += this.step;
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         } else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
             event.preventDefault();
             event.stopPropagation();
             this.value -= this.step;
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         }
     },
 
@@ -328,7 +332,9 @@ var Slider = NumericField.$extend({
             event.preventDefault();
             event.stopPropagation();
         }
+
         this._callCallbacks("value-changed", [this.value]);
+        this.__debValueChangedFinal();
     },
 
     /**
