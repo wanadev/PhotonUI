@@ -36,6 +36,8 @@
  * @namespace photonui
  */
 
+var lodash = require("lodash");
+
 var Widget = require("../widget.js");
 
 /**
@@ -45,6 +47,10 @@ var Widget = require("../widget.js");
  *
  *   * value-changed:
  *     - description: called when the value was modified.
+ *     - callback:    function(widget, value)
+ *
+ *   * value-changed-final:
+ *     - description: called when the value is no more modified after continuous changes
  *     - callback:    function(widget, value)
  *
  *   * keydown:
@@ -72,11 +78,13 @@ var Field = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this._registerWEvents([
-            "value-changed", "keydown", "keyup", "keypress",
+            "value-changed", "value-changed-final", "keydown", "keyup", "keypress",
             "selection-changed"
         ]);
         this.$super(params);
         this.__html.field.name = this.name;
+
+        this.__debValueChangedFinal = lodash.debounce(this.__forValueChangedFinal, 250);
     },
 
     //////////////////////////////////////////
@@ -146,7 +154,8 @@ var Field = Widget.$extend({
      */
     _bindFieldEvents: function () {
         this._bindEvent("value-changed", this.__html.field, "change", function (event) {
-            this._callCallbacks("value-changed", [this.getValue()]);
+            this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         }.bind(this));
 
         this._bindEvent("keydown", this.__html.field, "keydown", function (event) {
@@ -183,7 +192,25 @@ var Field = Widget.$extend({
      */
     __onContextMenu: function (event) {
         event.stopPropagation();  // Enable context menu on fields
-    }
+    },
+
+    /**
+     * To be called indirectly through __debValueChangedFinal().
+     *
+     * @method __forValueChangedFinal
+     * @private
+     */
+    __forValueChangedFinal: function () {
+        this._callCallbacks("value-changed-final", [this.value]);
+    },
+
+    /**
+     * Debounced version of __forValueChangedFinal.
+     *
+     * @method __debValueChangedFinal
+     * @private
+     */
+    __debValueChangedFinal: null
 });
 
 module.exports = Field;

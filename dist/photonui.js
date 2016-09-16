@@ -24771,6 +24771,8 @@ module.exports = ColorPicker;
  * @namespace photonui
  */
 
+var lodash = require("lodash");
+
 var Widget = require("../widget.js");
 
 /**
@@ -24780,6 +24782,10 @@ var Widget = require("../widget.js");
  *
  *   * value-changed:
  *     - description: called when the value was modified.
+ *     - callback:    function(widget, value)
+ *
+ *   * value-changed-final:
+ *     - description: called when the value is no more modified after continuous changes
  *     - callback:    function(widget, value)
  *
  *   * keydown:
@@ -24807,11 +24813,13 @@ var Field = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this._registerWEvents([
-            "value-changed", "keydown", "keyup", "keypress",
+            "value-changed", "value-changed-final", "keydown", "keyup", "keypress",
             "selection-changed"
         ]);
         this.$super(params);
         this.__html.field.name = this.name;
+
+        this.__debValueChangedFinal = lodash.debounce(this.__forValueChangedFinal, 250);
     },
 
     //////////////////////////////////////////
@@ -24881,7 +24889,8 @@ var Field = Widget.$extend({
      */
     _bindFieldEvents: function () {
         this._bindEvent("value-changed", this.__html.field, "change", function (event) {
-            this._callCallbacks("value-changed", [this.getValue()]);
+            this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         }.bind(this));
 
         this._bindEvent("keydown", this.__html.field, "keydown", function (event) {
@@ -24918,12 +24927,30 @@ var Field = Widget.$extend({
      */
     __onContextMenu: function (event) {
         event.stopPropagation();  // Enable context menu on fields
-    }
+    },
+
+    /**
+     * To be called indirectly through __debValueChangedFinal().
+     *
+     * @method __forValueChangedFinal
+     * @private
+     */
+    __forValueChangedFinal: function () {
+        this._callCallbacks("value-changed-final", [this.value]);
+    },
+
+    /**
+     * Debounced version of __forValueChangedFinal.
+     *
+     * @method __debValueChangedFinal
+     * @private
+     */
+    __debValueChangedFinal: null
 });
 
 module.exports = Field;
 
-},{"../widget.js":68}],37:[function(require,module,exports){
+},{"../widget.js":68,"lodash":8}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25416,6 +25443,7 @@ var NumericField = Field.$extend({
         } else if (event.keyCode == 13) {  // Enter
             this._updateFieldValue();
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         } else {
             var field = this.__html.field;
             var value = field.value.slice(0, field.selectionStart) +
@@ -25448,6 +25476,7 @@ var NumericField = Field.$extend({
     __onChange: function (event) {
         this._updateFieldValue();
         this._callCallbacks("value-changed", [this.value]);
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -25485,7 +25514,9 @@ var NumericField = Field.$extend({
             }
             event.preventDefault();
         }
+
         this._callCallbacks("value-changed", [this.value]);
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -25495,15 +25526,18 @@ var NumericField = Field.$extend({
      */
     __onKeydown: function (event) {
         if (event.keyCode == 38) {
-            this.setValue(this.getValue() + this.step);
+            this.value += this.step;
             event.preventDefault();
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         } else if (event.keyCode == 40) {
-            this.setValue(this.getValue() - this.step);
+            this.value -= this.step;
             event.preventDefault();
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         }
     }
+
 });
 
 module.exports = NumericField;
@@ -25731,6 +25765,7 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-mousemove");
         this._unbindEvent("slider-mouseup");
         this._updateFromMouseEvent(event);
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -25763,6 +25798,7 @@ var Slider = NumericField.$extend({
         this._unbindEvent("slider-touchmove");
         this._unbindEvent("slider-touchend");
         this._unbindEvent("slider-touchcancel");
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -25799,11 +25835,13 @@ var Slider = NumericField.$extend({
             event.stopPropagation();
             this.value += this.step;
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         } else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
             event.preventDefault();
             event.stopPropagation();
             this.value -= this.step;
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         }
     },
 
@@ -25839,7 +25877,9 @@ var Slider = NumericField.$extend({
             event.preventDefault();
             event.stopPropagation();
         }
+
         this._callCallbacks("value-changed", [this.value]);
+        this.__debValueChangedFinal();
     },
 
     /**

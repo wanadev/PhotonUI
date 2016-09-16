@@ -283,6 +283,7 @@ var NumericField = Field.$extend({
         } else if (event.keyCode == 13) {  // Enter
             this._updateFieldValue();
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         } else {
             var field = this.__html.field;
             var value = field.value.slice(0, field.selectionStart) +
@@ -315,6 +316,7 @@ var NumericField = Field.$extend({
     __onChange: function (event) {
         this._updateFieldValue();
         this._callCallbacks("value-changed", [this.value]);
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -352,7 +354,9 @@ var NumericField = Field.$extend({
             }
             event.preventDefault();
         }
+
         this._callCallbacks("value-changed", [this.value]);
+        this.__debValueChangedFinal();
     },
 
     /**
@@ -362,15 +366,18 @@ var NumericField = Field.$extend({
      */
     __onKeydown: function (event) {
         if (event.keyCode == 38) {
-            this.setValue(this.getValue() + this.step);
+            this.value += this.step;
             event.preventDefault();
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         } else if (event.keyCode == 40) {
-            this.setValue(this.getValue() - this.step);
+            this.value -= this.step;
             event.preventDefault();
             this._callCallbacks("value-changed", [this.value]);
+            this.__debValueChangedFinal();
         }
     }
+
 });
 
 module.exports = NumericField;
