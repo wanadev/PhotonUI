@@ -168,6 +168,9 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.6.4:**
+  * Fields new event: `value-changed-final` called when the value is no more modified after continuous changes
+
 * **1.6.3:**
   * Fixes an issue when unregistering a callback in `photonui.AccelManager` (#73)
   * Fixes translation not updated on selected elements of `photonui.Select` widget (#71)
