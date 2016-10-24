@@ -82,55 +82,55 @@ describe("photonui.Color", function() {
     });
 
     it("ParseRgbaHexString can parse RGBA hexadecimal strings", function() {
-        expect(photonui.Color.ParseRgbHexString("#ff440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
-        expect(photonui.Color.ParseRgbHexString("#FF440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
-        expect(photonui.Color.ParseRgbHexString("ff440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
-        expect(photonui.Color.ParseRgbHexString("FF440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
-        expect(photonui.Color.ParseRgbHexString("#f403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
-        expect(photonui.Color.ParseRgbHexString("#F403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
-        expect(photonui.Color.ParseRgbHexString("f403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
-        expect(photonui.Color.ParseRgbHexString("F403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("#ff440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("#FF440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("ff440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("FF440033")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("#f403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("#F403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("f403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
+        expect(photonui.Color.ParseRgbaHexString("F403")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0x33]);
     });
 
     it("ParseCssRgbString can parse CSS rgb() color notation", function() {
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0)")).toBeEquivalentToArray([255, 0, 0]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255,0,0)")).toBeEquivalentToArray([255, 0, 0]);
-        expect(photonui.Color.ParseRgbHexString("rgb( 255 , 0 , 0 )")).toBeEquivalentToArray([255, 0, 0]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255,         0,\t0)")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb(255, 0, 0)")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb(255,0,0)")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb( 255 , 0 , 0 )")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb(255,         0,\t0)")).toBeEquivalentToArray([255, 0, 0]);
 
-        expect(photonui.Color.ParseRgbHexString("rgb(100%, 0%, 0%)")).toBeEquivalentToArray([255, 0, 0]);
-        expect(photonui.Color.ParseRgbHexString("rgb( 100% , 0% , 0% )")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb(100%, 0%, 0%)")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb( 100% , 0% , 0% )")).toBeEquivalentToArray([255, 0, 0]);
 
-        expect(photonui.Color.ParseRgbHexString("rgb(110%, 0%, 0%)")).toBeEquivalentToArray([255, 0, 0]);
-        expect(photonui.Color.ParseRgbHexString("rgb(300, -10, 0)")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb(110%, 0%, 0%)")).toBeEquivalentToArray([255, 0, 0]);
+        expect(photonui.Color.ParseCssRgbString("rgb(3000, -10, 0)")).toBeEquivalentToArray([255, 0, 0]);
     });
 
     it("ParseCssRgbaString can parse CSS rgba() color notation", function() {
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255,0,0,1)")).toBeEquivalentToArray([255, 0, 0, 255]);
-        expect(photonui.Color.ParseRgbHexString("rgb( 255 , 0 , 0 , 1 )")).toBeEquivalentToArray([255, 0, 0, 255]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255,         0,\t0, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255,0,0,1)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba( 255 , 0 , 0 , 1 )")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255,         0,\t0, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
 
-        expect(photonui.Color.ParseRgbHexString("rgb(100%, 0%, 0%, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
-        expect(photonui.Color.ParseRgbHexString("rgb( 100% , 0% , 0% , 1 )")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(100%, 0%, 0%, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba( 100% , 0% , 0% , 1 )")).toBeEquivalentToArray([255, 0, 0, 255]);
 
-        expect(photonui.Color.ParseRgbHexString("rgb(110%, 0%, 0%, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
-        expect(photonui.Color.ParseRgbHexString("rgb(300, -10, 0, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(110%, 0%, 0%, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(300, -10, 0, 1)")).toBeEquivalentToArray([255, 0, 0, 255]);
 
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0, 0.2)")).toBeEquivalentToArray([255, 0, 0, 51]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0, .2)")).toBeEquivalentToArray([255, 0, 0, 51]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0, 0)")).toBeEquivalentToArray([255, 0, 0, 0]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0, 1.0)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, 0.2)")).toBeEquivalentToArray([255, 0, 0, 51]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, .2)")).toBeEquivalentToArray([255, 0, 0, 51]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, 0)")).toBeEquivalentToArray([255, 0, 0, 0]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, 1.0)")).toBeEquivalentToArray([255, 0, 0, 255]);
 
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0, -42)")).toBeEquivalentToArray([255, 0, 0, 0]);
-        expect(photonui.Color.ParseRgbHexString("rgb(255, 0, 0, 42)")).toBeEquivalentToArray([255, 0, 0, 255]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, -42)")).toBeEquivalentToArray([255, 0, 0, 0]);
+        expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, 42)")).toBeEquivalentToArray([255, 0, 0, 255]);
     });
 
-    it("ParseCssHslString can parse CSS hsl() color notation", function() {
+    xit("ParseCssHslString can parse CSS hsl() color notation", function() {
         // TODO
     });
 
-    it("ParseCssHslaString can parse CSS hsla() color notation", function() {
+    xit("ParseCssHslaString can parse CSS hsla() color notation", function() {
         // TODO
     });
 

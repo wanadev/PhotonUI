@@ -36,7 +36,27 @@
  * @namespace photonui
  */
 
+var lodash = require("lodash");
 var Base = require("../base.js");
+
+var NAMED_COLORS = {
+    white:   [0xFF, 0xFF, 0xFF],
+    silver:  [0xC0, 0xC0, 0xC0],
+    gray:    [0x80, 0x80, 0x80],
+    black:   [0x00, 0x00, 0x00],
+    red:     [0xFF, 0x00, 0x00],
+    maroon:  [0x80, 0x00, 0x00],
+    yellow:  [0xFF, 0xFF, 0x00],
+    olive:   [0x80, 0x80, 0x00],
+    lime:    [0x00, 0xFF, 0x00],
+    green:   [0x00, 0x80, 0x00],
+    aqua:    [0x00, 0xFF, 0xFF],
+    teal:    [0x00, 0x80, 0x80],
+    blue:    [0x00, 0x00, 0xFF],
+    navy:    [0x00, 0x00, 0x80],
+    fuchsia: [0xFF, 0x00, 0xFF],
+    purple:  [0x80, 0x00, 0x80]
+};
 
 /**
  * Handle colors.
@@ -69,6 +89,229 @@ var Color = Base.$extend({
                 this.setRGBA.apply(this, arguments);
             }
         }
+    },
+
+    //////////////////////////////////////////
+    // Static methods                       //
+    //////////////////////////////////////////
+
+    __classvars__: {
+
+        /**
+         * Object containing all known named colors (`colorName: [r, g, b]`).
+         *
+         * @property NAMED_COLORS
+         * @static
+         * @type Object
+         */
+        NAMED_COLORS: NAMED_COLORS,
+
+        /**
+         * Converts a named color (e.g. "red") to an `[r, g, b]` array.
+         *
+         * @method ParseNamedColor
+         * @static
+         * @param {String} color The named color
+         * @return {Array} `[r, g, b] where all component is an integer between 0-255`
+         */
+        ParseNamedColor: function (color) {
+            color = color.toLowerCase();
+            if (!NAMED_COLORS[color]) {
+                throw new Error("InvalidColorFormat: '" + color + "' is not a supported named color");
+            }
+            return lodash.clone(NAMED_COLORS[color]);
+        },
+
+        /**
+         * Converts an hexadecimal RGB color (e.g. `#FF0000`, `#F00`) to an `[r, g, b]` array.
+         *
+         * @method ParseRgbHexString
+         * @static
+         * @param {String} color The hexadecimal RGB color
+         * @return {Array} `[r, g, b] where each component is an integer between 0-255`
+         */
+        ParseRgbHexString: function (color) {
+            if (color[0] != "#") {
+                color = "#" + color;
+            }
+
+            // #ff0000
+            if (color.match(/^#[a-z0-9]{6}$/i)) {
+                return Color.NormalizeRgbColor(
+                    parseInt(color[1] + color[2], 16),  // red
+                    parseInt(color[3] + color[4], 16),  // green
+                    parseInt(color[5] + color[6], 16)   // blue
+                );
+
+            // #f00
+            } else if (color.match(/^#[a-z0-9]{3}$/i)) {
+                return Color.NormalizeRgbColor(
+                    parseInt(color[1] + color[1], 16),  // red
+                    parseInt(color[2] + color[2], 16),  // green
+                    parseInt(color[3] + color[3], 16)   // blue
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid hexadecimal RGB color");
+        },
+
+        /**
+         * Converts an hexadecimal RGBA color (e.g. `#FF0000FF`, `#F00F`) to an `[r, g, b, a]` array.
+         *
+         * @method ParseRgbaHexString
+         * @static
+         * @param {String} color The hexadecimal RGBA color
+         * @return {Array} `[r, g, b, a] where each component is an integer between 0-255`
+         */
+        ParseRgbaHexString: function (color) {
+            if (color[0] != "#") {
+                color = "#" + color;
+            }
+
+            // #ff0000ff
+            if (color.match(/^#[a-z0-9]{8}$/i)) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(color[1] + color[2], 16),  // red
+                    parseInt(color[3] + color[4], 16),  // green
+                    parseInt(color[5] + color[6], 16),  // blue
+                    parseInt(color[7] + color[8], 16)   // alpha
+                );
+
+            // #f00f
+            } else if (color.match(/^#[a-z0-9]{4}$/i)) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(color[1] + color[1], 16),  // red
+                    parseInt(color[2] + color[2], 16),  // green
+                    parseInt(color[3] + color[3], 16),  // blue
+                    parseInt(color[4] + color[4], 16)   // alpha
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid hexadecimal RGBA color");
+        },
+
+        /**
+         * Converts a CSS RGB color (e.g. `rgb(255, 0, 0)`) to an `[r, g, b]` array.
+         *
+         * @method ParseCssRgbString
+         * @static
+         * @param {String} color The CSS RGB color
+         * @return {Array} `[r, g, b] where each component is an integer between 0-255`
+         */
+        ParseCssRgbString: function (color) {
+            // rgb(255, 0, 0)
+            var match = color.match(/^rgb\(\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*\)$/);
+            if (match) {
+                return Color.NormalizeRgbColor(
+                    parseInt(match[1], 10),
+                    parseInt(match[2], 10),
+                    parseInt(match[3], 10)
+                );
+            }
+
+            // rgb(100%, 0%, 0%)
+            match = color.match(/^rgb\(\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*\)$/);
+            if (match) {
+                return Color.NormalizeRgbColor(
+                    parseInt(match[1], 10) / 100 * 255,
+                    parseInt(match[2], 10) / 100 * 255,
+                    parseInt(match[3], 10) / 100 * 255
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid CSS RGB color");
+        },
+
+        /**
+         * Converts a CSS RGBA color (e.g. `rgba(255, 0, 0, 0.3)`) to an `[r, g, b, a]` array.
+         *
+         * @method ParseCssRgbaString
+         * @static
+         * @param {String} color The CSS RGBA color
+         * @return {Array} `[r, g, b, a] where each component is an integer between 0-255`
+         */
+        ParseCssRgbaString: function (color) {
+            // rgba(255, 0, 0)
+            // jscs:disable
+            var match = color.match(/^rgba\(\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*,\s*(-?[0-9]*\.?[0-9]+)\s*\)$/);
+            // jscs:enable
+            if (match) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(match[1], 10),
+                    parseInt(match[2], 10),
+                    parseInt(match[3], 10),
+                    parseFloat(match[4], 10) * 255
+                );
+            }
+
+            // rgba(100%, 0%, 0%)
+            // jscs:disable
+            match = color.match(/^rgba\(\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*,\s*(-?[0-9]*\.?[0-9]+)\s*\)$/);
+            // jscs:enable
+            if (match) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(match[1], 10) / 100 * 255,
+                    parseInt(match[2], 10) / 100 * 255,
+                    parseInt(match[3], 10) / 100 * 255,
+                    parseFloat(match[4], 10) * 255
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid CSS RGBA color");
+        },
+
+        ParseCssHslString: function (color) {
+            // TODO
+        },
+
+        ParseCssHslaString: function (color) {
+            // TODO
+        },
+
+        /**
+         * Normalize an RGB color.
+         *
+         * @method NormalizeRgbColor
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @return {Array} The normalized array `[r, g, b] where each component is an integer between 0-255`.
+         */
+        NormalizeRgbColor: function (red, green, blue) {
+            return [
+                lodash.clamp(red | 0, 0, 255),
+                lodash.clamp(green | 0, 0, 255),
+                lodash.clamp(blue | 0, 0, 255)
+            ];
+        },
+
+        /**
+         * Normalize an RGBA color.
+         *
+         * @method NormalizeRgbaColor
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @param {Number} alpha The opacity of the color
+         * @return {Array} The normalized array `[r, g, b, a] where each component is an integer between 0-255`.
+         */
+        NormalizeRgbaColor: function (red, green, blue, alpha) {
+            return [
+                lodash.clamp(red | 0, 0, 255),
+                lodash.clamp(green | 0, 0, 255),
+                lodash.clamp(blue | 0, 0, 255),
+                lodash.clamp(alpha | 0, 0, 255)
+            ];
+        },
+
+        NormalizeHslColor: function (hue, saturation, lightness) {
+            // TODO
+        },
+
+        NormalizeHslaColor: function (hue, saturation, lightness, alpha) {
+            // TODO
+        }
+
     },
 
     //////////////////////////////////////////
