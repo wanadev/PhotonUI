@@ -37,7 +37,9 @@
  */
 
 var lodash = require("lodash");
+
 var Base = require("../base.js");
+var helpers = require("../helpers.js");
 
 var NAMED_COLORS = {
     white:   [0xFF, 0xFF, 0xFF],
@@ -401,65 +403,38 @@ var Color = Base.$extend({
      * The color in HTML RGB hexadecimal format (e.g. "#FF0000").
      *
      * @property hexString
+     * @deprecated
      * @type String
      */
     getHexString: function () {
-        var r = this.red.toString(16).toUpperCase();
-        if (r.length == 1) {
-            r = "0" + r;
-        }
-        var g = this.green.toString(16).toUpperCase();
-        if (g.length == 1) {
-            g = "0" + g;
-        }
-        var b = this.blue.toString(16).toUpperCase();
-        if (b.length == 1) {
-            b = "0" + b;
-        }
-        return "#" + r + g + b;
+        helpers.log("warn", "'hexString' is deprecated, use 'rgbHexString' instead");
+        return this.$class.FormatToRgbHexString(this.red, this.green, this.blue);
     },
 
     setHexString: function (value) {
-        value = value.replace(" ", "");
-        // #FF0000
-        if (value.match(/^#[0-9a-f]{6}$/i)) {
-            this._red = parseInt(value[1] + value[2], 16);
-            this._green = parseInt(value[3] + value[4], 16);
-            this._blue = parseInt(value[5] + value[6], 16);
-            this._updateHSB();
+        helpers.log("warn", "'hexString' is deprecated, use 'fromString()' method instead");
 
-        // #F00
-        } else if (value.match(/^#[0-9a-f]{3}$/i)) {
-            this._red = parseInt(value[1] + value[1], 16);
-            this._green = parseInt(value[2] + value[2], 16);
-            this._blue = parseInt(value[3] + value[3], 16);
-            this._updateHSB();
+        var color = null;
 
-        // Named colors
-        } else {
-            var colors = {
-                white:   [0xFF, 0xFF, 0xFF],
-                silver:  [0xC0, 0xC0, 0xC0],
-                gray:    [0x80, 0x80, 0x80],
-                black:   [0x00, 0x00, 0x00],
-                red:     [0xFF, 0x00, 0x00],
-                maroon:  [0x80, 0x00, 0x00],
-                yellow:  [0xFF, 0xFF, 0x00],
-                olive:   [0x80, 0x80, 0x00],
-                lime:    [0x00, 0xFF, 0x00],
-                green:   [0x00, 0x80, 0x00],
-                aqua:    [0x00, 0xFF, 0xFF],
-                teal:    [0x00, 0x80, 0x80],
-                blue:    [0x00, 0x00, 0xFF],
-                navy:    [0x00, 0x00, 0x80],
-                fuchsia: [0xFF, 0x00, 0xFF],
-                purple:  [0x80, 0x00, 0x80]
-            };
-            if (colors[value] !== undefined) {
-                this.setRGB(colors[value]);
+        if (typeof value == "string") {
+            if (value.match(/^#([0-9a-f]{3}){1,2}$/i)) {
+                color = this.$class.ParseRgbHexString(value);
+            } else {
+                try {
+                    color = this.$class.ParseNamedColor(value);
+                } catch (e) {
+                    // pass
+                }
             }
+        } else if (lodash.isArray(value)) {
+            color = value;
         }
 
+        if (color) {
+            this.setRGB(color);
+        } else {
+            helpers.log("warn", "Unrecognized color format " + JSON.stringify(value));
+        }
     },
 
     /**
