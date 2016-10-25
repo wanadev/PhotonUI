@@ -445,7 +445,8 @@ var Color = Base.$extend({
      * @readOnly
      */
     getRgbString: function () {
-        return "rgb(" + this._red + ", " + this._green + ", " + this._blue + ")";
+        helpers.log("warn", "'rgbString' is deprecated, use 'cssRgbString' instead");
+        return this.$class.FormatToCssRgbString(this.red, this.green, this.blue);
     },
 
     /**
@@ -456,7 +457,8 @@ var Color = Base.$extend({
      * @readOnly
      */
     getRgbaString: function () {
-        return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + (this._alpha / 255) + ")";
+        helpers.log("warn", "'rgbaString' is deprecated, use 'cssRgbaString' instead");
+        return this.$class.FormatToCssRgbaString(this.red, this.green, this.blue, this.alpha);
     },
 
     /**
@@ -472,7 +474,7 @@ var Color = Base.$extend({
     },
 
     setRed: function (red) {
-        this._red = Math.max(0, Math.min(255, red | 0));
+        this._red = lodash.clamp(red | 0, 0, 255);
         this._updateHSB();
     },
 
@@ -489,7 +491,7 @@ var Color = Base.$extend({
     },
 
     setGreen: function (green) {
-        this._green = Math.max(0, Math.min(255, green | 0));
+        this._green = lodash.clamp(green | 0, 0, 255);
         this._updateHSB();
     },
 
@@ -506,7 +508,7 @@ var Color = Base.$extend({
     },
 
     setBlue: function (blue) {
-        this._blue = Math.max(0, Math.min(255, blue | 0));
+        this._blue = lodash.clamp(blue | 0, 0, 255);
         this._updateHSB();
     },
 
@@ -523,7 +525,7 @@ var Color = Base.$extend({
     },
 
     setAlpha: function (alpha) {
-        this._alpha = Math.max(0, Math.min(255, alpha | 0));
+        this._alpha = lodash.clamp(alpha | 0, 0, 255);
         this._callCallbacks("value-changed");
     },
 
@@ -540,7 +542,7 @@ var Color = Base.$extend({
     },
 
     setHue: function (hue) {
-        this._hue = Math.max(0, Math.min(360, hue | 0));
+        this._hue = lodash.clamp(hue | 0, 0, 360);
         this._updateRGB();
     },
 
@@ -557,7 +559,7 @@ var Color = Base.$extend({
     },
 
     setSaturation: function (saturation) {
-        this._saturation = Math.max(0, Math.min(100, saturation | 0));
+        this._saturation = lodash.clamp(saturation | 0, 0, 100);
         this._updateRGB();
     },
 
@@ -574,7 +576,7 @@ var Color = Base.$extend({
     },
 
     setBrightness: function (brightness) {
-        this._brightness = Math.max(0, Math.min(100, brightness | 0));
+        this._brightness = lodash.clamp(brightness | 0, 0, 100);
         this._updateRGB();
     },
 

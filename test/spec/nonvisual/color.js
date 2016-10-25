@@ -174,5 +174,15 @@ describe("photonui.Color", function() {
         expect(color.hexString).toEqual("#123456");
     });
 
+    it("rgbString (deprecated) returns a CSS RGB string", function() {
+        var color = new photonui.Color(0xC0, 0xFF, 0xEE);
+        expect(color.rgbString).toEqual("rgb(192, 255, 238)");
+    });
+
+    it("rgbaString (deprecated) returns a CSS RGBA string", function() {
+        var color = new photonui.Color(0xC0, 0xFF, 0xEE);
+        expect(color.rgbaString).toEqual("rgba(192, 255, 238, 1.00)");
+    });
+
 });
 
