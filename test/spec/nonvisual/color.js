@@ -134,5 +134,27 @@ describe("photonui.Color", function() {
         // TODO
     });
 
+    it("FormatToRgbHexString can format a color to an hexadecimal RGB string", function() {
+        expect(photonui.Color.FormatToRgbHexString(0xFF, 0x44, 0x00)).toEqual("#FF4400");
+        expect(photonui.Color.FormatToRgbHexString(0x00, 0x01, 0x02)).toEqual("#000102");
+    });
+
+    it("FormatToRgbaHexString can format a color to an hexadecimal RGBA string", function() {
+        expect(photonui.Color.FormatToRgbaHexString(0xFF, 0x44, 0x00, 0x00)).toEqual("#FF440000");
+        expect(photonui.Color.FormatToRgbaHexString(0x00, 0x01, 0x02, 0xFF)).toEqual("#000102FF");
+        expect(photonui.Color.FormatToRgbaHexString(0x00, 0x00, 0x00, 0x88)).toEqual("#00000088");
+    });
+
+    it("FormatToCssRgbString can format a color to a CSS RGB string", function() {
+        expect(photonui.Color.FormatToCssRgbString(0xFF, 0x44, 0x00)).toEqual("rgb(255, 68, 0)");
+        expect(photonui.Color.FormatToCssRgbString(0x00, 0x01, 0x02)).toEqual("rgb(0, 1, 2)");
+    });
+
+    it("FormatToCssRgbaString can format a color to a CSS RGBA string", function() {
+        expect(photonui.Color.FormatToCssRgbaString(0xFF, 0x44, 0x00, 0xFF)).toEqual("rgba(255, 68, 0, 1.00)");
+        expect(photonui.Color.FormatToCssRgbaString(0xFF, 0x44, 0x00, 0x00)).toEqual("rgba(255, 68, 0, 0.00)");
+        expect(photonui.Color.FormatToCssRgbaString(0xFF, 0x44, 0x00, 0x88)).toEqual("rgba(255, 68, 0, 0.53)");
+    });
+
 });
 

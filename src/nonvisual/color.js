@@ -269,9 +269,85 @@ var Color = Base.$extend({
         },
 
         /**
+         * Format an RGB color to hexadecimal RGB string (e.g. `#FF0000`).
+         *
+         * @method FormatToRgbHexString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @return {String} The formatted color string.
+         */
+        FormatToRgbHexString: function (red, green, blue) {
+            var r = red.toString(16).toUpperCase();
+            if (r.length == 1) {
+                r = "0" + r;
+            }
+            var g = green.toString(16).toUpperCase();
+            if (g.length == 1) {
+                g = "0" + g;
+            }
+            var b = blue.toString(16).toUpperCase();
+            if (b.length == 1) {
+                b = "0" + b;
+            }
+            return "#" + r + g + b;
+        },
+
+        /**
+         * Format an RGBA color to hexadecimal RGBA string (e.g. `#FF0000FF`).
+         *
+         * @method FormatToRgbaHexString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @param {Number} alpha The opacity of the color
+         * @return {String} The formatted color string.
+         */
+        FormatToRgbaHexString: function (red, green, blue, alpha) {
+            var a = alpha.toString(16).toUpperCase();
+            if (a.length == 1) {
+                a = "0" + a;
+            }
+            return Color.FormatToRgbHexString(red, green, blue) + a;
+        },
+
+        /**
+         * Format an RGB color to CSS RGB string (e.g. `rgb(255, 0, 0)`).
+         *
+         * @method FormatToCssRgbString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @return {String} The formatted color string.
+         */
+        FormatToCssRgbString: function (red, green, blue) {
+            return "rgb(" + red + ", " + green + ", " + blue + ")";
+        },
+
+        /**
+         * Format an RGBA color to CSS RGBA string (e.g. `rgba(255, 0, 0, 1.00)`).
+         *
+         * @method FormatToCssRgbaString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @param {Number} alpha The opacity of the color
+         * @return {String} The formatted color string.
+         */
+        FormatToCssRgbaString: function (red, green, blue, alpha) {
+            var a = (alpha / 255).toFixed(2);
+            return "rgba(" + red + ", " + green + ", " + blue + ", " + a + ")";
+        },
+
+        /**
          * Normalize an RGB color.
          *
          * @method NormalizeRgbColor
+         * @static
          * @param {Number} red The red component
          * @param {Number} green The green component
          * @param {Number} blue The blue component
@@ -289,6 +365,7 @@ var Color = Base.$extend({
          * Normalize an RGBA color.
          *
          * @method NormalizeRgbaColor
+         * @static
          * @param {Number} red The red component
          * @param {Number} green The green component
          * @param {Number} blue The blue component
