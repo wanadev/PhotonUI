@@ -535,7 +535,7 @@ var Color = Base.$extend({
     /**
      * The color in CSS RGB format (e.g. "rgb(255, 0, 0)").
      *
-     * @property rgbString
+     * @property cssRgbString
      * @type String
      */
     getCssRgbString: function () {
@@ -553,7 +553,7 @@ var Color = Base.$extend({
     /**
      * The color in CSS RGBA format (e.g. "rgb(255, 0, 0, 1.0)").
      *
-     * @property rgbaString
+     * @property cssRgbaString
      * @type String
      */
     getCssRgbaString: function () {
