@@ -84,7 +84,7 @@ var Color = Base.$extend({
         } else {
             this.$super();
             if (typeof(params) == "string") {
-                this.hexString = params;
+                this.fromString(params);
             } else if (Array.isArray(params)) {
                 this.setRGBA(params);
             } else if (arguments.length >= 3) {
@@ -109,12 +109,58 @@ var Color = Base.$extend({
         NAMED_COLORS: NAMED_COLORS,
 
         /**
+         * Converts any supported color format to an `[r, g, b, a]` array.
+         *
+         * @method ParseString
+         * @static
+         * @param {String} color
+         * @return {Array} `[r, g, b, a]` where each components is an integer between 0-255
+         */
+        ParseString: function (color) {
+            // #FF4400 #F40
+            if (color.match(/^#([0-9a-f]{3}){1,2}$/i)) {
+                return Color.NormalizeRgbaColor.apply(undefined, Color.ParseRgbHexString(color));
+            }
+
+            // #FF4400FF #F40F
+            if (color.match(/^#([0-9a-f]{4}){1,2}$/i)) {
+                return Color.ParseRgbaHexString(color);
+            }
+
+            // rgb(255, 70, 0)
+            if (color.match(/^rgb\(.+\)$/)) {
+                try {
+                    return Color.NormalizeRgbaColor.apply(undefined, Color.ParseCssRgbString(color));
+                } catch (error) {
+                    // pass
+                }
+            }
+
+            // rgba(255, 70, 0, 1.0)
+            if (color.match(/^rgba\(.+\)$/)) {
+                try {
+                    return Color.ParseCssRgbaString(color);
+                } catch (error) {
+                    // pass
+                }
+            }
+
+            // Named color
+            if (lodash.includes(lodash.keys(NAMED_COLORS), color.toLowerCase())) {
+                return Color.NormalizeRgbaColor.apply(undefined, Color.ParseNamedColor(color));
+            }
+
+            // Invalid color... thow...
+            throw new Error("InvalidColorFormat: '" + color + "' is not in a supported format");
+        },
+
+        /**
          * Converts a named color (e.g. "red") to an `[r, g, b]` array.
          *
          * @method ParseNamedColor
          * @static
          * @param {String} color The named color
-         * @return {Array} `[r, g, b] where all component is an integer between 0-255`
+         * @return {Array} `[r, g, b]` where each component is an integer between 0-255
          */
         ParseNamedColor: function (color) {
             color = color.toLowerCase();
@@ -130,7 +176,7 @@ var Color = Base.$extend({
          * @method ParseRgbHexString
          * @static
          * @param {String} color The hexadecimal RGB color
-         * @return {Array} `[r, g, b] where each component is an integer between 0-255`
+         * @return {Array} `[r, g, b]` where each component is an integer between 0-255
          */
         ParseRgbHexString: function (color) {
             if (color[0] != "#") {
@@ -163,7 +209,7 @@ var Color = Base.$extend({
          * @method ParseRgbaHexString
          * @static
          * @param {String} color The hexadecimal RGBA color
-         * @return {Array} `[r, g, b, a] where each component is an integer between 0-255`
+         * @return {Array} `[r, g, b, a]` where each component is an integer between 0-255
          */
         ParseRgbaHexString: function (color) {
             if (color[0] != "#") {
@@ -198,7 +244,7 @@ var Color = Base.$extend({
          * @method ParseCssRgbString
          * @static
          * @param {String} color The CSS RGB color
-         * @return {Array} `[r, g, b] where each component is an integer between 0-255`
+         * @return {Array} `[r, g, b]` where each component is an integer between 0-255
          */
         ParseCssRgbString: function (color) {
             // rgb(255, 0, 0)
@@ -230,7 +276,7 @@ var Color = Base.$extend({
          * @method ParseCssRgbaString
          * @static
          * @param {String} color The CSS RGBA color
-         * @return {Array} `[r, g, b, a] where each component is an integer between 0-255`
+         * @return {Array} `[r, g, b, a]` where each component is an integer between 0-255
          */
         ParseCssRgbaString: function (color) {
             // rgba(255, 0, 0)
@@ -353,7 +399,7 @@ var Color = Base.$extend({
          * @param {Number} red The red component
          * @param {Number} green The green component
          * @param {Number} blue The blue component
-         * @return {Array} The normalized array `[r, g, b] where each component is an integer between 0-255`.
+         * @return {Array} The normalized array `[r, g, b]` where each component is an integer between 0-255.
          */
         NormalizeRgbColor: function (red, green, blue) {
             return [
@@ -372,9 +418,12 @@ var Color = Base.$extend({
          * @param {Number} green The green component
          * @param {Number} blue The blue component
          * @param {Number} alpha The opacity of the color
-         * @return {Array} The normalized array `[r, g, b, a] where each component is an integer between 0-255`.
+         * @return {Array} The normalized array `[r, g, b, a]` where each component is an integer between 0-255.
          */
         NormalizeRgbaColor: function (red, green, blue, alpha) {
+            if (alpha === undefined) {
+                alpha = 255;
+            }
             return [
                 lodash.clamp(red | 0, 0, 255),
                 lodash.clamp(green | 0, 0, 255),
@@ -585,6 +634,20 @@ var Color = Base.$extend({
     //////////////////////////////////////////
 
     // ====== Public methods ======
+
+    /**
+     * Defines the color from any supported string format.
+     *
+     * @method fromString
+     * @param {String} color
+     */
+    fromString: function (color) {
+        try {
+            this.setRGBA(this.$class.ParseString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
 
     /**
      * Set RGB(A) color (alias for setRGBA).

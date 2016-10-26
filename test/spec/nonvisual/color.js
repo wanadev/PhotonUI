@@ -49,6 +49,18 @@ describe("photonui.Color", function() {
 
     describe("Static methods", function() {
 
+        it("ParseString can parse any supported color format to RGBA array", function() {
+            expect(photonui.Color.ParseString("#c0ffee")).toBeEquivalentToArray([0xC0, 0xFF, 0xEE, 0xFF]);
+            expect(photonui.Color.ParseString("#F40")).toBeEquivalentToArray([0xFF, 0x44, 0x00, 0xFF]);
+            expect(photonui.Color.ParseString("rgb(0, 255, 255)")).toBeEquivalentToArray([0, 255, 255, 255]);
+
+            expect(photonui.Color.ParseString("#ABadCafe")).toBeEquivalentToArray([0xAB, 0xAD, 0xCA, 0xFE]);
+            expect(photonui.Color.ParseString("#dead")).toBeEquivalentToArray([0xDD, 0xEE, 0xAA, 0xDD]);
+            expect(photonui.Color.ParseString("rgba(255, 0, 0, .2)")).toBeEquivalentToArray([255, 0, 0, 51]);
+
+            expect(photonui.Color.ParseString("teal")).toBeEquivalentToArray([0x00, 0x80, 0x80, 0xFF]);
+        });
+
         it("ParseNamedColor can parse valid CSS named colors", function() {
             // TODO Implements supports of all SVG colors https://www.w3.org/TR/css3-color/#svg-color
 
@@ -182,6 +194,17 @@ describe("photonui.Color", function() {
     it("rgbaString (deprecated) returns a CSS RGBA string", function() {
         var color = new photonui.Color(0xC0, 0xFF, 0xEE);
         expect(color.rgbaString).toEqual("rgba(192, 255, 238, 1.00)");
+    });
+
+    it("fromString() updates the color from the given string", function() {
+        var color = new photonui.Color();
+
+        color.fromString("#DeadBeef");
+
+        expect(color.red).toEqual(0xDE);
+        expect(color.green).toEqual(0xAD);
+        expect(color.blue).toEqual(0xBE);
+        expect(color.alpha).toEqual(0xEF);
     });
 
 });
