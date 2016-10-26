@@ -308,14 +308,6 @@ var Color = Base.$extend({
             throw new Error("InvalidColorFormat: " + color + " is not a valid CSS RGBA color");
         },
 
-        ParseCssHslString: function (color) {
-            // TODO
-        },
-
-        ParseCssHslaString: function (color) {
-            // TODO
-        },
-
         /**
          * Format an RGB color to hexadecimal RGB string (e.g. `#FF0000`).
          *
@@ -430,14 +422,6 @@ var Color = Base.$extend({
                 lodash.clamp(blue | 0, 0, 255),
                 lodash.clamp(alpha | 0, 0, 255)
             ];
-        },
-
-        NormalizeHslColor: function (hue, saturation, lightness) {
-            // TODO
-        },
-
-        NormalizeHslaColor: function (hue, saturation, lightness, alpha) {
-            // TODO
         }
 
     },
@@ -814,7 +798,7 @@ var Color = Base.$extend({
     },
 
     toString: function () {
-        return this.hexString;
+        return this.rgbHexString;
     },
 
     // ====== Private methods ======

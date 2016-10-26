@@ -140,14 +140,6 @@ describe("photonui.Color", function() {
             expect(photonui.Color.ParseCssRgbaString("rgba(255, 0, 0, 42)")).toBeEquivalentToArray([255, 0, 0, 255]);
         });
 
-        xit("ParseCssHslString can parse CSS hsl() color notation", function() {
-            // TODO
-        });
-
-        xit("ParseCssHslaString can parse CSS hsla() color notation", function() {
-            // TODO
-        });
-
         it("FormatToRgbHexString can format a color to an hexadecimal RGB string", function() {
             expect(photonui.Color.FormatToRgbHexString(0xFF, 0x44, 0x00)).toEqual("#FF4400");
             expect(photonui.Color.FormatToRgbHexString(0x00, 0x01, 0x02)).toEqual("#000102");
