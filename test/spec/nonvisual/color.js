@@ -207,5 +207,43 @@ describe("photonui.Color", function() {
         expect(color.alpha).toEqual(0xEF);
     });
 
+    it("cssRgbString", function() {
+        var color = new photonui.Color("teal");
+        expect(color.cssRgbString).toEqual("rgb(0, 128, 128)");
+        color.cssRgbString = "rgb(255, 0, 0)";
+        expect(color.red).toEqual(255);
+        expect(color.green).toEqual(0);
+        expect(color.blue).toEqual(0);
+    });
+
+    it("cssRgbaString", function() {
+        var color = new photonui.Color("teal");
+        expect(color.cssRgbaString).toEqual("rgba(0, 128, 128, 1.00)");
+        color.cssRgbaString = "rgba(255, 0, 0, .2)";
+        expect(color.red).toEqual(255);
+        expect(color.green).toEqual(0);
+        expect(color.blue).toEqual(0);
+        expect(color.alpha).toEqual(51);
+    });
+
+    it("rgbHexString", function() {
+        var color = new photonui.Color("teal");
+        expect(color.rgbHexString).toEqual("#008080");
+        color.rgbHexString = "#BADBEE";
+        expect(color.red).toEqual(0xBA);
+        expect(color.green).toEqual(0xDB);
+        expect(color.blue).toEqual(0xEE);
+    });
+
+    it("rgbaHexString", function() {
+        var color = new photonui.Color("teal");
+        expect(color.rgbaHexString).toEqual("#008080FF");
+        color.rgbaHexString = "#ABADCAFE";
+        expect(color.red).toEqual(0xAB);
+        expect(color.green).toEqual(0xAD);
+        expect(color.blue).toEqual(0xCA);
+        expect(color.alpha).toEqual(0xFE);
+    });
+
 });
 

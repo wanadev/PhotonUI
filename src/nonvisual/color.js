@@ -449,7 +449,7 @@ var Color = Base.$extend({
     // ====== Public properties ======
 
     /**
-     * The color in HTML RGB hexadecimal format (e.g. "#FF0000").
+     * The color in RGB hexadecimal format (e.g. "#FF0000").
      *
      * @property hexString
      * @deprecated
@@ -457,7 +457,7 @@ var Color = Base.$extend({
      */
     getHexString: function () {
         helpers.log("warn", "'hexString' is deprecated, use 'rgbHexString' instead");
-        return this.$class.FormatToRgbHexString(this.red, this.green, this.blue);
+        return this.rgbHexString;
     },
 
     setHexString: function (value) {
@@ -487,11 +487,12 @@ var Color = Base.$extend({
     },
 
     /**
-     * The color in HTML RGB format (e.g. "rgb(255, 0, 0)").
+     * The color in CSS RGB format (e.g. "rgb(255, 0, 0)").
      *
      * @property rgbString
      * @type String
      * @readOnly
+     * @deprecated
      */
     getRgbString: function () {
         helpers.log("warn", "'rgbString' is deprecated, use 'cssRgbString' instead");
@@ -499,15 +500,88 @@ var Color = Base.$extend({
     },
 
     /**
-     * The color in HTML RGBA format (e.g. "rgba(255, 0, 0, 1.0)").
+     * The color in CSS RGBA format (e.g. "rgba(255, 0, 0, 1.0)").
      *
      * @property rgbaString
      * @type String
      * @readOnly
+     * @deprecated
      */
     getRgbaString: function () {
         helpers.log("warn", "'rgbaString' is deprecated, use 'cssRgbaString' instead");
         return this.$class.FormatToCssRgbaString(this.red, this.green, this.blue, this.alpha);
+    },
+
+    /**
+     * The color in RGB hexadecimal format (e.g. "#FF0000").
+     *
+     * @property rgbHexString
+     * @type String
+     */
+    getRgbHexString: function () {
+        return this.$class.FormatToRgbHexString(this.red, this.green, this.blue);
+    },
+
+    setRgbHexString: function (color) {
+        try {
+            this.setRGB(this.$class.ParseRgbHexString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
+
+    /**
+     * The color in RGBA hexadecimal format (e.g. "#FF0000FF").
+     *
+     * @property rgbaHexString
+     * @type String
+     */
+    getRgbaHexString: function () {
+        return this.$class.FormatToRgbaHexString(this.red, this.green, this.blue, this.alpha);
+    },
+
+    setRgbaHexString: function (color) {
+        try {
+            this.setRGBA(this.$class.ParseRgbaHexString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
+
+    /**
+     * The color in CSS RGB format (e.g. "rgb(255, 0, 0)").
+     *
+     * @property rgbString
+     * @type String
+     */
+    getCssRgbString: function () {
+        return this.$class.FormatToCssRgbString(this.red, this.green, this.blue);
+    },
+
+    setCssRgbString: function (color) {
+        try {
+            this.setRGB(this.$class.ParseCssRgbString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
+
+    /**
+     * The color in CSS RGBA format (e.g. "rgb(255, 0, 0, 1.0)").
+     *
+     * @property rgbaString
+     * @type String
+     */
+    getCssRgbaString: function () {
+        return this.$class.FormatToCssRgbaString(this.red, this.green, this.blue, this.alpha);
+    },
+
+    setCssRgbaString: function (color) {
+        try {
+            this.setRGBA(this.$class.ParseCssRgbaString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
     },
 
     /**
