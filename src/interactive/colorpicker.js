@@ -99,11 +99,11 @@ var ColorPicker = Widget.$extend({
      * @type String
      */
     getValue: function () {
-        return this.color.hexString;
+        return this.color.rgbHexString;
     },
 
     setValue: function (value) {
-        this.color.hexString = value;
+        this.color.fromString(value);
         this._updateSB();
         this._updateCanvas();
     },
@@ -240,7 +240,7 @@ var ColorPicker = Widget.$extend({
         for (var i = 0 ; i < 360 ; i++) {
             color.hue = 360 - i;
             ctx.beginPath();
-            ctx.fillStyle = color.hexString;
+            ctx.fillStyle = color.rgbHexString;
             ctx.arc(100, 100, 90, Math.PI * i / 180, Math.PI * ((i + 2) % 360) / 180, false);
             ctx.lineTo(100, 100);
             ctx.fill();
@@ -312,7 +312,7 @@ var ColorPicker = Widget.$extend({
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // fill the whole canvas with the current color
-        ctx.fillStyle = color.hexString;
+        ctx.fillStyle = color.rgbHexString;
         ctx.rect(0, 0, canvas.width, canvas.height);
         ctx.fill();
 
@@ -358,8 +358,8 @@ var ColorPicker = Widget.$extend({
         ctx.restore();
 
         // Color preview
-        this.__html.preview.style.backgroundColor = this.color.rgbaString;
-        this.__html.preview.value = this.color.hexString;
+        this.__html.preview.style.backgroundColor = this.color.cssRgbaString;
+        this.__html.preview.value = this.color.rgbHexString;
     },
 
     /**
@@ -507,8 +507,8 @@ var ColorPicker = Widget.$extend({
      * @private
      */
     __onValueChanged: function () {
-        this.color.hexString = this.__html.preview.value;
-        this.__html.preview.value = this.color.hexString;
+        this.color.fromString(this.__html.preview.value);
+        this.__html.preview.value = this.color.rgbHexString;
         this._callCallbacks("value-changed", this.color);
     },
 });

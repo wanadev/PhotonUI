@@ -115,17 +115,17 @@ var ColorPickerDialog = Dialog.$extend({
     },
 
     /**
-     * The color as hex string (shorthand to ColorPickerDialog.color.hexString).
+     * The color as hex string (shorthand to ColorPickerDialog.color.rgbHexString).
      *
      * @property value
      * @type String
      */
     getValue: function () {
-        return this._color.hexString;
+        return this._color.rgbHexString;
     },
 
     setValue: function (value) {
-        this._color.hexString = value;
+        this._color.fromString(value);
     },
 
     setVisible: function (visible) {
