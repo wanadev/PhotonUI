@@ -81,11 +81,11 @@ var ColorButton = Button.$extend({
      * @type String
      */
     getValue: function () {
-        return this.color.hexString;
+        return this.color.rgbHexString;
     },
 
     setValue: function (value) {
-        this.color.hexString = value;
+        this.color.fromString(value);
     },
 
     /**
@@ -244,7 +244,7 @@ var ColorButton = Button.$extend({
      * @private
      */
     __onColorChanged: function () {
-        this.__html.color.style.backgroundColor = this.color.hexString;
+        this.__html.color.style.backgroundColor = this.color.rgbHexString;
     },
 
     /**

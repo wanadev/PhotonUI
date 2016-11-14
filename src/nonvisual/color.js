@@ -36,7 +36,160 @@
  * @namespace photonui
  */
 
+var lodash = require("lodash");
+
 var Base = require("../base.js");
+var helpers = require("../helpers.js");
+
+var NAMED_COLORS = {
+    aliceblue:             [0xF0, 0xF8, 0xFF],
+    antiquewhite:          [0xFA, 0xEB, 0xD7],
+    aqua:                  [0x00, 0xFF, 0xFF],
+    aquamarine:            [0x7F, 0xFF, 0xD4],
+    azure:                 [0xF0, 0xFF, 0xFF],
+    beige:                 [0xF5, 0xF5, 0xDC],
+    bisque:                [0xFF, 0xE4, 0xC4],
+    black:                 [0x00, 0x00, 0x00],
+    blanchedalmond:        [0xFF, 0xEB, 0xCD],
+    blue:                  [0x00, 0x00, 0xFF],
+    blueviolet:            [0x8A, 0x2B, 0xE2],
+    brown:                 [0xA5, 0x2A, 0x2A],
+    burlywood:             [0xDE, 0xB8, 0x87],
+    cadetblue:             [0x5F, 0x9E, 0xA0],
+    chartreuse:            [0x7F, 0xFF, 0x00],
+    chocolate:             [0xD2, 0x69, 0x1E],
+    coral:                 [0xFF, 0x7F, 0x50],
+    cornflowerblue:        [0x64, 0x95, 0xED],
+    cornsilk:              [0xFF, 0xF8, 0xDC],
+    crimson:               [0xDC, 0x14, 0x3C],
+    cyan:                  [0x00, 0xFF, 0xFF],
+    darkblue:              [0x00, 0x00, 0x8B],
+    darkcyan:              [0x00, 0x8B, 0x8B],
+    darkgoldenrod:         [0xB8, 0x86, 0x0B],
+    darkgray:              [0xA9, 0xA9, 0xA9],
+    darkgreen:             [0x00, 0x64, 0x00],
+    darkgrey:              [0xA9, 0xA9, 0xA9],
+    darkkhaki:             [0xBD, 0xB7, 0x6B],
+    darkmagenta:           [0x8B, 0x00, 0x8B],
+    darkolivegreen:        [0x55, 0x6B, 0x2F],
+    darkorange:            [0xFF, 0x8C, 0x00],
+    darkorchid:            [0x99, 0x32, 0xCC],
+    darkred:               [0x8B, 0x00, 0x00],
+    darksalmon:            [0xE9, 0x96, 0x7A],
+    darkseagreen:          [0x8F, 0xBC, 0x8F],
+    darkslateblue:         [0x48, 0x3D, 0x8B],
+    darkslategray:         [0x2F, 0x4F, 0x4F],
+    darkslategrey:         [0x2F, 0x4F, 0x4F],
+    darkturquoise:         [0x00, 0xCE, 0xD1],
+    darkviolet:            [0x94, 0x00, 0xD3],
+    deeppink:              [0xFF, 0x14, 0x93],
+    deepskyblue:           [0x00, 0xBF, 0xFF],
+    dimgray:               [0x69, 0x69, 0x69],
+    dimgrey:               [0x69, 0x69, 0x69],
+    dodgerblue:            [0x1E, 0x90, 0xFF],
+    firebrick:             [0xB2, 0x22, 0x22],
+    floralwhite:           [0xFF, 0xFA, 0xF0],
+    forestgreen:           [0x22, 0x8B, 0x22],
+    fuchsia:               [0xFF, 0x00, 0xFF],
+    gainsboro:             [0xDC, 0xDC, 0xDC],
+    ghostwhite:            [0xF8, 0xF8, 0xFF],
+    gold:                  [0xFF, 0xD7, 0x00],
+    goldenrod:             [0xDA, 0xA5, 0x20],
+    gray:                  [0x80, 0x80, 0x80],
+    green:                 [0x00, 0x80, 0x00],
+    greenyellow:           [0xAD, 0xFF, 0x2F],
+    grey:                  [0x80, 0x80, 0x80],
+    honeydew:              [0xF0, 0xFF, 0xF0],
+    hotpink:               [0xFF, 0x69, 0xB4],
+    indianred:             [0xCD, 0x5C, 0x5C],
+    indigo:                [0x4B, 0x00, 0x82],
+    ivory:                 [0xFF, 0xFF, 0xF0],
+    khaki:                 [0xF0, 0xE6, 0x8C],
+    lavender:              [0xE6, 0xE6, 0xFA],
+    lavenderblush:         [0xFF, 0xF0, 0xF5],
+    lawngreen:             [0x7C, 0xFC, 0x00],
+    lemonchiffon:          [0xFF, 0xFA, 0xCD],
+    lightblue:             [0xAD, 0xD8, 0xE6],
+    lightcoral:            [0xF0, 0x80, 0x80],
+    lightcyan:             [0xE0, 0xFF, 0xFF],
+    lightgoldenrodyellow:  [0xFA, 0xFA, 0xD2],
+    lightgray:             [0xD3, 0xD3, 0xD3],
+    lightgreen:            [0x90, 0xEE, 0x90],
+    lightgrey:             [0xD3, 0xD3, 0xD3],
+    lightpink:             [0xFF, 0xB6, 0xC1],
+    lightsalmon:           [0xFF, 0xA0, 0x7A],
+    lightseagreen:         [0x20, 0xB2, 0xAA],
+    lightskyblue:          [0x87, 0xCE, 0xFA],
+    lightslategray:        [0x77, 0x88, 0x99],
+    lightslategrey:        [0x77, 0x88, 0x99],
+    lightsteelblue:        [0xB0, 0xC4, 0xDE],
+    lightyellow:           [0xFF, 0xFF, 0xE0],
+    lime:                  [0x00, 0xFF, 0x00],
+    limegreen:             [0x32, 0xCD, 0x32],
+    linen:                 [0xFA, 0xF0, 0xE6],
+    magenta:               [0xFF, 0x00, 0xFF],
+    maroon:                [0x80, 0x00, 0x00],
+    mediumaquamarine:      [0x66, 0xCD, 0xAA],
+    mediumblue:            [0x00, 0x00, 0xCD],
+    mediumorchid:          [0xBA, 0x55, 0xD3],
+    mediumpurple:          [0x93, 0x70, 0xDB],
+    mediumseagreen:        [0x3C, 0xB3, 0x71],
+    mediumslateblue:       [0x7B, 0x68, 0xEE],
+    mediumspringgreen:     [0x00, 0xFA, 0x9A],
+    mediumturquoise:       [0x48, 0xD1, 0xCC],
+    mediumvioletred:       [0xC7, 0x15, 0x85],
+    midnightblue:          [0x19, 0x19, 0x70],
+    mintcream:             [0xF5, 0xFF, 0xFA],
+    mistyrose:             [0xFF, 0xE4, 0xE1],
+    moccasin:              [0xFF, 0xE4, 0xB5],
+    navajowhite:           [0xFF, 0xDE, 0xAD],
+    navy:                  [0x00, 0x00, 0x80],
+    oldlace:               [0xFD, 0xF5, 0xE6],
+    olive:                 [0x80, 0x80, 0x00],
+    olivedrab:             [0x6B, 0x8E, 0x23],
+    orange:                [0xFF, 0xA5, 0x00],
+    orangered:             [0xFF, 0x45, 0x00],
+    orchid:                [0xDA, 0x70, 0xD6],
+    palegoldenrod:         [0xEE, 0xE8, 0xAA],
+    palegreen:             [0x98, 0xFB, 0x98],
+    paleturquoise:         [0xAF, 0xEE, 0xEE],
+    palevioletred:         [0xDB, 0x70, 0x93],
+    papayawhip:            [0xFF, 0xEF, 0xD5],
+    peachpuff:             [0xFF, 0xDA, 0xB9],
+    peru:                  [0xCD, 0x85, 0x3F],
+    pink:                  [0xFF, 0xC0, 0xCB],
+    plum:                  [0xDD, 0xA0, 0xDD],
+    powderblue:            [0xB0, 0xE0, 0xE6],
+    purple:                [0x80, 0x00, 0x80],
+    red:                   [0xFF, 0x00, 0x00],
+    rosybrown:             [0xBC, 0x8F, 0x8F],
+    royalblue:             [0x41, 0x69, 0xE1],
+    saddlebrown:           [0x8B, 0x45, 0x13],
+    salmon:                [0xFA, 0x80, 0x72],
+    sandybrown:            [0xF4, 0xA4, 0x60],
+    seagreen:              [0x2E, 0x8B, 0x57],
+    seashell:              [0xFF, 0xF5, 0xEE],
+    sienna:                [0xA0, 0x52, 0x2D],
+    silver:                [0xC0, 0xC0, 0xC0],
+    skyblue:               [0x87, 0xCE, 0xEB],
+    slateblue:             [0x6A, 0x5A, 0xCD],
+    slategray:             [0x70, 0x80, 0x90],
+    slategrey:             [0x70, 0x80, 0x90],
+    snow:                  [0xFF, 0xFA, 0xFA],
+    springgreen:           [0x00, 0xFF, 0x7F],
+    steelblue:             [0x46, 0x82, 0xB4],
+    tan:                   [0xD2, 0xB4, 0x8C],
+    teal:                  [0x00, 0x80, 0x80],
+    thistle:               [0xD8, 0xBF, 0xD8],
+    tomato:                [0xFF, 0x63, 0x47],
+    turquoise:             [0x40, 0xE0, 0xD0],
+    violet:                [0xEE, 0x82, 0xEE],
+    wheat:                 [0xF5, 0xDE, 0xB3],
+    white:                 [0xFF, 0xFF, 0xFF],
+    whitesmoke:            [0xF5, 0xF5, 0xF5],
+    yellow:                [0xFF, 0xFF, 0x00],
+    yellowgreen:           [0x9A, 0xCD, 0x32]
+};
 
 /**
  * Handle colors.
@@ -62,7 +215,7 @@ var Color = Base.$extend({
         } else {
             this.$super();
             if (typeof(params) == "string") {
-                this.hexString = params;
+                this.fromString(params);
             } else if (Array.isArray(params)) {
                 this.setRGBA(params);
             } else if (arguments.length >= 3) {
@@ -72,96 +225,478 @@ var Color = Base.$extend({
     },
 
     //////////////////////////////////////////
+    // Static methods                       //
+    //////////////////////////////////////////
+
+    __classvars__: {
+
+        /**
+         * Object containing all known named colors (`colorName: [r, g, b]`).
+         *
+         * @property NAMED_COLORS
+         * @static
+         * @type Object
+         */
+        NAMED_COLORS: NAMED_COLORS,
+
+        /**
+         * Converts any supported color format to an `[r, g, b, a]` array.
+         *
+         * @method ParseString
+         * @static
+         * @param {String} color
+         * @return {Array} `[r, g, b, a]` where each components is an integer between 0-255
+         */
+        ParseString: function (color) {
+            // #FF4400 #F40
+            if (color.match(/^#([0-9a-f]{3}){1,2}$/i)) {
+                return Color.NormalizeRgbaColor.apply(undefined, Color.ParseRgbHexString(color));
+            }
+
+            // #FF4400FF #F40F
+            if (color.match(/^#([0-9a-f]{4}){1,2}$/i)) {
+                return Color.ParseRgbaHexString(color);
+            }
+
+            // rgb(255, 70, 0)
+            if (color.match(/^rgb\(.+\)$/)) {
+                try {
+                    return Color.NormalizeRgbaColor.apply(undefined, Color.ParseCssRgbString(color));
+                } catch (error) {
+                    // pass
+                }
+            }
+
+            // rgba(255, 70, 0, 1.0)
+            if (color.match(/^rgba\(.+\)$/)) {
+                try {
+                    return Color.ParseCssRgbaString(color);
+                } catch (error) {
+                    // pass
+                }
+            }
+
+            // Named color
+            if (lodash.includes(lodash.keys(NAMED_COLORS), color.toLowerCase())) {
+                return Color.NormalizeRgbaColor.apply(undefined, Color.ParseNamedColor(color));
+            }
+
+            // Invalid color... thow...
+            throw new Error("InvalidColorFormat: '" + color + "' is not in a supported format");
+        },
+
+        /**
+         * Converts a named color (e.g. "red") to an `[r, g, b]` array.
+         *
+         * @method ParseNamedColor
+         * @static
+         * @param {String} color The named color
+         * @return {Array} `[r, g, b]` where each component is an integer between 0-255
+         */
+        ParseNamedColor: function (color) {
+            color = color.toLowerCase();
+            if (!NAMED_COLORS[color]) {
+                throw new Error("InvalidColorFormat: '" + color + "' is not a supported named color");
+            }
+            return lodash.clone(NAMED_COLORS[color]);
+        },
+
+        /**
+         * Converts an hexadecimal RGB color (e.g. `#FF0000`, `#F00`) to an `[r, g, b]` array.
+         *
+         * @method ParseRgbHexString
+         * @static
+         * @param {String} color The hexadecimal RGB color
+         * @return {Array} `[r, g, b]` where each component is an integer between 0-255
+         */
+        ParseRgbHexString: function (color) {
+            if (color[0] != "#") {
+                color = "#" + color;
+            }
+
+            // #ff0000
+            if (color.match(/^#[a-z0-9]{6}$/i)) {
+                return Color.NormalizeRgbColor(
+                    parseInt(color[1] + color[2], 16),  // red
+                    parseInt(color[3] + color[4], 16),  // green
+                    parseInt(color[5] + color[6], 16)   // blue
+                );
+
+            // #f00
+            } else if (color.match(/^#[a-z0-9]{3}$/i)) {
+                return Color.NormalizeRgbColor(
+                    parseInt(color[1] + color[1], 16),  // red
+                    parseInt(color[2] + color[2], 16),  // green
+                    parseInt(color[3] + color[3], 16)   // blue
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid hexadecimal RGB color");
+        },
+
+        /**
+         * Converts an hexadecimal RGBA color (e.g. `#FF0000FF`, `#F00F`) to an `[r, g, b, a]` array.
+         *
+         * @method ParseRgbaHexString
+         * @static
+         * @param {String} color The hexadecimal RGBA color
+         * @return {Array} `[r, g, b, a]` where each component is an integer between 0-255
+         */
+        ParseRgbaHexString: function (color) {
+            if (color[0] != "#") {
+                color = "#" + color;
+            }
+
+            // #ff0000ff
+            if (color.match(/^#[a-z0-9]{8}$/i)) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(color[1] + color[2], 16),  // red
+                    parseInt(color[3] + color[4], 16),  // green
+                    parseInt(color[5] + color[6], 16),  // blue
+                    parseInt(color[7] + color[8], 16)   // alpha
+                );
+
+            // #f00f
+            } else if (color.match(/^#[a-z0-9]{4}$/i)) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(color[1] + color[1], 16),  // red
+                    parseInt(color[2] + color[2], 16),  // green
+                    parseInt(color[3] + color[3], 16),  // blue
+                    parseInt(color[4] + color[4], 16)   // alpha
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid hexadecimal RGBA color");
+        },
+
+        /**
+         * Converts a CSS RGB color (e.g. `rgb(255, 0, 0)`) to an `[r, g, b]` array.
+         *
+         * @method ParseCssRgbString
+         * @static
+         * @param {String} color The CSS RGB color
+         * @return {Array} `[r, g, b]` where each component is an integer between 0-255
+         */
+        ParseCssRgbString: function (color) {
+            // rgb(255, 0, 0)
+            var match = color.match(/^rgb\(\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*\)$/);
+            if (match) {
+                return Color.NormalizeRgbColor(
+                    parseInt(match[1], 10),
+                    parseInt(match[2], 10),
+                    parseInt(match[3], 10)
+                );
+            }
+
+            // rgb(100%, 0%, 0%)
+            match = color.match(/^rgb\(\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*\)$/);
+            if (match) {
+                return Color.NormalizeRgbColor(
+                    parseInt(match[1], 10) / 100 * 255,
+                    parseInt(match[2], 10) / 100 * 255,
+                    parseInt(match[3], 10) / 100 * 255
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid CSS RGB color");
+        },
+
+        /**
+         * Converts a CSS RGBA color (e.g. `rgba(255, 0, 0, 0.3)`) to an `[r, g, b, a]` array.
+         *
+         * @method ParseCssRgbaString
+         * @static
+         * @param {String} color The CSS RGBA color
+         * @return {Array} `[r, g, b, a]` where each component is an integer between 0-255
+         */
+        ParseCssRgbaString: function (color) {
+            // rgba(255, 0, 0)
+            // jscs:disable
+            var match = color.match(/^rgba\(\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*,\s*(-?[0-9]+)\s*,\s*(-?[0-9]*\.?[0-9]+)\s*\)$/);
+            // jscs:enable
+            if (match) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(match[1], 10),
+                    parseInt(match[2], 10),
+                    parseInt(match[3], 10),
+                    parseFloat(match[4], 10) * 255
+                );
+            }
+
+            // rgba(100%, 0%, 0%)
+            // jscs:disable
+            match = color.match(/^rgba\(\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*,\s*(-?[0-9]+)%\s*,\s*(-?[0-9]*\.?[0-9]+)\s*\)$/);
+            // jscs:enable
+            if (match) {
+                return Color.NormalizeRgbaColor(
+                    parseInt(match[1], 10) / 100 * 255,
+                    parseInt(match[2], 10) / 100 * 255,
+                    parseInt(match[3], 10) / 100 * 255,
+                    parseFloat(match[4], 10) * 255
+                );
+            }
+
+            throw new Error("InvalidColorFormat: " + color + " is not a valid CSS RGBA color");
+        },
+
+        /**
+         * Format an RGB color to hexadecimal RGB string (e.g. `#FF0000`).
+         *
+         * @method FormatToRgbHexString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @return {String} The formatted color string.
+         */
+        FormatToRgbHexString: function (red, green, blue) {
+            var r = red.toString(16).toUpperCase();
+            if (r.length == 1) {
+                r = "0" + r;
+            }
+            var g = green.toString(16).toUpperCase();
+            if (g.length == 1) {
+                g = "0" + g;
+            }
+            var b = blue.toString(16).toUpperCase();
+            if (b.length == 1) {
+                b = "0" + b;
+            }
+            return "#" + r + g + b;
+        },
+
+        /**
+         * Format an RGBA color to hexadecimal RGBA string (e.g. `#FF0000FF`).
+         *
+         * @method FormatToRgbaHexString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @param {Number} alpha The opacity of the color
+         * @return {String} The formatted color string.
+         */
+        FormatToRgbaHexString: function (red, green, blue, alpha) {
+            var a = alpha.toString(16).toUpperCase();
+            if (a.length == 1) {
+                a = "0" + a;
+            }
+            return Color.FormatToRgbHexString(red, green, blue) + a;
+        },
+
+        /**
+         * Format an RGB color to CSS RGB string (e.g. `rgb(255, 0, 0)`).
+         *
+         * @method FormatToCssRgbString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @return {String} The formatted color string.
+         */
+        FormatToCssRgbString: function (red, green, blue) {
+            return "rgb(" + red + ", " + green + ", " + blue + ")";
+        },
+
+        /**
+         * Format an RGBA color to CSS RGBA string (e.g. `rgba(255, 0, 0, 1.00)`).
+         *
+         * @method FormatToCssRgbaString
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @param {Number} alpha The opacity of the color
+         * @return {String} The formatted color string.
+         */
+        FormatToCssRgbaString: function (red, green, blue, alpha) {
+            var a = (alpha / 255).toFixed(2);
+            return "rgba(" + red + ", " + green + ", " + blue + ", " + a + ")";
+        },
+
+        /**
+         * Normalize an RGB color.
+         *
+         * @method NormalizeRgbColor
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @return {Array} The normalized array `[r, g, b]` where each component is an integer between 0-255.
+         */
+        NormalizeRgbColor: function (red, green, blue) {
+            return [
+                lodash.clamp(red | 0, 0, 255),
+                lodash.clamp(green | 0, 0, 255),
+                lodash.clamp(blue | 0, 0, 255)
+            ];
+        },
+
+        /**
+         * Normalize an RGBA color.
+         *
+         * @method NormalizeRgbaColor
+         * @static
+         * @param {Number} red The red component
+         * @param {Number} green The green component
+         * @param {Number} blue The blue component
+         * @param {Number} alpha The opacity of the color
+         * @return {Array} The normalized array `[r, g, b, a]` where each component is an integer between 0-255.
+         */
+        NormalizeRgbaColor: function (red, green, blue, alpha) {
+            if (alpha === undefined) {
+                alpha = 255;
+            }
+            return [
+                lodash.clamp(red | 0, 0, 255),
+                lodash.clamp(green | 0, 0, 255),
+                lodash.clamp(blue | 0, 0, 255),
+                lodash.clamp(alpha | 0, 0, 255)
+            ];
+        }
+
+    },
+
+    //////////////////////////////////////////
     // Properties and Accessors             //
     //////////////////////////////////////////
 
     // ====== Public properties ======
 
     /**
-     * The color in HTML RGB hexadecimal format (e.g. "#FF0000").
+     * The color in RGB hexadecimal format (e.g. "#FF0000").
      *
      * @property hexString
+     * @deprecated
      * @type String
      */
     getHexString: function () {
-        var r = this.red.toString(16).toUpperCase();
-        if (r.length == 1) {
-            r = "0" + r;
-        }
-        var g = this.green.toString(16).toUpperCase();
-        if (g.length == 1) {
-            g = "0" + g;
-        }
-        var b = this.blue.toString(16).toUpperCase();
-        if (b.length == 1) {
-            b = "0" + b;
-        }
-        return "#" + r + g + b;
+        helpers.log("warn", "'hexString' is deprecated, use 'rgbHexString' instead");
+        return this.rgbHexString;
     },
 
     setHexString: function (value) {
-        value = value.replace(" ", "");
-        // #FF0000
-        if (value.match(/^#[0-9a-f]{6}$/i)) {
-            this._red = parseInt(value[1] + value[2], 16);
-            this._green = parseInt(value[3] + value[4], 16);
-            this._blue = parseInt(value[5] + value[6], 16);
-            this._updateHSB();
+        helpers.log("warn", "'hexString' is deprecated, use 'fromString()' method instead");
 
-        // #F00
-        } else if (value.match(/^#[0-9a-f]{3}$/i)) {
-            this._red = parseInt(value[1] + value[1], 16);
-            this._green = parseInt(value[2] + value[2], 16);
-            this._blue = parseInt(value[3] + value[3], 16);
-            this._updateHSB();
+        var color = null;
 
-        // Named colors
-        } else {
-            var colors = {
-                white:   [0xFF, 0xFF, 0xFF],
-                silver:  [0xC0, 0xC0, 0xC0],
-                gray:    [0x80, 0x80, 0x80],
-                black:   [0x00, 0x00, 0x00],
-                red:     [0xFF, 0x00, 0x00],
-                maroon:  [0x80, 0x00, 0x00],
-                yellow:  [0xFF, 0xFF, 0x00],
-                olive:   [0x80, 0x80, 0x00],
-                lime:    [0x00, 0xFF, 0x00],
-                green:   [0x00, 0x80, 0x00],
-                aqua:    [0x00, 0xFF, 0xFF],
-                teal:    [0x00, 0x80, 0x80],
-                blue:    [0x00, 0x00, 0xFF],
-                navy:    [0x00, 0x00, 0x80],
-                fuchsia: [0xFF, 0x00, 0xFF],
-                purple:  [0x80, 0x00, 0x80]
-            };
-            if (colors[value] !== undefined) {
-                this.setRGB(colors[value]);
+        if (typeof value == "string") {
+            if (value.match(/^#([0-9a-f]{3}){1,2}$/i)) {
+                color = this.$class.ParseRgbHexString(value);
+            } else {
+                try {
+                    color = this.$class.ParseNamedColor(value);
+                } catch (e) {
+                    // pass
+                }
             }
+        } else if (lodash.isArray(value)) {
+            color = value;
         }
 
+        if (color) {
+            this.setRGB(color);
+        } else {
+            helpers.log("warn", "Unrecognized color format " + JSON.stringify(value));
+        }
     },
 
     /**
-     * The color in HTML RGB format (e.g. "rgb(255, 0, 0)").
+     * The color in CSS RGB format (e.g. "rgb(255, 0, 0)").
      *
      * @property rgbString
      * @type String
      * @readOnly
+     * @deprecated
      */
     getRgbString: function () {
-        return "rgb(" + this._red + ", " + this._green + ", " + this._blue + ")";
+        helpers.log("warn", "'rgbString' is deprecated, use 'cssRgbString' instead");
+        return this.$class.FormatToCssRgbString(this.red, this.green, this.blue);
     },
 
     /**
-     * The color in HTML RGBA format (e.g. "rgba(255, 0, 0, 1.0)").
+     * The color in CSS RGBA format (e.g. "rgba(255, 0, 0, 1.0)").
      *
      * @property rgbaString
      * @type String
      * @readOnly
+     * @deprecated
      */
     getRgbaString: function () {
-        return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + (this._alpha / 255) + ")";
+        helpers.log("warn", "'rgbaString' is deprecated, use 'cssRgbaString' instead");
+        return this.$class.FormatToCssRgbaString(this.red, this.green, this.blue, this.alpha);
+    },
+
+    /**
+     * The color in RGB hexadecimal format (e.g. "#FF0000").
+     *
+     * @property rgbHexString
+     * @type String
+     */
+    getRgbHexString: function () {
+        return this.$class.FormatToRgbHexString(this.red, this.green, this.blue);
+    },
+
+    setRgbHexString: function (color) {
+        try {
+            this.setRGB(this.$class.ParseRgbHexString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
+
+    /**
+     * The color in RGBA hexadecimal format (e.g. "#FF0000FF").
+     *
+     * @property rgbaHexString
+     * @type String
+     */
+    getRgbaHexString: function () {
+        return this.$class.FormatToRgbaHexString(this.red, this.green, this.blue, this.alpha);
+    },
+
+    setRgbaHexString: function (color) {
+        try {
+            this.setRGBA(this.$class.ParseRgbaHexString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
+
+    /**
+     * The color in CSS RGB format (e.g. "rgb(255, 0, 0)").
+     *
+     * @property cssRgbString
+     * @type String
+     */
+    getCssRgbString: function () {
+        return this.$class.FormatToCssRgbString(this.red, this.green, this.blue);
+    },
+
+    setCssRgbString: function (color) {
+        try {
+            this.setRGB(this.$class.ParseCssRgbString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
+
+    /**
+     * The color in CSS RGBA format (e.g. "rgb(255, 0, 0, 1.0)").
+     *
+     * @property cssRgbaString
+     * @type String
+     */
+    getCssRgbaString: function () {
+        return this.$class.FormatToCssRgbaString(this.red, this.green, this.blue, this.alpha);
+    },
+
+    setCssRgbaString: function (color) {
+        try {
+            this.setRGBA(this.$class.ParseCssRgbaString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
     },
 
     /**
@@ -177,7 +712,7 @@ var Color = Base.$extend({
     },
 
     setRed: function (red) {
-        this._red = Math.max(0, Math.min(255, red | 0));
+        this._red = lodash.clamp(red | 0, 0, 255);
         this._updateHSB();
     },
 
@@ -194,7 +729,7 @@ var Color = Base.$extend({
     },
 
     setGreen: function (green) {
-        this._green = Math.max(0, Math.min(255, green | 0));
+        this._green = lodash.clamp(green | 0, 0, 255);
         this._updateHSB();
     },
 
@@ -211,7 +746,7 @@ var Color = Base.$extend({
     },
 
     setBlue: function (blue) {
-        this._blue = Math.max(0, Math.min(255, blue | 0));
+        this._blue = lodash.clamp(blue | 0, 0, 255);
         this._updateHSB();
     },
 
@@ -228,7 +763,7 @@ var Color = Base.$extend({
     },
 
     setAlpha: function (alpha) {
-        this._alpha = Math.max(0, Math.min(255, alpha | 0));
+        this._alpha = lodash.clamp(alpha | 0, 0, 255);
         this._callCallbacks("value-changed");
     },
 
@@ -245,7 +780,7 @@ var Color = Base.$extend({
     },
 
     setHue: function (hue) {
-        this._hue = Math.max(0, Math.min(360, hue | 0));
+        this._hue = lodash.clamp(hue | 0, 0, 360);
         this._updateRGB();
     },
 
@@ -262,7 +797,7 @@ var Color = Base.$extend({
     },
 
     setSaturation: function (saturation) {
-        this._saturation = Math.max(0, Math.min(100, saturation | 0));
+        this._saturation = lodash.clamp(saturation | 0, 0, 100);
         this._updateRGB();
     },
 
@@ -279,7 +814,7 @@ var Color = Base.$extend({
     },
 
     setBrightness: function (brightness) {
-        this._brightness = Math.max(0, Math.min(100, brightness | 0));
+        this._brightness = lodash.clamp(brightness | 0, 0, 100);
         this._updateRGB();
     },
 
@@ -288,6 +823,20 @@ var Color = Base.$extend({
     //////////////////////////////////////////
 
     // ====== Public methods ======
+
+    /**
+     * Defines the color from any supported string format.
+     *
+     * @method fromString
+     * @param {String} color
+     */
+    fromString: function (color) {
+        try {
+            this.setRGBA(this.$class.ParseString(color));
+        } catch (error) {
+            helpers.log("warn", error);
+        }
+    },
 
     /**
      * Set RGB(A) color (alias for setRGBA).
@@ -380,7 +929,7 @@ var Color = Base.$extend({
     },
 
     toString: function () {
-        return this.hexString;
+        return this.rgbHexString;
     },
 
     // ====== Private methods ======
@@ -480,6 +1029,7 @@ var Color = Base.$extend({
 
         this._callCallbacks("value-changed");
     }
+
 });
 
 module.exports = Color;
