@@ -29083,6 +29083,7 @@ var Color = Base.$extend({
 
         this._callCallbacks("value-changed");
     }
+
 });
 
 module.exports = Color;

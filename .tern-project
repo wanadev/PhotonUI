@@ -1,6 +1,7 @@
 {
   "ecmaVersion": 5,
   "plugins": {
-    "node": {}
+    "node": {},
+    "abitbol": {}
   }
 }

@@ -77,11 +77,11 @@ var ColorPalette = Widget.$extend({
      */
     getValue: function () {
         "@photonui-update";
-        return this.color.hexString;
+        return this.color.rgbHexString;
     },
 
     setValue: function (value) {
-        this.color.hexString = value;
+        this.color.fromString(value);
     },
 
     /**
