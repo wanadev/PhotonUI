@@ -168,6 +168,10 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.7.0:**
+  * `photonui.Color` improved: it can now import/export colors from/to many format
+  * Dependencies updated
+
 * **1.6.4:**
   * Fields new event: `value-changed-final` called when the value is no more modified after continuous changes
 
