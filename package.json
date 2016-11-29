@@ -32,7 +32,7 @@
     "keyboardjs": "^2.3.3",
     "lodash": "^4.17.0",
     "stonejs": ">=2.1.0",
-    "uuid": "^2.0.3"
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "browserify-licenses": "^1.4.2",
