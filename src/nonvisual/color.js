@@ -450,15 +450,15 @@ var Color = Base.$extend({
          * @return {String} The formatted color string.
          */
         FormatToRgbHexString: function (red, green, blue) {
-            var r = red.toString(16).toUpperCase();
+            var r = (red | 0).toString(16).toUpperCase();
             if (r.length == 1) {
                 r = "0" + r;
             }
-            var g = green.toString(16).toUpperCase();
+            var g = (green | 0).toString(16).toUpperCase();
             if (g.length == 1) {
                 g = "0" + g;
             }
-            var b = blue.toString(16).toUpperCase();
+            var b = (blue | 0).toString(16).toUpperCase();
             if (b.length == 1) {
                 b = "0" + b;
             }
@@ -477,7 +477,7 @@ var Color = Base.$extend({
          * @return {String} The formatted color string.
          */
         FormatToRgbaHexString: function (red, green, blue, alpha) {
-            var a = alpha.toString(16).toUpperCase();
+            var a = (alpha | 0).toString(16).toUpperCase();
             if (a.length == 1) {
                 a = "0" + a;
             }
