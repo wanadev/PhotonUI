@@ -168,6 +168,9 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.7.1:**
+  * Dependencies updated (uuid 2.0.3 → 3.0.0)
+
 * **1.7.0:**
   * `photonui.Color` improved: it can now import/export colors from/to many format
   * Dependencies updated

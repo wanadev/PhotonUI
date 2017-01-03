@@ -1204,7 +1204,7 @@ module.exports = function(locale, platform, userAgent) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.0';
+  var VERSION = '4.17.4';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -2759,9 +2759,9 @@ module.exports = function(locale, platform, userAgent) {
      * Shortcut fusion is an optimization to merge iteratee calls; this avoids
      * the creation of intermediate arrays and can greatly reduce the number of
      * iteratee executions. Sections of a chain sequence qualify for shortcut
-     * fusion if the section is applied to an array of at least `200` elements
-     * and any iteratees accept only one argument. The heuristic for whether a
-     * section qualifies for shortcut fusion is subject to change.
+     * fusion if the section is applied to an array and iteratees accept only
+     * one argument. The heuristic for whether a section qualifies for shortcut
+     * fusion is subject to change.
      *
      * Chaining is supported in custom builds as long as the `_#value` method is
      * directly or indirectly included in the build.
@@ -2920,8 +2920,8 @@ module.exports = function(locale, platform, userAgent) {
 
     /**
      * By default, the template delimiters used by lodash are like those in
-     * embedded Ruby (ERB). Change the following template settings to use
-     * alternative delimiters.
+     * embedded Ruby (ERB) as well as ES2015 template strings. Change the
+     * following template settings to use alternative delimiters.
      *
      * @static
      * @memberOf _
@@ -3068,8 +3068,7 @@ module.exports = function(locale, platform, userAgent) {
           resIndex = 0,
           takeCount = nativeMin(length, this.__takeCount__);
 
-      if (!isArr || arrLength < LARGE_ARRAY_SIZE ||
-          (arrLength == length && takeCount == length)) {
+      if (!isArr || (!isRight && arrLength == length && takeCount == length)) {
         return baseWrapperValue(array, this.__actions__);
       }
       var result = [];
@@ -3183,7 +3182,7 @@ module.exports = function(locale, platform, userAgent) {
      */
     function hashHas(key) {
       var data = this.__data__;
-      return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
+      return nativeCreate ? (data[key] !== undefined) : hasOwnProperty.call(data, key);
     }
 
     /**
@@ -3654,24 +3653,6 @@ module.exports = function(locale, platform, userAgent) {
      */
     function arrayShuffle(array) {
       return shuffleSelf(copyArray(array));
-    }
-
-    /**
-     * Used by `_.defaults` to customize its `_.assignIn` use.
-     *
-     * @private
-     * @param {*} objValue The destination value.
-     * @param {*} srcValue The source value.
-     * @param {string} key The key of the property to assign.
-     * @param {Object} object The parent object of `objValue`.
-     * @returns {*} Returns the value to assign.
-     */
-    function assignInDefaults(objValue, srcValue, key, object) {
-      if (objValue === undefined ||
-          (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
-        return srcValue;
-      }
-      return objValue;
     }
 
     /**
@@ -4248,7 +4229,7 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {*} Returns the resolved value.
      */
     function baseGet(object, path) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = 0,
           length = path.length;
@@ -4286,8 +4267,7 @@ module.exports = function(locale, platform, userAgent) {
       if (value == null) {
         return value === undefined ? undefinedTag : nullTag;
       }
-      value = Object(value);
-      return (symToStringTag && symToStringTag in value)
+      return (symToStringTag && symToStringTag in Object(value))
         ? getRawTag(value)
         : objectToString(value);
     }
@@ -4434,12 +4414,9 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {*} Returns the result of the invoked method.
      */
     function baseInvoke(object, path, args) {
-      if (!isKey(path, object)) {
-        path = castPath(path);
-        object = parent(object, path);
-        path = last(path);
-      }
-      var func = object == null ? object : object[toKey(path)];
+      path = castPath(path, object);
+      object = parent(object, path);
+      var func = object == null ? object : object[toKey(last(path))];
       return func == null ? undefined : apply(func, object, args);
     }
 
@@ -4494,7 +4471,7 @@ module.exports = function(locale, platform, userAgent) {
       if (value === other) {
         return true;
       }
-      if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+      if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
         return value !== value && other !== other;
       }
       return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
@@ -4517,17 +4494,12 @@ module.exports = function(locale, platform, userAgent) {
     function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
       var objIsArr = isArray(object),
           othIsArr = isArray(other),
-          objTag = arrayTag,
-          othTag = arrayTag;
+          objTag = objIsArr ? arrayTag : getTag(object),
+          othTag = othIsArr ? arrayTag : getTag(other);
 
-      if (!objIsArr) {
-        objTag = getTag(object);
-        objTag = objTag == argsTag ? objectTag : objTag;
-      }
-      if (!othIsArr) {
-        othTag = getTag(other);
-        othTag = othTag == argsTag ? objectTag : othTag;
-      }
+      objTag = objTag == argsTag ? objectTag : objTag;
+      othTag = othTag == argsTag ? objectTag : othTag;
+
       var objIsObj = objTag == objectTag,
           othIsObj = othTag == objectTag,
           isSameTag = objTag == othTag;
@@ -4975,7 +4947,6 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {Object} Returns the new object.
      */
     function basePick(object, paths) {
-      object = Object(object);
       return basePickBy(object, paths, function(value, path) {
         return hasIn(object, path);
       });
@@ -5000,7 +4971,7 @@ module.exports = function(locale, platform, userAgent) {
             value = baseGet(object, path);
 
         if (predicate(value, path)) {
-          baseSet(result, path, value);
+          baseSet(result, castPath(path, object), value);
         }
       }
       return result;
@@ -5076,17 +5047,8 @@ module.exports = function(locale, platform, userAgent) {
           var previous = index;
           if (isIndex(index)) {
             splice.call(array, index, 1);
-          }
-          else if (!isKey(index, array)) {
-            var path = castPath(index),
-                object = parent(array, path);
-
-            if (object != null) {
-              delete object[toKey(last(path))];
-            }
-          }
-          else {
-            delete array[toKey(index)];
+          } else {
+            baseUnset(array, index);
           }
         }
       }
@@ -5207,7 +5169,7 @@ module.exports = function(locale, platform, userAgent) {
       if (!isObject(object)) {
         return object;
       }
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = -1,
           length = path.length,
@@ -5548,11 +5510,9 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {boolean} Returns `true` if the property is deleted, else `false`.
      */
     function baseUnset(object, path) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
       object = parent(object, path);
-
-      var key = toKey(last(path));
-      return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
+      return object == null || delete object[toKey(last(path))];
     }
 
     /**
@@ -5692,10 +5652,14 @@ module.exports = function(locale, platform, userAgent) {
      *
      * @private
      * @param {*} value The value to inspect.
+     * @param {Object} [object] The object to query keys on.
      * @returns {Array} Returns the cast property path array.
      */
-    function castPath(value) {
-      return isArray(value) ? value : stringToPath(value);
+    function castPath(value, object) {
+      if (isArray(value)) {
+        return value;
+      }
+      return isKey(value, object) ? [value] : stringToPath(toString(value));
     }
 
     /**
@@ -6375,8 +6339,7 @@ module.exports = function(locale, platform, userAgent) {
           var args = arguments,
               value = args[0];
 
-          if (wrapper && args.length == 1 &&
-              isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+          if (wrapper && args.length == 1 && isArray(value)) {
             return wrapper.plant(value).value();
           }
           var index = 0,
@@ -6683,7 +6646,7 @@ module.exports = function(locale, platform, userAgent) {
       var func = Math[methodName];
       return function(number, precision) {
         number = toNumber(number);
-        precision = nativeMin(toInteger(precision), 292);
+        precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
         if (precision) {
           // Shift with exponential notation to avoid floating-point issues.
           // See [MDN](https://mdn.io/round#Examples) for more details.
@@ -6788,7 +6751,7 @@ module.exports = function(locale, platform, userAgent) {
       thisArg = newData[2];
       partials = newData[3];
       holders = newData[4];
-      arity = newData[9] = newData[9] == null
+      arity = newData[9] = newData[9] === undefined
         ? (isBindKey ? 0 : func.length)
         : nativeMax(newData[9] - length, 0);
 
@@ -6806,6 +6769,63 @@ module.exports = function(locale, platform, userAgent) {
       }
       var setter = data ? baseSetData : setData;
       return setWrapToString(setter(result, newData), func, bitmask);
+    }
+
+    /**
+     * Used by `_.defaults` to customize its `_.assignIn` use to assign properties
+     * of source objects to the destination object for all destination properties
+     * that resolve to `undefined`.
+     *
+     * @private
+     * @param {*} objValue The destination value.
+     * @param {*} srcValue The source value.
+     * @param {string} key The key of the property to assign.
+     * @param {Object} object The parent object of `objValue`.
+     * @returns {*} Returns the value to assign.
+     */
+    function customDefaultsAssignIn(objValue, srcValue, key, object) {
+      if (objValue === undefined ||
+          (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+        return srcValue;
+      }
+      return objValue;
+    }
+
+    /**
+     * Used by `_.defaultsDeep` to customize its `_.merge` use to merge source
+     * objects into destination objects that are passed thru.
+     *
+     * @private
+     * @param {*} objValue The destination value.
+     * @param {*} srcValue The source value.
+     * @param {string} key The key of the property to merge.
+     * @param {Object} object The parent object of `objValue`.
+     * @param {Object} source The parent object of `srcValue`.
+     * @param {Object} [stack] Tracks traversed source values and their merged
+     *  counterparts.
+     * @returns {*} Returns the value to assign.
+     */
+    function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
+      if (isObject(objValue) && isObject(srcValue)) {
+        // Recursively merge objects and arrays (susceptible to call stack limits).
+        stack.set(srcValue, objValue);
+        baseMerge(objValue, srcValue, undefined, customDefaultsMerge, stack);
+        stack['delete'](srcValue);
+      }
+      return objValue;
+    }
+
+    /**
+     * Used by `_.omit` to customize its `_.cloneDeep` use to only clone plain
+     * objects.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @param {string} key The key of the property to inspect.
+     * @returns {*} Returns the uncloned value or `undefined` to defer cloning to `_.cloneDeep`.
+     */
+    function customOmitClone(value) {
+      return isPlainObject(value) ? undefined : value;
     }
 
     /**
@@ -6979,9 +6999,9 @@ module.exports = function(locale, platform, userAgent) {
      */
     function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
       var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-          objProps = keys(object),
+          objProps = getAllKeys(object),
           objLength = objProps.length,
-          othProps = keys(other),
+          othProps = getAllKeys(other),
           othLength = othProps.length;
 
       if (objLength != othLength && !isPartial) {
@@ -7219,7 +7239,15 @@ module.exports = function(locale, platform, userAgent) {
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of symbols.
      */
-    var getSymbols = nativeGetSymbols ? overArg(nativeGetSymbols, Object) : stubArray;
+    var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
+      if (object == null) {
+        return [];
+      }
+      object = Object(object);
+      return arrayFilter(nativeGetSymbols(object), function(symbol) {
+        return propertyIsEnumerable.call(object, symbol);
+      });
+    };
 
     /**
      * Creates an array of the own and inherited enumerable symbols of `object`.
@@ -7320,7 +7348,7 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {boolean} Returns `true` if `path` exists, else `false`.
      */
     function hasPath(object, path, hasFunc) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = -1,
           length = path.length,
@@ -7706,29 +7734,6 @@ module.exports = function(locale, platform, userAgent) {
     }
 
     /**
-     * Used by `_.defaultsDeep` to customize its `_.merge` use.
-     *
-     * @private
-     * @param {*} objValue The destination value.
-     * @param {*} srcValue The source value.
-     * @param {string} key The key of the property to merge.
-     * @param {Object} object The parent object of `objValue`.
-     * @param {Object} source The parent object of `srcValue`.
-     * @param {Object} [stack] Tracks traversed source values and their merged
-     *  counterparts.
-     * @returns {*} Returns the value to assign.
-     */
-    function mergeDefaults(objValue, srcValue, key, object, source, stack) {
-      if (isObject(objValue) && isObject(srcValue)) {
-        // Recursively merge objects and arrays (susceptible to call stack limits).
-        stack.set(srcValue, objValue);
-        baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
-        stack['delete'](srcValue);
-      }
-      return objValue;
-    }
-
-    /**
      * This function is like
      * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
      * except that it includes inherited enumerable properties.
@@ -7797,7 +7802,7 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {*} Returns the parent value.
      */
     function parent(object, path) {
-      return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+      return path.length < 2 ? object : baseGet(object, baseSlice(path, 0, -1));
     }
 
     /**
@@ -7937,8 +7942,6 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {Array} Returns the property path array.
      */
     var stringToPath = memoizeCapped(function(string) {
-      string = toString(string);
-
       var result = [];
       if (reLeadingDot.test(string)) {
         result.push('');
@@ -9472,7 +9475,7 @@ module.exports = function(locale, platform, userAgent) {
      *
      * var users = [
      *   { 'user': 'barney',  'active': false },
-     *   { 'user': 'fred',    'active': false},
+     *   { 'user': 'fred',    'active': false },
      *   { 'user': 'pebbles', 'active': true }
      * ];
      *
@@ -10673,12 +10676,10 @@ module.exports = function(locale, platform, userAgent) {
     var invokeMap = baseRest(function(collection, path, args) {
       var index = -1,
           isFunc = typeof path == 'function',
-          isProp = isKey(path),
           result = isArrayLike(collection) ? Array(collection.length) : [];
 
       baseEach(collection, function(value) {
-        var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
-        result[++index] = func ? apply(func, value, args) : baseInvoke(value, path, args);
+        result[++index] = isFunc ? apply(path, value, args) : baseInvoke(value, path, args);
       });
       return result;
     });
@@ -12043,17 +12044,13 @@ module.exports = function(locale, platform, userAgent) {
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
+      start = start == null ? 0 : nativeMax(toInteger(start), 0);
       return baseRest(function(args) {
         var array = args[start],
-            lastIndex = args.length - 1,
             otherArgs = castSlice(args, 0, start);
 
         if (array) {
           arrayPush(otherArgs, array);
-        }
-        if (start != lastIndex) {
-          arrayPush(otherArgs, castSlice(args, start + 1));
         }
         return apply(func, this, otherArgs);
       });
@@ -12717,7 +12714,7 @@ module.exports = function(locale, platform, userAgent) {
      * date objects, error objects, maps, numbers, `Object` objects, regexes,
      * sets, strings, symbols, and typed arrays. `Object` objects are compared
      * by their own, not inherited, enumerable properties. Functions and DOM
-     * nodes are **not** supported.
+     * nodes are compared by strict equality, i.e. `===`.
      *
      * @static
      * @memberOf _
@@ -13737,7 +13734,9 @@ module.exports = function(locale, platform, userAgent) {
      * // => 3
      */
     function toSafeInteger(value) {
-      return baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
+      return value
+        ? baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER)
+        : (value === 0 ? value : 0);
     }
 
     /**
@@ -13991,7 +13990,7 @@ module.exports = function(locale, platform, userAgent) {
      * // => { 'a': 1, 'b': 2 }
      */
     var defaults = baseRest(function(args) {
-      args.push(undefined, assignInDefaults);
+      args.push(undefined, customDefaultsAssignIn);
       return apply(assignInWith, undefined, args);
     });
 
@@ -14015,7 +14014,7 @@ module.exports = function(locale, platform, userAgent) {
      * // => { 'a': { 'b': 2, 'c': 3 } }
      */
     var defaultsDeep = baseRest(function(args) {
-      args.push(undefined, mergeDefaults);
+      args.push(undefined, customDefaultsMerge);
       return apply(mergeWith, undefined, args);
     });
 
@@ -14669,9 +14668,16 @@ module.exports = function(locale, platform, userAgent) {
       if (object == null) {
         return result;
       }
+      var isDeep = false;
+      paths = arrayMap(paths, function(path) {
+        path = castPath(path, object);
+        isDeep || (isDeep = path.length > 1);
+        return path;
+      });
       copyObject(object, getAllKeysIn(object), result);
-      result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
-
+      if (isDeep) {
+        result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG, customOmitClone);
+      }
       var length = paths.length;
       while (length--) {
         baseUnset(result, paths[length]);
@@ -14721,7 +14727,7 @@ module.exports = function(locale, platform, userAgent) {
      * // => { 'a': 1, 'c': 3 }
      */
     var pick = flatRest(function(object, paths) {
-      return object == null ? {} : basePick(object, arrayMap(paths, toKey));
+      return object == null ? {} : basePick(object, paths);
     });
 
     /**
@@ -14743,7 +14749,16 @@ module.exports = function(locale, platform, userAgent) {
      * // => { 'a': 1, 'c': 3 }
      */
     function pickBy(object, predicate) {
-      return object == null ? {} : basePickBy(object, getAllKeysIn(object), getIteratee(predicate));
+      if (object == null) {
+        return {};
+      }
+      var props = arrayMap(getAllKeysIn(object), function(prop) {
+        return [prop];
+      });
+      predicate = getIteratee(predicate);
+      return basePickBy(object, props, function(value, path) {
+        return predicate(value, path[0]);
+      });
     }
 
     /**
@@ -14776,15 +14791,15 @@ module.exports = function(locale, platform, userAgent) {
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = -1,
           length = path.length;
 
       // Ensure the loop is entered when path is empty.
       if (!length) {
-        object = undefined;
         length = 1;
+        object = undefined;
       }
       while (++index < length) {
         var value = object == null ? undefined : object[toKey(path[index])];
@@ -15810,7 +15825,10 @@ module.exports = function(locale, platform, userAgent) {
      */
     function startsWith(string, target, position) {
       string = toString(string);
-      position = baseClamp(toInteger(position), 0, string.length);
+      position = position == null
+        ? 0
+        : baseClamp(toInteger(position), 0, string.length);
+
       target = baseToString(target);
       return string.slice(position, position + target.length) == target;
     }
@@ -15929,9 +15947,9 @@ module.exports = function(locale, platform, userAgent) {
         options = undefined;
       }
       string = toString(string);
-      options = assignInWith({}, options, settings, assignInDefaults);
+      options = assignInWith({}, options, settings, customDefaultsAssignIn);
 
-      var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
+      var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
           importsKeys = keys(imports),
           importsValues = baseValues(imports, importsKeys);
 
@@ -17294,7 +17312,7 @@ module.exports = function(locale, platform, userAgent) {
       if (isArray(value)) {
         return arrayMap(value, toKey);
       }
-      return isSymbol(value) ? [value] : copyArray(stringToPath(value));
+      return isSymbol(value) ? [value] : copyArray(stringToPath(toString(value)));
     }
 
     /**
@@ -18015,14 +18033,13 @@ module.exports = function(locale, platform, userAgent) {
     // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
     arrayEach(['drop', 'take'], function(methodName, index) {
       LazyWrapper.prototype[methodName] = function(n) {
-        var filtered = this.__filtered__;
-        if (filtered && !index) {
-          return new LazyWrapper(this);
-        }
         n = n === undefined ? 1 : nativeMax(toInteger(n), 0);
 
-        var result = this.clone();
-        if (filtered) {
+        var result = (this.__filtered__ && !index)
+          ? new LazyWrapper(this)
+          : this.clone();
+
+        if (result.__filtered__) {
           result.__takeCount__ = nativeMin(n, result.__takeCount__);
         } else {
           result.__views__.push({
@@ -18751,82 +18768,28 @@ module.exports = {
 };
 
 },{"./dom.js":9,"./gettext.js":10,"./helpers.js":11}],13:[function(require,module,exports){
-(function (global){
+var v1 = require('./v1');
+var v4 = require('./v4');
 
-var rng;
+var uuid = v4;
+uuid.v1 = v1;
+uuid.v4 = v4;
 
-var crypto = global.crypto || global.msCrypto; // for IE 11
-if (crypto && crypto.getRandomValues) {
-  // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
-  // Moderately fast, high quality
-  var _rnds8 = new Uint8Array(16);
-  rng = function whatwgRNG() {
-    crypto.getRandomValues(_rnds8);
-    return _rnds8;
-  };
+module.exports = uuid;
+
+},{"./v1":16,"./v4":17}],14:[function(require,module,exports){
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
 }
 
-if (!rng) {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var  _rnds = new Array(16);
-  rng = function() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      _rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return _rnds;
-  };
-}
-
-module.exports = rng;
-
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],14:[function(require,module,exports){
-//     uuid.js
-//
-//     Copyright (c) 2010-2012 Robert Kieffer
-//     MIT License - http://opensource.org/licenses/mit-license.php
-
-// Unique ID creation requires a high quality random # generator.  We feature
-// detect to determine the best RNG source, normalizing to a function that
-// returns 128-bits of randomness, since that's what's usually required
-var _rng = require('./rng');
-
-// Maps for number <-> hex string conversion
-var _byteToHex = [];
-var _hexToByte = {};
-for (var i = 0; i < 256; i++) {
-  _byteToHex[i] = (i + 0x100).toString(16).substr(1);
-  _hexToByte[_byteToHex[i]] = i;
-}
-
-// **`parse()` - Parse a UUID into it's component bytes**
-function parse(s, buf, offset) {
-  var i = (buf && offset) || 0, ii = 0;
-
-  buf = buf || [];
-  s.toLowerCase().replace(/[0-9a-f]{2}/g, function(oct) {
-    if (ii < 16) { // Don't overflow!
-      buf[i + ii++] = _hexToByte[oct];
-    }
-  });
-
-  // Zero out remaining bytes if string was short
-  while (ii < 16) {
-    buf[i + ii++] = 0;
-  }
-
-  return buf;
-}
-
-// **`unparse()` - Convert UUID byte array (ala parse()) into a string**
-function unparse(buf, offset) {
-  var i = offset || 0, bth = _byteToHex;
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
   return  bth[buf[i++]] + bth[buf[i++]] +
           bth[buf[i++]] + bth[buf[i++]] + '-' +
           bth[buf[i++]] + bth[buf[i++]] + '-' +
@@ -18837,13 +18800,59 @@ function unparse(buf, offset) {
           bth[buf[i++]] + bth[buf[i++]];
 }
 
+module.exports = bytesToUuid;
+
+},{}],15:[function(require,module,exports){
+(function (global){
+// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+var rng;
+
+var crypto = global.crypto || global.msCrypto; // for IE 11
+if (crypto && crypto.getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16);
+  rng = function whatwgRNG() {
+    crypto.getRandomValues(rnds8);
+    return rnds8;
+  };
+}
+
+if (!rng) {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var  rnds = new Array(16);
+  rng = function() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
+}
+
+module.exports = rng;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],16:[function(require,module,exports){
+// Unique ID creation requires a high quality random # generator.  We feature
+// detect to determine the best RNG source, normalizing to a function that
+// returns 128-bits of randomness, since that's what's usually required
+var rng = require('./lib/rng');
+var bytesToUuid = require('./lib/bytesToUuid');
+
 // **`v1()` - Generate time-based UUID**
 //
 // Inspired by https://github.com/LiosK/UUID.js
 // and http://docs.python.org/library/uuid.html
 
 // random #'s we need to init node and clockseq
-var _seedBytes = _rng();
+var _seedBytes = rng();
 
 // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
 var _nodeId = [
@@ -18926,18 +18935,20 @@ function v1(options, buf, offset) {
 
   // `node`
   var node = options.node || _nodeId;
-  for (var n = 0; n < 6; n++) {
+  for (var n = 0; n < 6; ++n) {
     b[i + n] = node[n];
   }
 
-  return buf ? buf : unparse(b);
+  return buf ? buf : bytesToUuid(b);
 }
 
-// **`v4()` - Generate random UUID**
+module.exports = v1;
 
-// See https://github.com/broofa/node-uuid for API details
+},{"./lib/bytesToUuid":14,"./lib/rng":15}],17:[function(require,module,exports){
+var rng = require('./lib/rng');
+var bytesToUuid = require('./lib/bytesToUuid');
+
 function v4(options, buf, offset) {
-  // Deprecated - 'format' argument, as supported in v1.2
   var i = buf && offset || 0;
 
   if (typeof(options) == 'string') {
@@ -18946,7 +18957,7 @@ function v4(options, buf, offset) {
   }
   options = options || {};
 
-  var rnds = options.random || (options.rng || _rng)();
+  var rnds = options.random || (options.rng || rng)();
 
   // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
   rnds[6] = (rnds[6] & 0x0f) | 0x40;
@@ -18954,24 +18965,17 @@ function v4(options, buf, offset) {
 
   // Copy bytes to buffer, if provided
   if (buf) {
-    for (var ii = 0; ii < 16; ii++) {
+    for (var ii = 0; ii < 16; ++ii) {
       buf[i + ii] = rnds[ii];
     }
   }
 
-  return buf || unparse(rnds);
+  return buf || bytesToUuid(rnds);
 }
 
-// Export public API
-var uuid = v4;
-uuid.v1 = v1;
-uuid.v4 = v4;
-uuid.parse = parse;
-uuid.unparse = unparse;
+module.exports = v4;
 
-module.exports = uuid;
-
-},{"./rng":13}],15:[function(require,module,exports){
+},{"./lib/bytesToUuid":14,"./lib/rng":15}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19283,7 +19287,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":31,"abitbol":1,"uuid":14}],16:[function(require,module,exports){
+},{"./helpers.js":34,"abitbol":1,"uuid":13}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19545,7 +19549,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":26,"../interactive/button.js":32,"../interactive/colorpalette.js":34,"../layout/boxlayout.js":44,"../nonvisual/color.js":51,"./colorpickerdialog.js":17,"stonejs":12}],17:[function(require,module,exports){
+},{"../container/popupwindow.js":29,"../interactive/button.js":35,"../interactive/colorpalette.js":37,"../layout/boxlayout.js":47,"../nonvisual/color.js":54,"./colorpickerdialog.js":20,"stonejs":12}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19960,7 +19964,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":23,"../interactive/button.js":32,"../interactive/colorpalette.js":34,"../interactive/colorpicker.js":35,"../interactive/slider.js":39,"../layout/boxlayout.js":44,"../layout/gridlayout.js":46,"../nonvisual/color.js":51,"../visual/faicon.js":60,"../visual/label.js":62,"../visual/separator.js":64,"stonejs":12}],18:[function(require,module,exports){
+},{"../container/dialog.js":26,"../interactive/button.js":35,"../interactive/colorpalette.js":37,"../interactive/colorpicker.js":38,"../interactive/slider.js":42,"../layout/boxlayout.js":47,"../layout/gridlayout.js":49,"../nonvisual/color.js":54,"../visual/faicon.js":63,"../visual/label.js":65,"../visual/separator.js":67,"stonejs":12}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20095,7 +20099,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":25,"./select.js":20,"stonejs":12}],19:[function(require,module,exports){
+},{"../container/menuitem.js":28,"./select.js":23,"stonejs":12}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20213,7 +20217,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":26,"../layout/menu.js":48}],20:[function(require,module,exports){
+},{"../container/popupwindow.js":29,"../layout/menu.js":51}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20630,7 +20634,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":25,"../helpers.js":31,"../widget.js":68,"./popupmenu.js":19,"stonejs":12}],21:[function(require,module,exports){
+},{"../container/menuitem.js":28,"../helpers.js":34,"../widget.js":71,"./popupmenu.js":22,"stonejs":12}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21002,7 +21006,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":68,"./container.js":22}],22:[function(require,module,exports){
+},{"../widget.js":71,"./container.js":25}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21229,7 +21233,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":68}],23:[function(require,module,exports){
+},{"../widget.js":71}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21480,7 +21484,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":31,"../widget.js":68,"./window.js":30}],24:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"./window.js":33}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21710,7 +21714,7 @@ var Expander = Container.$extend({
 
 module.exports = Expander;
 
-},{"../helpers.js":31,"../widget.js":68,"./container.js":22}],25:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"./container.js":25}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21942,7 +21946,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":31,"../visual/baseicon.js":58,"../widget.js":68,"./container.js":22}],26:[function(require,module,exports){
+},{"../helpers.js":34,"../visual/baseicon.js":61,"../widget.js":71,"./container.js":25}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22115,7 +22119,7 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":21}],27:[function(require,module,exports){
+},{"./basewindow.js":24}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22264,7 +22268,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":48,"../widget.js":68,"./menuitem.js":25}],28:[function(require,module,exports){
+},{"../layout/menu.js":51,"../widget.js":71,"./menuitem.js":28}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22652,7 +22656,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":31,"../interactive/iconbutton.js":37,"../visual/baseicon.js":58,"../widget.js":68,"./container.js":22}],29:[function(require,module,exports){
+},{"../helpers.js":34,"../interactive/iconbutton.js":40,"../visual/baseicon.js":61,"../widget.js":71,"./container.js":25}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23044,7 +23048,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":31,"./container.js":22}],30:[function(require,module,exports){
+},{"../helpers.js":34,"./container.js":25}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23537,7 +23541,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
 module.exports = Window;
 
-},{"../helpers.js":31,"../widget.js":68,"./basewindow.js":21,"stonejs":12}],31:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"./basewindow.js":24,"stonejs":12}],34:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23744,7 +23748,7 @@ Helpers.log = function (level, message) {
 
 module.exports = Helpers;
 
-},{"uuid":14}],32:[function(require,module,exports){
+},{"uuid":13}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24163,7 +24167,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":31,"../visual/baseicon.js":58,"../widget.js":68}],33:[function(require,module,exports){
+},{"../helpers.js":34,"../visual/baseicon.js":61,"../widget.js":71}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24345,7 +24349,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":68}],34:[function(require,module,exports){
+},{"../widget.js":71}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24550,7 +24554,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":31,"../nonvisual/color.js":51,"../widget.js":68}],35:[function(require,module,exports){
+},{"../helpers.js":34,"../nonvisual/color.js":54,"../widget.js":71}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25068,7 +25072,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":31,"../nonvisual/color.js":51,"../nonvisual/mousemanager.js":54,"../widget.js":68}],36:[function(require,module,exports){
+},{"../helpers.js":34,"../nonvisual/color.js":54,"../nonvisual/mousemanager.js":57,"../widget.js":71}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25286,7 +25290,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":68,"lodash":8}],37:[function(require,module,exports){
+},{"../widget.js":71,"lodash":8}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25493,7 +25497,7 @@ var IconButton = Widget.$extend({
 
 module.exports = IconButton;
 
-},{"../helpers.js":31,"../visual/baseicon.js":58,"../widget.js":68}],38:[function(require,module,exports){
+},{"../helpers.js":34,"../visual/baseicon.js":61,"../widget.js":71}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25878,7 +25882,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":36}],39:[function(require,module,exports){
+},{"./field.js":39}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26245,7 +26249,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":31,"./numericfield.js":38}],40:[function(require,module,exports){
+},{"../helpers.js":34,"./numericfield.js":41}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26305,7 +26309,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":33}],41:[function(require,module,exports){
+},{"./checkbox.js":36}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26419,7 +26423,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":36}],42:[function(require,module,exports){
+},{"./field.js":39}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26533,7 +26537,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":36}],43:[function(require,module,exports){
+},{"./field.js":39}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26626,7 +26630,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":32,"./checkbox.js":33}],44:[function(require,module,exports){
+},{"./button.js":35,"./checkbox.js":36}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26997,7 +27001,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":31,"./layout.js":47}],45:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27379,7 +27383,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":31,"./layout.js":47}],46:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28016,7 +28020,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":31,"./layout.js":47}],47:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28302,7 +28306,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":22,"../widget.js":68}],48:[function(require,module,exports){
+},{"../container/container.js":25,"../widget.js":71}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28442,7 +28446,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":31,"./layout.js":47}],49:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28744,7 +28748,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":28,"../helpers.js":31,"../widget.js":68,"./layout.js":47}],50:[function(require,module,exports){
+},{"../container/tabitem.js":31,"../helpers.js":34,"../widget.js":71,"./layout.js":50}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28936,7 +28940,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":15,"keyboardjs":3}],51:[function(require,module,exports){
+},{"../base.js":18,"keyboardjs":3}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29389,15 +29393,15 @@ var Color = Base.$extend({
          * @return {String} The formatted color string.
          */
         FormatToRgbHexString: function (red, green, blue) {
-            var r = red.toString(16).toUpperCase();
+            var r = (red | 0).toString(16).toUpperCase();
             if (r.length == 1) {
                 r = "0" + r;
             }
-            var g = green.toString(16).toUpperCase();
+            var g = (green | 0).toString(16).toUpperCase();
             if (g.length == 1) {
                 g = "0" + g;
             }
-            var b = blue.toString(16).toUpperCase();
+            var b = (blue | 0).toString(16).toUpperCase();
             if (b.length == 1) {
                 b = "0" + b;
             }
@@ -29416,7 +29420,7 @@ var Color = Base.$extend({
          * @return {String} The formatted color string.
          */
         FormatToRgbaHexString: function (red, green, blue, alpha) {
-            var a = alpha.toString(16).toUpperCase();
+            var a = (alpha | 0).toString(16).toUpperCase();
             if (a.length == 1) {
                 a = "0" + a;
             }
@@ -29973,7 +29977,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":15,"../helpers.js":31,"lodash":8}],52:[function(require,module,exports){
+},{"../base.js":18,"../helpers.js":34,"lodash":8}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30290,7 +30294,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":15}],53:[function(require,module,exports){
+},{"../base.js":18}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30803,7 +30807,7 @@ var KeyboardManager = Base.$extend({
 
 module.exports = KeyboardManager;
 
-},{"../base.js":15,"../helpers.js":31,"../widget.js":68}],54:[function(require,module,exports){
+},{"../base.js":18,"../helpers.js":34,"../widget.js":71}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31534,7 +31538,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":15,"../helpers.js":31,"../widget.js":68}],55:[function(require,module,exports){
+},{"../base.js":18,"../helpers.js":34,"../widget.js":71}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31760,7 +31764,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":15}],56:[function(require,module,exports){
+},{"../base.js":18}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31935,7 +31939,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":15,"stonejs":12}],57:[function(require,module,exports){
+},{"../base.js":18,"stonejs":12}],60:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32049,7 +32053,7 @@ photonui.Template = require("./visual/template.js");
 
 module.exports = photonui;
 
-},{"./base.js":15,"./composite/colorbutton.js":16,"./composite/colorpickerdialog.js":17,"./composite/fontselect.js":18,"./composite/popupmenu.js":19,"./composite/select.js":20,"./container/basewindow.js":21,"./container/container.js":22,"./container/dialog.js":23,"./container/expander.js":24,"./container/menuitem.js":25,"./container/popupwindow.js":26,"./container/submenuitem.js":27,"./container/tabitem.js":28,"./container/viewport.js":29,"./container/window.js":30,"./helpers.js":31,"./interactive/button.js":32,"./interactive/checkbox.js":33,"./interactive/colorpalette.js":34,"./interactive/colorpicker.js":35,"./interactive/field.js":36,"./interactive/iconbutton.js":37,"./interactive/numericfield.js":38,"./interactive/slider.js":39,"./interactive/switch.js":40,"./interactive/textareafield.js":41,"./interactive/textfield.js":42,"./interactive/togglebutton.js":43,"./layout/boxlayout.js":44,"./layout/fluidlayout.js":45,"./layout/gridlayout.js":46,"./layout/layout.js":47,"./layout/menu.js":48,"./layout/tablayout.js":49,"./nonvisual/accelmanager.js":50,"./nonvisual/color.js":51,"./nonvisual/filemanager.js":52,"./nonvisual/keyboardmanager.js":53,"./nonvisual/mousemanager.js":54,"./nonvisual/spritesheet.js":55,"./nonvisual/translation.js":56,"./visual/baseicon.js":58,"./visual/canvas.js":59,"./visual/faicon.js":60,"./visual/image.js":61,"./visual/label.js":62,"./visual/progressbar.js":63,"./visual/separator.js":64,"./visual/spriteicon.js":65,"./visual/template.js":66,"./visual/text.js":67,"./widget.js":68,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":14}],58:[function(require,module,exports){
+},{"./base.js":18,"./composite/colorbutton.js":19,"./composite/colorpickerdialog.js":20,"./composite/fontselect.js":21,"./composite/popupmenu.js":22,"./composite/select.js":23,"./container/basewindow.js":24,"./container/container.js":25,"./container/dialog.js":26,"./container/expander.js":27,"./container/menuitem.js":28,"./container/popupwindow.js":29,"./container/submenuitem.js":30,"./container/tabitem.js":31,"./container/viewport.js":32,"./container/window.js":33,"./helpers.js":34,"./interactive/button.js":35,"./interactive/checkbox.js":36,"./interactive/colorpalette.js":37,"./interactive/colorpicker.js":38,"./interactive/field.js":39,"./interactive/iconbutton.js":40,"./interactive/numericfield.js":41,"./interactive/slider.js":42,"./interactive/switch.js":43,"./interactive/textareafield.js":44,"./interactive/textfield.js":45,"./interactive/togglebutton.js":46,"./layout/boxlayout.js":47,"./layout/fluidlayout.js":48,"./layout/gridlayout.js":49,"./layout/layout.js":50,"./layout/menu.js":51,"./layout/tablayout.js":52,"./nonvisual/accelmanager.js":53,"./nonvisual/color.js":54,"./nonvisual/filemanager.js":55,"./nonvisual/keyboardmanager.js":56,"./nonvisual/mousemanager.js":57,"./nonvisual/spritesheet.js":58,"./nonvisual/translation.js":59,"./visual/baseicon.js":61,"./visual/canvas.js":62,"./visual/faicon.js":63,"./visual/image.js":64,"./visual/label.js":65,"./visual/progressbar.js":66,"./visual/separator.js":67,"./visual/spriteicon.js":68,"./visual/template.js":69,"./visual/text.js":70,"./widget.js":71,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":13}],61:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32117,7 +32121,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":68}],59:[function(require,module,exports){
+},{"../widget.js":71}],62:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32398,7 +32402,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":68}],60:[function(require,module,exports){
+},{"../widget.js":71}],63:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32571,7 +32575,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":58}],61:[function(require,module,exports){
+},{"./baseicon.js":61}],64:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32726,7 +32730,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":68}],62:[function(require,module,exports){
+},{"../widget.js":71}],65:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32936,7 +32940,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":31,"../widget.js":68}],63:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71}],66:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33166,7 +33170,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":68}],64:[function(require,module,exports){
+},{"../widget.js":71}],67:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33307,7 +33311,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":68}],65:[function(require,module,exports){
+},{"../widget.js":71}],68:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33489,7 +33493,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":55,"./baseicon.js":58}],66:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":58,"./baseicon.js":61}],69:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33646,7 +33650,7 @@ var Template = Widget.$extend({
 
 module.exports = Template;
 
-},{"../helpers.js":31,"../widget.js":68,"lodash":8}],67:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"lodash":8}],70:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33792,7 +33796,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":31,"../widget.js":68,"stonejs":12}],68:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"stonejs":12}],71:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -34325,5 +34329,5 @@ var Widget = Base.$extend({
 
 module.exports = Widget;
 
-},{"./base.js":15,"./container/popupwindow.js":26,"./helpers.js":31,"stonejs":12,"uuid":14}]},{},[57])(57)
+},{"./base.js":18,"./container/popupwindow.js":29,"./helpers.js":34,"stonejs":12,"uuid":13}]},{},[60])(60)
 });
