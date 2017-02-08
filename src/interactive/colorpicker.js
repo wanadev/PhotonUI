@@ -48,7 +48,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
  *
  *   * value-changed:
  *      - description: the selected color changed.
- *      - callback:    function(widget, color)
+ *      - callback:    function (widget, color)
  *
  * @class ColorPicker
  * @constructor
@@ -58,8 +58,8 @@ var MouseManager = require("../nonvisual/mousemanager.js");
 var ColorPicker = Widget.$extend({
 
     // Constructor
-    __init__: function(params) {
-        this._registerWEvents(["value-changed","value-changed-final"]);
+    __init__: function (params) {
+        this._registerWEvents(["value-changed", "value-changed-final"]);
         this._color = new Color();
         this.__buffH = document.createElement("canvas");
         this.__buffH.width = 200;
@@ -99,11 +99,11 @@ var ColorPicker = Widget.$extend({
      * @property value
      * @type String
      */
-    getValue: function() {
+    getValue: function () {
         return this.color.rgbHexString;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
         this.color.fromString(value);
         this._updateSB();
         this._updateCanvas();
@@ -117,12 +117,12 @@ var ColorPicker = Widget.$extend({
      */
     _color: null,
 
-    getColor: function() {
+    getColor: function () {
         "@photonui-update";
         return this._color;
     },
 
-    setColor: function(color) {
+    setColor: function (color) {
         if (color instanceof Color) {
             if (this._color) {
                 this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
@@ -130,7 +130,7 @@ var ColorPicker = Widget.$extend({
             this._color = color;
             this._color.registerCallback("photonui.colorpicker.value-changed::" +
                 this.name, "value-changed",
-                function() {
+                function () {
                     this._updateSB();
                     this._updateCanvas();
                 }.bind(this));
@@ -147,7 +147,7 @@ var ColorPicker = Widget.$extend({
      * @default null
      * @readOnly
      */
-    getHtml: function() {
+    getHtml: function () {
         return this.__html.outer;
     },
 
@@ -194,7 +194,7 @@ var ColorPicker = Widget.$extend({
     // Methods                              //
     //////////////////////////////////////////
 
-    destroy: function() {
+    destroy: function () {
         this.__mouseManager.destroy();
         this._color.removeCallback("photonui.colorpicker.value-changed::" + this.name);
         this.$super();
@@ -206,7 +206,7 @@ var ColorPicker = Widget.$extend({
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function() {
+    _buildHtml: function () {
         this.__html.outer = document.createElement("div");
         this.__html.outer.className = "photonui-widget photonui-colorpicker";
         this.__html.canvas = document.createElement("canvas");
@@ -232,7 +232,7 @@ var ColorPicker = Widget.$extend({
      * @method _updateH
      * @private
      */
-    _updateH: function() {
+    _updateH: function () {
         var canvas = this.__buffH;
         var ctx = canvas.getContext("2d");
         var color = new Color();
@@ -261,7 +261,7 @@ var ColorPicker = Widget.$extend({
      * @method _updateSBmask
      * @private
      */
-    _updateSBmask: function() {
+    _updateSBmask: function () {
         var canvas = this.__buffSBmask;
         var ctx = canvas.getContext("2d");
         var pix = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -295,7 +295,7 @@ var ColorPicker = Widget.$extend({
      * @method _updateSB
      * @private
      */
-    _updateSB: function() {
+    _updateSB: function () {
         if (this.__disableSBUpdate) {
             return;
         }
@@ -330,7 +330,7 @@ var ColorPicker = Widget.$extend({
      * @method _updateCanvas
      * @private
      */
-    _updateCanvas: function() {
+    _updateCanvas: function () {
         var canvas = this.__html.canvas;
         var ctx = canvas.getContext("2d");
 
@@ -372,7 +372,7 @@ var ColorPicker = Widget.$extend({
      * @param mstate
      * @return {Boolean}
      */
-    _pointerOnSquare: function(mstate) {
+    _pointerOnSquare: function (mstate) {
         return (mstate.x >= 50 && mstate.x <= 150 && mstate.y >= 50 && mstate.y <= 150);
     },
 
@@ -384,7 +384,7 @@ var ColorPicker = Widget.$extend({
      * @param mstate
      * @return {Boolean}
      */
-    _pointerOnCircle: function(mstate) {
+    _pointerOnCircle: function (mstate) {
         var dx = Math.abs(100 - mstate.x);
         var dy = Math.abs(100 - mstate.y);
         var h = Math.sqrt(dx * dx + dy * dy);
@@ -399,7 +399,7 @@ var ColorPicker = Widget.$extend({
      * @param mstate
      * @return {Number} the angle in degree.
      */
-    _pointerAngle: function(mstate) {
+    _pointerAngle: function (mstate) {
         var dx = Math.abs(100 - mstate.x);
         var dy = Math.abs(100 - mstate.y);
         var angle = Math.atan(dy / dx) * 180 / Math.PI;
@@ -425,7 +425,7 @@ var ColorPicker = Widget.$extend({
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onMouseMove: function(manager, mstate) {
+    __onMouseMove: function (manager, mstate) {
         if (this._pointerOnSquare(mstate) || this._pointerOnCircle(mstate)) {
             this.__html.canvas.style.cursor = "crosshair";
         } else {
@@ -439,7 +439,7 @@ var ColorPicker = Widget.$extend({
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onMouseDown: function(manager, mstate) {
+    __onMouseDown: function (manager, mstate) {
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.color.saturation = mstate.x - 50;
@@ -451,16 +451,24 @@ var ColorPicker = Widget.$extend({
             this._callCallbacks("value-changed", this.color);
         }
     },
-    __onMouseUp: function(manager, mstate) {
+
+    /**
+     * @method __onMouseUp
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onMouseUp: function (manager, mstate) {
         this._callCallbacks("value-changed-final", this.color);
     },
+
     /**
      * @method __onDragStart
      * @private
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDragStart: function(manager, mstate) {
+    __onDragStart: function (manager, mstate) {
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingSquare.bind(this));
@@ -477,7 +485,7 @@ var ColorPicker = Widget.$extend({
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDraggingSquare: function(manager, mstate) {
+    __onDraggingSquare: function (manager, mstate) {
         this.color.saturation = mstate.x - 50;
         this.color.brightness = 150 - mstate.y;
         this._callCallbacks("value-changed", this.color);
@@ -489,7 +497,7 @@ var ColorPicker = Widget.$extend({
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDraggingCircle: function(manager, mstate) {
+    __onDraggingCircle: function (manager, mstate) {
         this.color.hue = this._pointerAngle(mstate);
         this._callCallbacks("value-changed", this.color);
     },
@@ -500,7 +508,7 @@ var ColorPicker = Widget.$extend({
      * @param {photonui.MouseManager} manager
      * @param {Object} mstate
      */
-    __onDragEnd: function(manager, mstate) {
+    __onDragEnd: function (manager, mstate) {
         this.__mouseManager.removeCallback("dragging");
         this.__mouseManager.removeCallback("drag-end");
         this.__disableSBUpdate = false;
@@ -510,7 +518,7 @@ var ColorPicker = Widget.$extend({
      * @method __onValueChanged
      * @private
      */
-    __onValueChanged: function() {
+    __onValueChanged: function () {
         this.color.fromString(this.__html.preview.value);
         this.__html.preview.value = this.color.rgbHexString;
         this._callCallbacks("value-changed", this.color);
