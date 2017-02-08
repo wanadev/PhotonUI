@@ -48,7 +48,11 @@ var MouseManager = require("../nonvisual/mousemanager.js");
  *
  *   * value-changed:
  *      - description: the selected color changed.
- *      - callback:    function(widget, color)
+ *      - callback:    function (widget, color)
+ *
+* value-changed-final:
+ *      - description: called when the value is no more modified after continuous changes
+ *      - callback:    function (widget, color)
  *
  * @class ColorPicker
  * @constructor
@@ -59,7 +63,7 @@ var ColorPicker = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
-        this._registerWEvents(["value-changed"]);
+        this._registerWEvents(["value-changed", "value-changed-final"]);
         this._color = new Color();
         this.__buffH = document.createElement("canvas");
         this.__buffH.width = 200;
@@ -80,6 +84,7 @@ var ColorPicker = Widget.$extend({
 
         this.__mouseManager.registerCallback("click", "mouse-move", this.__onMouseMove.bind(this));
         this.__mouseManager.registerCallback("mouse-down", "mouse-down", this.__onMouseDown.bind(this));
+        this.__mouseManager.registerCallback("mouse-up", "mouse-up", this.__onMouseUp.bind(this));
         this.__mouseManager.registerCallback("drag-start", "drag-start", this.__onDragStart.bind(this));
 
         // Bind js events
@@ -128,10 +133,11 @@ var ColorPicker = Widget.$extend({
             }
             this._color = color;
             this._color.registerCallback("photonui.colorpicker.value-changed::" +
-                                         this.name, "value-changed", function () {
-                this._updateSB();
-                this._updateCanvas();
-            }.bind(this));
+                this.name, "value-changed",
+                function () {
+                    this._updateSB();
+                    this._updateCanvas();
+                }.bind(this));
             this._updateSB();
             this._updateCanvas();
         }
@@ -237,7 +243,7 @@ var ColorPicker = Widget.$extend({
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        for (var i = 0 ; i < 360 ; i++) {
+        for (var i = 0; i < 360; i++) {
             color.hue = 360 - i;
             ctx.beginPath();
             ctx.fillStyle = color.rgbHexString;
@@ -268,8 +274,8 @@ var ColorPicker = Widget.$extend({
         var saturation = 0;
         var b = 0;
         var s = 0;
-        for (b = 0 ; b < 100 ; b++) {
-            for (s = 0 ; s < 100 ; s++) {
+        for (b = 0; b < 100; b++) {
+            for (s = 0; s < 100; s++) {
                 i = 400 * b + 4 * s;
 
                 // some magic here
@@ -448,6 +454,16 @@ var ColorPicker = Widget.$extend({
             this.color.hue = this._pointerAngle(mstate);
             this._callCallbacks("value-changed", this.color);
         }
+    },
+
+    /**
+     * @method __onMouseUp
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onMouseUp: function (manager, mstate) {
+        this._callCallbacks("value-changed-final", this.color);
     },
 
     /**
