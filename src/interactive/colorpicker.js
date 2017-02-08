@@ -50,6 +50,10 @@ var MouseManager = require("../nonvisual/mousemanager.js");
  *      - description: the selected color changed.
  *      - callback:    function (widget, color)
  *
+* value-changed-final:
+ *      - description: the selected color changed and the mouse is up.
+ *      - callback:    function (widget, color)
+ *
  * @class ColorPicker
  * @constructor
  * @extends photonui.Widget
