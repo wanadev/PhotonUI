@@ -51,7 +51,7 @@ var MouseManager = require("../nonvisual/mousemanager.js");
  *      - callback:    function (widget, color)
  *
 * value-changed-final:
- *      - description: the selected color changed and the mouse is up.
+ *      - description: called when the value is no more modified after continuous changes
  *      - callback:    function (widget, color)
  *
  * @class ColorPicker
