@@ -1,5 +1,5 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-abitbol v1.1.0 - License BSD-3-Clause
+abitbol v1.1.1 - License BSD-3-Clause
 downloaded from <https://www.npmjs.com/package/abitbol>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c) 2015, Wanadev <http://www.wanadev.fr/>
