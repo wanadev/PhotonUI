@@ -619,7 +619,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-boxlayout > .photonui-layout-align-stretch {
   -ms-flex-item-align: stretch;
-      -ms-grid-row-align: stretch;
       align-self: stretch;
 }
 .photonui-boxlayout > .photonui-layout-align-start {
@@ -628,7 +627,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-boxlayout > .photonui-layout-align-center {
   -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
       align-self: center;
 }
 .photonui-boxlayout > .photonui-layout-align-end {
@@ -683,7 +681,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-fluidlayout > .photonui-fluidlayout-innerbox > .photonui-container.photonui-layout-align-stretch {
   -ms-flex-item-align: stretch;
-      -ms-grid-row-align: stretch;
       align-self: stretch;
   height: 100%;
 }
@@ -696,7 +693,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-fluidlayout > .photonui-fluidlayout-innerbox > .photonui-container.photonui-layout-align-center {
   -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
       align-self: center;
 }
 .photonui-fluidlayout > .photonui-fluidlayout-innerbox > .photonui-container.photonui-layout-align-end {
@@ -1865,7 +1861,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 :root .fa-rotate-270,
 :root .fa-flip-horizontal,
 :root .fa-flip-vertical {
-  filter: none;
+  -webkit-filter: none;
+          filter: none;
 }
 .fa-stack {
   position: relative;

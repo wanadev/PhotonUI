@@ -168,6 +168,9 @@ creates all required files for you:
 
 ## Changelog:
 
+* **1.7.2:**
+  * New event on ColorPicker: `value-changed-final` called when the value is no more modified after continuous changes
+
 * **1.7.1:**
   * Dependencies updated (uuid 2.0.3 → 3.0.0)
 
