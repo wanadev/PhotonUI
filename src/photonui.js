@@ -106,6 +106,8 @@ photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
 photonui.IconButton = require("./interactive/iconbutton.js");
 photonui.Template = require("./visual/template.js");
+photonui.BaseDataView = require("./dataview/basedataview.js");
+photonui.ListView = require("./dataview/listview.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 

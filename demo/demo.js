@@ -1028,6 +1028,20 @@ new photonui.ColorPickerDialog({
     color: new photonui.Color("green")
 });
 
+var listView = new photonui.ListView({
+  collection: [
+    "hello world foo bar",
+    "hello",
+    "world",
+    "foo",
+    "bar",
+  ]
+});
+
+new photonui.Window({
+  visible: true,
+  child: listView,
+});
 
 win.center();
 win.show();
