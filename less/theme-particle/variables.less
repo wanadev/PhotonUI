@@ -113,6 +113,12 @@
 @color-button-green: #4CAF50;
 
 
+// Listview
+@color-listview: @color-light-lightest;
+@color-listview-hover: darken(@color-light-lightest, 3%);
+@color-listview-selected: lighten(@color-highlight-background, 20%);
+@color-listview-text-selected: darken(@color-highlight-background, 40%);
+@color-listview-selected-hover: darken(@color-listview-selected, 3%);
 
 
 /*@color-step: 5;*/
@@ -150,4 +156,3 @@
 @color-dark-default: lighten(@color-dark-darkest, @color-step*3);
 @color-dark-disabled: lighten(@color-dark-darkest, @color-step*4);
 @color-dark-highlight: #FFF;
-

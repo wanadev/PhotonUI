@@ -50,6 +50,7 @@ var ListView = BaseDataView.$extend({
 
     // Constructor
     __init__: function (params) {
+        this.isSelectable = true;
         this._registerWEvents([]);
         this.$super(params);
     },
@@ -63,29 +64,13 @@ var ListView = BaseDataView.$extend({
     /**
      * Html outer element of the widget (if any).
      *
-     * @property collection
-     * @type Array
-     * @default null
-     */
-    getCollection: function () {
-        return this.$data.collection;
-    },
-
-    setCollection: function (collection) {
-        this.$data.collection = collection;
-        this._updateCollectionView();
-    },
-
-    /**
-     * Html outer element of the widget (if any).
-     *
      * @property html
      * @type HTMLElement
      * @default null
      * @readOnly
      */
     getHtml: function () {
-        return this.__html.ul;
+        return this.__html.container;
     },
 
     // ====== Private properties ======
@@ -103,37 +88,16 @@ var ListView = BaseDataView.$extend({
     // ====== Private methods ======
 
     /**
-     * Build the widget HTML.
+     * Build the widget container HTML.
      *
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function () {
-        this.__html.ul = document.createElement("ul");
-        this.__html.ul.className = "photonui-widget photonui-listview";
+    _buildContainerHtml: function () {
+        this.__html.container = document.createElement("ul");
+        this.__html.container.className = "photonui-widget photonui-dataview-container photonui-listview";
     },
 
-    /**
-     * Update the layout.
-     *
-     * @method _updateLayout
-     * @private
-     */
-    _updateCollectionView: function () {
-        Helpers.cleanNode(this.__html.ul);
-
-        var fragment = document.createDocumentFragment();
-        var li;
-
-        this.$data.collection.forEach(function (item) {
-            li = document.createElement("li");
-            li.className = "photonui-listview-item";
-            li.innerHTML = item;
-            fragment.appendChild(li);
-        });
-
-        this.__html.ul.appendChild(fragment);
-    },
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //

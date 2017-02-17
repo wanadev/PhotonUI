@@ -1029,11 +1029,12 @@ new photonui.ColorPickerDialog({
 });
 
 var listView = new photonui.ListView({
-  collection: [
+  items: [
     "hello world foo bar",
     "hello",
     "world",
     "foo",
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
     "bar",
   ]
 });

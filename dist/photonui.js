@@ -23580,6 +23580,7 @@ module.exports = Window;
  * @namespace photonui
  */
 
+var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 
 /**
@@ -23593,13 +23594,196 @@ var BaseDataView = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
+        this._initialSelectionItemIndex = null;
         this.$super(params);
+
+        // Bind js events
+        this._bindEvent("click", this.__html.container, "click", this.__onClick.bind(this));
     },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property items
+     * @type Array
+     * @default null
+     */
+    getItems: function () {
+        return this.$data.items;
+    },
+
+    setItems: function (items) {
+        this.$data.items = items.map(function (item, index) {
+            return {
+                value: item,
+                selected: false,
+                index: index,
+            };
+        });
+
+        this._buildItemsHtml();
+    },
+
+    /**
+     * Defines if the data items can be selected.
+     *
+     * @property selectable
+     * @type Boolean
+     * @default false
+     */
+    isSelectable: false,
+
+    /**
+     * The currently selected items.
+     *
+     * @property selectedItems
+     * @type Array
+     * @default []
+     */
+    getSelectedItems: function () {
+        return this.$data.items.filter(function (item) {
+            return item.selected;
+        });
+    },
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    // TODO Public methods here
+
+    // ====== Private methods ======
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function () {
+        this._buildContainerHtml();
+    },
+
+    /**
+     * Build the widget container HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildContainerHtml: function () {
+        this.__html.container = document.createElement("ul");
+        this.__html.container.className = "photonui-widget photonui-dataview-container";
+    },
+
+    /**
+     * Build the items list HTML.
+     *
+     * @method _updateLayout
+     * @private
+     */
+    _buildItemsHtml: function () {
+        Helpers.cleanNode(this.__html.container);
+
+        var fragment = document.createDocumentFragment();
+        var itemNode;
+
+        this.$data.items.forEach(function (item) {
+            var itemNode = this._getItemHtml(item);
+            item.node = itemNode;
+            fragment.appendChild(itemNode);
+        }.bind(this));
+
+        this.__html.container.appendChild(fragment);
+    },
+
+    _getItemHtml: function (item) {
+      var node = document.createElement("li");
+      node.className = "photonui-dataview-item photonui-listview-item";
+      node.innerHTML = item.value;
+      node.setAttribute("data-photonui-dataview-item-index", item.index);
+
+      return node;
+    },
+
+    _selectItem: function (item) {
+        item.selected = true;
+        item.node.classList.add('selected');
+    },
+
+    _unselectItem: function (item) {
+        item.selected = false;
+        item.node.classList.remove('selected');
+    },
+
+    _selectItemsTo: function (item) {
+        this._unselectAllItems();
+
+        if (this._initialSelectionItemIndex < item.index) {
+            for (var i = this._initialSelectionItemIndex; i <= item.index; i++) {
+                this._selectItem(this.items[i]);
+            }
+        } else {
+            for (var j = this._initialSelectionItemIndex; j >= item.index; j--) {
+                this._selectItem(this.items[j]);
+            }
+        }
+    },
+
+    _unselectAllItems: function () {
+        this.getSelectedItems().forEach(function (item) {
+            this._unselectItem(item);
+        }.bind(this));
+    },
+
+    _getItemFromNode: function (itemNode) {
+        var index = itemNode.getAttribute("data-photonui-dataview-item-index");
+        return index ? this.$data.items[parseInt(index, 10)] : null;
+    },
+
+    _handleClick: function (clickedItem, modifiers) {
+        if (this.isSelectable) {
+            if (this.selectedItems.length === 0) {
+                this._selectItem(clickedItem);
+                this._initialSelectionItemIndex = clickedItem.index;
+            } else {
+                if (modifiers.shift) {
+                    this._selectItemsTo(clickedItem);
+                } else if (modifiers.ctrl) {
+                    if (clickedItem.selected) {
+                        this._unselectItem(clickedItem);
+                    } else {
+                        this._selectItem(clickedItem);
+                    }
+                } else {
+                    this._unselectAllItems();
+                    this._selectItem(clickedItem);
+                    this._initialSelectionItemIndex = clickedItem.index;
+                }
+            }
+        }
+    },
+
+    __onClick: function (e) {
+        var clickedItemNode = Helpers.getClosest(e.target, ".photonui-dataview-item");
+
+        if (clickedItemNode) {
+          this.__onItemClick(e, this._getItemFromNode(clickedItemNode));
+        }
+    },
+
+    __onItemClick: function (e, item) {
+        this._handleClick(item, {
+          shift: e.shiftKey,
+          ctrl: e.ctrlKey,
+        });
+    }
 });
 
 module.exports = BaseDataView;
 
-},{"../widget.js":73}],35:[function(require,module,exports){
+},{"../helpers.js":36,"../widget.js":73}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23652,6 +23836,7 @@ var ListView = BaseDataView.$extend({
 
     // Constructor
     __init__: function (params) {
+        this.isSelectable = true;
         this._registerWEvents([]);
         this.$super(params);
     },
@@ -23665,29 +23850,13 @@ var ListView = BaseDataView.$extend({
     /**
      * Html outer element of the widget (if any).
      *
-     * @property collection
-     * @type Array
-     * @default null
-     */
-    getCollection: function () {
-        return this.$data.collection;
-    },
-
-    setCollection: function (collection) {
-        this.$data.collection = collection;
-        this._updateCollectionView();
-    },
-
-    /**
-     * Html outer element of the widget (if any).
-     *
      * @property html
      * @type HTMLElement
      * @default null
      * @readOnly
      */
     getHtml: function () {
-        return this.__html.ul;
+        return this.__html.container;
     },
 
     // ====== Private properties ======
@@ -23705,37 +23874,16 @@ var ListView = BaseDataView.$extend({
     // ====== Private methods ======
 
     /**
-     * Build the widget HTML.
+     * Build the widget container HTML.
      *
      * @method _buildHtml
      * @private
      */
-    _buildHtml: function () {
-        this.__html.ul = document.createElement("ul");
-        this.__html.ul.className = "photonui-widget photonui-listview";
+    _buildContainerHtml: function () {
+        this.__html.container = document.createElement("ul");
+        this.__html.container.className = "photonui-widget photonui-dataview-container photonui-listview";
     },
 
-    /**
-     * Update the layout.
-     *
-     * @method _updateLayout
-     * @private
-     */
-    _updateCollectionView: function () {
-        Helpers.cleanNode(this.__html.ul);
-
-        var fragment = document.createDocumentFragment();
-        var li;
-
-        this.$data.collection.forEach(function (item) {
-            li = document.createElement("li");
-            li.className = "photonui-listview-item";
-            li.innerHTML = item;
-            fragment.appendChild(li);
-        });
-
-        this.__html.ul.appendChild(fragment);
-    },
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -23949,6 +24097,44 @@ Helpers.log = function (level, message) {
         window.console[level]("PhotonUI: " + message);
     } catch (e) {
     }
+};
+
+/**
+ * Get the closest matching element up the DOM tree.
+ * https://gomakethings.com/climbing-up-and-down-the-dom-tree-with-vanilla-javascript/
+ *
+ * @method getClosest
+ * @param  {Element} elem     Starting element
+ * @param  {String}  selector Selector to match against
+ * @return {Boolean|Element}  Returns null if not match found
+ */
+Helpers.getClosest = function (elem, selector) {
+
+    // Element.matches() polyfill
+    if (!Element.prototype.matches) {
+        Element.prototype.matches =
+            Element.prototype.matchesSelector ||
+            Element.prototype.mozMatchesSelector ||
+            Element.prototype.msMatchesSelector ||
+            Element.prototype.oMatchesSelector ||
+            Element.prototype.webkitMatchesSelector ||
+            function(s) {
+                var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                    i = matches.length;
+                while (--i >= 0 && matches.item(i) !== this) {}
+                return i > -1;
+            };
+    }
+
+    // Get closest match
+    for (; elem && elem !== document; elem = elem.parentNode) {
+        if (elem.matches(selector)) {
+          return elem;
+        }
+    }
+
+    return null;
+
 };
 
 module.exports = Helpers;
