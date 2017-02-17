@@ -51,6 +51,7 @@ var ListView = BaseDataView.$extend({
     // Constructor
     __init__: function (params) {
         this.isSelectable = true;
+        this.isMultiSelectable = true;
         this._registerWEvents([]);
         this.$super(params);
     },

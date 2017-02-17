@@ -90,6 +90,15 @@ var BaseDataView = Widget.$extend({
     isSelectable: false,
 
     /**
+     * Defines if the data items can be multi-selected.
+     *
+     * @property multiSelectable
+     * @type Boolean
+     * @default false
+     */
+    isMultiSelectable: false,
+
+    /**
      * The currently selected items.
      *
      * @property selectedItems
@@ -200,22 +209,31 @@ var BaseDataView = Widget.$extend({
 
     _handleClick: function (clickedItem, modifiers) {
         if (this.isSelectable) {
-            if (this.selectedItems.length === 0) {
-                this._selectItem(clickedItem);
-                this._initialSelectionItemIndex = clickedItem.index;
-            } else {
-                if (modifiers.shift) {
-                    this._selectItemsTo(clickedItem);
-                } else if (modifiers.ctrl) {
-                    if (clickedItem.selected) {
-                        this._unselectItem(clickedItem);
-                    } else {
-                        this._selectItem(clickedItem);
-                    }
+            if (this.isMultiSelectable) {
+                if (this.selectedItems.length === 0) {
+                  this._selectItem(clickedItem);
+                  this._initialSelectionItemIndex = clickedItem.index;
                 } else {
+                  if (modifiers.shift) {
+                    this._selectItemsTo(clickedItem);
+                  } else if (modifiers.ctrl) {
+                    if (clickedItem.selected) {
+                      this._unselectItem(clickedItem);
+                    } else {
+                      this._selectItem(clickedItem);
+                    }
+                  } else {
                     this._unselectAllItems();
                     this._selectItem(clickedItem);
                     this._initialSelectionItemIndex = clickedItem.index;
+                  }
+                }
+            } else {
+                if (modifiers.ctrl && clickedItem.selected) {
+                    this._unselectItem(clickedItem);
+                } else {
+                    this._unselectAllItems();
+                    this._selectItem(clickedItem);
                 }
             }
         }
