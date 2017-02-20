@@ -4350,19 +4350,20 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Valentin Ledrapier
  */
 .photonui-tableview {
-  list-style: none;
+  border-collapse: collapse;
   padding: 0;
   margin: 0;
 }
 .photonui-tableview .photonui-tableview-item {
-  border-bottom: 1px solid #fff;
+  border-bottom: 2px solid #fff;
   box-sizing: border-box;
 }
 .photonui-tableview .photonui-tableview-item.selected {
   background-color: #aaa;
 }
 .photonui-tableview .photonui-tableview-item .photonui-tableview-column {
-  padding: 4px 6px;
+  border-right: 1px solid #fff;
+  padding: 6px;
 }
 /* [generator] */
 /* DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR! */

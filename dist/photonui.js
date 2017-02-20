@@ -23971,6 +23971,12 @@ var TableView = BaseDataView.$extend({
         this.isMultiSelectable = true;
         this._registerWEvents([]);
         this.$super(params);
+
+        if (params.columns) {
+            this._manuallySetColumns = true;
+        } else {
+            this._generateColumns();
+        }
     },
 
     //////////////////////////////////////////
@@ -23991,17 +23997,19 @@ var TableView = BaseDataView.$extend({
         return this.__html.container;
     },
 
-    setColumns: function(columns) {
+    setColumns: function (columns) {
         this.$data.columns = columns.map(function (column) {
-            return typeof(column) === 'string' ? { label: column, key: column} :
-                column.key ? { label: column.label || column.key, key: column.key } :
-                null
+            return typeof(column) === "string" ? {label: column, key: column} :
+                column.key ? {label: column.label || column.key, key: column.key} :
+                null;
         }).filter(function (col) {
             return col !== null;
         });
     },
 
     // ====== Private properties ======
+
+    _manuallySetColumns: false,
 
     //////////////////////////////////////////
     // Methods                              //
@@ -24029,19 +24037,42 @@ var TableView = BaseDataView.$extend({
         node.className = "photonui-dataview-item photonui-tableview-item";
         node.setAttribute("data-photonui-dataview-item-index", item.index);
 
-        this.$data.columns.forEach(function (column) {
-            node.appendChild(this._renderColumn(_.get(item.value, column.key)));
-        }.bind(this));
+        if (this.$data.columns && this.$data.columns.length) {
+            this.$data.columns.forEach(function (column) {
+                node.appendChild(this._renderColumn(_.get(item.value, column.key)));
+            }.bind(this));
+        }
 
         return node;
     },
 
     _renderColumn: function (value) {
         var column = document.createElement("td");
-        column.className = "photonui-tableview-column"
+        column.className = "photonui-tableview-column";
         column.innerHTML = value;
+
         return column;
     },
+
+    _generateColumns: function () {
+        var keys = [];
+        this.$data.items.forEach(function (item) {
+            Object.keys(item.value).forEach(function (key) {
+                if (keys.indexOf(key) === -1) {
+                    keys.push(key);
+                }
+            });
+        });
+
+        this.$data.columns = keys.map(function (key) {
+            return {
+                key: key,
+                label: key,
+            };
+        });
+
+        this._buildItemsHtml();
+    }
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //

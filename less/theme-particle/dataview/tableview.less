@@ -33,7 +33,7 @@
 
     .photonui-tableview-item {
         background-color: @color-light-lightest;
-        border-color: @color-light-disabled;
+        border-color: @color-tableview-border;
         transition: background-color .1s ease-in-out;
 
         &:hover {
@@ -52,6 +52,10 @@
             .photonui-tableview-column {
                 border-color: darken(@color-listview-selected, 10%);
             }
+        }
+
+        .photonui-tableview-column {
+            border-color: @color-tableview-border;
         }
     }
 }
