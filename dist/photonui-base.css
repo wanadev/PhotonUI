@@ -4356,7 +4356,7 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-tableview .photonui-tableview-item {
   border-bottom: 2px solid #fff;
-  box-sizing: border-box;
+  width: 100%;
 }
 .photonui-tableview .photonui-tableview-item.selected {
   background-color: #aaa;

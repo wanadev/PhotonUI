@@ -54,14 +54,15 @@ var TableView = BaseDataView.$extend({
     __init__: function (params) {
         this.isSelectable = true;
         this.isMultiSelectable = true;
-        this._registerWEvents([]);
-        this.$super(params);
 
         if (params.columns) {
-            this._manuallySetColumns = true;
+            this.$data._manuallySetColumns = true;
         } else {
             this._generateColumns();
         }
+
+        this._registerWEvents([]);
+        this.$super(params);
     },
 
     //////////////////////////////////////////
@@ -92,9 +93,25 @@ var TableView = BaseDataView.$extend({
         });
     },
 
-    // ====== Private properties ======
+    setItems: function (items) {
+        this.$super(items);
 
-    _manuallySetColumns: false,
+        this.$data.items = this.$data.items.map(function (item) {
+            if (typeof(item.value) === "string") {
+                item.value = {
+                    _string: item.value,
+                };
+            }
+
+            return item;
+        });
+
+        if (!this.$data._manuallySetColumns) {
+            this._generateColumns();
+        }
+    },
+
+    // ====== Private properties ======
 
     //////////////////////////////////////////
     // Methods                              //
@@ -134,29 +151,34 @@ var TableView = BaseDataView.$extend({
     _renderColumn: function (value) {
         var column = document.createElement("td");
         column.className = "photonui-tableview-column";
-        column.innerHTML = value;
+        column.innerHTML = value || "";
 
         return column;
     },
 
     _generateColumns: function () {
         var keys = [];
-        this.$data.items.forEach(function (item) {
-            Object.keys(item.value).forEach(function (key) {
-                if (keys.indexOf(key) === -1) {
-                    keys.push(key);
+
+        if (this.$data.items) {
+            this.$data.items.forEach(function (item) {
+                if (typeof(item.value) !== "string") {
+                    Object.keys(item.value).forEach(function (key) {
+                        if (keys.indexOf(key) === -1) {
+                            keys.push(key);
+                        }
+                    });
                 }
             });
-        });
 
-        this.$data.columns = keys.map(function (key) {
-            return {
-                key: key,
-                label: key,
-            };
-        });
+            this.$data.columns = keys.map(function (key) {
+                return {
+                    key: key,
+                    label: key,
+                };
+            });
 
-        this._buildItemsHtml();
+            this._buildItemsHtml();
+        }
     }
 
     //////////////////////////////////////////
