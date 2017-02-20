@@ -155,7 +155,7 @@ var BaseDataView = Widget.$extend({
         var itemNode;
 
         this.$data.items.forEach(function (item) {
-            var itemNode = this._getItemHtml(item);
+            var itemNode = this._renderItem(item);
             item.node = itemNode;
             fragment.appendChild(itemNode);
         }.bind(this));
@@ -163,7 +163,7 @@ var BaseDataView = Widget.$extend({
         this.__html.container.appendChild(fragment);
     },
 
-    _getItemHtml: function (item) {
+    _renderItem: function (item) {
         var node = document.createElement("li");
         node.className = "photonui-dataview-item photonui-listview-item";
         node.innerHTML = item.value;

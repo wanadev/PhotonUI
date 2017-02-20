@@ -29,9 +29,9 @@
  */
 
 
-.photonui-listview {
+.photonui-tableview {
 
-    .photonui-listview-item {
+    .photonui-tableview-item {
         background-color: @color-light-lightest;
         border-color: @color-light-disabled;
         transition: background-color .1s ease-in-out;
@@ -47,6 +47,10 @@
 
             &:hover {
                 background-color: @color-listview-selected-hover;
+            }
+
+            .photonui-tableview-column {
+                border-color: darken(@color-listview-selected, 10%);
             }
         }
     }

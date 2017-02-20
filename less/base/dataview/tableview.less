@@ -29,25 +29,21 @@
  */
 
 
-.photonui-listview {
+.photonui-tableview {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 
-    .photonui-listview-item {
-        background-color: @color-light-lightest;
-        border-color: @color-light-disabled;
-        transition: background-color .1s ease-in-out;
-
-        &:hover {
-            background-color: @color-listview-hover;
-        }
+    .photonui-tableview-item {
+        border-bottom: 1px solid #fff;
+        box-sizing: border-box;
 
         &.selected {
-            color: @color-listview-text-selected;
-            background-color: @color-listview-selected;
-            border-color: darken(@color-listview-selected, 10%);
+            background-color: #aaa;
+        }
 
-            &:hover {
-                background-color: @color-listview-selected-hover;
-            }
+        .photonui-tableview-column {
+            padding: 4px 6px;
         }
     }
 }
