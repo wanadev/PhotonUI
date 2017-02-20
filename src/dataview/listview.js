@@ -99,7 +99,6 @@ var ListView = BaseDataView.$extend({
         this.__html.container.className = "photonui-widget photonui-dataview-container photonui-listview";
     },
 
-
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////

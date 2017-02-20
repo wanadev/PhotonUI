@@ -23708,22 +23708,22 @@ var BaseDataView = Widget.$extend({
     },
 
     _getItemHtml: function (item) {
-      var node = document.createElement("li");
-      node.className = "photonui-dataview-item photonui-listview-item";
-      node.innerHTML = item.value;
-      node.setAttribute("data-photonui-dataview-item-index", item.index);
+        var node = document.createElement("li");
+        node.className = "photonui-dataview-item photonui-listview-item";
+        node.innerHTML = item.value;
+        node.setAttribute("data-photonui-dataview-item-index", item.index);
 
-      return node;
+        return node;
     },
 
     _selectItem: function (item) {
         item.selected = true;
-        item.node.classList.add('selected');
+        item.node.classList.add("selected");
     },
 
     _unselectItem: function (item) {
         item.selected = false;
-        item.node.classList.remove('selected');
+        item.node.classList.remove("selected");
     },
 
     _selectItemsTo: function (item) {
@@ -23755,22 +23755,22 @@ var BaseDataView = Widget.$extend({
         if (this.isSelectable) {
             if (this.isMultiSelectable) {
                 if (this.selectedItems.length === 0) {
-                  this._selectItem(clickedItem);
-                  this._initialSelectionItemIndex = clickedItem.index;
-                } else {
-                  if (modifiers.shift) {
-                    this._selectItemsTo(clickedItem);
-                  } else if (modifiers.ctrl) {
-                    if (clickedItem.selected) {
-                      this._unselectItem(clickedItem);
-                    } else {
-                      this._selectItem(clickedItem);
-                    }
-                  } else {
-                    this._unselectAllItems();
                     this._selectItem(clickedItem);
                     this._initialSelectionItemIndex = clickedItem.index;
-                  }
+                } else {
+                    if (modifiers.shift) {
+                        this._selectItemsTo(clickedItem);
+                    } else if (modifiers.ctrl) {
+                        if (clickedItem.selected) {
+                            this._unselectItem(clickedItem);
+                        } else {
+                            this._selectItem(clickedItem);
+                        }
+                    } else {
+                        this._unselectAllItems();
+                        this._selectItem(clickedItem);
+                        this._initialSelectionItemIndex = clickedItem.index;
+                    }
                 }
             } else {
                 if (modifiers.ctrl && clickedItem.selected) {
@@ -23787,14 +23787,14 @@ var BaseDataView = Widget.$extend({
         var clickedItemNode = Helpers.getClosest(e.target, ".photonui-dataview-item");
 
         if (clickedItemNode) {
-          this.__onItemClick(e, this._getItemFromNode(clickedItemNode));
+            this.__onItemClick(e, this._getItemFromNode(clickedItemNode));
         }
     },
 
     __onItemClick: function (e, item) {
         this._handleClick(item, {
-          shift: e.shiftKey,
-          ctrl: e.ctrlKey,
+            shift: e.shiftKey,
+            ctrl: e.ctrlKey,
         });
     }
 });
@@ -23902,7 +23902,6 @@ var ListView = BaseDataView.$extend({
         this.__html.container = document.createElement("ul");
         this.__html.container.className = "photonui-widget photonui-dataview-container photonui-listview";
     },
-
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -24137,10 +24136,10 @@ Helpers.getClosest = function (elem, selector) {
             Element.prototype.msMatchesSelector ||
             Element.prototype.oMatchesSelector ||
             Element.prototype.webkitMatchesSelector ||
-            function(s) {
-                var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-                    i = matches.length;
-                while (--i >= 0 && matches.item(i) !== this) {}
+            function (s) {
+                var matches = (this.document || this.ownerDocument).querySelectorAll(s);
+                var i = matches.length;
+                while (--i >= 0 && matches.item(i) !== this) {} // jscs:disable
                 return i > -1;
             };
     }
@@ -24148,7 +24147,7 @@ Helpers.getClosest = function (elem, selector) {
     // Get closest match
     for (; elem && elem !== document; elem = elem.parentNode) {
         if (elem.matches(selector)) {
-          return elem;
+            return elem;
         }
     }
 

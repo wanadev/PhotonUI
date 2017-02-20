@@ -221,10 +221,10 @@ Helpers.getClosest = function (elem, selector) {
             Element.prototype.msMatchesSelector ||
             Element.prototype.oMatchesSelector ||
             Element.prototype.webkitMatchesSelector ||
-            function(s) {
-                var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-                    i = matches.length;
-                while (--i >= 0 && matches.item(i) !== this) {}
+            function (s) {
+                var matches = (this.document || this.ownerDocument).querySelectorAll(s);
+                var i = matches.length;
+                while (--i >= 0 && matches.item(i) !== this) {} // jscs:disable
                 return i > -1;
             };
     }
@@ -232,7 +232,7 @@ Helpers.getClosest = function (elem, selector) {
     // Get closest match
     for (; elem && elem !== document; elem = elem.parentNode) {
         if (elem.matches(selector)) {
-          return elem;
+            return elem;
         }
     }
 
