@@ -23953,8 +23953,10 @@ module.exports = ListView;
 
 var _ = require("lodash");
 
-var BaseDataView = require("./basedataview");
+var Widget = require("../widget");
 var Helpers = require("../helpers.js");
+
+var BaseDataView = require("./basedataview");
 
 /**
  * TableView container.
@@ -24000,8 +24002,8 @@ var TableView = BaseDataView.$extend({
 
     setColumns: function (columns) {
         this.$data.columns = columns.map(function (column) {
-            return typeof(column) === "string" ? {label: column, key: column} :
-                column.key ? {label: column.label || column.key, key: column.key} :
+            return typeof(column) === "string" ? {label: column, value: column} :
+                column.value ? {label: column.label || column.value, value: column.value} :
                 null;
         }).filter(function (col) {
             return col !== null;
@@ -24056,17 +24058,28 @@ var TableView = BaseDataView.$extend({
 
         if (this.$data.columns && this.$data.columns.length) {
             this.$data.columns.forEach(function (column) {
-                node.appendChild(this._renderColumn(_.get(item.value, column.key)));
+                var content = typeof(column.value) === "string" ? _.get(item.value, column.value) :
+                    typeof(column.value) === "function" ? column.value(item.value) :
+                    null;
+
+                if (content !== null) {
+                    node.appendChild(this._renderColumn(content));
+                }
             }.bind(this));
         }
 
         return node;
     },
 
-    _renderColumn: function (value) {
+    _renderColumn: function (content) {
         var column = document.createElement("td");
         column.className = "photonui-tableview-column";
-        column.innerHTML = value || "";
+
+        if (content instanceof Widget) {
+            column.appendChild(content.getHtml());
+        } else {
+            column.innerHTML = content || "";
+        }
 
         return column;
     },
@@ -24087,7 +24100,7 @@ var TableView = BaseDataView.$extend({
 
             this.$data.columns = keys.map(function (key) {
                 return {
-                    key: key,
+                    value: key,
                     label: key,
                 };
             });
@@ -24105,7 +24118,7 @@ var TableView = BaseDataView.$extend({
 
 module.exports = TableView;
 
-},{"../helpers.js":37,"./basedataview":34,"lodash":8}],37:[function(require,module,exports){
+},{"../helpers.js":37,"../widget":74,"./basedataview":34,"lodash":8}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
