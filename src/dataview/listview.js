@@ -60,31 +60,10 @@ var ListView = BaseDataView.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-    // ====== Public properties ======
-
-    // ====== Private properties ======
-
     _classname: "listview",
     _containerElement: "ul",
     _itemElement: "li",
 
-    // TODO Private property here
-
-    //////////////////////////////////////////
-    // Methods                              //
-    //////////////////////////////////////////
-
-    // ====== Public methods ======
-
-    // TODO Public methods here
-
-    // ====== Private methods ======
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-    // TODO Internal events callback here
 });
 
 module.exports = ListView;

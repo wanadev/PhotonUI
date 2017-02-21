@@ -1536,5 +1536,52 @@ new photonui.Window({
   height: 400
 });
 
+new photonui.Window({
+    visible: true,
+    child: new photonui.BaseDataView({
+        customFormater: function(item) {
+          return new photonui.BoxLayout({
+              orientation: "vertical",
+              children: [
+                  new photonui.Image({
+                      url: item.image,
+                      height: 96,
+                      width: 96,
+                  }),
+                  new photonui.Text({
+                      rawHtml: "<div style=\"text-align: center\">" + item.label + "</div>",
+                  })
+              ]
+            });
+        },
+        items: [
+            {
+                label: "hello world",
+                image: "http://pipsum.com/96x96.jpg?t=1",
+            },
+            {
+                label: "hello",
+                image: "http://pipsum.com/96x96.jpg?t=2",
+            },
+            {
+                label: "world",
+                image: "http://pipsum.com/96x96.jpg?t=3",
+            },
+            {
+                label: "foo",
+                image: "http://pipsum.com/96x96.jpg?t=4",
+            },
+            {
+                label: "Lorem ipsum dolor sit amet",
+                image: "http://pipsum.com/96x96.jpg?t=5",
+            },
+            {
+                label: "bar",
+                image: "http://pipsum.com/96x96.jpg?t=6",
+            },
+        ]
+    }),
+});
+
 win.center();
 win.show();

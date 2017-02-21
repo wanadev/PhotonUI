@@ -36,7 +36,7 @@
  * @namespace photonui
  */
 
-var _ = require("lodash");
+var lodash = require("lodash");
 
 var Widget = require("../widget");
 var Helpers = require("../helpers.js");
@@ -54,8 +54,10 @@ var TableView = BaseDataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        this.isSelectable = true;
-        this.isMultiSelectable = true;
+        params = lodash.merge({
+            selectable: true,
+            multiSelectable: true,
+        }, params);
 
         if (params.columns) {
             this.$data._manuallySetColumns = true;
@@ -118,7 +120,7 @@ var TableView = BaseDataView.$extend({
     _renderItemInner: function (itemNode, item) {
         if (this.$data.columns && this.$data.columns.length) {
             this.$data.columns.forEach(function (column) {
-                var content = typeof(column.value) === "string" ? _.get(item.value, column.value) :
+                var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
                     typeof(column.value) === "function" ? column.value(item.value) :
                     null;
 

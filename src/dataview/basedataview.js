@@ -64,6 +64,9 @@ var BaseDataView = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
+        this.$data.selectable = false;
+        this.$data.multiSelectable = false;
+
         this._initialSelectionItemIndex = null;
         this.$super(params);
 
@@ -101,7 +104,13 @@ var BaseDataView = Widget.$extend({
      * @type Boolean
      * @default false
      */
-    isSelectable: false,
+    isSelectable: function () {
+        return this.$data.selectable;
+    },
+
+    setSelectable: function (selectable) {
+        this.$data.selectable = selectable;
+    },
 
     /**
      * Defines if the data items can be multi-selected.
@@ -110,7 +119,21 @@ var BaseDataView = Widget.$extend({
      * @type Boolean
      * @default false
      */
-    isMultiSelectable: false,
+    isMultiSelectable: function () {
+        return this.$data.multiSelectable;
+    },
+
+    setMultiSelectable: function (multiSelectable) {
+        this.$data.multiSelectable = multiSelectable;
+    },
+
+    getCustomFormater: function () {
+        return this.$data.customFormater;
+    },
+
+    setCustomFormater: function (customFormater) {
+        this.$data.customFormater = customFormater;
+    },
 
     /**
      * The currently selected items.
@@ -207,12 +230,21 @@ var BaseDataView = Widget.$extend({
             node.classList.add("photonui-" + this._classname + "-item");
         }
 
+        if (this.customFormater && typeof(this.customFormater) === "function") {
+            var widget = this.customFormater(item.value);
+
+            if (widget && widget instanceof Widget) {
+                node.appendChild(widget.getHtml());
+                return node;
+            }
+        }
+
         return this._renderItemInner(node, item);
     },
 
-    _renderItemInner: function (itemNode, item) {
-        itemNode.innerHTML = item.value;
-        return itemNode;
+    _renderItemInner: function (node, item) {
+        node.innerHTML = item.value;
+        return node;
     },
 
     _selectItem: function (item) {
@@ -253,8 +285,8 @@ var BaseDataView = Widget.$extend({
     },
 
     _handleClick: function (clickedItem, modifiers) {
-        if (this.isSelectable) {
-            if (this.isMultiSelectable) {
+        if (this.selectable) {
+            if (this.multiSelectable) {
                 if (this.selectedItems.length === 0) {
                     this._selectItem(clickedItem);
                     this._initialSelectionItemIndex = clickedItem.index;
