@@ -23655,6 +23655,22 @@ var BaseDataView = Widget.$extend({
         });
     },
 
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function () {
+        return this.__html.container;
+    },
+
+    _classname: null,
+    _containerElement: "ul",
+    _itemElement: "li",
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -23682,8 +23698,13 @@ var BaseDataView = Widget.$extend({
      * @private
      */
     _buildContainerHtml: function () {
-        this.__html.container = document.createElement("ul");
+        this.__html.container = document.createElement(this._containerElement);
         this.__html.container.className = "photonui-widget photonui-dataview-container";
+
+        if (this._classname) {
+            this.__html.container.classList.add("photonui-" + this._classname);
+            this.__html.container.classList.add("photonui-" + this._classname + "-container");
+        }
     },
 
     /**
@@ -23708,12 +23729,20 @@ var BaseDataView = Widget.$extend({
     },
 
     _renderItem: function (item) {
-        var node = document.createElement("li");
-        node.className = "photonui-dataview-item photonui-listview-item";
-        node.innerHTML = item.value;
+        var node = document.createElement(this._itemElement);
+        node.className = "photonui-dataview-item";
         node.setAttribute("data-photonui-dataview-item-index", item.index);
 
-        return node;
+        if (this._classname) {
+            node.classList.add("photonui-" + this._classname + "-item");
+        }
+
+        return this._renderItemInner(node, item);
+    },
+
+    _renderItemInner: function (itemNode, item) {
+        itemNode.innerHTML = item.value;
+        return itemNode;
     },
 
     _selectItem: function (item) {
@@ -23866,19 +23895,11 @@ var ListView = BaseDataView.$extend({
 
     // ====== Public properties ======
 
-    /**
-     * Html outer element of the widget (if any).
-     *
-     * @property html
-     * @type HTMLElement
-     * @default null
-     * @readOnly
-     */
-    getHtml: function () {
-        return this.__html.container;
-    },
-
     // ====== Private properties ======
+
+    _classname: "listview",
+    _containerElement: "ul",
+    _itemElement: "li",
 
     // TODO Private property here
 
@@ -23891,17 +23912,6 @@ var ListView = BaseDataView.$extend({
     // TODO Public methods here
 
     // ====== Private methods ======
-
-    /**
-     * Build the widget container HTML.
-     *
-     * @method _buildHtml
-     * @private
-     */
-    _buildContainerHtml: function () {
-        this.__html.container = document.createElement("ul");
-        this.__html.container.className = "photonui-widget photonui-dataview-container photonui-listview";
-    },
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
@@ -23987,19 +23997,6 @@ var TableView = BaseDataView.$extend({
     //////////////////////////////////////////
 
     // ====== Public properties ======
-
-    /**
-     * Html outer element of the widget (if any).
-     *
-     * @property html
-     * @type HTMLElement
-     * @default null
-     * @readOnly
-     */
-    getHtml: function () {
-        return this.__html.container;
-    },
-
     setColumns: function (columns) {
         this.$data.columns = columns.map(function (column) {
             return typeof(column) === "string" ? {label: column, value: column} :
@@ -24030,6 +24027,10 @@ var TableView = BaseDataView.$extend({
 
     // ====== Private properties ======
 
+    _classname: "tableview",
+    _containerElement: "table",
+    _itemElement: "tr",
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -24039,23 +24040,7 @@ var TableView = BaseDataView.$extend({
     // TODO Public methods here
 
     // ====== Private methods ======
-
-    /**
-     * Build the widget container HTML.
-     *
-     * @method _buildHtml
-     * @private
-     */
-    _buildContainerHtml: function () {
-        this.__html.container = document.createElement("table");
-        this.__html.container.className = "photonui-widget photonui-dataview-container photonui-tableview";
-    },
-
-    _renderItem: function (item) {
-        var node = document.createElement("tr");
-        node.className = "photonui-dataview-item photonui-tableview-item";
-        node.setAttribute("data-photonui-dataview-item-index", item.index);
-
+    _renderItemInner: function (itemNode, item) {
         if (this.$data.columns && this.$data.columns.length) {
             this.$data.columns.forEach(function (column) {
                 var content = typeof(column.value) === "string" ? _.get(item.value, column.value) :
@@ -24063,12 +24048,12 @@ var TableView = BaseDataView.$extend({
                     null;
 
                 if (content !== null) {
-                    node.appendChild(this._renderColumn(content));
+                    itemNode.appendChild(this._renderColumn(content));
                 }
             }.bind(this));
         }
 
-        return node;
+        return itemNode;
     },
 
     _renderColumn: function (content) {

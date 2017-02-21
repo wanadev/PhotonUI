@@ -111,6 +111,22 @@ var BaseDataView = Widget.$extend({
         });
     },
 
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function () {
+        return this.__html.container;
+    },
+
+    _classname: null,
+    _containerElement: "ul",
+    _itemElement: "li",
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -138,8 +154,13 @@ var BaseDataView = Widget.$extend({
      * @private
      */
     _buildContainerHtml: function () {
-        this.__html.container = document.createElement("ul");
+        this.__html.container = document.createElement(this._containerElement);
         this.__html.container.className = "photonui-widget photonui-dataview-container";
+
+        if (this._classname) {
+            this.__html.container.classList.add("photonui-" + this._classname);
+            this.__html.container.classList.add("photonui-" + this._classname + "-container");
+        }
     },
 
     /**
@@ -164,12 +185,20 @@ var BaseDataView = Widget.$extend({
     },
 
     _renderItem: function (item) {
-        var node = document.createElement("li");
-        node.className = "photonui-dataview-item photonui-listview-item";
-        node.innerHTML = item.value;
+        var node = document.createElement(this._itemElement);
+        node.className = "photonui-dataview-item";
         node.setAttribute("data-photonui-dataview-item-index", item.index);
 
-        return node;
+        if (this._classname) {
+            node.classList.add("photonui-" + this._classname + "-item");
+        }
+
+        return this._renderItemInner(node, item);
+    },
+
+    _renderItemInner: function (itemNode, item) {
+        itemNode.innerHTML = item.value;
+        return itemNode;
     },
 
     _selectItem: function (item) {

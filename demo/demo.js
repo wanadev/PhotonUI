@@ -1530,7 +1530,10 @@ var tableView = new photonui.TableView({
 
 new photonui.Window({
   visible: true,
-  child: tableView,
+  child: new photonui.Viewport({
+    child: tableView,
+  }),
+  height: 400
 });
 
 win.center();

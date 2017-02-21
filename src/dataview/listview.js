@@ -62,19 +62,11 @@ var ListView = BaseDataView.$extend({
 
     // ====== Public properties ======
 
-    /**
-     * Html outer element of the widget (if any).
-     *
-     * @property html
-     * @type HTMLElement
-     * @default null
-     * @readOnly
-     */
-    getHtml: function () {
-        return this.__html.container;
-    },
-
     // ====== Private properties ======
+
+    _classname: "listview",
+    _containerElement: "ul",
+    _itemElement: "li",
 
     // TODO Private property here
 
@@ -87,17 +79,6 @@ var ListView = BaseDataView.$extend({
     // TODO Public methods here
 
     // ====== Private methods ======
-
-    /**
-     * Build the widget container HTML.
-     *
-     * @method _buildHtml
-     * @private
-     */
-    _buildContainerHtml: function () {
-        this.__html.container = document.createElement("ul");
-        this.__html.container.className = "photonui-widget photonui-dataview-container photonui-listview";
-    },
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //

@@ -4362,7 +4362,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   background-color: #aaa;
 }
 .photonui-tableview .photonui-tableview-item .photonui-tableview-column {
-  border-right: 1px solid #fff;
   padding: 6px;
 }
 /* [generator] */
