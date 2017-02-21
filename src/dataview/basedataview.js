@@ -42,6 +42,20 @@ var Widget = require("../widget.js");
 /**
  * BaseDataView container.
  *
+ * wEvents:
+ *
+ *   * item-click:
+ *     - description: called when an item is clicked.
+ *     - callback:    function(event, item)
+ *
+ *   * item-select:
+ *     - description: called when an item is selected.
+ *     - callback:    function(item)
+ *
+ *   * item-unselect:
+ *     - description: called when an item is unselected.
+ *     - callback:    function(item)
+ *
  * @class BaseDataView
  * @constructor
  * @extends photonui.Widget
@@ -204,11 +218,13 @@ var BaseDataView = Widget.$extend({
     _selectItem: function (item) {
         item.selected = true;
         item.node.classList.add("selected");
+        this._callCallbacks("item-select", [item]);
     },
 
     _unselectItem: function (item) {
         item.selected = false;
         item.node.classList.remove("selected");
+        this._callCallbacks("item-unselect", [item]);
     },
 
     _selectItemsTo: function (item) {
@@ -268,6 +284,10 @@ var BaseDataView = Widget.$extend({
         }
     },
 
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
     __onClick: function (e) {
         var clickedItemNode = Helpers.getClosest(e.target, ".photonui-dataview-item");
 
@@ -281,6 +301,7 @@ var BaseDataView = Widget.$extend({
             shift: e.shiftKey,
             ctrl: e.ctrlKey,
         });
+        this._callCallbacks("item-click", [e, item]);
     }
 });
 
