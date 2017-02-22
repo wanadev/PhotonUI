@@ -325,6 +325,8 @@ var BaseDataView = Widget.$extend({
 
         if (clickedItemNode) {
             this.__onItemClick(e, this._getItemFromNode(clickedItemNode));
+        } else {
+            this._unselectAllItems();
         }
     },
 

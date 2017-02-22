@@ -109,6 +109,7 @@ photonui.Template = require("./visual/template.js");
 photonui.BaseDataView = require("./dataview/basedataview.js");
 photonui.ListView = require("./dataview/listview.js");
 photonui.TableView = require("./dataview/tableview.js");
+photonui.IconView = require("./dataview/iconview.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 

@@ -1063,8 +1063,9 @@ var tableView = new photonui.TableView({
     {
       label: "Gender",
       value: function(item) {
-        return item.gender;
-      }
+        return "<b>" + item.gender + "</b>";
+      },
+      rawHtml: true,
     },
     {
       label: "Delete",
@@ -1538,46 +1539,33 @@ new photonui.Window({
 
 new photonui.Window({
     visible: true,
-    child: new photonui.BaseDataView({
-        customFormater: function(item) {
-          return new photonui.BoxLayout({
-              orientation: "vertical",
-              children: [
-                  new photonui.Image({
-                      url: item.image,
-                      height: 96,
-                      width: 96,
-                  }),
-                  new photonui.Text({
-                      rawHtml: "<div style=\"text-align: center\">" + item.label + "</div>",
-                  })
-              ]
-            });
-        },
+    width: 500,
+    child: new photonui.IconView({
         items: [
             {
                 label: "hello world",
-                image: "http://pipsum.com/96x96.jpg?t=1",
+                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
+                size: 1561,
             },
             {
                 label: "hello",
-                image: "http://pipsum.com/96x96.jpg?t=2",
+                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
             },
             {
                 label: "world",
-                image: "http://pipsum.com/96x96.jpg?t=3",
+                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
             },
             {
                 label: "foo",
-                image: "http://pipsum.com/96x96.jpg?t=4",
+                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
             },
             {
                 label: "Lorem ipsum dolor sit amet",
-                image: "http://pipsum.com/96x96.jpg?t=5",
+                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
             },
             {
                 label: "bar",
-                image: "http://pipsum.com/96x96.jpg?t=6",
+                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
             },
         ]
     }),

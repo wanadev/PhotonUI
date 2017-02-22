@@ -23869,6 +23869,8 @@ var BaseDataView = Widget.$extend({
 
         if (clickedItemNode) {
             this.__onItemClick(e, this._getItemFromNode(clickedItemNode));
+        } else {
+            this._unselectAllItems();
         }
     },
 
@@ -23922,22 +23924,30 @@ module.exports = BaseDataView;
  * @namespace photonui
  */
 
+var lodash = require("lodash");
+
+var Helpers = require("../helpers");
+var BoxLayout = require("../layout/boxlayout");
+var Image = require("../visual/image");
+var Text = require("../visual/text");
+
 var BaseDataView = require("./basedataview");
-var Helpers = require("../helpers.js");
 
 /**
- * FloatView container.
+ * IconView container.
  *
- * @class FloatView
+ * @class IconView
  * @constructor
  * @extends photonui.BaseDataView
  */
-var FloatView = BaseDataView.$extend({
+var IconView = BaseDataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        this.isSelectable = true;
-        this.isMultiSelectable = true;
+        params = lodash.merge({
+            selectable: true,
+            multiSelectable: true,
+        }, params);
         this._registerWEvents([]);
         this.$super(params);
     },
@@ -23946,15 +23956,33 @@ var FloatView = BaseDataView.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-    _classname: "floatview",
+    _classname: "iconview",
     _containerElement: "ul",
     _itemElement: "li",
 
+    _renderItemInner: function (node, item) {
+        var widget = new BoxLayout({
+            orientation: "vertical",
+            children: [
+                new Image({
+                    url: item.value.image,
+                    height: 96,
+                    width: 96,
+                }),
+                new Text({
+                    rawHtml: "<div style=\"text-align: center\">" + item.value.label + "</div>",
+                })
+            ]
+        });
+        node.appendChild(widget.getHtml());
+        return node;
+    },
+
 });
 
-module.exports = FloatView;
+module.exports = IconView;
 
-},{"../helpers.js":38,"./basedataview":34}],36:[function(require,module,exports){
+},{"../helpers":38,"../layout/boxlayout":51,"../visual/image":68,"../visual/text":74,"./basedataview":34,"lodash":8}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24104,8 +24132,15 @@ var TableView = BaseDataView.$extend({
     // ====== Public properties ======
     setColumns: function (columns) {
         this.$data.columns = columns.map(function (column) {
-            return typeof(column) === "string" ? {label: column, value: column} :
-                column.value ? {label: column.label || column.value, value: column.value} :
+            return typeof(column) === "string" ? {
+                    label: column,
+                    value: column
+                } :
+                column.value ? {
+                    label: column.label || column.value,
+                    value: column.value,
+                    rawHtml: column.rawHtml
+                } :
                 null;
         }).filter(function (col) {
             return col !== null;
@@ -24153,7 +24188,7 @@ var TableView = BaseDataView.$extend({
                     null;
 
                 if (content !== null) {
-                    itemNode.appendChild(this._renderColumn(content));
+                    itemNode.appendChild(this._renderColumn(content, column.rawHtml));
                 }
             }.bind(this));
         }
@@ -24161,14 +24196,16 @@ var TableView = BaseDataView.$extend({
         return itemNode;
     },
 
-    _renderColumn: function (content) {
+    _renderColumn: function (content, rawHtml) {
         var column = document.createElement("td");
         column.className = "photonui-tableview-column";
 
         if (content instanceof Widget) {
             column.appendChild(content.getHtml());
-        } else {
+        } else if (rawHtml) {
             column.innerHTML = content || "";
+        } else {
+            column.textContent = content || "";
         }
 
         return column;

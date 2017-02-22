@@ -76,8 +76,15 @@ var TableView = BaseDataView.$extend({
     // ====== Public properties ======
     setColumns: function (columns) {
         this.$data.columns = columns.map(function (column) {
-            return typeof(column) === "string" ? {label: column, value: column} :
-                column.value ? {label: column.label || column.value, value: column.value} :
+            return typeof(column) === "string" ? {
+                    label: column,
+                    value: column
+                } :
+                column.value ? {
+                    label: column.label || column.value,
+                    value: column.value,
+                    rawHtml: column.rawHtml
+                } :
                 null;
         }).filter(function (col) {
             return col !== null;
@@ -125,7 +132,7 @@ var TableView = BaseDataView.$extend({
                     null;
 
                 if (content !== null) {
-                    itemNode.appendChild(this._renderColumn(content));
+                    itemNode.appendChild(this._renderColumn(content, column.rawHtml));
                 }
             }.bind(this));
         }
@@ -133,14 +140,16 @@ var TableView = BaseDataView.$extend({
         return itemNode;
     },
 
-    _renderColumn: function (content) {
+    _renderColumn: function (content, rawHtml) {
         var column = document.createElement("td");
         column.className = "photonui-tableview-column";
 
         if (content instanceof Widget) {
             column.appendChild(content.getHtml());
-        } else {
+        } else if (rawHtml) {
             column.innerHTML = content || "";
+        } else {
+            column.textContent = content || "";
         }
 
         return column;
