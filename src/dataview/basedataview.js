@@ -36,6 +36,8 @@
  * @namespace photonui
  */
 
+var lodash = require("lodash");
+
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 
@@ -66,7 +68,7 @@ var BaseDataView = Widget.$extend({
     __init__: function (params) {
         this.$data.selectable = false;
         this.$data.multiSelectable = false;
-
+        this.$data._manuallySetColumns = (params && params.columns) ? true : false;
         this._initialSelectionItemIndex = null;
         this.$super(params);
 
@@ -87,12 +89,22 @@ var BaseDataView = Widget.$extend({
 
     setItems: function (items) {
         this.$data.items = items.map(function (item, index) {
-            return {
-                value: item,
-                selected: false,
+            return typeof(item) === "string" ? {
                 index: index,
+                selected: false,
+                value: {
+                    _string: item
+                },
+            } : {
+                index: index,
+                selected: false,
+                value: item,
             };
         });
+
+        if (!this.$data._manuallySetColumns) {
+            this._generateColumns();
+        }
 
         this._buildItemsHtml();
     },
@@ -148,6 +160,23 @@ var BaseDataView = Widget.$extend({
         });
     },
 
+    setColumns: function (columns) {
+        this.$data.columns = columns.map(function (column) {
+            return typeof(column) === "string" ? {
+                    label: column,
+                    value: column
+                } :
+                column.value ? {
+                    label: column.label || column.value,
+                    value: column.value,
+                    rawHtml: column.rawHtml
+                } :
+                null;
+        }).filter(function (col) {
+            return col !== null;
+        });
+    },
+
     /**
      * Html outer element of the widget (if any).
      *
@@ -163,6 +192,7 @@ var BaseDataView = Widget.$extend({
     _classname: null,
     _containerElement: "ul",
     _itemElement: "li",
+    _columnElement: "span",
 
     //////////////////////////////////////////
     // Methods                              //
@@ -242,9 +272,62 @@ var BaseDataView = Widget.$extend({
         return this._renderItemInner(node, item);
     },
 
-    _renderItemInner: function (node, item) {
-        node.innerHTML = item.value;
+    _renderItemInner: function (itemNode, item) {
+        if (this.$data.columns && this.$data.columns.length) {
+            this.$data.columns.forEach(function (column) {
+                var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
+                    typeof(column.value) === "function" ? column.value(item.value) :
+                    null;
+
+                itemNode.appendChild(this._renderColumn(content, column.rawHtml));
+            }.bind(this));
+        }
+
+        return itemNode;
+    },
+
+    _renderColumn: function (content, rawHtml) {
+        var node = document.createElement(this._columnElement);
+        node.className = "photonui-dataview-column";
+
+        if (this._classname) {
+            node.classList.add("photonui-" + this._classname + "-column");
+        }
+
+        if (content instanceof Widget) {
+            node.appendChild(content.getHtml());
+        } else if (rawHtml) {
+            node.innerHTML = content || "";
+        } else {
+            node.textContent = content || "";
+        }
+
         return node;
+    },
+
+    _generateColumns: function () {
+        var keys = [];
+
+        if (this.$data.items) {
+            this.$data.items.forEach(function (item) {
+                if (typeof(item.value) !== "string") {
+                    Object.keys(item.value).forEach(function (key) {
+                        if (keys.indexOf(key) === -1) {
+                            keys.push(key);
+                        }
+                    });
+                }
+            });
+
+            this.$data.columns = keys.map(function (key) {
+                return {
+                    value: key,
+                    label: key,
+                };
+            });
+
+            this._buildItemsHtml();
+        }
     },
 
     _selectItem: function (item) {

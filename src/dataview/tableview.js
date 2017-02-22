@@ -59,12 +59,6 @@ var TableView = BaseDataView.$extend({
             multiSelectable: true,
         }, params);
 
-        if (params.columns) {
-            this.$data._manuallySetColumns = true;
-        } else {
-            this._generateColumns();
-        }
-
         this._registerWEvents([]);
         this.$super(params);
     },
@@ -73,118 +67,13 @@ var TableView = BaseDataView.$extend({
     // Properties and Accessors             //
     //////////////////////////////////////////
 
-    // ====== Public properties ======
-    setColumns: function (columns) {
-        this.$data.columns = columns.map(function (column) {
-            return typeof(column) === "string" ? {
-                    label: column,
-                    value: column
-                } :
-                column.value ? {
-                    label: column.label || column.value,
-                    value: column.value,
-                    rawHtml: column.rawHtml
-                } :
-                null;
-        }).filter(function (col) {
-            return col !== null;
-        });
-    },
-
-    setItems: function (items) {
-        this.$super(items);
-
-        this.$data.items = this.$data.items.map(function (item) {
-            if (typeof(item.value) === "string") {
-                item.value = {
-                    _string: item.value,
-                };
-            }
-
-            return item;
-        });
-
-        if (!this.$data._manuallySetColumns) {
-            this._generateColumns();
-        }
-    },
-
     // ====== Private properties ======
 
     _classname: "tableview",
     _containerElement: "table",
     _itemElement: "tr",
+    _columnElement: "td",
 
-    //////////////////////////////////////////
-    // Methods                              //
-    //////////////////////////////////////////
-
-    // ====== Public methods ======
-
-    // TODO Public methods here
-
-    // ====== Private methods ======
-    _renderItemInner: function (itemNode, item) {
-        if (this.$data.columns && this.$data.columns.length) {
-            this.$data.columns.forEach(function (column) {
-                var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
-                    typeof(column.value) === "function" ? column.value(item.value) :
-                    null;
-
-                if (content !== null) {
-                    itemNode.appendChild(this._renderColumn(content, column.rawHtml));
-                }
-            }.bind(this));
-        }
-
-        return itemNode;
-    },
-
-    _renderColumn: function (content, rawHtml) {
-        var column = document.createElement("td");
-        column.className = "photonui-tableview-column";
-
-        if (content instanceof Widget) {
-            column.appendChild(content.getHtml());
-        } else if (rawHtml) {
-            column.innerHTML = content || "";
-        } else {
-            column.textContent = content || "";
-        }
-
-        return column;
-    },
-
-    _generateColumns: function () {
-        var keys = [];
-
-        if (this.$data.items) {
-            this.$data.items.forEach(function (item) {
-                if (typeof(item.value) !== "string") {
-                    Object.keys(item.value).forEach(function (key) {
-                        if (keys.indexOf(key) === -1) {
-                            keys.push(key);
-                        }
-                    });
-                }
-            });
-
-            this.$data.columns = keys.map(function (key) {
-                return {
-                    value: key,
-                    label: key,
-                };
-            });
-
-            this._buildItemsHtml();
-        }
-    }
-
-    //////////////////////////////////////////
-    // Internal Events Callbacks            //
-    //////////////////////////////////////////
-
-    // TODO Internal events callback here
 });
 
 module.exports = TableView;

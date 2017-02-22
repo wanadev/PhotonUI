@@ -1063,7 +1063,7 @@ var tableView = new photonui.TableView({
     {
       label: "Gender",
       value: function(item) {
-        return "<b>" + item.gender + "</b>";
+        return item.gender ? "<b>" + item.gender + "</b>" : null;
       },
       rawHtml: true,
     },
