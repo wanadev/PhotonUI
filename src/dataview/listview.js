@@ -36,6 +36,8 @@
  * @namespace photonui
  */
 
+var lodash = require("lodash");
+
 var BaseDataView = require("./basedataview");
 var Helpers = require("../helpers.js");
 
@@ -50,20 +52,15 @@ var ListView = BaseDataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        this.isSelectable = true;
-        this.isMultiSelectable = true;
+        params = lodash.merge({
+            containerElement: "ul",
+            itemElement: "li",
+            columnElement: "span",
+        }, params);
+
         this._registerWEvents([]);
         this.$super(params);
     },
-
-    //////////////////////////////////////////
-    // Properties and Accessors             //
-    //////////////////////////////////////////
-
-    _classname: "listview",
-    _containerElement: "ul",
-    _itemElement: "li",
-
 });
 
 module.exports = ListView;

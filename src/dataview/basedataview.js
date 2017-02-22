@@ -40,6 +40,7 @@ var lodash = require("lodash");
 
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
+var Text = require("../visual/text.js");
 
 /**
  * BaseDataView container.
@@ -66,8 +67,11 @@ var BaseDataView = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
-        this.$data.selectable = false;
-        this.$data.multiSelectable = false;
+        this.$data.selectable = true;
+        this.$data.multiSelectable = true;
+        this.$data.containerElement = "ul";
+        this.$data.itemElement = "li";
+        this.$data.columnElement = "span";
         this.$data._manuallySetColumns = (params && params.columns) ? true : false;
         this._initialSelectionItemIndex = null;
         this.$super(params);
@@ -161,13 +165,13 @@ var BaseDataView = Widget.$extend({
     },
 
     setColumns: function (columns) {
-        this.$data.columns = columns.map(function (column) {
+        this.$data.columns = columns.map(function (column, index) {
             return typeof(column) === "string" ? {
-                    label: column,
+                    id: column,
                     value: column
                 } :
                 column.value ? {
-                    label: column.label || column.value,
+                    id: column.id ? column.id : typeof(column.value) === "string" ? column.value : "column" + index,
                     value: column.value,
                     rawHtml: column.rawHtml
                 } :
@@ -189,10 +193,31 @@ var BaseDataView = Widget.$extend({
         return this.__html.container;
     },
 
+    getContainerElement: function () {
+        return this.$data.containerElement;
+    },
+
+    setContainerElement: function (containerElement) {
+        this.$data.containerElement =  containerElement;
+    },
+
+    getItemElement: function () {
+        return this.$data.itemElement;
+    },
+
+    setItemElement: function (itemElement) {
+        this.$data.itemElement = itemElement;
+    },
+
+    getColumnElement: function () {
+        return this.$data.columnElement;
+    },
+
+    setColumnElement: function (columnElement) {
+        this.$data.columnElement = columnElement;
+    },
+
     _classname: null,
-    _containerElement: "ul",
-    _itemElement: "li",
-    _columnElement: "span",
 
     //////////////////////////////////////////
     // Methods                              //
@@ -221,7 +246,7 @@ var BaseDataView = Widget.$extend({
      * @private
      */
     _buildContainerHtml: function () {
-        this.__html.container = document.createElement(this._containerElement);
+        this.__html.container = document.createElement(this.containerElement);
         this.__html.container.className = "photonui-widget photonui-dataview-container";
 
         if (this._classname) {
@@ -252,7 +277,7 @@ var BaseDataView = Widget.$extend({
     },
 
     _renderItem: function (item) {
-        var node = document.createElement(this._itemElement);
+        var node = document.createElement(this.itemElement);
         node.className = "photonui-dataview-item";
         node.setAttribute("data-photonui-dataview-item-index", item.index);
 
@@ -279,19 +304,20 @@ var BaseDataView = Widget.$extend({
                     typeof(column.value) === "function" ? column.value(item.value) :
                     null;
 
-                itemNode.appendChild(this._renderColumn(content, column.rawHtml));
+                itemNode.appendChild(this._renderColumn(content, column.id, column.rawHtml));
             }.bind(this));
         }
 
         return itemNode;
     },
 
-    _renderColumn: function (content, rawHtml) {
-        var node = document.createElement(this._columnElement);
-        node.className = "photonui-dataview-column";
+    _renderColumn: function (content, columnId, rawHtml) {
+        var node = document.createElement(this.columnElement);
+        node.className = "photonui-dataview-column photonui-dataview-column-" + columnId;
 
         if (this._classname) {
             node.classList.add("photonui-" + this._classname + "-column");
+            node.classList.add("photonui-" + this._classname + "-column-" + columnId);
         }
 
         if (content instanceof Widget) {
@@ -322,7 +348,7 @@ var BaseDataView = Widget.$extend({
             this.$data.columns = keys.map(function (key) {
                 return {
                     value: key,
-                    label: key,
+                    id: key,
                 };
             });
 

@@ -57,9 +57,21 @@ var IconView = BaseDataView.$extend({
     // Constructor
     __init__: function (params) {
         params = lodash.merge({
-            selectable: true,
-            multiSelectable: true,
+            columnElement: "div",
+            columns: [{
+                id: "image",
+                value: function (item) {
+                    return new Image({
+                        url: item.image,
+                        height: 96,
+                        width: 96,
+                    });
+                },
+            },
+            "label",
+          ],
         }, params);
+
         this._registerWEvents([]);
         this.$super(params);
     },
@@ -69,27 +81,6 @@ var IconView = BaseDataView.$extend({
     //////////////////////////////////////////
 
     _classname: "iconview",
-    _containerElement: "ul",
-    _itemElement: "li",
-
-    _renderItemInner: function (node, item) {
-        var widget = new BoxLayout({
-            orientation: "vertical",
-            children: [
-                new Image({
-                    url: item.value.image,
-                    height: 96,
-                    width: 96,
-                }),
-                new Text({
-                    rawHtml: "<div style=\"text-align: center\">" + item.value.label + "</div>",
-                })
-            ]
-        });
-        node.appendChild(widget.getHtml());
-        return node;
-    },
-
 });
 
 module.exports = IconView;

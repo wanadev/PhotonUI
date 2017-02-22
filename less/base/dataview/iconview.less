@@ -34,15 +34,20 @@
     list-style: none;
     padding: 4px;
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
 
     .photonui-iconview-item {
         margin: 4px;
         padding: 8px;
-        float: left;
         width: 96px;
 
         &.selected {
             background-color: #aaa;
+        }
+
+        .photonui-iconview-column-label {
+            text-align: center;
         }
     }
 }

@@ -1049,26 +1049,26 @@ var tableView = new photonui.TableView({
     "id",
     123,
     {
-      label: "First Name",
+      id: "firstname",
       value: "name.first",
     },
     {
-      label: "Last Name",
+      id: "lastname",
       value: "name.last"
     },
     {
-      label: "Email",
+      id: "email",
       value: "email"
     },
     {
-      label: "Gender",
+      id: "gender",
       value: function(item) {
         return item.gender ? "<b>" + item.gender + "</b>" : null;
       },
       rawHtml: true,
     },
     {
-      label: "Delete",
+      id: "Delete",
       value: function(item) {
         return new photonui.CheckBox({
             name: "checkbox-" + item.id,

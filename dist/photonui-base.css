@@ -4398,15 +4398,21 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   list-style: none;
   padding: 4px;
   margin: 0;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 .photonui-iconview .photonui-iconview-item {
   margin: 4px;
   padding: 8px;
-  float: left;
   width: 96px;
 }
 .photonui-iconview .photonui-iconview-item.selected {
   background-color: #aaa;
+}
+.photonui-iconview .photonui-iconview-item .photonui-iconview-column-label {
+  text-align: center;
 }
 /* [generator] */
 /* DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR! */

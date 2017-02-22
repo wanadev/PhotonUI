@@ -55,8 +55,9 @@ var TableView = BaseDataView.$extend({
     // Constructor
     __init__: function (params) {
         params = lodash.merge({
-            selectable: true,
-            multiSelectable: true,
+            containerElement: "table",
+            itemElement: "tr",
+            columnElement: "td",
         }, params);
 
         this._registerWEvents([]);
@@ -70,10 +71,6 @@ var TableView = BaseDataView.$extend({
     // ====== Private properties ======
 
     _classname: "tableview",
-    _containerElement: "table",
-    _itemElement: "tr",
-    _columnElement: "td",
-
 });
 
 module.exports = TableView;
