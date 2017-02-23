@@ -23619,7 +23619,7 @@ var BaseDataView = Widget.$extend({
         this.$data._manuallySetColumns = (params && params.columns) ? true : false;
 
         this._addClassname("dataview");
-        this._addClassname(params.classname);
+        this._addClassname(params && params.classname);
 
         this._initialSelectionItemIndex = null;
 
