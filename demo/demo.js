@@ -1029,6 +1029,7 @@ new photonui.ColorPickerDialog({
 });
 
 var listView = new photonui.ListView({
+  classname: "customListview",
   items: [
     "hello world foo bar",
     "hello",

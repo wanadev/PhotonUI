@@ -73,7 +73,12 @@ var BaseDataView = Widget.$extend({
         this.$data.itemElement = "li";
         this.$data.columnElement = "span";
         this.$data._manuallySetColumns = (params && params.columns) ? true : false;
+
+        this._addClassname("dataview");
+        this._addClassname(params.classname);
+
         this._initialSelectionItemIndex = null;
+
         this.$super(params);
 
         // Bind js events
@@ -217,7 +222,13 @@ var BaseDataView = Widget.$extend({
         this.$data.columnElement = columnElement;
     },
 
-    _classname: null,
+    _addClassname: function (classname) {
+        if (!this.$data._classnames) {
+            this.$data._classnames = [classname];
+        } else if (this.$data._classnames.indexOf(classname) === -1) {
+            this.$data._classnames.push(classname);
+        }
+    },
 
     //////////////////////////////////////////
     // Methods                              //
@@ -247,12 +258,10 @@ var BaseDataView = Widget.$extend({
      */
     _buildContainerHtml: function () {
         this.__html.container = document.createElement(this.containerElement);
-        this.__html.container.className = "photonui-widget photonui-dataview-container";
+        this.__html.container.className = "photonui-widget";
 
-        if (this._classname) {
-            this.__html.container.classList.add("photonui-" + this._classname);
-            this.__html.container.classList.add("photonui-" + this._classname + "-container");
-        }
+        this._addClasses(this.__html.container);
+        this._addClasses(this.__html.container, "container");
     },
 
     /**
@@ -281,9 +290,7 @@ var BaseDataView = Widget.$extend({
         node.className = "photonui-dataview-item";
         node.setAttribute("data-photonui-dataview-item-index", item.index);
 
-        if (this._classname) {
-            node.classList.add("photonui-" + this._classname + "-item");
-        }
+        this._addClasses(node, "item");
 
         if (this.customFormater && typeof(this.customFormater) === "function") {
             var widget = this.customFormater(item.value);
@@ -313,12 +320,9 @@ var BaseDataView = Widget.$extend({
 
     _renderColumn: function (content, columnId, rawHtml) {
         var node = document.createElement(this.columnElement);
-        node.className = "photonui-dataview-column photonui-dataview-column-" + columnId;
 
-        if (this._classname) {
-            node.classList.add("photonui-" + this._classname + "-column");
-            node.classList.add("photonui-" + this._classname + "-column-" + columnId);
-        }
+        this._addClasses(node, "column");
+        this._addClasses(node, "column-" + columnId);
 
         if (content instanceof Widget) {
             node.appendChild(content.getHtml());
@@ -354,6 +358,16 @@ var BaseDataView = Widget.$extend({
 
             this._buildItemsHtml();
         }
+    },
+
+    _addClasses: function (node, attribute) {
+        this.$data._classnames.forEach(function (classname) {
+            node.classList.add(
+                attribute ?
+                    "photonui-" + classname + "-" + attribute :
+                    "photonui-" + classname
+            );
+        });
     },
 
     _selectItem: function (item) {

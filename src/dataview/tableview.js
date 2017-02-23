@@ -60,17 +60,11 @@ var TableView = BaseDataView.$extend({
             columnElement: "td",
         }, params);
 
+        this._addClassname("tableview");
+
         this._registerWEvents([]);
         this.$super(params);
     },
-
-    //////////////////////////////////////////
-    // Properties and Accessors             //
-    //////////////////////////////////////////
-
-    // ====== Private properties ======
-
-    _classname: "tableview",
 });
 
 module.exports = TableView;

@@ -72,15 +72,11 @@ var IconView = BaseDataView.$extend({
           ],
         }, params);
 
+        this._addClassname("iconview");
+
         this._registerWEvents([]);
         this.$super(params);
     },
-
-    //////////////////////////////////////////
-    // Properties and Accessors             //
-    //////////////////////////////////////////
-
-    _classname: "iconview",
 });
 
 module.exports = IconView;

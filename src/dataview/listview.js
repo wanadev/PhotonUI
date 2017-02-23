@@ -58,6 +58,8 @@ var ListView = BaseDataView.$extend({
             columnElement: "span",
         }, params);
 
+        this._addClassname("listview");
+
         this._registerWEvents([]);
         this.$super(params);
     },
