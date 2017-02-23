@@ -39,20 +39,18 @@
 var lodash = require("lodash");
 
 var Helpers = require("../helpers");
-var BoxLayout = require("../layout/boxlayout");
 var Image = require("../visual/image");
-var Text = require("../visual/text");
 
-var BaseDataView = require("./basedataview");
+var FluidView = require("./fluidview");
 
 /**
  * IconView container.
  *
  * @class IconView
  * @constructor
- * @extends photonui.BaseDataView
+ * @extends photonui.FluidView
  */
-var IconView = BaseDataView.$extend({
+var IconView = FluidView.$extend({
 
     // Constructor
     __init__: function (params) {

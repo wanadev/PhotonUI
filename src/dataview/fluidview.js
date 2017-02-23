@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,30 @@
  * Authored by: Valentin Ledrapier
  */
 
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule DataView
+ * @namespace photonui
+ */
 
-.photonui-iconview {
+var BaseDataView = require("./basedataview");
 
-    .photonui-iconview-item {
-        background-color: @color-light-lightest;
-        border-color: @color-iconview-border;
-        transition: all .15s ease-in-out;
+/**
+ * FluidView container.
+ *
+ * @class FluidView
+ * @constructor
+ * @extends photonui.BaseDataView
+ */
+var FluidView = BaseDataView.$extend({
 
-        &:hover {
-            background-color: @color-listview-hover;
-        }
+    // Constructor
+    __init__: function (params) {
+        this._addClassname("fluidview");
+        this.$super(params);
+    },
+});
 
-        &.selected {
-            background-color: @color-listview-selected;
-            border-color: darken(@color-listview-selected, 10%);
-
-            &:hover {
-                background-color: @color-listview-selected-hover;
-            }
-
-            .photonui-text {
-              color: @color-listview-text-selected;
-            }
-        }
-    }
-}
+module.exports = FluidView;

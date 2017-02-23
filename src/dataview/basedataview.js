@@ -223,6 +223,9 @@ var BaseDataView = Widget.$extend({
     },
 
     _addClassname: function (classname) {
+        if (!classname) {
+            return;
+        }
         if (!this.$data._classnames) {
             this.$data._classnames = [classname];
         } else if (this.$data._classnames.indexOf(classname) === -1) {

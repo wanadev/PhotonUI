@@ -107,6 +107,7 @@ photonui.TabLayout = require("./layout/tablayout.js");
 photonui.IconButton = require("./interactive/iconbutton.js");
 photonui.Template = require("./visual/template.js");
 photonui.BaseDataView = require("./dataview/basedataview.js");
+photonui.FluidView = require("./dataview/fluidview.js");
 photonui.ListView = require("./dataview/listview.js");
 photonui.TableView = require("./dataview/tableview.js");
 photonui.IconView = require("./dataview/iconview.js");
