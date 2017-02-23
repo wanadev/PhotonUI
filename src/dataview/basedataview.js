@@ -164,9 +164,10 @@ var BaseDataView = Widget.$extend({
      * @default []
      */
     getSelectedItems: function () {
-        return this.$data.items.filter(function (item) {
-            return item.selected;
-        });
+        return this.$data.items ?
+            this.$data.items.filter(function (item) {
+                return item.selected;
+            }) : [];
     },
 
     setColumns: function (columns) {
@@ -310,7 +311,7 @@ var BaseDataView = Widget.$extend({
     },
 
     _renderItemInner: function (itemNode, item) {
-        if (this.$data.columns && this.$data.columns.length) {
+        if (this.$data.columns) {
             this.$data.columns.forEach(function (column) {
                 var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
                     typeof(column.value) === "function" ? column.value.call(this.$data, item.value) :
@@ -366,13 +367,15 @@ var BaseDataView = Widget.$extend({
     },
 
     _addClasses: function (node, attribute) {
-        this.$data._classnames.forEach(function (classname) {
-            node.classList.add(
+        if (this.$data._classnames) {
+            this.$data._classnames.forEach(function (classname) {
+              node.classList.add(
                 attribute ?
-                    "photonui-" + classname + "-" + attribute :
-                    "photonui-" + classname
-            );
-        });
+                "photonui-" + classname + "-" + attribute :
+                "photonui-" + classname
+              );
+            });
+        }
     },
 
     _selectItem: function (item) {
