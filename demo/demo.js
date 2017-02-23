@@ -1538,38 +1538,62 @@ new photonui.Window({
   height: 400
 });
 
+var iconView = new photonui.IconView({
+    itemsWidth: 88,
+    itemsHeight: 106,
+    iconWidth: 88,
+    iconHeight: 88,
+    items: [
+        {
+            label: "hello world",
+            faIcon: {
+                iconName: "fa-folder",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "hello",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+                color: "#DB624F",
+            },
+        },
+        {
+            label: "world",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "foo",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "Lorem ipsum dolor sit amet",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "bar",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+            },
+        },
+    ]
+});
+
 new photonui.Window({
     visible: true,
-    width: 500,
-    child: new photonui.IconView({
-        items: [
-            {
-                label: "hello world",
-                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
-                size: 1561,
-            },
-            {
-                label: "hello",
-                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
-            },
-            {
-                label: "world",
-                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
-            },
-            {
-                label: "foo",
-                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
-            },
-            {
-                label: "Lorem ipsum dolor sit amet",
-                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
-            },
-            {
-                label: "bar",
-                image: "http://www.iconsdb.com/icons/preview/gray/text-file-3-xxl.png",
-            },
-        ]
-    }),
+    width: 456,
+    child: iconView,
 });
 
 win.center();

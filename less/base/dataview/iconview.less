@@ -33,12 +33,22 @@
     background-color: #fff;
 
     .photonui-iconview-item {
+        padding: 8px;
+
         &.selected {
             background-color: #aaa;
         }
 
-        .photonui-iconview-column-label {
+        .photonui-iconview-column-icon {
             text-align: center;
+        }
+
+        .photonui-iconview-column-label {
+            margin-top: 4px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 }

@@ -276,16 +276,18 @@ var BaseDataView = Widget.$extend({
     _buildItemsHtml: function () {
         Helpers.cleanNode(this.__html.container);
 
-        var fragment = document.createDocumentFragment();
-        var itemNode;
+        if (this.$data.items) {
+            var fragment = document.createDocumentFragment();
 
-        this.$data.items.forEach(function (item) {
-            var itemNode = this._renderItem(item);
-            item.node = itemNode;
-            fragment.appendChild(itemNode);
-        }.bind(this));
+            this.$data.items.forEach(function (item) {
+                var itemNode = this._renderItem(item);
+                item.node = itemNode;
+                fragment.appendChild(itemNode);
+            }.bind(this));
 
-        this.__html.container.appendChild(fragment);
+            this.__html.container.appendChild(fragment);
+        }
+
     },
 
     _renderItem: function (item) {
@@ -311,7 +313,7 @@ var BaseDataView = Widget.$extend({
         if (this.$data.columns && this.$data.columns.length) {
             this.$data.columns.forEach(function (column) {
                 var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
-                    typeof(column.value) === "function" ? column.value(item.value) :
+                    typeof(column.value) === "function" ? column.value.call(this.$data, item.value) :
                     null;
 
                 itemNode.appendChild(this._renderColumn(content, column.id, column.rawHtml));

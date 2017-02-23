@@ -4309,16 +4309,21 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  */
 .photonui-fluidview {
   list-style: none;
-  padding: 4px;
   margin: 0;
+  padding: 0;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
 }
 .photonui-fluidview .photonui-fluidview-item {
-  margin: 4px;
-  padding: 8px;
+  text-align: center;
+}
+.photonui-fluidview .photonui-fluidview-item .photonui-fluidview-column {
+  margin: auto;
+}
+.photonui-container-expand-child-horizontal > .photonui-widget:not(.photonui-widget-fixed-width).photonui-fluidview {
+  width: auto !important;
 }
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
@@ -4438,11 +4443,21 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .photonui-iconview {
   background-color: #fff;
 }
+.photonui-iconview .photonui-iconview-item {
+  padding: 8px;
+}
 .photonui-iconview .photonui-iconview-item.selected {
   background-color: #aaa;
 }
-.photonui-iconview .photonui-iconview-item .photonui-iconview-column-label {
+.photonui-iconview .photonui-iconview-item .photonui-iconview-column-icon {
   text-align: center;
+}
+.photonui-iconview .photonui-iconview-item .photonui-iconview-column-label {
+  margin-top: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 /* [generator] */
 /* DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR! */

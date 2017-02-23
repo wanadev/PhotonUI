@@ -23820,16 +23820,18 @@ var BaseDataView = Widget.$extend({
     _buildItemsHtml: function () {
         Helpers.cleanNode(this.__html.container);
 
-        var fragment = document.createDocumentFragment();
-        var itemNode;
+        if (this.$data.items) {
+            var fragment = document.createDocumentFragment();
 
-        this.$data.items.forEach(function (item) {
-            var itemNode = this._renderItem(item);
-            item.node = itemNode;
-            fragment.appendChild(itemNode);
-        }.bind(this));
+            this.$data.items.forEach(function (item) {
+                var itemNode = this._renderItem(item);
+                item.node = itemNode;
+                fragment.appendChild(itemNode);
+            }.bind(this));
 
-        this.__html.container.appendChild(fragment);
+            this.__html.container.appendChild(fragment);
+        }
+
     },
 
     _renderItem: function (item) {
@@ -23855,7 +23857,7 @@ var BaseDataView = Widget.$extend({
         if (this.$data.columns && this.$data.columns.length) {
             this.$data.columns.forEach(function (column) {
                 var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
-                    typeof(column.value) === "function" ? column.value(item.value) :
+                    typeof(column.value) === "function" ? column.value.call(this.$data, item.value) :
                     null;
 
                 itemNode.appendChild(this._renderColumn(content, column.id, column.rawHtml));
@@ -24050,6 +24052,8 @@ module.exports = BaseDataView;
  * @namespace photonui
  */
 
+var lodash = require("lodash");
+
 var BaseDataView = require("./basedataview");
 
 /**
@@ -24063,14 +24067,132 @@ var FluidView = BaseDataView.$extend({
 
     // Constructor
     __init__: function (params) {
+        params = lodash.merge({
+            verticalPadding: 0,
+            horizontalPadding: 0,
+            verticalSpacing: 0,
+            horizontalSpacing: 0,
+        }, params);
+
         this._addClassname("fluidview");
         this.$super(params);
+    },
+
+    getItemsWidth: function () {
+        return this.$data.itemsWidth;
+    },
+
+    setItemsWidth: function (itemsWidth) {
+        this.$data.itemsWidth = itemsWidth;
+        this._buildItemsHtml();
+    },
+
+    getItemsHeight: function () {
+        return this.$data.itemsHeight;
+    },
+
+    setItemsHeight: function (itemsHeight) {
+        this.$data.itemsHeight = itemsHeight;
+        this._buildItemsHtml();
+    },
+
+    getVerticalPadding: function () {
+        return this.$data.verticalPadding;
+    },
+
+    setVerticalPadding: function (verticalPadding) {
+        this.$data.verticalPadding = verticalPadding;
+        this._buildItemsHtml();
+    },
+
+    getHorizontalPadding: function () {
+        return this.$data.horizontalPadding;
+    },
+
+    setHorizontalPadding: function (horizontalPadding) {
+        this.$data.horizontalPadding = horizontalPadding;
+        this._buildItemsHtml();
+    },
+
+    getVerticalSpacing: function () {
+        return this.$data.verticalSpacing;
+    },
+
+    setVerticalSpacing: function (verticalSpacing) {
+        this.$data.verticalSpacing = verticalSpacing;
+        this._buildItemsHtml();
+    },
+
+    getHorizontalSpacing: function () {
+        return this.$data.horizontalSpacing;
+    },
+
+    setHorizontalSpacing: function (horizontalSpacing) {
+        this.$data.horizontalSpacing = horizontalSpacing;
+        this._buildItemsHtml();
+    },
+
+    _buildItemsHtml: function () {
+        this.$super.apply(this, arguments);
+
+        this.__html.container.style.marginTop = this.$data.verticalSpacing ?
+            -this.$data.verticalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.marginBottom = this.$data.verticalSpacing ?
+            -this.$data.verticalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.marginLeft = this.$data.horizontalSpacing ?
+            -this.$data.horizontalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.marginRight = this.$data.horizontalSpacing ?
+            -this.$data.horizontalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.paddingTop = this.$data.verticalPadding ?
+            this.$data.verticalPadding + "px" :
+            "";
+
+        this.__html.container.style.paddingBottom = this.$data.verticalPadding ?
+            this.$data.verticalPadding + "px" :
+            "";
+
+        this.__html.container.style.paddingLeft = this.$data.horizontalPadding ?
+            this.$data.horizontalPadding + "px" :
+            "";
+
+        this.__html.container.style.paddingRight = this.$data.horizontalPadding ?
+            this.$data.horizontalPadding + "px" :
+            "";
+    },
+
+    _renderItem: function (item) {
+        var node = this.$super.apply(this, arguments);
+
+        if (this.$data.itemsWidth) {
+            node.style.width = this.$data.itemsWidth + "px";
+        }
+        if (this.$data.itemsHeight) {
+            node.style.height = this.$data.itemsHeight + "px";
+        }
+        if (this.$data.horizontalSpacing) {
+            node.style.marginLeft = this.$data.horizontalSpacing / 2 + "px";
+            node.style.marginRight = this.$data.horizontalSpacing / 2 + "px";
+        }
+        if (this.$data.verticalSpacing) {
+            node.style.marginTop = this.$data.verticalSpacing / 2 + "px";
+            node.style.marginBottom = this.$data.verticalSpacing / 2 + "px";
+        }
+
+        return node;
     },
 });
 
 module.exports = FluidView;
 
-},{"./basedataview":34}],36:[function(require,module,exports){
+},{"./basedataview":34,"lodash":8}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24113,6 +24235,7 @@ var lodash = require("lodash");
 
 var Helpers = require("../helpers");
 var Image = require("../visual/image");
+var FAIcon = require("../visual/faicon");
 
 var FluidView = require("./fluidview");
 
@@ -24128,15 +24251,23 @@ var IconView = FluidView.$extend({
     // Constructor
     __init__: function (params) {
         params = lodash.merge({
+            horizontalSpacing: 8,
+            horizontalPadding: 8,
+            verticalSpacing: 8,
+            verticalPadding: 8,
             columnElement: "div",
             columns: [{
-                id: "image",
+                id: "icon",
                 value: function (item) {
-                    return new Image({
-                        url: item.image,
-                        height: 96,
-                        width: 96,
-                    });
+                    return item.image ?
+                            new Image({
+                                url: item.image,
+                                height: this.iconHeight,
+                                width: this.iconWidth,
+                            }) :
+                        item.faIcon && item.faIcon.iconName ?
+                            new FAIcon(item.faIcon) :
+                        null;
                 },
             },
             "label",
@@ -24148,11 +24279,50 @@ var IconView = FluidView.$extend({
         this._registerWEvents([]);
         this.$super(params);
     },
+
+    getIconWidth: function () {
+        return this.$data.iconWidth;
+    },
+
+    setIconWidth: function (iconWidth) {
+        this.$data.iconWidth = iconWidth;
+        this._buildItemsHtml();
+    },
+
+    getIconHeight: function () {
+        return this.$data.iconHeight;
+    },
+
+    setIconHeight: function (iconHeight) {
+        this.$data.iconHeight = iconHeight;
+        this._buildItemsHtml();
+    },
+
+    _renderColumn: function (content, columnId, rawHtml) {
+        var node = this.$super.apply(this, arguments);
+
+        if (columnId === "icon") {
+            if (this.$data.iconWidth) {
+                node.style.width = this.$data.iconWidth + "px";
+            }
+            if (this.$data.iconHeight) {
+                node.style.height = this.$data.iconHeight + "px";
+
+                var faIconNode = node.getElementsByClassName("fa")[0];
+
+                if (faIconNode) {
+                    faIconNode.style.lineHeight = this.$data.iconHeight + "px";
+                }
+            }
+        }
+
+        return node;
+    },
 });
 
 module.exports = IconView;
 
-},{"../helpers":39,"../visual/image":69,"./fluidview":35,"lodash":8}],37:[function(require,module,exports){
+},{"../helpers":39,"../visual/faicon":68,"../visual/image":69,"./fluidview":35,"lodash":8}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.

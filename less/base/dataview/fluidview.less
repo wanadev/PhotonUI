@@ -31,13 +31,21 @@
 
 .photonui-fluidview {
     list-style: none;
-    padding: 4px;
     margin: 0;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
 
     .photonui-fluidview-item {
-        margin: 4px;
-        padding: 8px;
+        text-align: center;
+
+        .photonui-fluidview-column {
+            margin: auto;
+        }
     }
+}
+
+// Overrides "width: 100% !important" set by .photonui-widget
+.photonui-container-expand-child-horizontal > .photonui-widget:not(.photonui-widget-fixed-width).photonui-fluidview {
+    width: auto !important;
 }

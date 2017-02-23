@@ -40,6 +40,7 @@ var lodash = require("lodash");
 
 var Helpers = require("../helpers");
 var Image = require("../visual/image");
+var FAIcon = require("../visual/faicon");
 
 var FluidView = require("./fluidview");
 
@@ -55,15 +56,23 @@ var IconView = FluidView.$extend({
     // Constructor
     __init__: function (params) {
         params = lodash.merge({
+            horizontalSpacing: 8,
+            horizontalPadding: 8,
+            verticalSpacing: 8,
+            verticalPadding: 8,
             columnElement: "div",
             columns: [{
-                id: "image",
+                id: "icon",
                 value: function (item) {
-                    return new Image({
-                        url: item.image,
-                        height: 96,
-                        width: 96,
-                    });
+                    return item.image ?
+                            new Image({
+                                url: item.image,
+                                height: this.iconHeight,
+                                width: this.iconWidth,
+                            }) :
+                        item.faIcon && item.faIcon.iconName ?
+                            new FAIcon(item.faIcon) :
+                        null;
                 },
             },
             "label",
@@ -74,6 +83,45 @@ var IconView = FluidView.$extend({
 
         this._registerWEvents([]);
         this.$super(params);
+    },
+
+    getIconWidth: function () {
+        return this.$data.iconWidth;
+    },
+
+    setIconWidth: function (iconWidth) {
+        this.$data.iconWidth = iconWidth;
+        this._buildItemsHtml();
+    },
+
+    getIconHeight: function () {
+        return this.$data.iconHeight;
+    },
+
+    setIconHeight: function (iconHeight) {
+        this.$data.iconHeight = iconHeight;
+        this._buildItemsHtml();
+    },
+
+    _renderColumn: function (content, columnId, rawHtml) {
+        var node = this.$super.apply(this, arguments);
+
+        if (columnId === "icon") {
+            if (this.$data.iconWidth) {
+                node.style.width = this.$data.iconWidth + "px";
+            }
+            if (this.$data.iconHeight) {
+                node.style.height = this.$data.iconHeight + "px";
+
+                var faIconNode = node.getElementsByClassName("fa")[0];
+
+                if (faIconNode) {
+                    faIconNode.style.lineHeight = this.$data.iconHeight + "px";
+                }
+            }
+        }
+
+        return node;
     },
 });
 
