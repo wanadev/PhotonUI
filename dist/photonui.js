@@ -23913,11 +23913,11 @@ var BaseDataView = Widget.$extend({
     _addClasses: function (node, attribute) {
         if (this.$data._classnames) {
             this.$data._classnames.forEach(function (classname) {
-              node.classList.add(
-                attribute ?
-                "photonui-" + classname + "-" + attribute :
-                "photonui-" + classname
-              );
+                node.classList.add(
+                    attribute ?
+                    "photonui-" + classname + "-" + attribute :
+                    "photonui-" + classname
+                );
             });
         }
     },
