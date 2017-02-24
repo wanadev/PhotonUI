@@ -86,7 +86,7 @@ var BaseDataView = Widget.$extend({
     },
 
     /**
-     * Html outer element of the widget (if any).
+     * The collection of items displayed by the data view widget.
      *
      * @property items
      * @type Array
@@ -148,6 +148,14 @@ var BaseDataView = Widget.$extend({
         this.$data.multiSelectable = multiSelectable;
     },
 
+    /**
+     * A custom formater function which overrides the default rendering process
+     * of the widget.
+     *
+     * @property customFormater
+     * @type Function
+     * @default null
+     */
     getCustomFormater: function () {
         return this.$data.customFormater;
     },
@@ -170,6 +178,14 @@ var BaseDataView = Widget.$extend({
             }) : [];
     },
 
+    /**
+     * The list of columns which defines the structure of the items (if not
+     * setted manually, the columns are automatically generated).
+     *
+     * @property columns
+     * @type Array
+     * @default null
+     */
     setColumns: function (columns) {
         this.$data.columns = columns.map(function (column, index) {
             return typeof(column) === "string" ? {
@@ -199,6 +215,14 @@ var BaseDataView = Widget.$extend({
         return this.__html.container;
     },
 
+    /**
+     * The type of the container DOM element which will be created during the
+     * render process.
+     *
+     * @property containerElement
+     * @type String
+     * @default "ul"
+     */
     getContainerElement: function () {
         return this.$data.containerElement;
     },
@@ -207,6 +231,14 @@ var BaseDataView = Widget.$extend({
         this.$data.containerElement =  containerElement;
     },
 
+    /**
+     * The type of the items DOM elements which will be created during the
+     * render process.
+     *
+     * @property itemElement
+     * @type String
+     * @default "li"
+     */
     getItemElement: function () {
         return this.$data.itemElement;
     },
@@ -215,6 +247,14 @@ var BaseDataView = Widget.$extend({
         this.$data.itemElement = itemElement;
     },
 
+    /**
+     * The type of the columns DOM elements which will be created during the
+     * render process.
+     *
+     * @property columnElement
+     * @type String
+     * @default "span"
+     */
     getColumnElement: function () {
         return this.$data.columnElement;
     },
@@ -223,6 +263,14 @@ var BaseDataView = Widget.$extend({
         this.$data.columnElement = columnElement;
     },
 
+    /**
+     * The list of classnames wich will be added to every generated elements
+     * of the widget.
+     *
+     * @property classnames
+     * @type Array
+     * @default []
+     */
     _addClassname: function (classname) {
         if (!classname) {
             return;
@@ -257,7 +305,7 @@ var BaseDataView = Widget.$extend({
     /**
      * Build the widget container HTML.
      *
-     * @method _buildHtml
+     * @method _buildContainerHtml
      * @private
      */
     _buildContainerHtml: function () {
@@ -271,7 +319,7 @@ var BaseDataView = Widget.$extend({
     /**
      * Build the items list HTML.
      *
-     * @method _updateLayout
+     * @method _buildItemsHtml
      * @private
      */
     _buildItemsHtml: function () {
@@ -291,6 +339,14 @@ var BaseDataView = Widget.$extend({
 
     },
 
+    /**
+     * Renders a given item.
+     *
+     * @method _renderItem
+     * @private
+     * @param {Object} item
+     * @return {Element} the rendered item
+     */
     _renderItem: function (item) {
         var node = document.createElement(this.itemElement);
         node.className = "photonui-dataview-item";
@@ -310,6 +366,15 @@ var BaseDataView = Widget.$extend({
         return this._renderItemInner(node, item);
     },
 
+    /**
+     * Renders all the columns of a given item.
+     *
+     * @method _renderItemInner
+     * @private
+     * @param {Element} itemNode the container element of the item
+     * @param {Object} item the rendered item
+     * @return {Element} the rendered item
+     */
     _renderItemInner: function (itemNode, item) {
         if (this.$data.columns) {
             this.$data.columns.forEach(function (column) {
@@ -324,6 +389,15 @@ var BaseDataView = Widget.$extend({
         return itemNode;
     },
 
+    /**
+     * Renders a given column.
+     *
+     * @method _renderColumn
+     * @private
+     * @param {photonui.Widget|String} content the content of the column
+     * @param {String} columnId the identifier of the column
+     * @return {Element} the rendered column
+     */
     _renderColumn: function (content, columnId, rawHtml) {
         var node = document.createElement(this.columnElement);
 
@@ -341,6 +415,12 @@ var BaseDataView = Widget.$extend({
         return node;
     },
 
+    /**
+     * Generate the list of columns.
+     *
+     * @method _generateColumns
+     * @private
+     */
     _generateColumns: function () {
         var keys = [];
 
@@ -366,30 +446,60 @@ var BaseDataView = Widget.$extend({
         }
     },
 
-    _addClasses: function (node, attribute) {
+    /**
+     * Adds classes defined by the classname property to a given element, with
+     * a given suffix.
+     *
+     * @method _addClasses
+     * @private
+     * @param {Element} node the node
+     * @param {String} suffix the suffix of the classes
+     */
+    _addClasses: function (node, suffix) {
         if (this.$data._classnames) {
             this.$data._classnames.forEach(function (classname) {
                 node.classList.add(
-                    attribute ?
-                    "photonui-" + classname + "-" + attribute :
+                    suffix ?
+                    "photonui-" + classname + "-" + suffix :
                     "photonui-" + classname
                 );
             });
         }
     },
 
+    /**
+     * Selects an item.
+     *
+     * @method _selectItem
+     * @private
+     * @param {Object} item the item
+     */
     _selectItem: function (item) {
         item.selected = true;
         item.node.classList.add("selected");
         this._callCallbacks("item-select", [item]);
     },
 
+    /**
+     * Unselects an item.
+     *
+     * @method _unselectItem
+     * @private
+     * @param {Object} item the item
+     */
     _unselectItem: function (item) {
         item.selected = false;
         item.node.classList.remove("selected");
         this._callCallbacks("item-unselect", [item]);
     },
 
+    /**
+     * Selects all items from the current selection to a given item.
+     *
+     * @method _selectItemsTo
+     * @private
+     * @param {Object} item the item
+     */
     _selectItemsTo: function (item) {
         this._unselectAllItems();
 
@@ -404,17 +514,41 @@ var BaseDataView = Widget.$extend({
         }
     },
 
+    /**
+     * Unselects all items.
+     *
+     * @method _unselectAllItems
+     * @private
+     */
     _unselectAllItems: function () {
         this.getSelectedItems().forEach(function (item) {
             this._unselectItem(item);
         }.bind(this));
     },
 
+    /**
+     * Gets an item of the collection from a given item DOM element.
+     *
+     * @method _getItemFromNode
+     * @private
+     * @param {Element} itemNode the item DOM element
+     * @return {Object} the item
+     */
     _getItemFromNode: function (itemNode) {
         var index = itemNode.getAttribute("data-photonui-dataview-item-index");
         return index ? this.$data.items[parseInt(index, 10)] : null;
     },
 
+    /**
+     * Handle item click events.
+     *
+     * @method _handleClick
+     * @private
+     * @param {Object} item the item
+     * @param {Object} modifiers the modifiers states
+     * @param {Object} modifiers.ctrl
+     * @param {Object} modifiers.shift
+     */
     _handleClick: function (clickedItem, modifiers) {
         if (this.selectable) {
             if (this.multiSelectable) {
@@ -451,6 +585,13 @@ var BaseDataView = Widget.$extend({
     // Internal Events Callbacks            //
     //////////////////////////////////////////
 
+    /**
+     * Called when an element is clicked.
+     *
+     * @method __onClick
+     * @private
+     * @param {Object} e the click event
+     */
     __onClick: function (e) {
         var clickedItemNode = Helpers.getClosest(e.target, ".photonui-dataview-item");
 
@@ -461,6 +602,14 @@ var BaseDataView = Widget.$extend({
         }
     },
 
+    /**
+     * Called when an item is clicked.
+     *
+     * @method __onItemClick
+     * @private
+     * @param {Object} e the click event
+     * @param {item} item the clicked item
+     */
     __onItemClick: function (e, item) {
         this._handleClick(item, {
             shift: e.shiftKey,

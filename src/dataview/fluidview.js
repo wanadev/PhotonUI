@@ -62,6 +62,13 @@ var FluidView = BaseDataView.$extend({
         this.$super(params);
     },
 
+    /**
+     * The width of the items.
+     *
+     * @property itemsWidth
+     * @type Number
+     * @default 0
+     */
     getItemsWidth: function () {
         return this.$data.itemsWidth;
     },
@@ -71,6 +78,13 @@ var FluidView = BaseDataView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * The height of the items.
+     *
+     * @property itemsHeight
+     * @type Number
+     * @default 0
+     */
     getItemsHeight: function () {
         return this.$data.itemsHeight;
     },
@@ -80,6 +94,13 @@ var FluidView = BaseDataView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * The vertical padding of the container element.
+     *
+     * @property verticalPadding
+     * @type Number
+     * @default 0
+     */
     getVerticalPadding: function () {
         return this.$data.verticalPadding;
     },
@@ -89,6 +110,13 @@ var FluidView = BaseDataView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * The horizontal padding of the container element.
+     *
+     * @property horizontalPadding
+     * @type Number
+     * @default 0
+     */
     getHorizontalPadding: function () {
         return this.$data.horizontalPadding;
     },
@@ -98,6 +126,13 @@ var FluidView = BaseDataView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * The vertical spacing between the elements.
+     *
+     * @property verticalSpacing
+     * @type Number
+     * @default 0
+     */
     getVerticalSpacing: function () {
         return this.$data.verticalSpacing;
     },
@@ -107,6 +142,13 @@ var FluidView = BaseDataView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * The horizontal spacing between the elements.
+     *
+     * @property horizontalSpacing
+     * @type Number
+     * @default 0
+     */
     getHorizontalSpacing: function () {
         return this.$data.horizontalSpacing;
     },
@@ -116,6 +158,12 @@ var FluidView = BaseDataView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * Build the items list HTML.
+     *
+     * @method _buildItemsHtml
+     * @private
+     */
     _buildItemsHtml: function () {
         this.$super.apply(this, arguments);
 

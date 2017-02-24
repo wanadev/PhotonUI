@@ -85,6 +85,13 @@ var IconView = FluidView.$extend({
         this.$super(params);
     },
 
+    /**
+     * The width of the icons.
+     *
+     * @property iconWidth
+     * @type Number
+     * @default 0
+     */
     getIconWidth: function () {
         return this.$data.iconWidth;
     },
@@ -94,6 +101,13 @@ var IconView = FluidView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * The width of the items.
+     *
+     * @property iconHeight
+     * @type Number
+     * @default 0
+     */
     getIconHeight: function () {
         return this.$data.iconHeight;
     },
@@ -103,6 +117,15 @@ var IconView = FluidView.$extend({
         this._buildItemsHtml();
     },
 
+    /**
+     * Renders a given column.
+     *
+     * @method _renderColumn
+     * @private
+     * @param {photonui.Widget|String} content the content of the column
+     * @param {String} columnId the identifier of the column
+     * @return {Element} the rendered column
+     */
     _renderColumn: function (content, columnId, rawHtml) {
         var node = this.$super.apply(this, arguments);
 
