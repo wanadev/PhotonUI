@@ -4411,6 +4411,13 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .photonui-tableview .photonui-tableview-item .photonui-tableview-column {
   padding: 6px;
 }
+.photonui-tableview .photonui-tableview-header {
+  border-bottom: 4px solid #fff;
+  width: 100%;
+}
+.photonui-tableview .photonui-tableview-header .photonui-tableview-column {
+  padding: 12px;
+}
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.

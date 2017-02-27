@@ -1032,6 +1032,10 @@ var listView = new photonui.ListView({
   classname: "customListview",
   items: [
     "hello world foo bar",
+    {
+        first: "[first text]",
+        second: "[second text]",
+    },
     "hello",
     "world",
     "foo",
@@ -1052,29 +1056,31 @@ var tableView = new photonui.TableView({
     {
       id: "firstname",
       value: "name.first",
+      label: "First name",
     },
     {
       id: "lastname",
-      value: "name.last"
+      value: "name.last",
+      label: "Last name",
     },
     {
-      id: "email",
       value: "email"
     },
     {
-      id: "gender",
       value: function(item) {
         return item.gender ? "<b>" + item.gender + "</b>" : null;
       },
+      label: "Gender",
       rawHtml: true,
     },
     {
-      id: "Delete",
+      id: "delete",
       value: function(item) {
         return new photonui.CheckBox({
             name: "checkbox-" + item.id,
         });
-      }
+      },
+      label: "",
     },
   ],
   items: [{
@@ -1548,6 +1554,42 @@ var iconView = new photonui.IconView({
             label: "hello world",
             faIcon: {
                 iconName: "fa-folder",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "hello",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+                color: "#DB624F",
+            },
+        },
+        {
+            label: "world",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "foo",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "Lorem ipsum dolor sit amet",
+            faIcon: {
+                iconName: "fa-file",
+                size: "fa-5x",
+            },
+        },
+        {
+            label: "bar",
+            faIcon: {
+                iconName: "fa-file",
                 size: "fa-5x",
             },
         },

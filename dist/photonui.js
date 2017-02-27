@@ -23736,11 +23736,9 @@ var BaseDataView = Widget.$extend({
                     id: column,
                     value: column
                 } :
-                column.value ? {
-                    id: column.id ? column.id : typeof(column.value) === "string" ? column.value : "column" + index,
-                    value: column.value,
-                    rawHtml: column.rawHtml
-                } :
+                column.value ? lodash.merge({
+                    id: typeof(column.value) === "string" ? column.value : "column" + index,
+                }, column) :
                 null;
         }).filter(function (col) {
             return col !== null;
@@ -23880,7 +23878,6 @@ var BaseDataView = Widget.$extend({
 
             this.__html.container.appendChild(fragment);
         }
-
     },
 
     /**
@@ -24676,6 +24673,7 @@ var TableView = BaseDataView.$extend({
             containerElement: "table",
             itemElement: "tr",
             columnElement: "td",
+            showHeader: true,
         }, params);
 
         this._addClassname("tableview");
@@ -24683,6 +24681,57 @@ var TableView = BaseDataView.$extend({
         this._registerWEvents([]);
         this.$super(params);
     },
+
+    /**
+     * Defines if the header is displayed.
+     *
+     * @property showHeader
+     * @type Boolean
+     * @default true
+     */
+    getShowHeader: function () {
+        return this.$data.showHeader;
+    },
+
+    setShowHeader: function (showHeader) {
+        this.$data.showHeader = showHeader;
+    },
+
+    /**
+     * Build the items list HTML.
+     *
+     * @method _buildItemsHtml
+     * @private
+     */
+    _buildItemsHtml: function () {
+        this.$super.apply(this, arguments);
+        if (this.$data.showHeader) {
+            this.__html.container.insertBefore(this._renderHeader(), this.__html.container.firstChild);
+        }
+    },
+
+    /**
+     * Renders the table header.
+     *
+     * @method _renderHeader
+     * @private
+     * @return {Element} the rendered header
+     */
+    _renderHeader: function () {
+        var node = document.createElement("tr");
+        this._addClasses(node, "header");
+
+        if (this.$data.columns) {
+            this.$data.columns.forEach(function (column) {
+                var columnNode = document.createElement("th");
+                this._addClasses(columnNode, "column");
+                columnNode.textContent = column.label === undefined ? column.id : column.label;
+                node.appendChild(columnNode);
+            }.bind(this));
+        }
+
+        return node;
+    }
 });
 
 module.exports = TableView;

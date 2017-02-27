@@ -37,25 +37,26 @@
         transition: all .15s ease-in-out;
 
         &:hover {
-            background-color: @color-listview-hover;
+            background-color: @color-tableview-hover;
         }
 
         &.selected {
-            color: @color-listview-text-selected;
-            background-color: @color-listview-selected;
-            border-color: darken(@color-listview-selected, 10%);
+            color: @color-tableview-text-selected;
+            background-color: @color-tableview-selected;
+            border-color: darken(@color-tableview-selected, 10%);
 
             &:hover {
-                background-color: @color-listview-selected-hover;
+                background-color: @color-tableview-selected-hover;
             }
 
             .photonui-tableview-column {
-                border-color: darken(@color-listview-selected, 10%);
+                border-color: darken(@color-tableview-selected, 10%);
             }
         }
+    }
 
-        .photonui-tableview-column {
-            border-color: @color-tableview-border;
-        }
+    .photonui-tableview-header {
+        background-color: @color-tableview-header;
+        border-color: @color-tableview-border;
     }
 }

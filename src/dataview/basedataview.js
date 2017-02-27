@@ -192,11 +192,9 @@ var BaseDataView = Widget.$extend({
                     id: column,
                     value: column
                 } :
-                column.value ? {
-                    id: column.id ? column.id : typeof(column.value) === "string" ? column.value : "column" + index,
-                    value: column.value,
-                    rawHtml: column.rawHtml
-                } :
+                column.value ? lodash.merge({
+                    id: typeof(column.value) === "string" ? column.value : "column" + index,
+                }, column) :
                 null;
         }).filter(function (col) {
             return col !== null;
@@ -336,7 +334,6 @@ var BaseDataView = Widget.$extend({
 
             this.__html.container.appendChild(fragment);
         }
-
     },
 
     /**
