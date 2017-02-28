@@ -23641,17 +23641,18 @@ var BaseDataView = Widget.$extend({
     },
 
     setItems: function (items) {
+        items = items || [];
         this.$data.items = items.map(function (item, index) {
-            return typeof(item) === "string" ? {
-                index: index,
-                selected: false,
-                value: {
-                    _string: item
-                },
-            } : {
+            return typeof(item) === "object" ? {
                 index: index,
                 selected: false,
                 value: item,
+            } : {
+                index: index,
+                selected: false,
+                value: {
+                    __generated__: item.toString(),
+                },
             };
         });
 
@@ -23743,6 +23744,8 @@ var BaseDataView = Widget.$extend({
         }).filter(function (col) {
             return col !== null;
         });
+
+        this._buildItemsHtml();
     },
 
     /**
@@ -23812,6 +23815,7 @@ var BaseDataView = Widget.$extend({
      * @property classnames
      * @type Array
      * @default []
+     * @private
      */
     _addClassname: function (classname) {
         if (!classname) {
@@ -23943,7 +23947,10 @@ var BaseDataView = Widget.$extend({
         var node = document.createElement(this.columnElement);
 
         this._addClasses(node, "column");
-        this._addClasses(node, "column-" + columnId);
+
+        if (columnId !== "__generated__") {
+            this._addClasses(node, "column-" + columnId);
+        }
 
         if (content instanceof Widget) {
             node.appendChild(content.getHtml());
@@ -23964,10 +23971,9 @@ var BaseDataView = Widget.$extend({
      */
     _generateColumns: function () {
         var keys = [];
-
         if (this.$data.items) {
             this.$data.items.forEach(function (item) {
-                if (typeof(item.value) !== "string") {
+                if (typeof(item.value) === "object") {
                     Object.keys(item.value).forEach(function (key) {
                         if (keys.indexOf(key) === -1) {
                             keys.push(key);
@@ -24001,7 +24007,10 @@ var BaseDataView = Widget.$extend({
             this.$data._classnames.forEach(function (classname) {
                 node.classList.add(
                     suffix ?
-                    "photonui-" + classname + "-" + suffix :
+                    "photonui-" + classname + "-" + suffix
+                        .replace(/[^a-zA-Z0-9]+/gi, "-")
+                        .replace(/(^[^a-zA-Z0-9]|[^a-zA-Z0-9]$)/gi, "")
+                        .toLowerCase() :
                     "photonui-" + classname
                 );
             });
