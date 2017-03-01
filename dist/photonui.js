@@ -23611,12 +23611,18 @@ var BaseDataView = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
+        this._lockItemsUpdate = true;
         this.$data.selectable = true;
         this.$data.multiSelectable = true;
         this.$data.containerElement = "ul";
         this.$data.itemElement = "li";
         this.$data.columnElement = "span";
         this.$data._manuallySetColumns = (params && params.columns) ? true : false;
+
+        if (params && params.containerElement) {
+            this.$data.containerElement = params.containerElement;
+            params.containerElement = null;
+        }
 
         this._addClassname("dataview");
         this._addClassname(params && params.classname);
@@ -23625,7 +23631,9 @@ var BaseDataView = Widget.$extend({
 
         this.$super(params);
 
-        // Bind js events
+        this._lockItemsUpdate = false;
+        this._buildItemsHtml();
+
         this._bindEvent("click", this.__html.container, "click", this.__onClick.bind(this));
     },
 
@@ -23697,16 +23705,16 @@ var BaseDataView = Widget.$extend({
      * A custom formater function which overrides the default rendering process
      * of the widget.
      *
-     * @property customFormater
+     * @property customWidgetFormater
      * @type Function
      * @default null
      */
-    getCustomFormater: function () {
-        return this.$data.customFormater;
+    getCustomWidgetFormater: function () {
+        return this.$data.customWidgetFormater;
     },
 
-    setCustomFormater: function (customFormater) {
-        this.$data.customFormater = customFormater;
+    setCustomWidgetFormater: function (customWidgetFormater) {
+        this.$data.customWidgetFormater = customWidgetFormater;
     },
 
     /**
@@ -23834,9 +23842,63 @@ var BaseDataView = Widget.$extend({
 
     // ====== Public methods ======
 
-    // TODO Public methods here
+    /**
+     * Selects the item at a given index.
+     *
+     * @method selectItemByIndex
+     * @param {...Number|Number[]} index
+     */
+    selectItems: function () {
+        lodash.chain(arguments)
+            .map()
+            .flatten()
+            .uniq()
+            .value()
+            .forEach(function (index) {
+                var item = this._getItemByIndex(index);
+
+                if (item) {
+                    this._selectItem(item);
+                }
+            }.bind(this));
+    },
+
+    /**
+     * Unselects the item at a given index.
+     *
+     * @method selectItemByIndex
+     * @param {Number} index
+     */
+    unselectItems: function (index) {
+        lodash.chain(arguments)
+            .map()
+            .flatten()
+            .uniq()
+            .value()
+            .forEach(function (index) {
+                var item = this._getItemByIndex(index);
+
+                if (item) {
+                    this._unselectItem(item);
+                }
+            }.bind(this));
+    },
 
     // ====== Private methods ======
+
+    /**
+     * Returns the item at a given index.
+     *
+     * @method _getItemByIndex
+     * @private
+     * @param {Number} index
+     * @return {Object} the item
+     */
+    _getItemByIndex: function (index) {
+        return lodash.find(this.items, function (item) {
+            return item.index === index;
+        });
+    },
 
     /**
      * Build the widget HTML.
@@ -23869,6 +23931,10 @@ var BaseDataView = Widget.$extend({
      * @private
      */
     _buildItemsHtml: function () {
+        if (this._lockItemsUpdate) {
+            return;
+        }
+
         Helpers.cleanNode(this.__html.container);
 
         if (this.$data.items) {
@@ -23899,8 +23965,8 @@ var BaseDataView = Widget.$extend({
 
         this._addClasses(node, "item");
 
-        if (this.customFormater && typeof(this.customFormater) === "function") {
-            var widget = this.customFormater(item.value);
+        if (this.customWidgetFormater && typeof(this.customWidgetFormater) === "function") {
+            var widget = this.customWidgetFormater.call(this, item.value);
 
             if (widget && widget instanceof Widget) {
                 node.appendChild(widget.getHtml());
@@ -23924,7 +23990,7 @@ var BaseDataView = Widget.$extend({
         if (this.$data.columns) {
             this.$data.columns.forEach(function (column) {
                 var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
-                    typeof(column.value) === "function" ? column.value.call(this.$data, item.value) :
+                    typeof(column.value) === "function" ? column.value.call(this, item.value) :
                     null;
 
                 itemNode.appendChild(this._renderColumn(content, column.id, column.rawHtml));

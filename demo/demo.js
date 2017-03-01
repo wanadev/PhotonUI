@@ -1632,6 +1632,8 @@ var iconView = new photonui.IconView({
     ]
 });
 
+tableView.selectItems(6, 4, [4, 3]);
+
 new photonui.Window({
     visible: true,
     width: 456,
