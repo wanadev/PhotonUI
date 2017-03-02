@@ -23587,7 +23587,7 @@ var Widget = require("../widget.js");
 var Text = require("../visual/text.js");
 
 /**
- * BaseDataView container.
+ * DataView container.
  *
  * wEvents:
  *
@@ -23603,11 +23603,11 @@ var Text = require("../visual/text.js");
  *     - description: called when an item is unselected.
  *     - callback:    function(item)
  *
- * @class BaseDataView
+ * @class DataView
  * @constructor
  * @extends photonui.Widget
  */
-var BaseDataView = Widget.$extend({
+var DataView = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
@@ -24235,7 +24235,7 @@ var BaseDataView = Widget.$extend({
     }
 });
 
-module.exports = BaseDataView;
+module.exports = DataView;
 
 },{"../helpers.js":39,"../visual/text.js":75,"../widget.js":76,"lodash":8}],35:[function(require,module,exports){
 /*
@@ -24278,16 +24278,16 @@ module.exports = BaseDataView;
 
 var lodash = require("lodash");
 
-var BaseDataView = require("./basedataview");
+var DataView = require("./dataview");
 
 /**
  * FluidView container.
  *
  * @class FluidView
  * @constructor
- * @extends photonui.BaseDataView
+ * @extends photonui.DataView
  */
-var FluidView = BaseDataView.$extend({
+var FluidView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
@@ -24464,7 +24464,7 @@ var FluidView = BaseDataView.$extend({
 
 module.exports = FluidView;
 
-},{"./basedataview":34,"lodash":8}],36:[function(require,module,exports){
+},{"./dataview":34,"lodash":8}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24658,7 +24658,7 @@ module.exports = IconView;
 
 var lodash = require("lodash");
 
-var BaseDataView = require("./basedataview");
+var DataView = require("./dataview");
 var Helpers = require("../helpers.js");
 
 /**
@@ -24666,9 +24666,9 @@ var Helpers = require("../helpers.js");
  *
  * @class ListView
  * @constructor
- * @extends photonui.BaseDataView
+ * @extends photonui.DataView
  */
-var ListView = BaseDataView.$extend({
+var ListView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
@@ -24687,7 +24687,7 @@ var ListView = BaseDataView.$extend({
 
 module.exports = ListView;
 
-},{"../helpers.js":39,"./basedataview":34,"lodash":8}],38:[function(require,module,exports){
+},{"../helpers.js":39,"./dataview":34,"lodash":8}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24731,16 +24731,16 @@ var lodash = require("lodash");
 var Widget = require("../widget");
 var Helpers = require("../helpers.js");
 
-var BaseDataView = require("./basedataview");
+var DataView = require("./dataview");
 
 /**
  * TableView container.
  *
  * @class TableView
  * @constructor
- * @extends photonui.BaseDataView
+ * @extends photonui.DataView
  */
-var TableView = BaseDataView.$extend({
+var TableView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
@@ -24811,7 +24811,7 @@ var TableView = BaseDataView.$extend({
 
 module.exports = TableView;
 
-},{"../helpers.js":39,"../widget":76,"./basedataview":34,"lodash":8}],39:[function(require,module,exports){
+},{"../helpers.js":39,"../widget":76,"./dataview":34,"lodash":8}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33372,7 +33372,7 @@ photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
 photonui.IconButton = require("./interactive/iconbutton.js");
 photonui.Template = require("./visual/template.js");
-photonui.BaseDataView = require("./dataview/basedataview.js");
+photonui.DataView = require("./dataview/dataview.js");
 photonui.FluidView = require("./dataview/fluidview.js");
 photonui.ListView = require("./dataview/listview.js");
 photonui.TableView = require("./dataview/tableview.js");
@@ -33382,7 +33382,7 @@ photonui.IconView = require("./dataview/iconview.js");
 
 module.exports = photonui;
 
-},{"./base.js":18,"./composite/colorbutton.js":19,"./composite/colorpickerdialog.js":20,"./composite/fontselect.js":21,"./composite/popupmenu.js":22,"./composite/select.js":23,"./container/basewindow.js":24,"./container/container.js":25,"./container/dialog.js":26,"./container/expander.js":27,"./container/menuitem.js":28,"./container/popupwindow.js":29,"./container/submenuitem.js":30,"./container/tabitem.js":31,"./container/viewport.js":32,"./container/window.js":33,"./dataview/basedataview.js":34,"./dataview/fluidview.js":35,"./dataview/iconview.js":36,"./dataview/listview.js":37,"./dataview/tableview.js":38,"./helpers.js":39,"./interactive/button.js":40,"./interactive/checkbox.js":41,"./interactive/colorpalette.js":42,"./interactive/colorpicker.js":43,"./interactive/field.js":44,"./interactive/iconbutton.js":45,"./interactive/numericfield.js":46,"./interactive/slider.js":47,"./interactive/switch.js":48,"./interactive/textareafield.js":49,"./interactive/textfield.js":50,"./interactive/togglebutton.js":51,"./layout/boxlayout.js":52,"./layout/fluidlayout.js":53,"./layout/gridlayout.js":54,"./layout/layout.js":55,"./layout/menu.js":56,"./layout/tablayout.js":57,"./nonvisual/accelmanager.js":58,"./nonvisual/color.js":59,"./nonvisual/filemanager.js":60,"./nonvisual/keyboardmanager.js":61,"./nonvisual/mousemanager.js":62,"./nonvisual/spritesheet.js":63,"./nonvisual/translation.js":64,"./visual/baseicon.js":66,"./visual/canvas.js":67,"./visual/faicon.js":68,"./visual/image.js":69,"./visual/label.js":70,"./visual/progressbar.js":71,"./visual/separator.js":72,"./visual/spriteicon.js":73,"./visual/template.js":74,"./visual/text.js":75,"./widget.js":76,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":13}],66:[function(require,module,exports){
+},{"./base.js":18,"./composite/colorbutton.js":19,"./composite/colorpickerdialog.js":20,"./composite/fontselect.js":21,"./composite/popupmenu.js":22,"./composite/select.js":23,"./container/basewindow.js":24,"./container/container.js":25,"./container/dialog.js":26,"./container/expander.js":27,"./container/menuitem.js":28,"./container/popupwindow.js":29,"./container/submenuitem.js":30,"./container/tabitem.js":31,"./container/viewport.js":32,"./container/window.js":33,"./dataview/dataview.js":34,"./dataview/fluidview.js":35,"./dataview/iconview.js":36,"./dataview/listview.js":37,"./dataview/tableview.js":38,"./helpers.js":39,"./interactive/button.js":40,"./interactive/checkbox.js":41,"./interactive/colorpalette.js":42,"./interactive/colorpicker.js":43,"./interactive/field.js":44,"./interactive/iconbutton.js":45,"./interactive/numericfield.js":46,"./interactive/slider.js":47,"./interactive/switch.js":48,"./interactive/textareafield.js":49,"./interactive/textfield.js":50,"./interactive/togglebutton.js":51,"./layout/boxlayout.js":52,"./layout/fluidlayout.js":53,"./layout/gridlayout.js":54,"./layout/layout.js":55,"./layout/menu.js":56,"./layout/tablayout.js":57,"./nonvisual/accelmanager.js":58,"./nonvisual/color.js":59,"./nonvisual/filemanager.js":60,"./nonvisual/keyboardmanager.js":61,"./nonvisual/mousemanager.js":62,"./nonvisual/spritesheet.js":63,"./nonvisual/translation.js":64,"./visual/baseicon.js":66,"./visual/canvas.js":67,"./visual/faicon.js":68,"./visual/image.js":69,"./visual/label.js":70,"./visual/progressbar.js":71,"./visual/separator.js":72,"./visual/spriteicon.js":73,"./visual/template.js":74,"./visual/text.js":75,"./widget.js":76,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":13}],66:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.

@@ -43,7 +43,7 @@ var Widget = require("../widget.js");
 var Text = require("../visual/text.js");
 
 /**
- * BaseDataView container.
+ * DataView container.
  *
  * wEvents:
  *
@@ -59,11 +59,11 @@ var Text = require("../visual/text.js");
  *     - description: called when an item is unselected.
  *     - callback:    function(item)
  *
- * @class BaseDataView
+ * @class DataView
  * @constructor
  * @extends photonui.Widget
  */
-var BaseDataView = Widget.$extend({
+var DataView = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
@@ -691,4 +691,4 @@ var BaseDataView = Widget.$extend({
     }
 });
 
-module.exports = BaseDataView;
+module.exports = DataView;

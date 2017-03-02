@@ -1,17 +1,17 @@
-describe("photonui.BaseDataView (widget)", function() {
+describe("photonui.DataView (widget)", function() {
 
     beforeEach(function() {
         this.area = addTestArea();
     });
 
     afterEach(function() {
-        // this.dv.destroy();
+        this.dv.destroy();
     });
 
     describe("basics", function() {
 
         beforeEach(function() {
-            this.dv = new photonui.BaseDataView();
+            this.dv = new photonui.DataView();
             photonui.domInsert(this.dv, this.area);
         });
 
@@ -74,7 +74,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "world",
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -94,7 +94,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "hello",
                 1234,
             ];
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
             });
 
@@ -114,7 +114,7 @@ describe("photonui.BaseDataView (widget)", function() {
                     "bar",
                 ],
             ];
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
             });
 
@@ -134,7 +134,7 @@ describe("photonui.BaseDataView (widget)", function() {
                     prop2: "bar",
                 },
             ];
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
             });
 
@@ -156,7 +156,7 @@ describe("photonui.BaseDataView (widget)", function() {
                     prop2: "object",
                 },
             ];
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
             });
 
@@ -179,7 +179,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "world",
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -204,7 +204,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 456,
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -233,7 +233,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 ],
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -264,7 +264,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -297,7 +297,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 42
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -332,7 +332,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "prop1",
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
               columns: this.columns,
             });
@@ -380,7 +380,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "prop4",
             ]
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -431,7 +431,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -468,7 +468,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -507,7 +507,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -543,7 +543,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -580,7 +580,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -621,7 +621,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -660,7 +660,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -702,7 +702,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 myData: "hello world",
             }
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
                 data: this.data,
@@ -744,7 +744,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columns: this.columns,
             });
@@ -770,7 +770,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "bar",
                 "foobar",
             ];
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: [
                   "hello",
                   "world",
@@ -802,7 +802,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -845,7 +845,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "world",
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
             });
 
@@ -876,7 +876,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "prop2",
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
               columns: this.columns,
             });
@@ -907,7 +907,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 "prop2",
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
               items: this.items,
               columns: this.columns,
             });
@@ -931,7 +931,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 456
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 containerElement: this.containerElement,
             });
@@ -949,7 +949,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 456
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 containerElement: this.containerElement,
                 itemElement: this.itemElement,
@@ -970,7 +970,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 456
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 columnElement: this.columnElement,
             });
@@ -1001,7 +1001,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 customWidgetFormater: function (item) {
                     return new photonui.BoxLayout({
@@ -1038,7 +1038,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 data: {
                     message: "hello",
@@ -1070,7 +1070,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 classname: this.classname,
             });
@@ -1093,7 +1093,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 classname: this.classname,
             });
@@ -1120,7 +1120,7 @@ describe("photonui.BaseDataView (widget)", function() {
                 },
             ];
 
-            this.dv = new photonui.BaseDataView({
+            this.dv = new photonui.DataView({
                 items: this.items,
                 classname: this.classname,
             });

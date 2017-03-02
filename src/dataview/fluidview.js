@@ -38,16 +38,16 @@
 
 var lodash = require("lodash");
 
-var BaseDataView = require("./basedataview");
+var DataView = require("./dataview");
 
 /**
  * FluidView container.
  *
  * @class FluidView
  * @constructor
- * @extends photonui.BaseDataView
+ * @extends photonui.DataView
  */
-var FluidView = BaseDataView.$extend({
+var FluidView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {

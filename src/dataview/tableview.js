@@ -41,16 +41,16 @@ var lodash = require("lodash");
 var Widget = require("../widget");
 var Helpers = require("../helpers.js");
 
-var BaseDataView = require("./basedataview");
+var DataView = require("./dataview");
 
 /**
  * TableView container.
  *
  * @class TableView
  * @constructor
- * @extends photonui.BaseDataView
+ * @extends photonui.DataView
  */
-var TableView = BaseDataView.$extend({
+var TableView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {

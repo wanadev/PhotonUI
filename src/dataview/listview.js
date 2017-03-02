@@ -38,7 +38,7 @@
 
 var lodash = require("lodash");
 
-var BaseDataView = require("./basedataview");
+var DataView = require("./dataview");
 var Helpers = require("../helpers.js");
 
 /**
@@ -46,9 +46,9 @@ var Helpers = require("../helpers.js");
  *
  * @class ListView
  * @constructor
- * @extends photonui.BaseDataView
+ * @extends photonui.DataView
  */
-var ListView = BaseDataView.$extend({
+var ListView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
