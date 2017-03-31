@@ -23629,6 +23629,11 @@ var DataView = Widget.$extend({
 
         this._initialSelectionItemIndex = null;
 
+        this._registerWEvents([
+            "item-select",
+            "item-unselect",
+            "item-click",
+        ]);
         this.$super(params);
 
         this._lockItemsUpdate = false;
@@ -24206,13 +24211,13 @@ var DataView = Widget.$extend({
      *
      * @method __onClick
      * @private
-     * @param {Object} e the click event
+     * @param {Object} event the click event
      */
-    __onClick: function (e) {
-        var clickedItemNode = Helpers.getClosest(e.target, ".photonui-dataview-item");
+    __onClick: function (event) {
+        var clickedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
 
         if (clickedItemNode) {
-            this.__onItemClick(e, this._getItemFromNode(clickedItemNode));
+            this.__onItemClick(event, this._getItemFromNode(clickedItemNode));
         } else {
             this._unselectAllItems();
         }
@@ -24223,15 +24228,15 @@ var DataView = Widget.$extend({
      *
      * @method __onItemClick
      * @private
-     * @param {Object} e the click event
+     * @param {Object} event the click event
      * @param {item} item the clicked item
      */
-    __onItemClick: function (e, item) {
+    __onItemClick: function (event, item) {
         this._handleClick(item, {
-            shift: e.shiftKey,
-            ctrl: e.ctrlKey,
+            shift: event.shiftKey,
+            ctrl: event.ctrlKey,
         });
-        this._callCallbacks("item-click", [e, item]);
+        this._callCallbacks("item-click", [item, event]);
     }
 });
 
