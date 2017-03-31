@@ -1549,6 +1549,17 @@ var iconView = new photonui.IconView({
     itemsHeight: 106,
     iconWidth: 88,
     iconHeight: 88,
+    callbacks: {
+        "item-click": function(widget, item, event) {
+            console.log("clicked:", item);
+        },
+        "item-select": function(widget, item) {
+            console.log("selected:", item);
+        },
+        "item-unselect": function(widget, item) {
+            console.log("unselected:", item);
+        },
+    },
     items: [
         {
             label: "hello world",
