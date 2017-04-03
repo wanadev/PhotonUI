@@ -306,7 +306,7 @@ var DataView = Widget.$extend({
     /**
      * Selects the item at a given index.
      *
-     * @method selectItemByIndex
+     * @method selectItems
      * @param {...Number|Number[]} index
      */
     selectItems: function () {
@@ -327,7 +327,7 @@ var DataView = Widget.$extend({
     /**
      * Unselects the item at a given index.
      *
-     * @method selectItemByIndex
+     * @method unselectItems
      * @param {Number} index
      */
     unselectItems: function (index) {
