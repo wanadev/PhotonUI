@@ -23848,10 +23848,10 @@ var DataView = Widget.$extend({
     // ====== Public methods ======
 
     /**
-     * Selects the item at a given index.
+     * Selects the item(s) at given indexes.
      *
-     * @method selectItemByIndex
-     * @param {...Number|Number[]} index
+     * @method selectItems
+     * @param {...Number|Number[]} indexes
      */
     selectItems: function () {
         lodash.chain(arguments)
@@ -23863,16 +23863,16 @@ var DataView = Widget.$extend({
                 var item = this._getItemByIndex(index);
 
                 if (item) {
-                    this._selectItem(item);
+                    this._selectItem(item, true);
                 }
             }.bind(this));
     },
 
     /**
-     * Unselects the item at a given index.
+     * Unselects the item(s) at given indexes.
      *
-     * @method selectItemByIndex
-     * @param {Number} index
+     * @method unselectItems
+     * @param {...Number|Number[]} indexes
      */
     unselectItems: function (index) {
         lodash.chain(arguments)
@@ -23884,7 +23884,7 @@ var DataView = Widget.$extend({
                 var item = this._getItemByIndex(index);
 
                 if (item) {
-                    this._unselectItem(item);
+                    this._unselectItem(item, true);
                 }
             }.bind(this));
     },
@@ -24095,10 +24095,13 @@ var DataView = Widget.$extend({
      * @private
      * @param {Object} item the item
      */
-    _selectItem: function (item) {
+    _selectItem: function (item, preventEvent) {
         item.selected = true;
         item.node.classList.add("selected");
-        this._callCallbacks("item-select", [item]);
+
+        if (!preventEvent) {
+            this._callCallbacks("item-select", [item]);
+        }
     },
 
     /**
@@ -24108,10 +24111,13 @@ var DataView = Widget.$extend({
      * @private
      * @param {Object} item the item
      */
-    _unselectItem: function (item) {
+    _unselectItem: function (item, preventEvent) {
         item.selected = false;
         item.node.classList.remove("selected");
-        this._callCallbacks("item-unselect", [item]);
+
+        if (!preventEvent) {
+            this._callCallbacks("item-unselect", [item]);
+        }
     },
 
     /**

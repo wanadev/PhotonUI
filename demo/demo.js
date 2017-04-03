@@ -1041,8 +1041,15 @@ var listView = new photonui.ListView({
     "foo",
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
     "bar",
-  ]
+  ],
+  callbacks: {
+    "item-select": function(item) {
+      console.log("selected:", item);
+    }
+  }
 });
+
+listView.selectItems(0, 2);
 
 new photonui.Window({
   visible: true,
