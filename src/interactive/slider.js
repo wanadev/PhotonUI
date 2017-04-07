@@ -53,6 +53,18 @@ var Slider = NumericField.$extend({
     __init__: function (params) {
         this.$super(params);
 
+        if (params && params.decimalDigits === undefined) {
+            this.decimalDigits = 0;
+        }
+
+        if (params && params.min === undefined) {
+            this.decimalDigits = 0;
+        }
+
+        if (params && params.max === undefined) {
+            this.decimalDigits = 100;
+        }
+
         this.inputId = this.name + "-field";
         this.__html.field.id = this.inputId;
 
@@ -65,11 +77,6 @@ var Slider = NumericField.$extend({
                         "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("field-contextmenu", this.__html.field, "contextmenu", this.__onFieldContextMenu.bind(this));
     },
-
-    // Default value (!= NumericField)
-    _min: 0,
-    _max: 100,
-    _decimalDigits: 0,
 
     //////////////////////////////////////////
     // Properties and Accessors             //
