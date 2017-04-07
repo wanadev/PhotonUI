@@ -58,11 +58,11 @@ var Slider = NumericField.$extend({
         }
 
         if (params && params.min === undefined) {
-            this.decimalDigits = 0;
+            this.min = 0;
         }
 
         if (params && params.max === undefined) {
-            this.decimalDigits = 100;
+            this.max = 100;
         }
 
         this.inputId = this.name + "-field";
