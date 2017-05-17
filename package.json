@@ -48,7 +48,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-contrib-yuidoc": ">=0.7.0",
     "grunt-githooks": "^0.6.0",
-    "grunt-jscs": "^3.0.1",
+    "grunt-jscs": "^2.0.0",
     "grunt-shell": "^2.1.0",
     "jasmine-core": "^2.5.2",
     "karma": "^1.1.2",
