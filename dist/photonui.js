@@ -23624,8 +23624,8 @@ var DataView = Widget.$extend({
             params.containerElement = null;
         }
 
-        this._addClassname("dataview");
-        this._addClassname(params && params.classname);
+        this._addIdentifier("dataview");
+        this._addIdentifier(params && params.identifier);
 
         this._initialSelectionItemIndex = null;
 
@@ -23822,22 +23822,22 @@ var DataView = Widget.$extend({
     },
 
     /**
-     * The list of classnames wich will be added to every generated elements
-     * of the widget.
+     * The list of identifiers wich will be added to every generated elements
+     * of the widget as classnames.
      *
-     * @property classnames
+     * @property identifiers
      * @type Array
      * @default []
      * @private
      */
-    _addClassname: function (classname) {
-        if (!classname) {
+    _addIdentifier: function (identifier) {
+        if (!identifier) {
             return;
         }
-        if (!this.$data._classnames) {
-            this.$data._classnames = [classname];
-        } else if (this.$data._classnames.indexOf(classname) === -1) {
-            this.$data._classnames.push(classname);
+        if (!this.$data._identifiers) {
+            this.$data._identifiers = [identifier];
+        } else if (this.$data._identifiers.indexOf(identifier) === -1) {
+            this.$data._identifiers.push(identifier);
         }
     },
 
@@ -23925,8 +23925,8 @@ var DataView = Widget.$extend({
         this.__html.container = document.createElement(this.containerElement);
         this.__html.container.className = "photonui-widget";
 
-        this._addClasses(this.__html.container);
-        this._addClasses(this.__html.container, "container");
+        this._addIdentifiersClasses(this.__html.container);
+        this._addIdentifiersClasses(this.__html.container, "container");
     },
 
     /**
@@ -23968,7 +23968,7 @@ var DataView = Widget.$extend({
         node.className = "photonui-dataview-item";
         node.setAttribute("data-photonui-dataview-item-index", item.index);
 
-        this._addClasses(node, "item");
+        this._addIdentifiersClasses(node, "item");
 
         if (this.customWidgetFormater && typeof(this.customWidgetFormater) === "function") {
             var widget = this.customWidgetFormater.call(this, item.value);
@@ -24017,10 +24017,10 @@ var DataView = Widget.$extend({
     _renderColumn: function (content, columnId, rawHtml) {
         var node = document.createElement(this.columnElement);
 
-        this._addClasses(node, "column");
+        this._addIdentifiersClasses(node, "column");
 
         if (columnId !== "__generated__") {
-            this._addClasses(node, "column-" + columnId);
+            this._addIdentifiersClasses(node, "column-" + columnId);
         }
 
         if (content instanceof Widget) {
@@ -24065,24 +24065,24 @@ var DataView = Widget.$extend({
     },
 
     /**
-     * Adds classes defined by the classname property to a given element, with
+     * Adds classes defined by the identifiers property to a given element, with
      * a given suffix.
      *
-     * @method _addClasses
+     * @method _addIdentifiersClasses
      * @private
      * @param {Element} node the node
      * @param {String} suffix the suffix of the classes
      */
-    _addClasses: function (node, suffix) {
-        if (this.$data._classnames) {
-            this.$data._classnames.forEach(function (classname) {
+    _addIdentifiersClasses: function (node, suffix) {
+        if (this.$data._identifiers) {
+            this.$data._identifiers.forEach(function (identifier) {
                 node.classList.add(
                     suffix ?
-                    "photonui-" + classname + "-" + suffix
+                    "photonui-" + identifier + "-" + suffix
                         .replace(/[^a-zA-Z0-9]+/gi, "-")
                         .replace(/(^[^a-zA-Z0-9]|[^a-zA-Z0-9]$)/gi, "")
                         .toLowerCase() :
-                    "photonui-" + classname
+                    "photonui-" + identifier
                 );
             });
         }
@@ -24309,7 +24309,7 @@ var FluidView = DataView.$extend({
             horizontalSpacing: 0,
         }, params);
 
-        this._addClassname("fluidview");
+        this._addIdentifier("fluidview");
         this.$super(params);
     },
 
@@ -24557,7 +24557,7 @@ var IconView = FluidView.$extend({
           ],
         }, params);
 
-        this._addClassname("iconview");
+        this._addIdentifier("iconview");
 
         this._registerWEvents([]);
         this.$super(params);
@@ -24689,7 +24689,7 @@ var ListView = DataView.$extend({
             columnElement: "span",
         }, params);
 
-        this._addClassname("listview");
+        this._addIdentifier("listview");
 
         this._registerWEvents([]);
         this.$super(params);
@@ -24762,7 +24762,7 @@ var TableView = DataView.$extend({
             showHeader: true,
         }, params);
 
-        this._addClassname("tableview");
+        this._addIdentifier("tableview");
 
         this._registerWEvents([]);
         this.$super(params);

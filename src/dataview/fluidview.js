@@ -58,7 +58,7 @@ var FluidView = DataView.$extend({
             horizontalSpacing: 0,
         }, params);
 
-        this._addClassname("fluidview");
+        this._addIdentifier("fluidview");
         this.$super(params);
     },
 

@@ -61,7 +61,7 @@ var TableView = DataView.$extend({
             showHeader: true,
         }, params);
 
-        this._addClassname("tableview");
+        this._addIdentifier("tableview");
 
         this._registerWEvents([]);
         this.$super(params);
