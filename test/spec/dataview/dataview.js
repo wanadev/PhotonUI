@@ -1058,7 +1058,6 @@ describe("photonui.DataView (widget)", function() {
         });
 
         it("adds custom classname to container element", function() {
-            this.classname = "hello";
             this.items = [
                 {
                     prop1: "an",
@@ -1072,7 +1071,7 @@ describe("photonui.DataView (widget)", function() {
 
             this.dv = new photonui.DataView({
                 items: this.items,
-                classname: this.classname,
+                identifier: "hello",
             });
 
             photonui.domInsert(this.dv, this.area);
@@ -1081,7 +1080,6 @@ describe("photonui.DataView (widget)", function() {
         });
 
         it("adds custom classname to item elements", function() {
-            this.classname = "hello";
             this.items = [
                 {
                     prop1: "an",
@@ -1095,7 +1093,7 @@ describe("photonui.DataView (widget)", function() {
 
             this.dv = new photonui.DataView({
                 items: this.items,
-                classname: this.classname,
+                identifier: "hello",
             });
 
             photonui.domInsert(this.dv, this.area);
@@ -1103,12 +1101,11 @@ describe("photonui.DataView (widget)", function() {
             var rowElements = this.dv.html.getElementsByClassName("photonui-dataview-item");
             expect(rowElements.length).toEqual(this.items.length);
 
-            expect(rowElements[0].className).toContain("photonui-dataview-item");
-            expect(rowElements[1].className).toContain("photonui-dataview-item");
+            expect(rowElements[0].className).toContain("photonui-hello-item");
+            expect(rowElements[1].className).toContain("photonui-hello-item");
         });
 
         it("adds custom classname to column elements", function() {
-            this.classname = "hello";
             this.items = [
                 {
                     prop1: "an",
@@ -1122,7 +1119,7 @@ describe("photonui.DataView (widget)", function() {
 
             this.dv = new photonui.DataView({
                 items: this.items,
-                classname: this.classname,
+                identifier: "hello",
             });
 
             photonui.domInsert(this.dv, this.area);
@@ -1131,8 +1128,8 @@ describe("photonui.DataView (widget)", function() {
             expect(rowElements.length).toEqual(this.items.length);
 
             var columnElements = rowElements[0].getElementsByClassName("photonui-dataview-column");
-            expect(columnElements[0].className).toContain("photonui-dataview-column");
-            expect(columnElements[1].className).toContain("photonui-dataview-column");
+            expect(columnElements[0].className).toContain("photonui-hello-column");
+            expect(columnElements[1].className).toContain("photonui-hello-column");
         });
     });
 });

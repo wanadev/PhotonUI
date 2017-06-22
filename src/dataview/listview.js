@@ -58,7 +58,7 @@ var ListView = DataView.$extend({
             columnElement: "span",
         }, params);
 
-        this._addClassname("listview");
+        this._addIdentifier("listview");
 
         this._registerWEvents([]);
         this.$super(params);

@@ -79,7 +79,7 @@ var IconView = FluidView.$extend({
           ],
         }, params);
 
-        this._addClassname("iconview");
+        this._addIdentifier("iconview");
 
         this._registerWEvents([]);
         this.$super(params);
