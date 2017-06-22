@@ -699,7 +699,18 @@ var DataView = Widget.$extend({
             ctrl: event.ctrlKey,
         });
         this._callCallbacks("item-click", [item, event]);
-    }
+    },
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function () {
+        this._buildItemsHtml();
+    },
+
 });
 
 module.exports = DataView;
