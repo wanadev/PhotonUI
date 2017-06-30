@@ -23649,6 +23649,8 @@ var DataView = Widget.$extend({
         this._bindEvent("dragstart", this.__html.container, "dragstart", this.__onDragStart.bind(this));
         this._bindEvent("dragenter", this.__html.container, "dragenter", this.__onDragEnter.bind(this));
         this._bindEvent("dragend", this.__html.container, "dragend", this.__onDragEnd.bind(this));
+        this._bindEvent("dragover", this.__html.container, "dragover", this.__onDragOver.bind(this));
+        this._bindEvent("drop", this.__html.container, "drop", this.__onDrop.bind(this));
     },
 
     /**
@@ -24324,7 +24326,8 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragStart: function (event) {
-        var draggedItemNode = Helpers.getClosest(event.srcElement, ".photonui-dataview-item");
+        event.dataTransfer.setData("text/plain", null);
+        var draggedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
 
         if (draggedItemNode) {
             this.$data._draggedItem = this._getItemFromNode(draggedItemNode);
@@ -24349,7 +24352,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragEnter: function (event) {
-        var enteredItemNode = Helpers.getClosest(event.toElement, ".photonui-dataview-item");
+        var enteredItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+
+        event.preventDefault();
+        event.stopPropagation();
 
         if (enteredItemNode) {
             var enteredIndex = this._getItemFromNode(enteredItemNode).index;
@@ -24366,6 +24372,8 @@ var DataView = Widget.$extend({
                 this.__html.container.appendChild(this.$data._placeholderElement);
             }
         }
+
+        return false;
     },
 
     /**
@@ -24390,6 +24398,30 @@ var DataView = Widget.$extend({
 
         this.$data._placeholderElement = null;
         this.$data._draggedItem = null;
+    },
+
+    /**
+     * Called when a item is dragged (fix for firefox).
+     *
+     * @method __onDragOver
+     * @private
+     * @param {Object} event
+     */
+    __onDragOver: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    /**
+     * Called when a item is dropped (fix for firefox).
+     *
+     * @method __onDrop
+     * @private
+     * @param {Object} event
+     */
+    __onDrop: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
     },
 
     /**
