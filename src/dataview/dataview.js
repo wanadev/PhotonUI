@@ -49,15 +49,19 @@ var Text = require("../visual/text.js");
  *
  *   * item-click:
  *     - description: called when an item is clicked.
- *     - callback:    function(event, item)
+ *     - callback:    function (event, item)
  *
  *   * item-select:
  *     - description: called when an item is selected.
- *     - callback:    function(item)
+ *     - callback:    function (item)
  *
  *   * item-unselect:
  *     - description: called when an item is unselected.
- *     - callback:    function(item)
+ *     - callback:    function (item)
+ *
+ *   * item-sort:
+ *     - description: called when an item is moved to a new position.
+ *     - callback:    function (item, position)
  *
  * @class DataView
  * @constructor
@@ -70,6 +74,7 @@ var DataView = Widget.$extend({
         this._lockItemsUpdate = true;
         this.$data.selectable = true;
         this.$data.multiSelectable = true;
+        this.$data.dragAndDroppable = false;
         this.$data.containerElement = "ul";
         this.$data.itemElement = "li";
         this.$data.columnElement = "span";
@@ -89,6 +94,7 @@ var DataView = Widget.$extend({
             "item-select",
             "item-unselect",
             "item-click",
+            "item-sort",
         ]);
         this.$super(params);
 
@@ -96,6 +102,11 @@ var DataView = Widget.$extend({
         this._buildItemsHtml();
 
         this._bindEvent("click", this.__html.container, "click", this.__onClick.bind(this));
+        this._bindEvent("dragstart", this.__html.container, "dragstart", this.__onDragStart.bind(this));
+        this._bindEvent("dragenter", this.__html.container, "dragenter", this.__onDragEnter.bind(this));
+        this._bindEvent("dragend", this.__html.container, "dragend", this.__onDragEnd.bind(this));
+        this._bindEvent("dragover", this.__html.container, "dragover", this.__onDragOver.bind(this));
+        this._bindEvent("drop", this.__html.container, "drop", this.__onDrop.bind(this));
     },
 
     /**
@@ -160,6 +171,21 @@ var DataView = Widget.$extend({
 
     setMultiSelectable: function (multiSelectable) {
         this.$data.multiSelectable = multiSelectable;
+    },
+
+    /**
+     * Defines if the data items can be drag & dropped.
+     *
+     * @property dragAndDroppable
+     * @type Boolean
+     * @default false
+     */
+    isDragAndDroppable: function () {
+        return this.$data.dragAndDroppable;
+    },
+
+    setDragAndDroppable: function (dragAndDroppable) {
+        this.$data.dragAndDroppable = dragAndDroppable;
     },
 
     /**
@@ -403,6 +429,11 @@ var DataView = Widget.$extend({
 
             this.$data.items.forEach(function (item) {
                 var itemNode = this._renderItem(item);
+
+                if (this.$data.dragAndDroppable) {
+                    itemNode.setAttribute("draggable", true);
+                }
+
                 item.node = itemNode;
                 fragment.appendChild(itemNode);
             }.bind(this));
@@ -623,6 +654,24 @@ var DataView = Widget.$extend({
     },
 
     /**
+     * Moves the item at a givent index to another given index. Rebuilds the
+     * dataview.
+     *
+     * @method _moveItem
+     * @private
+     * @param {Number} itemIndex the index of the item to move
+     * @param {Number} destinationIndex the destination index
+     */
+    _moveItem: function (itemIndex, destinationIndex) {
+        this.items.splice(destinationIndex, 0, this.items.splice(itemIndex, 1)[0]);
+        this.setItems(
+            this.items.map(function (item) {
+                return item.value;
+            })
+        );
+    },
+
+    /**
      * Handle item click events.
      *
      * @method _handleClick
@@ -664,6 +713,30 @@ var DataView = Widget.$extend({
         }
     },
 
+    /**
+     * Generates a placeholder item element.
+     *
+     * @method _generatePlaceholderElement
+     * @private
+     * @return {Element} the placeholder item element
+     */
+    _generatePlaceholderElement: function (itemNode) {
+        var placeholderElement = document.createElement(this.$data.itemElement);
+
+        this.$data.columns.forEach(function () {
+            var column = document.createElement(this.$data.columnElement);
+            placeholderElement.appendChild(column);
+        }.bind(this));
+
+        placeholderElement.style.height = itemNode.offsetHeight + "px";
+        placeholderElement.style.width = itemNode.offsetWidth + "px";
+        placeholderElement.style.margin = itemNode.style.margin;
+
+        this._addIdentifiersClasses(placeholderElement, "item-placeholder");
+
+        return placeholderElement;
+    },
+
     //////////////////////////////////////////
     // Internal Events Callbacks            //
     //////////////////////////////////////////
@@ -699,6 +772,109 @@ var DataView = Widget.$extend({
             ctrl: event.ctrlKey,
         });
         this._callCallbacks("item-click", [item, event]);
+    },
+
+    /**
+     * Called when an item is dragged.
+     *
+     * @method __onDragStart
+     * @private
+     * @param {Object} event
+     */
+    __onDragStart: function (event) {
+        event.dataTransfer.setData("text", "");
+        var draggedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+
+        if (draggedItemNode) {
+            this.$data._draggedItem = this._getItemFromNode(draggedItemNode);
+            this._unselectAllItems();
+
+            this.$data._placeholderElement = this._generatePlaceholderElement(draggedItemNode);
+
+            this.$data._lastPlaceholderIndex = this.$data._draggedItem.index;
+
+            lodash.defer(function () {
+                this.__html.container.insertBefore(this.$data._placeholderElement, draggedItemNode);
+                this.$data._draggedItem.node.style.display = "none";
+            }.bind(this));
+        }
+    },
+
+    /**
+     * Called when a dragged item enters into another element.
+     *
+     * @method __onDragEnter
+     * @private
+     * @param {Object} event
+     */
+    __onDragEnter: function (event) {
+        var enteredItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+
+        if (enteredItemNode) {
+            var enteredIndex = this._getItemFromNode(enteredItemNode).index;
+            var placeholderIndex =
+              enteredIndex + (this.$data._lastPlaceholderIndex <= enteredIndex ? 1 : 0);
+
+            var nextItem = this._getItemByIndex(placeholderIndex);
+
+            this.$data._lastPlaceholderIndex = placeholderIndex;
+
+            if (nextItem) {
+                this.__html.container.insertBefore(this.$data._placeholderElement, nextItem.node);
+            } else {
+                this.__html.container.appendChild(this.$data._placeholderElement);
+            }
+        }
+
+        return false;
+    },
+
+    /**
+     * Called when a item drag has ended.
+     *
+     * @method __onDragEnd
+     * @private
+     * @param {Object} event
+     */
+    __onDragEnd: function (event) {
+        this.$data._draggedItem.node.style.display = "";
+
+        if (this.$data._placeholderElement.parentNode === this.__html.container) {
+            var destIndex = this.$data._lastPlaceholderIndex > this.$data._draggedItem.index ?
+                this.$data._lastPlaceholderIndex - 1 :
+                this.$data._lastPlaceholderIndex;
+
+            this._moveItem(this.$data._draggedItem.index, destIndex);
+
+            this._callCallbacks("item-sort", [this.$data._draggedItem, destIndex, event]);
+        }
+
+        this.$data._placeholderElement = null;
+        this.$data._draggedItem = null;
+    },
+
+    /**
+     * Called when a item is dragged (fix for firefox).
+     *
+     * @method __onDragOver
+     * @private
+     * @param {Object} event
+     */
+    __onDragOver: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    /**
+     * Called when a item is dropped (fix for firefox).
+     *
+     * @method __onDrop
+     * @private
+     * @param {Object} event
+     */
+    __onDrop: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
     },
 
     /**
