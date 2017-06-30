@@ -24326,7 +24326,7 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragStart: function (event) {
-        event.dataTransfer.setData("text/plain", null);
+        event.dataTransfer.setData("text", "");
         var draggedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
 
         if (draggedItemNode) {
@@ -24353,9 +24353,6 @@ var DataView = Widget.$extend({
      */
     __onDragEnter: function (event) {
         var enteredItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
-
-        event.preventDefault();
-        event.stopPropagation();
 
         if (enteredItemNode) {
             var enteredIndex = this._getItemFromNode(enteredItemNode).index;
