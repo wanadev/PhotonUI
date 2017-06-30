@@ -718,7 +718,7 @@ var DataView = Widget.$extend({
      * @private
      * @return {Element} the placeholder item element
      */
-    _generatePlaceholderElement: function () {
+    _generatePlaceholderElement: function (itemNode) {
         var placeholderElement = document.createElement(this.$data.itemElement);
 
         this.$data.columns.forEach(function () {
@@ -726,8 +726,9 @@ var DataView = Widget.$extend({
             placeholderElement.appendChild(column);
         }.bind(this));
 
-        placeholderElement.style.height = this.$data._draggedItem.node.offsetHeight + "px";
-        placeholderElement.style.width = this.$data._draggedItem.node.offsetWidth + "px";
+        placeholderElement.style.height = itemNode.offsetHeight + "px";
+        placeholderElement.style.width = itemNode.offsetWidth + "px";
+        placeholderElement.style.margin = itemNode.style.margin;
 
         this._addIdentifiersClasses(placeholderElement, "item-placeholder");
 
@@ -785,11 +786,12 @@ var DataView = Widget.$extend({
             this.$data._draggedItem = this._getItemFromNode(draggedItemNode);
             this._unselectAllItems();
 
-            this.$data._placeholderElement = this._generatePlaceholderElement();
+            this.$data._placeholderElement = this._generatePlaceholderElement(draggedItemNode);
 
-            this.$data._lastPlaceholderIndex = Infinity;
+            this.$data._lastPlaceholderIndex = this.$data._draggedItem.index;
 
             lodash.defer(function () {
+                this.__html.container.insertBefore(this.$data._placeholderElement, draggedItemNode);
                 this.$data._draggedItem.node.style.display = "none";
             }.bind(this));
         }

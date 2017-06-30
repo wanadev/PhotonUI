@@ -4330,6 +4330,9 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .photonui-fluidview .photonui-fluidview-item {
   text-align: center;
 }
+.photonui-fluidview .photonui-fluidview-item-placeholder {
+  background-color: #ddd;
+}
 .photonui-fluidview .photonui-fluidview-item .photonui-fluidview-column {
   margin: auto;
 }
