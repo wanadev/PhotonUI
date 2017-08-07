@@ -782,6 +782,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragStart: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         event.dataTransfer.setData("text", "");
         var draggedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
 
@@ -808,6 +812,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragEnter: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         var enteredItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
 
         if (enteredItemNode) {
@@ -837,6 +845,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragEnd: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         this.$data._draggedItem.node.style.display = "";
 
         if (this.$data._placeholderElement.parentNode === this.__html.container) {
@@ -861,6 +873,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragOver: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
     },
@@ -873,6 +889,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDrop: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
     },
