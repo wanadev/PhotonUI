@@ -73,7 +73,7 @@ var DataView = Widget.$extend({
     __init__: function (params) {
         this._lockItemsUpdate = true;
         this.$data.selectable = true;
-        this.$data.multiSelectable = true;
+        this.$data.multiSelectable = false;
         this.$data.dragAndDroppable = false;
         this.$data.containerElement = "ul";
         this.$data.itemElement = "li";
