@@ -54,7 +54,7 @@ var TableView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             containerElement: "table",
             itemElement: "tr",
             columnElement: "td",

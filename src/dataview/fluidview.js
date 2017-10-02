@@ -51,7 +51,7 @@ var FluidView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             verticalPadding: 0,
             horizontalPadding: 0,
             verticalSpacing: 0,

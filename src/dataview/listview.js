@@ -52,7 +52,7 @@ var ListView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             containerElement: "ul",
             itemElement: "li",
             columnElement: "span",
