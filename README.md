@@ -5,6 +5,7 @@
 [![License](http://img.shields.io/npm/l/photonui.svg?style=flat)](https://github.com/wanadev/PhotonUI/blob/master/LICENSE)
 [![Dependencies](https://img.shields.io/david/wanadev/PhotonUI.svg?maxAge=2592000)]()
 [![Dev Dependencies](https://img.shields.io/david/dev/wanadev/PhotonUI.svg?maxAge=2592000)]()
+[![Greenkeeper badge](https://badges.greenkeeper.io/wanadev/PhotonUI.svg)](https://greenkeeper.io/)
 
 
 PhotonUI javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
