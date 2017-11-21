@@ -756,6 +756,8 @@ var DataView = Widget.$extend({
         } else {
             this._unselectAllItems();
         }
+
+        event.stopPropagation();
     },
 
     /**
@@ -772,6 +774,8 @@ var DataView = Widget.$extend({
             ctrl: event.ctrlKey,
         });
         this._callCallbacks("item-click", [item, event]);
+
+        event.stopPropagation();
     },
 
     /**
@@ -802,6 +806,8 @@ var DataView = Widget.$extend({
                 this.$data._draggedItem.node.style.display = "none";
             }.bind(this));
         }
+
+        event.stopPropagation();
     },
 
     /**
@@ -834,6 +840,8 @@ var DataView = Widget.$extend({
             }
         }
 
+        event.stopPropagation();
+
         return false;
     },
 
@@ -863,6 +871,8 @@ var DataView = Widget.$extend({
 
         this.$data._placeholderElement = null;
         this.$data._draggedItem = null;
+
+        event.stopPropagation();
     },
 
     /**
