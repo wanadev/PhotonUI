@@ -50,7 +50,7 @@
     "grunt-githooks": "^0.6.0",
     "grunt-jscs": "^2.0.0",
     "grunt-shell": "^2.1.0",
-    "jasmine-core": "^2.5.2",
+    "jasmine-core": "^3.0.0",
     "karma": "^1.1.2",
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0",
