@@ -356,7 +356,7 @@ var DataView = Widget.$extend({
      * @method unselectItems
      * @param {...Number|Number[]} indexes
      */
-    unselectItems: function (index) {
+    unselectItems: function () {
         lodash.chain(arguments)
             .map()
             .flatten()
@@ -615,7 +615,7 @@ var DataView = Widget.$extend({
      * @param {Object} item the item
      */
     _selectItemsTo: function (item) {
-        this._unselectAllItems();
+        this.unselectAllItems();
 
         if (this._initialSelectionItemIndex < item.index) {
             for (var i = this._initialSelectionItemIndex; i <= item.index; i++) {
@@ -631,10 +631,10 @@ var DataView = Widget.$extend({
     /**
      * Unselects all items.
      *
-     * @method _unselectAllItems
+     * @method unselectAllItems
      * @private
      */
-    _unselectAllItems: function () {
+    unselectAllItems: function () {
         this.getSelectedItems().forEach(function (item) {
             this._unselectItem(item);
         }.bind(this));
@@ -697,7 +697,7 @@ var DataView = Widget.$extend({
                             this._selectItem(clickedItem);
                         }
                     } else {
-                        this._unselectAllItems();
+                        this.unselectAllItems();
                         this._selectItem(clickedItem);
                         this._initialSelectionItemIndex = clickedItem.index;
                     }
@@ -706,7 +706,7 @@ var DataView = Widget.$extend({
                 if (modifiers.ctrl && clickedItem.selected) {
                     this._unselectItem(clickedItem);
                 } else {
-                    this._unselectAllItems();
+                    this.unselectAllItems();
                     this._selectItem(clickedItem);
                 }
             }
@@ -754,7 +754,7 @@ var DataView = Widget.$extend({
         if (clickedItemNode) {
             this.__onItemClick(event, this._getItemFromNode(clickedItemNode));
         } else {
-            this._unselectAllItems();
+            this.unselectAllItems();
         }
 
         event.stopPropagation();
@@ -795,7 +795,7 @@ var DataView = Widget.$extend({
 
         if (draggedItemNode) {
             this.$data._draggedItem = this._getItemFromNode(draggedItemNode);
-            this._unselectAllItems();
+            this.unselectAllItems();
 
             this.$data._placeholderElement = this._generatePlaceholderElement(draggedItemNode);
 
