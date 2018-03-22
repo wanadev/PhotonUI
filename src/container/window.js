@@ -184,13 +184,13 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
     setModal: function (modal) {
         this._modal = modal;
-        if (modal) {
+        if (modal && !this.__html.modalBox) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
             var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
-        } else if (this.__html.modalBox) {
+        } else if (!modal && this.__html.modalBox) {
             this.__html.modalBox.parentNode.removeChild(this.__html.modalBox);
             delete this.__html.modalBox;
         }
