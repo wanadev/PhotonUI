@@ -51,14 +51,14 @@ var FluidView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             verticalPadding: 0,
             horizontalPadding: 0,
             verticalSpacing: 0,
             horizontalSpacing: 0,
         }, params);
 
-        this._addClassname("fluidview");
+        this._addIdentifier("fluidview");
         this.$super(params);
     },
 

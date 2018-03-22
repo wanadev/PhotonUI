@@ -55,7 +55,7 @@ var IconView = FluidView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             horizontalSpacing: 8,
             horizontalPadding: 8,
             verticalSpacing: 8,
@@ -79,7 +79,7 @@ var IconView = FluidView.$extend({
           ],
         }, params);
 
-        this._addClassname("iconview");
+        this._addIdentifier("iconview");
 
         this._registerWEvents([]);
         this.$super(params);

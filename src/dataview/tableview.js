@@ -54,14 +54,14 @@ var TableView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             containerElement: "table",
             itemElement: "tr",
             columnElement: "td",
             showHeader: true,
         }, params);
 
-        this._addClassname("tableview");
+        this._addIdentifier("tableview");
 
         this._registerWEvents([]);
         this.$super(params);
@@ -104,12 +104,12 @@ var TableView = DataView.$extend({
      */
     _renderHeader: function () {
         var node = document.createElement("tr");
-        this._addClasses(node, "header");
+        this._addIdentifiersClasses(node, "header");
 
         if (this.$data.columns) {
             this.$data.columns.forEach(function (column) {
                 var columnNode = document.createElement("th");
-                this._addClasses(columnNode, "column");
+                this._addIdentifiersClasses(columnNode, "column");
                 columnNode.textContent = column.label === undefined ? column.id : column.label;
                 node.appendChild(columnNode);
             }.bind(this));

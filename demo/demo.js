@@ -1029,7 +1029,7 @@ new photonui.ColorPickerDialog({
 });
 
 var listView = new photonui.ListView({
-  classname: "customListview",
+  identifier: "customListview",
   items: [
     "hello world foo bar",
     {
@@ -1556,6 +1556,7 @@ var iconView = new photonui.IconView({
     itemsHeight: 106,
     iconWidth: 88,
     iconHeight: 88,
+    dragAndDroppable: true,
     callbacks: {
         "item-click": function(widget, item, event) {
             console.log("clicked:", item);
@@ -1565,6 +1566,9 @@ var iconView = new photonui.IconView({
         },
         "item-unselect": function(widget, item) {
             console.log("unselected:", item);
+        },
+        "item-sort": function(widget, item, position) {
+            console.log("sorted:", item, "new position:", position);
         },
     },
     items: [

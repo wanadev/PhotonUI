@@ -4278,6 +4278,17 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   height: 100%;
   box-sizing: border-box;
 }
+.photonui-dataview-item[draggable] {
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+.photonui-dataview-item[draggable]:active {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+.photonui-dataview-item-placeholder {
+  background-color: #ddd;
+}
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -4318,6 +4329,9 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-fluidview .photonui-fluidview-item {
   text-align: center;
+}
+.photonui-fluidview .photonui-fluidview-item-placeholder {
+  background-color: #ddd;
 }
 .photonui-fluidview .photonui-fluidview-item .photonui-fluidview-column {
   margin: auto;

@@ -674,6 +674,11 @@ var MouseManager = Base.$extend({
         }
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("drag-end", event);
+        } else if (event.button === 0 && this._btnLeft ||
+            event.button === 1 && this._btnMiddle ||
+            event.button === 2 && this._btnRight) {
+
+            this._stateMachine("mouse-up", event);
         }
     },
 
