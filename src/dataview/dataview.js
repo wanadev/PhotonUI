@@ -750,14 +750,19 @@ var DataView = Widget.$extend({
      */
     __onClick: function (event) {
         var clickedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+        event.stopPropagation();
 
         if (clickedItemNode) {
+            var item = this._getItemFromNode(clickedItemNode);
+
+            if (!item) {
+                return;
+            }
+
             this.__onItemClick(event, this._getItemFromNode(clickedItemNode));
         } else {
             this.unselectAllItems();
         }
-
-        event.stopPropagation();
     },
 
     /**
