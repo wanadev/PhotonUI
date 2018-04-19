@@ -224,7 +224,9 @@ Helpers.getClosest = function (elem, selector) {
             function (s) {
                 var matches = (this.document || this.ownerDocument).querySelectorAll(s);
                 var i = matches.length;
-                while (--i >= 0 && matches.item(i) !== this) {} // jscs:disable
+                // jscs:disable
+                while (--i >= 0 && matches.item(i) !== this) {}
+                // jscs:enable
                 return i > -1;
             };
     }
