@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
 var extractAnnotations = require("./annotation.js");
@@ -90,17 +90,39 @@ Object.defineProperty(Class, "$extend", {
         __class__.prototype = inherit(this.$class);
 
         properties = properties || {};
+
+        var _preBuildHook = properties.__preBuild__ || _superClass.prototype.__preBuild__;
+        if (_preBuildHook) {
+            _preBuildHook(properties, __class__, _superClass);
+        }
+
         var property;
         var computedPropertyName;
         var annotations;
         var i;
+        var mixin;
 
         // Copy properties from mixins
         if (properties.__include__) {
             for (i = properties.__include__.length - 1 ; i >= 0 ; i--) {
-                for (property in properties.__include__[i]) {
-                    if (properties[property] === undefined) {
-                        properties[property] = properties.__include__[i][property];
+                mixin = properties.__include__[i];
+                for (property in mixin) {
+                    if (property == "__classvars__") {
+                        continue;
+                    } else if (properties[property] === undefined) {
+                        properties[property] = mixin[property];
+                    }
+                }
+
+                // Merging mixin's static properties
+                if (mixin.__classvars__) {
+                    if (!properties.__classvars__) {
+                        properties.__classvars__ = {};
+                    }
+                    for (property in mixin.__classvars__) {
+                        if (properties.__classvars__[property] === undefined) {
+                            properties.__classvars__[property] = mixin.__classvars__[property];
+                        }
                     }
                 }
             }
@@ -226,6 +248,11 @@ Object.defineProperty(Class, "$extend", {
             enumerable: false,
             value: _classMap
         });
+
+        var _postBuildHook = properties.__postBuild__ || _superClass.prototype.__postBuild__;
+        if (_postBuildHook) {
+            _postBuildHook(properties, __class__, _superClass);
+        }
 
         return __class__;
     }
@@ -396,7 +423,7 @@ function KeyCombo(keyComboStr) {
   this.subCombos = KeyCombo.parseComboStr(keyComboStr);
   this.keyNames  = this.subCombos.reduce(function(memo, nextSubCombo) {
     return memo.concat(nextSubCombo);
-  });
+  }, []);
 }
 
 // TODO: Add support for key combo sequences
@@ -545,6 +572,7 @@ function Keyboard(targetWindow, targetElement, platform, userAgent) {
   this._targetKeyUpBinding   = null;
   this._targetResetBinding   = null;
   this._paused               = false;
+  this._callerHandler        = null;
 
   this.setContext('global');
   this.watch(targetWindow, targetElement, platform, userAgent);
@@ -703,6 +731,7 @@ Keyboard.prototype.watch = function(targetWindow, targetElement, targetPlatform,
 
   this._targetKeyDownBinding = function(event) {
     _this.pressKey(event.keyCode, event);
+    _this._handleCommandBug(event, platform);
   };
   this._targetKeyUpBinding = function(event) {
     _this.releaseKey(event.keyCode, event);
@@ -880,11 +909,26 @@ Keyboard.prototype._clearBindings = function(event) {
     var listener = this._appliedListeners[i];
     var keyCombo = listener.keyCombo;
     if (keyCombo === null || !keyCombo.check(this._locale.pressedKeys)) {
-      listener.preventRepeat = listener.preventRepeatByDefault;
-      listener.releaseHandler.call(this, event);
+      if (this._callerHandler !== listener.releaseHandler) {
+        var oldCaller = this._callerHandler;
+        this._callerHandler = listener.releaseHandler;
+        listener.preventRepeat = listener.preventRepeatByDefault;
+        listener.releaseHandler.call(this, event);
+        this._callerHandler = oldCaller;
+      }
       this._appliedListeners.splice(i, 1);
       i -= 1;
     }
+  }
+};
+
+Keyboard.prototype._handleCommandBug = function(event, platform) {
+  // On Mac when the command key is kept pressed, keyup is not triggered for any other key.
+  // In this case force a keyup for non-modifier keys directly after the keypress.
+  var modifierKeys = ["shift", "ctrl", "alt", "capslock", "tab", "command"];
+  if (platform.match("Mac") && this._locale.pressedKeys.includes("command") &&
+      !modifierKeys.includes(this._locale.getKeyNames(event.keyCode)[0])) {
+    this._targetKeyUpBinding(event);
   }
 };
 
@@ -1154,6 +1198,12 @@ module.exports = function(locale, platform, userAgent) {
   locale.bindMacro('shift + !,', ['openanglebracket', '<']);
   locale.bindMacro('shift + .', ['closeanglebracket', '>']);
   locale.bindMacro('shift + /', ['questionmark', '?']);
+  
+  if (platform.match('Mac')) {
+    locale.bindMacro('command', ['mod', 'modifier']);
+  } else {
+    locale.bindMacro('ctrl', ['mod', 'modifier']);
+  }
 
   //a-z and A-Z
   for (var keyCode = 65; keyCode <= 90; keyCode += 1) {
@@ -1204,7 +1254,7 @@ module.exports = function(locale, platform, userAgent) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.4';
+  var VERSION = '4.17.5';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -1335,7 +1385,6 @@ module.exports = function(locale, platform, userAgent) {
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
       reIsPlainProp = /^\w*$/,
-      reLeadingDot = /^\./,
       rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 
   /**
@@ -1435,8 +1484,8 @@ module.exports = function(locale, platform, userAgent) {
       reOptMod = rsModifier + '?',
       rsOptVar = '[' + rsVarRange + ']?',
       rsOptJoin = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVar + reOptMod + ')*',
-      rsOrdLower = '\\d*(?:(?:1st|2nd|3rd|(?![123])\\dth)\\b)',
-      rsOrdUpper = '\\d*(?:(?:1ST|2ND|3RD|(?![123])\\dTH)\\b)',
+      rsOrdLower = '\\d*(?:1st|2nd|3rd|(?![123])\\dth)(?=\\b|[A-Z_])',
+      rsOrdUpper = '\\d*(?:1ST|2ND|3RD|(?![123])\\dTH)(?=\\b|[a-z_])',
       rsSeq = rsOptVar + reOptMod + rsOptJoin,
       rsEmoji = '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq,
       rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?', rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')';
@@ -1642,34 +1691,6 @@ module.exports = function(locale, platform, userAgent) {
       nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
 
   /*--------------------------------------------------------------------------*/
-
-  /**
-   * Adds the key-value `pair` to `map`.
-   *
-   * @private
-   * @param {Object} map The map to modify.
-   * @param {Array} pair The key-value pair to add.
-   * @returns {Object} Returns `map`.
-   */
-  function addMapEntry(map, pair) {
-    // Don't return `map.set` because it's not chainable in IE 11.
-    map.set(pair[0], pair[1]);
-    return map;
-  }
-
-  /**
-   * Adds `value` to `set`.
-   *
-   * @private
-   * @param {Object} set The set to modify.
-   * @param {*} value The value to add.
-   * @returns {Object} Returns `set`.
-   */
-  function addSetEntry(set, value) {
-    // Don't return `set.add` because it's not chainable in IE 11.
-    set.add(value);
-    return set;
-  }
 
   /**
    * A faster alternative to `Function#apply`, this function invokes `func`
@@ -2435,6 +2456,20 @@ module.exports = function(locale, platform, userAgent) {
       }
     }
     return result;
+  }
+
+  /**
+   * Gets the value at `key`, unless `key` is "__proto__".
+   *
+   * @private
+   * @param {Object} object The object to query.
+   * @param {string} key The key of the property to get.
+   * @returns {*} Returns the property value.
+   */
+  function safeGet(object, key) {
+    return key == '__proto__'
+      ? undefined
+      : object[key];
   }
 
   /**
@@ -3869,7 +3904,7 @@ module.exports = function(locale, platform, userAgent) {
           if (!cloneableTags[tag]) {
             return object ? value : {};
           }
-          result = initCloneByTag(value, tag, baseClone, isDeep);
+          result = initCloneByTag(value, tag, isDeep);
         }
       }
       // Check for circular references and return its corresponding clone.
@@ -3879,6 +3914,22 @@ module.exports = function(locale, platform, userAgent) {
         return stacked;
       }
       stack.set(value, result);
+
+      if (isSet(value)) {
+        value.forEach(function(subValue) {
+          result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
+        });
+
+        return result;
+      }
+
+      if (isMap(value)) {
+        value.forEach(function(subValue, key) {
+          result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
+        });
+
+        return result;
+      }
 
       var keysFunc = isFull
         ? (isFlat ? getAllKeysIn : getAllKeys)
@@ -4807,7 +4858,7 @@ module.exports = function(locale, platform, userAgent) {
         }
         else {
           var newValue = customizer
-            ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+            ? customizer(safeGet(object, key), srcValue, (key + ''), object, source, stack)
             : undefined;
 
           if (newValue === undefined) {
@@ -4834,8 +4885,8 @@ module.exports = function(locale, platform, userAgent) {
      *  counterparts.
      */
     function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
-      var objValue = object[key],
-          srcValue = source[key],
+      var objValue = safeGet(object, key),
+          srcValue = safeGet(source, key),
           stacked = stack.get(srcValue);
 
       if (stacked) {
@@ -5744,20 +5795,6 @@ module.exports = function(locale, platform, userAgent) {
     }
 
     /**
-     * Creates a clone of `map`.
-     *
-     * @private
-     * @param {Object} map The map to clone.
-     * @param {Function} cloneFunc The function to clone values.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @returns {Object} Returns the cloned map.
-     */
-    function cloneMap(map, isDeep, cloneFunc) {
-      var array = isDeep ? cloneFunc(mapToArray(map), CLONE_DEEP_FLAG) : mapToArray(map);
-      return arrayReduce(array, addMapEntry, new map.constructor);
-    }
-
-    /**
      * Creates a clone of `regexp`.
      *
      * @private
@@ -5768,20 +5805,6 @@ module.exports = function(locale, platform, userAgent) {
       var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
       result.lastIndex = regexp.lastIndex;
       return result;
-    }
-
-    /**
-     * Creates a clone of `set`.
-     *
-     * @private
-     * @param {Object} set The set to clone.
-     * @param {Function} cloneFunc The function to clone values.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @returns {Object} Returns the cloned set.
-     */
-    function cloneSet(set, isDeep, cloneFunc) {
-      var array = isDeep ? cloneFunc(setToArray(set), CLONE_DEEP_FLAG) : setToArray(set);
-      return arrayReduce(array, addSetEntry, new set.constructor);
     }
 
     /**
@@ -7378,7 +7401,7 @@ module.exports = function(locale, platform, userAgent) {
      */
     function initCloneArray(array) {
       var length = array.length,
-          result = array.constructor(length);
+          result = new array.constructor(length);
 
       // Add properties assigned by `RegExp#exec`.
       if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
@@ -7405,16 +7428,15 @@ module.exports = function(locale, platform, userAgent) {
      * Initializes an object clone based on its `toStringTag`.
      *
      * **Note:** This function only supports cloning values with tags of
-     * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+     * `Boolean`, `Date`, `Error`, `Map`, `Number`, `RegExp`, `Set`, or `String`.
      *
      * @private
      * @param {Object} object The object to clone.
      * @param {string} tag The `toStringTag` of the object to clone.
-     * @param {Function} cloneFunc The function to clone values.
      * @param {boolean} [isDeep] Specify a deep clone.
      * @returns {Object} Returns the initialized clone.
      */
-    function initCloneByTag(object, tag, cloneFunc, isDeep) {
+    function initCloneByTag(object, tag, isDeep) {
       var Ctor = object.constructor;
       switch (tag) {
         case arrayBufferTag:
@@ -7433,7 +7455,7 @@ module.exports = function(locale, platform, userAgent) {
           return cloneTypedArray(object, isDeep);
 
         case mapTag:
-          return cloneMap(object, isDeep, cloneFunc);
+          return new Ctor;
 
         case numberTag:
         case stringTag:
@@ -7443,7 +7465,7 @@ module.exports = function(locale, platform, userAgent) {
           return cloneRegExp(object);
 
         case setTag:
-          return cloneSet(object, isDeep, cloneFunc);
+          return new Ctor;
 
         case symbolTag:
           return cloneSymbol(object);
@@ -7490,10 +7512,13 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
      */
     function isIndex(value, length) {
+      var type = typeof value;
       length = length == null ? MAX_SAFE_INTEGER : length;
+
       return !!length &&
-        (typeof value == 'number' || reIsUint.test(value)) &&
-        (value > -1 && value % 1 == 0 && value < length);
+        (type == 'number' ||
+          (type != 'symbol' && reIsUint.test(value))) &&
+            (value > -1 && value % 1 == 0 && value < length);
     }
 
     /**
@@ -7943,11 +7968,11 @@ module.exports = function(locale, platform, userAgent) {
      */
     var stringToPath = memoizeCapped(function(string) {
       var result = [];
-      if (reLeadingDot.test(string)) {
+      if (string.charCodeAt(0) === 46 /* . */) {
         result.push('');
       }
-      string.replace(rePropName, function(match, number, quote, string) {
-        result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+      string.replace(rePropName, function(match, number, quote, subString) {
+        result.push(quote ? subString.replace(reEscapeChar, '$1') : (number || match));
       });
       return result;
     });
@@ -11555,9 +11580,11 @@ module.exports = function(locale, platform, userAgent) {
       function remainingWait(time) {
         var timeSinceLastCall = time - lastCallTime,
             timeSinceLastInvoke = time - lastInvokeTime,
-            result = wait - timeSinceLastCall;
+            timeWaiting = wait - timeSinceLastCall;
 
-        return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+        return maxing
+          ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+          : timeWaiting;
       }
 
       function shouldInvoke(time) {
@@ -13989,9 +14016,35 @@ module.exports = function(locale, platform, userAgent) {
      * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
      * // => { 'a': 1, 'b': 2 }
      */
-    var defaults = baseRest(function(args) {
-      args.push(undefined, customDefaultsAssignIn);
-      return apply(assignInWith, undefined, args);
+    var defaults = baseRest(function(object, sources) {
+      object = Object(object);
+
+      var index = -1;
+      var length = sources.length;
+      var guard = length > 2 ? sources[2] : undefined;
+
+      if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+        length = 1;
+      }
+
+      while (++index < length) {
+        var source = sources[index];
+        var props = keysIn(source);
+        var propsIndex = -1;
+        var propsLength = props.length;
+
+        while (++propsIndex < propsLength) {
+          var key = props[propsIndex];
+          var value = object[key];
+
+          if (value === undefined ||
+              (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+            object[key] = source[key];
+          }
+        }
+      }
+
+      return object;
     });
 
     /**
@@ -14388,6 +14441,11 @@ module.exports = function(locale, platform, userAgent) {
      * // => { '1': 'c', '2': 'b' }
      */
     var invert = createInverter(function(result, value, key) {
+      if (value != null &&
+          typeof value.toString != 'function') {
+        value = nativeObjectToString.call(value);
+      }
+
       result[value] = key;
     }, constant(identity));
 
@@ -14418,6 +14476,11 @@ module.exports = function(locale, platform, userAgent) {
      * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
      */
     var invertBy = createInverter(function(result, value, key) {
+      if (value != null &&
+          typeof value.toString != 'function') {
+        value = nativeObjectToString.call(value);
+      }
+
       if (hasOwnProperty.call(result, value)) {
         result[value].push(key);
       } else {
@@ -18433,9 +18496,22 @@ function lazyGettext(string, replacements) {
     return new LazyString(string, replacements);
 }
 
+function clearCatalogs() {
+    for (var locale in catalogs) {
+        delete catalogs[locale];
+    }
+}
+
 function addCatalogs(newCatalogs) {
     for (var locale in newCatalogs) {
-        catalogs[locale] = newCatalogs[locale];
+        if (catalogs[locale]) {
+            catalogs[locale]["plural-forms"] = newCatalogs[locale]["plural-forms"];
+            for (var message in newCatalogs[locale].messages) {
+                catalogs[locale].messages[message] = newCatalogs[locale].messages[message];
+            }
+        } else {
+            catalogs[locale] = newCatalogs[locale];
+        }
     }
 }
 
@@ -18458,9 +18534,11 @@ function setBestMatchingLocale(l) {
 }
 
 module.exports = {
+    catalogs: catalogs,
     LazyString: LazyString,
     gettext: gettext,
     lazyGettext: lazyGettext,
+    clearCatalogs: clearCatalogs,
     addCatalogs: addCatalogs,
     getLocale: getLocale,
     setLocale: setLocale,
@@ -18757,6 +18835,7 @@ module.exports = {
     LazyString: gettext.LazyString,
     gettext: gettext.gettext,
     lazyGettext: gettext.lazyGettext,
+    clearCatalogs: gettext.clearCatalogs,
     addCatalogs: gettext.addCatalogs,
     getLocale: gettext.getLocale,
     setLocale: setLocale,
@@ -18780,7 +18859,7 @@ module.exports = uuid;
 },{"./v1":16,"./v4":17}],14:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
  */
 var byteToHex = [];
 for (var i = 0; i < 256; ++i) {
@@ -18790,7 +18869,7 @@ for (var i = 0; i < 256; ++i) {
 function bytesToUuid(buf, offset) {
   var i = offset || 0;
   var bth = byteToHex;
-  return  bth[buf[i++]] + bth[buf[i++]] +
+  return bth[buf[i++]] + bth[buf[i++]] +
           bth[buf[i++]] + bth[buf[i++]] + '-' +
           bth[buf[i++]] + bth[buf[i++]] + '-' +
           bth[buf[i++]] + bth[buf[i++]] + '-' +
@@ -18803,30 +18882,30 @@ function bytesToUuid(buf, offset) {
 module.exports = bytesToUuid;
 
 },{}],15:[function(require,module,exports){
-(function (global){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
 // feature-detection
-var rng;
 
-var crypto = global.crypto || global.msCrypto; // for IE 11
-if (crypto && crypto.getRandomValues) {
+// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && msCrypto.getRandomValues.bind(msCrypto));
+if (getRandomValues) {
   // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16);
-  rng = function whatwgRNG() {
-    crypto.getRandomValues(rnds8);
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
     return rnds8;
   };
-}
-
-if (!rng) {
+} else {
   // Math.random()-based (RNG)
   //
   // If all else fails, use Math.random().  It's fast, but is of unspecified
   // quality.
-  var  rnds = new Array(16);
-  rng = function() {
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
     for (var i = 0, r; i < 16; i++) {
       if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
       rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
@@ -18836,13 +18915,7 @@ if (!rng) {
   };
 }
 
-module.exports = rng;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],16:[function(require,module,exports){
-// Unique ID creation requires a high quality random # generator.  We feature
-// detect to determine the best RNG source, normalizing to a function that
-// returns 128-bits of randomness, since that's what's usually required
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -18851,20 +18924,12 @@ var bytesToUuid = require('./lib/bytesToUuid');
 // Inspired by https://github.com/LiosK/UUID.js
 // and http://docs.python.org/library/uuid.html
 
-// random #'s we need to init node and clockseq
-var _seedBytes = rng();
-
-// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-var _nodeId = [
-  _seedBytes[0] | 0x01,
-  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
-];
-
-// Per 4.2.2, randomize (14 bit) clockseq
-var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
+var _nodeId;
+var _clockseq;
 
 // Previous uuid creation time
-var _lastMSecs = 0, _lastNSecs = 0;
+var _lastMSecs = 0;
+var _lastNSecs = 0;
 
 // See https://github.com/broofa/node-uuid for API details
 function v1(options, buf, offset) {
@@ -18872,8 +18937,26 @@ function v1(options, buf, offset) {
   var b = buf || [];
 
   options = options || {};
-
+  var node = options.node || _nodeId;
   var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  }
 
   // UUID timestamps are 100 nano-second units since the Gregorian epoch,
   // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
@@ -18934,7 +19017,6 @@ function v1(options, buf, offset) {
   b[i++] = clockseq & 0xff;
 
   // `node`
-  var node = options.node || _nodeId;
   for (var n = 0; n < 6; ++n) {
     b[i + n] = node[n];
   }
@@ -18952,7 +19034,7 @@ function v4(options, buf, offset) {
   var i = buf && offset || 0;
 
   if (typeof(options) == 'string') {
-    buf = options == 'binary' ? new Array(16) : null;
+    buf = options === 'binary' ? new Array(16) : null;
     options = null;
   }
   options = options || {};
@@ -23235,13 +23317,13 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
     setModal: function (modal) {
         this._modal = modal;
-        if (modal) {
+        if (modal && !this.__html.modalBox) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
             var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
-        } else if (this.__html.modalBox) {
+        } else if (!modal && this.__html.modalBox) {
             this.__html.modalBox.parentNode.removeChild(this.__html.modalBox);
             delete this.__html.modalBox;
         }
@@ -23617,7 +23699,7 @@ var DataView = Widget.$extend({
     __init__: function (params) {
         this._lockItemsUpdate = true;
         this.$data.selectable = true;
-        this.$data.multiSelectable = true;
+        this.$data.multiSelectable = false;
         this.$data.dragAndDroppable = false;
         this.$data.containerElement = "ul";
         this.$data.itemElement = "li";
@@ -23900,7 +23982,7 @@ var DataView = Widget.$extend({
      * @method unselectItems
      * @param {...Number|Number[]} indexes
      */
-    unselectItems: function (index) {
+    unselectItems: function () {
         lodash.chain(arguments)
             .map()
             .flatten()
@@ -24159,7 +24241,7 @@ var DataView = Widget.$extend({
      * @param {Object} item the item
      */
     _selectItemsTo: function (item) {
-        this._unselectAllItems();
+        this.unselectAllItems();
 
         if (this._initialSelectionItemIndex < item.index) {
             for (var i = this._initialSelectionItemIndex; i <= item.index; i++) {
@@ -24175,10 +24257,10 @@ var DataView = Widget.$extend({
     /**
      * Unselects all items.
      *
-     * @method _unselectAllItems
+     * @method unselectAllItems
      * @private
      */
-    _unselectAllItems: function () {
+    unselectAllItems: function () {
         this.getSelectedItems().forEach(function (item) {
             this._unselectItem(item);
         }.bind(this));
@@ -24241,7 +24323,7 @@ var DataView = Widget.$extend({
                             this._selectItem(clickedItem);
                         }
                     } else {
-                        this._unselectAllItems();
+                        this.unselectAllItems();
                         this._selectItem(clickedItem);
                         this._initialSelectionItemIndex = clickedItem.index;
                     }
@@ -24250,7 +24332,7 @@ var DataView = Widget.$extend({
                 if (modifiers.ctrl && clickedItem.selected) {
                     this._unselectItem(clickedItem);
                 } else {
-                    this._unselectAllItems();
+                    this.unselectAllItems();
                     this._selectItem(clickedItem);
                 }
             }
@@ -24294,11 +24376,18 @@ var DataView = Widget.$extend({
      */
     __onClick: function (event) {
         var clickedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+        event.stopPropagation();
 
         if (clickedItemNode) {
+            var item = this._getItemFromNode(clickedItemNode);
+
+            if (!item) {
+                return;
+            }
+
             this.__onItemClick(event, this._getItemFromNode(clickedItemNode));
         } else {
-            this._unselectAllItems();
+            this.unselectAllItems();
         }
     },
 
@@ -24316,6 +24405,8 @@ var DataView = Widget.$extend({
             ctrl: event.ctrlKey,
         });
         this._callCallbacks("item-click", [item, event]);
+
+        event.stopPropagation();
     },
 
     /**
@@ -24326,12 +24417,16 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragStart: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         event.dataTransfer.setData("text", "");
         var draggedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
 
         if (draggedItemNode) {
             this.$data._draggedItem = this._getItemFromNode(draggedItemNode);
-            this._unselectAllItems();
+            this.unselectAllItems();
 
             this.$data._placeholderElement = this._generatePlaceholderElement(draggedItemNode);
 
@@ -24342,6 +24437,8 @@ var DataView = Widget.$extend({
                 this.$data._draggedItem.node.style.display = "none";
             }.bind(this));
         }
+
+        event.stopPropagation();
     },
 
     /**
@@ -24352,6 +24449,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragEnter: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         var enteredItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
 
         if (enteredItemNode) {
@@ -24370,6 +24471,8 @@ var DataView = Widget.$extend({
             }
         }
 
+        event.stopPropagation();
+
         return false;
     },
 
@@ -24381,6 +24484,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragEnd: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         this.$data._draggedItem.node.style.display = "";
 
         if (this.$data._placeholderElement.parentNode === this.__html.container) {
@@ -24395,6 +24502,8 @@ var DataView = Widget.$extend({
 
         this.$data._placeholderElement = null;
         this.$data._draggedItem = null;
+
+        event.stopPropagation();
     },
 
     /**
@@ -24405,6 +24514,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDragOver: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
     },
@@ -24417,6 +24530,10 @@ var DataView = Widget.$extend({
      * @param {Object} event
      */
     __onDrop: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
     },
@@ -24489,7 +24606,7 @@ var FluidView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             verticalPadding: 0,
             horizontalPadding: 0,
             verticalSpacing: 0,
@@ -24720,7 +24837,7 @@ var IconView = FluidView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             horizontalSpacing: 8,
             horizontalPadding: 8,
             verticalSpacing: 8,
@@ -24870,7 +24987,7 @@ var ListView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             containerElement: "ul",
             itemElement: "li",
             columnElement: "span",
@@ -24942,7 +25059,7 @@ var TableView = DataView.$extend({
 
     // Constructor
     __init__: function (params) {
-        params = lodash.merge({
+        params = lodash.assign({
             containerElement: "table",
             itemElement: "tr",
             columnElement: "td",
@@ -25236,7 +25353,9 @@ Helpers.getClosest = function (elem, selector) {
             function (s) {
                 var matches = (this.document || this.ownerDocument).querySelectorAll(s);
                 var i = matches.length;
-                while (--i >= 0 && matches.item(i) !== this) {} // jscs:disable
+                // jscs:disable
+                while (--i >= 0 && matches.item(i) !== this) {}
+                // jscs:enable
                 return i > -1;
             };
     }
@@ -31907,6 +32026,9 @@ var KeyboardManager = Base.$extend({
     // Constructor
     __init__: function (element, params) {
         this._registerWEvents(["key-down", "key-up", "key-hold"]);
+
+        this.__keys = {};
+
         if (element && (element instanceof Widget || element instanceof HTMLElement || element === document)) {
             this.$super(params);
             this.element = element;
@@ -32016,9 +32138,9 @@ var KeyboardManager = Base.$extend({
      * @property __event
      * @private
      * @type Object
-     * @default {}
+     * @default null
      */
-    __event: {},
+    __event: null,
 
     /**
      * The currently active keys.
@@ -32028,17 +32150,17 @@ var KeyboardManager = Base.$extend({
      * @type Object
      * @default {}
      */
-    __keys: {},
+    __keys: null,
 
     /**
      * Last key concerned.
      *
      * @property __key
      * @private
-     * @type Object
-     * @default {}
+     * @type String
+     * @default null
      */
-    __key: {},
+    __key: null,
 
     /**
      * KeyCode correspondance to key name.
@@ -32052,7 +32174,7 @@ var KeyboardManager = Base.$extend({
     /**
      * Key name correspondance to key code.
      *
-     * @property __keyCache
+     * @property __keyCodeCache
      * @private
      * @type Array
      */
@@ -32307,7 +32429,7 @@ var KeyboardManager = Base.$extend({
         }
 
         this._action = "key-up";
-        this.__keys[event.keyCode] = undefined;
+        delete this.__keys[event.keyCode];
         this._callCallbacks(this._action, [this._dump()]);
 
         if (!this._noPreventDefault) {
@@ -32327,7 +32449,7 @@ var KeyboardManager = Base.$extend({
         this._event = undefined;
 
         for (var keyCode in this.__keys) {
-            this.__keys[keyCode] = undefined;
+            delete this.__keys[keyCode];
             this.__key = this.__keyCache[keyCode];
             this._callCallbacks(this._action, [this._dump()]);
         }
@@ -33013,6 +33135,11 @@ var MouseManager = Base.$extend({
         }
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("drag-end", event);
+        } else if (event.button === 0 && this._btnLeft ||
+            event.button === 1 && this._btnMiddle ||
+            event.button === 2 && this._btnRight) {
+
+            this._stateMachine("mouse-up", event);
         }
     },
 

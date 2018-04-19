@@ -1,7 +1,6 @@
 {
-    "preset": "yandex",
+    "preset": "loris",
     "validateQuoteMarks": "\"",
     "requireSpaceAfterLineComment": null,
     "validateLineBreaks": null
 }
-
