@@ -39,6 +39,7 @@
 var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Helpers = require("../helpers.js");
+var Image = require("../visual/image.js");
 
 /**
  * A simple flat button that only contains an icon
@@ -147,7 +148,7 @@ var IconButton = Widget.$extend({
     },
 
     setIcon: function (icon) {
-        if (icon instanceof BaseIcon) {
+        if (icon instanceof BaseIcon || icon instanceof Image) {
             this.iconName = icon.name;
             return;
         }
