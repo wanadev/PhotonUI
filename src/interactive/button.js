@@ -147,7 +147,7 @@ var Button = Widget.$extend({
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon || icon instanceof Image) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof Image) {
             this.leftIconName = leftIcon.name;
             return;
         }
@@ -207,7 +207,7 @@ var Button = Widget.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon || icon instanceof Image) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof Image) {
             this.rightIconName = rightIcon.name;
             return;
         }

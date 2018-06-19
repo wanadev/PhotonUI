@@ -283,7 +283,7 @@ var TabItem = Container.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton || leftIcon instanceof Image) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton || rightIcon instanceof Image) {
             this.rightIconName = rightIcon.name;
         } else {
             this.rightIconName = null;
