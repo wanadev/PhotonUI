@@ -41,6 +41,7 @@ var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
 var IconButton = require("../interactive/iconbutton.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Tab Item.
@@ -221,7 +222,7 @@ var TabItem = Container.$extend({
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton || leftIcon instanceof PhotonImage) {
             this.leftIconName = leftIcon.name;
         } else {
             this.leftIconName = null;
@@ -282,7 +283,7 @@ var TabItem = Container.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton || rightIcon instanceof PhotonImage) {
             this.rightIconName = rightIcon.name;
         } else {
             this.rightIconName = null;
