@@ -482,7 +482,7 @@ var DataView = Widget.$extend({
         if (this.$data.columns) {
             this.$data.columns.forEach(function (column) {
                 var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
-                    typeof(column.value) === "function" ? column.value.call(this, item.value) :
+                    typeof(column.value) === "function" ? column.value.call(this, item.value, itemNode) :
                     null;
 
                 itemNode.appendChild(this._renderColumn(content, column.id, column.rawHtml));
