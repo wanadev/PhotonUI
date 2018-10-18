@@ -73,7 +73,10 @@ var DataView = Widget.$extend({
     __init__: function (params) {
         this._lockItemsUpdate = true;
         this.$data.selectable = true;
+        this.$data.unselectOnOutsideClick = true;
         this.$data.multiSelectable = false;
+        this.$data.multiSelectWithCtrl = true;
+        this.$data.allowShiftSelect = true;
         this.$data.dragAndDroppable = false;
         this.$data.containerElement = "ul";
         this.$data.itemElement = "li";
@@ -159,7 +162,25 @@ var DataView = Widget.$extend({
     },
 
     /**
+     * If true, clicking outside of the items (in the container) will unselect
+     * currently selected items.
+     * Only used when "selectable" option is set to "true".
+     *
+     * @property unselectOnOutsideClick
+     * @type Boolean
+     * @default false
+     */
+    getUnselectOnOutsideClick: function () {
+        return this.$data.unselectOnOutsideClick;
+    },
+
+    setUnselectOnOutsideClick: function (unselectOnOutsideClick) {
+        this.$data.unselectOnOutsideClick = unselectOnOutsideClick;
+    },
+
+    /**
      * Defines if the data items can be multi-selected.
+     * Only used when "selectable" option is set to "true".
      *
      * @property multiSelectable
      * @type Boolean
@@ -171,6 +192,39 @@ var DataView = Widget.$extend({
 
     setMultiSelectable: function (multiSelectable) {
         this.$data.multiSelectable = multiSelectable;
+    },
+
+    /**
+     * Defines wether or not "ctrl" key has to be pressed to multi-select items.
+     * Only used when "multiSelectable" option is set to "true".
+     *
+     * @property multiSelectWithCtrl
+     * @type Boolean
+     * @default true
+     */
+    getMultiSelectWithCtrl: function () {
+        return this.$data.multiSelectWithCtrl;
+    },
+
+    setMultiSelectWithCtrl: function (multiSelectWithCtrl) {
+        this.$data.multiSelectWithCtrl = multiSelectWithCtrl;
+    },
+
+    /**
+     * If true, allow selecting multiple items with one click when pressing
+     * "shift" key.
+     * Only used when "multiSelectable" option is set to "true".
+     *
+     * @property allowShiftSelect
+     * @type Boolean
+     * @default true
+     */
+    getAllowShiftSelect: function () {
+        return this.$data.allowShiftSelect;
+    },
+
+    setAllowShiftSelect: function (allowShiftSelect) {
+        this.$data.allowShiftSelect = allowShiftSelect;
     },
 
     /**
@@ -684,22 +738,31 @@ var DataView = Widget.$extend({
     _handleClick: function (clickedItem, modifiers) {
         if (this.selectable) {
             if (this.multiSelectable) {
+                // No item is selected, select clicked item
                 if (this.selectedItems.length === 0) {
                     this._selectItem(clickedItem);
                     this._initialSelectionItemIndex = clickedItem.index;
                 } else {
-                    if (modifiers.shift) {
+                    if (this.allowShiftSelect && modifiers.shift) {
                         this._selectItemsTo(clickedItem);
-                    } else if (modifiers.ctrl) {
+                    } else if (this.multiSelectWithCtrl) {
+                        if (modifiers.ctrl) {
+                            if (clickedItem.selected) {
+                                this._unselectItem(clickedItem);
+                            } else {
+                                this._selectItem(clickedItem);
+                            }
+                        } else {
+                            this.unselectAllItems();
+                            this._selectItem(clickedItem);
+                            this._initialSelectionItemIndex = clickedItem.index;
+                        }
+                    } else {
                         if (clickedItem.selected) {
                             this._unselectItem(clickedItem);
                         } else {
                             this._selectItem(clickedItem);
                         }
-                    } else {
-                        this.unselectAllItems();
-                        this._selectItem(clickedItem);
-                        this._initialSelectionItemIndex = clickedItem.index;
                     }
                 }
             } else {
@@ -760,7 +823,7 @@ var DataView = Widget.$extend({
             }
 
             this.__onItemClick(event, this._getItemFromNode(clickedItemNode));
-        } else {
+        } else if (this.unselectOnOutsideClick){
             this.unselectAllItems();
         }
     },
