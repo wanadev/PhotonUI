@@ -374,7 +374,6 @@ var Select = Widget.$extend({
      * @param event
      */
     __onClick: function (event) {
-        console.log("ici")
         if (!this._minWidthDefined) {
             this.popupMinWidth = this.offsetWidth;
         }
