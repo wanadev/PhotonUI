@@ -181,6 +181,15 @@ var Widget = Base.$extend({
         this._visibilityChanged();
     },
 
+    setEnabled: function (enabled) {
+        this.$super(enabled);
+        if(enabled){
+            this.html.classList.remove("photonui-disabled");
+        }else{
+            this.html.classList.add("photonui-disabled");
+        }
+    },
+
     /**
      * Tooltip.
      *

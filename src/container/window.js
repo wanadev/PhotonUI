@@ -61,7 +61,17 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
     // Constructor
     __init__: function (params) {
         this._registerWEvents(["close-button-clicked"]);
+        params = Object.assign({
+            alwaysEnabledEvents: [
+                "move.dragstart",
+                "move.touchstart",
+                "closeButton.click",
+                "totop",
+                "totop-touch",
+                "closeButton.mousedown",
+        ]}, params);
         this.$super(params);
+
 
         // Bind js events
         this._bindEvent("move.dragstart", this.__html.windowTitle, "mousedown", this.__moveDragStart.bind(this));
@@ -119,6 +129,11 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
     setMovable: function (movable) {
         this._movable = movable;
+    },
+
+    setEnabled(){
+        this.$data.enabled = true;
+        this.$super(true);
     },
 
     /**

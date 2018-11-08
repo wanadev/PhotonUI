@@ -181,6 +181,7 @@ var ColorPalette = Widget.$extend({
     //////////////////////////////////////////
 
     __onColorClicked: function (color, event) {
+        if(!this.enabled) return;
         this.value = color;
         this._callCallbacks("value-changed", [this.color]);
     }

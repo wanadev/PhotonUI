@@ -92,6 +92,10 @@ var Button = Widget.$extend({
         Helpers.cleanNode(this.__html.text);
         this.__html.text.appendChild(document.createTextNode(text));
     },
+    setEnabled: function (enabled) {
+        this.$super(enabled)
+        this.__html.button.disabled = !enabled;
+    },
 
     /**
      * Define if the button text is displayed or hidden.
