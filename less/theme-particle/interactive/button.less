@@ -61,6 +61,21 @@
     &:active {
         .photonui-particle-button-active(@color);
     }
+
+    &.photonui-disabled {
+        .make-grey(@color, background-color);
+        .make-grey(@color, border-color);
+        .make-grey(@color, border-bottom-color);
+        border: none;
+        box-shadow: none;
+        cursor: not-allowed;
+        &:hover {
+            background-color: .make-grey(@color, background-color);
+        }
+        .photonui-faicon {
+            .make-grey(darken(@color, 50%), color);
+        }
+    }
 }
 
 .photonui-particle-button-active(@color) {
@@ -182,6 +197,20 @@
         .photonui-particle-button(@color-button-default);
         .photonui-particle-button-default;
         .photonui-particle-button-alternative-colors;
+    }
+    &.photonui-disabled {
+        background-color:  @color-field-background-disabled;
+        color:  @color-field-text-disabled;
+        .photonui-faicon {
+            color: @color-field-text-disabled;
+        }
+        &:hover {
+            background-color: @color-field-background-disabled;
+            color:  @color-field-text-disabled;
+            .photonui-faicon {
+                color: @color-field-text-disabled;
+            }
+        }
     }
 }
 

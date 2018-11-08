@@ -200,4 +200,16 @@
             }
         }
     }
+
+    &.photonui-disabled{
+        .photonui-tablayout-tabs {
+            .photonui-tabitem-tab {
+                cursor: not-allowed;
+                .make-grey(@color-field-background, background);
+                &:hover,&.photonui-tabitem-active {
+                    .make-grey(@color-field-background, background);
+                }
+            }
+        }
+    }
 }

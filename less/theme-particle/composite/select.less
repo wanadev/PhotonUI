@@ -90,5 +90,18 @@
             }
         }
     }
+    &.photonui-disabled{
+        cursor: not-allowed;
+        .make-grey(@color-field-background, background);
+        &:focus {
+            .make-grey(@color-field-background, border-color);
+            box-shadow: none;
+        }
+        > * {
+            color: @color-widget-text-disabled;
+        }
+        .photonui-menuitem-widget:before {
+            border-top-color: @color-widget-text-disabled;
+        }
+    }
 }
-
