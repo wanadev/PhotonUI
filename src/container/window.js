@@ -131,7 +131,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
         this._movable = movable;
     },
 
-    setEnabled(){
+    setEnabled: function(){
         this.$data.enabled = true;
         this.$super(true);
     },

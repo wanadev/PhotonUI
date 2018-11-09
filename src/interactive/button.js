@@ -93,7 +93,7 @@ var Button = Widget.$extend({
         this.__html.text.appendChild(document.createTextNode(text));
     },
     setEnabled: function (enabled) {
-        this.$super(enabled)
+        this.$super(enabled);
         this.__html.button.disabled = !enabled;
     },
 

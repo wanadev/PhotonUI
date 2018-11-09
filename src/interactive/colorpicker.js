@@ -96,8 +96,8 @@ var ColorPicker = Widget.$extend({
     //////////////////////////////////////////
 
     // ====== Public properties ======
-    setEnabled(enabled){
-        this.$super(enabled)
+    setEnabled: function(enabled){
+        this.$super(enabled);
         this.__html.preview.disabled = !enabled;
     },
     /**

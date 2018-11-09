@@ -134,21 +134,21 @@ var Base = Class.$extend({
     },
 
     setEnabled: function (enabled) {
-        var events = Object.values(this.__events)
-            .filter(event => !this.alwaysEnabledEvents.includes(event.evName));
         if(enabled){
             // rebind events on enable
             for(var i in events){
+                if(this.alwaysEnabledEvents.includes(events[i].evName)) return;
                 events[i].element.addEventListener(
                   events[i].evName,
                   events[i].callback,
                   false);
             }
         }else{
-            for(var i in events){
-                events[i].element.removeEventListener(
-                  events[i].evName,
-                  events[i].callback,
+            for(var j in events){
+                if(this.alwaysEnabledEvents.includes(events[j].evName)) return;
+                events[j].element.removeEventListener(
+                  events[j].evName,
+                  events[j].callback,
                   false);
             }
         }
@@ -163,11 +163,11 @@ var Base = Class.$extend({
       this.enabled = false;
     },
 
-    getAlwaysEnabledEvents(){
+    getAlwaysEnabledEvents: function(){
         return this.$data.alwaysEnabledEvents;
     },
 
-    setAlwaysEnabledEvents(events){
+    setAlwaysEnabledEvents: function(events){
         this.$data.alwaysEnabledEvents = events;
     },
 
