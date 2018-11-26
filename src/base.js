@@ -134,10 +134,13 @@ var Base = Class.$extend({
     },
 
     setEnabled: function (enabled) {
+        var events = this.__events;
         if(enabled){
             // rebind events on enable
             for(var i in events){
-                if(this.alwaysEnabledEvents.includes(events[i].evName)) return;
+                if(this.alwaysEnabledEvents.includes(events[i].evName)) {
+                  return;
+                }
                 events[i].element.addEventListener(
                   events[i].evName,
                   events[i].callback,
@@ -145,7 +148,9 @@ var Base = Class.$extend({
             }
         }else{
             for(var j in events){
-                if(this.alwaysEnabledEvents.includes(events[j].evName)) return;
+                if(this.alwaysEnabledEvents.includes(events[j].evName)){
+                  return;
+                }
                 events[j].element.removeEventListener(
                   events[j].evName,
                   events[j].callback,
