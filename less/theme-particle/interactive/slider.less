@@ -72,6 +72,17 @@
             margin-right: 0;
         }
     }
+
+    &.photonui-disabled {
+        .photonui-slider-slider {
+            cursor: not-allowed;
+            .photonui-slider-grip {
+                .make-grey(@color-highlight-border,background);
+                border: none;
+                box-shadow: none;
+            }
+        }
+    }
 }
 
 

@@ -60,3 +60,12 @@
     }
 }
 
+.make-grey(@color, @attribute) {
+    @{attribute}: desaturate(@color, 20%);
+}
+.make-grey(@color, @attribute)when (lightness(@color) >80 ) {
+    @{attribute}: desaturate(shade(@color, 10%),30%);
+}
+.make-grey(@color, @attribute)when (lightness(@color) >90 ) {
+    @{attribute}: @color-field-background-disabled;
+}

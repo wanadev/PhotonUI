@@ -60,6 +60,8 @@ var Base = Class.$extend({
         // New instances for object properties
         this.__events = {};
         this._data = {};
+        this.$data.enabled = true;
+        this.$data.alwaysEnabledEvents = [];
 
         // wEvents
         this._registerWEvents(["destroy"]);
@@ -125,6 +127,53 @@ var Base = Class.$extend({
 
     setData: function (data) {
         this._data = data;
+    },
+
+    getEnabled: function () {
+        return this.$data.enabled;
+    },
+
+    setEnabled: function (enabled) {
+        var events = this.__events;
+        if(enabled){
+            // rebind events on enable
+            for(var i in events){
+                if(this.alwaysEnabledEvents.includes(events[i].evName)) {
+                  return;
+                }
+                events[i].element.addEventListener(
+                  events[i].evName,
+                  events[i].callback,
+                  false);
+            }
+        }else{
+            for(var j in events){
+                if(this.alwaysEnabledEvents.includes(events[j].evName)){
+                  return;
+                }
+                events[j].element.removeEventListener(
+                  events[j].evName,
+                  events[j].callback,
+                  false);
+            }
+        }
+        this.$data.enabled = enabled;
+    },
+
+    enable: function (){
+      this.enabled = true;
+    },
+
+    disable: function (){
+      this.enabled = false;
+    },
+
+    getAlwaysEnabledEvents: function(){
+        return this.$data.alwaysEnabledEvents;
+    },
+
+    setAlwaysEnabledEvents: function(events){
+        this.$data.alwaysEnabledEvents = events;
     },
 
     // ====== Private properties ======
@@ -243,6 +292,9 @@ var Base = Class.$extend({
             element: element,
             callback: callback
         };
+        if (!this.enabled && !this.alwaysEnabledEvents.includes(evName)) {
+            return;
+        }
         this.__events[id].element.addEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,

@@ -93,6 +93,11 @@ var Field = Widget.$extend({
 
     // ====== Public properties ======
 
+    setEnabled: function (enabled) {
+        this.$super(enabled);
+        this.__html.field.disabled = !enabled;
+    },
+
     /**
      * The field value.
      *

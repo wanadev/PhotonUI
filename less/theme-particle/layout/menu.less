@@ -58,6 +58,16 @@
             background: @color-highlight-background;
             color: @color-highlight-text;
         }
+        &.photonui-disabled{
+            cursor: not-allowed;
+            color: @color-widget-text-disabled;
+            &:hover,
+            &.photonui-menuitem-active {
+                color: @color-widget-text-disabled;
+                background:inherit;
+                color: inherit;
+            }
+        }
     }
 
 
@@ -92,6 +102,19 @@
 
         &:hover {
             background: @color-highlight-background;
+        }
+        &.photonui-disabled{
+            &.photonui-menuitem-active {
+                .photonui-menuitem-widget:before {
+                    border-top-color: inherit;
+                }
+            }
+            &:hover,
+            &.photonui-menuitem-active {
+                .photonui-menuitem-widget:before {
+                    color: @color-widget-text-disabled;
+                }
+            }
         }
     }
 }
