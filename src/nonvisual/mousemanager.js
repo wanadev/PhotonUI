@@ -460,8 +460,7 @@ var MouseManager = Base.$extend({
         this._bindEvent("mouse-up", this.element, "mouseup", this.__onMouseUp.bind(this));
         this._bindEvent("double-click", this.element, "dblclick", this.__onDoubleClick.bind(this));
         this._bindEvent("mouse-move", this.element, "mousemove", this.__onMouseMove.bind(this));
-        this._bindEvent("mousewheel", this.element, "mousewheel", this.__onMouseWheel.bind(this));
-        this._bindEvent("mousewheel-firefox", this.element, "DOMMouseScroll", this.__onMouseWheel.bind(this));
+        this._bindEvent("wheel", this.element, "mousewheel", this.__onMouseWheel.bind(this));
 
         this._bindEvent("document-mouse-up", document, "mouseup", this.__onDocumentMouseUp.bind(this));
         this._bindEvent("document-mouse-move", document, "mousemove", this.__onDocumentMouseMove.bind(this));
