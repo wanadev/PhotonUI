@@ -714,10 +714,8 @@ var MouseManager = Base.$extend({
             wheelDelta = event.wheelDelta;
         }
         // Firefox
-        if (event.axis !== undefined && event.detail !== undefined) {
-            if (event.axis == 2) { // Y
-                wheelDelta = -event.detail;
-            }
+        if (event.deltaY !== undefined) {
+            wheelDelta = -event.deltaY;
         }
 
         if (wheelDelta !== null) {
