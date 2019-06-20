@@ -460,8 +460,7 @@ var MouseManager = Base.$extend({
         this._bindEvent("mouse-up", this.element, "mouseup", this.__onMouseUp.bind(this));
         this._bindEvent("double-click", this.element, "dblclick", this.__onDoubleClick.bind(this));
         this._bindEvent("mouse-move", this.element, "mousemove", this.__onMouseMove.bind(this));
-        this._bindEvent("mousewheel", this.element, "mousewheel", this.__onMouseWheel.bind(this));
-        this._bindEvent("mousewheel-firefox", this.element, "DOMMouseScroll", this.__onMouseWheel.bind(this));
+        this._bindEvent("wheel", this.element, "wheel", this.__onWheel.bind(this));
 
         this._bindEvent("document-mouse-up", document, "mouseup", this.__onDocumentMouseUp.bind(this));
         this._bindEvent("document-mouse-move", document, "mousemove", this.__onDocumentMouseMove.bind(this));
@@ -699,26 +698,15 @@ var MouseManager = Base.$extend({
     },
 
     /**
-     * @method __onMouseWheel
+     * @method __onWheel
      * @private
      * @param event
      */
-    __onMouseWheel: function (event) {
+    __onWheel: function (event) {
         var wheelDelta = null;
 
-        // Webkit
-        if (event.wheelDeltaY !== undefined) {
-            wheelDelta = event.wheelDeltaY;
-        }
-        // MSIE
-        if (event.wheelDelta !== undefined) {
-            wheelDelta = event.wheelDelta;
-        }
-        // Firefox
-        if (event.axis !== undefined && event.detail !== undefined) {
-            if (event.axis == 2) { // Y
-                wheelDelta = -event.detail;
-            }
+        if (event.deltaY !== undefined) {
+            wheelDelta = -event.deltaY;
         }
 
         if (wheelDelta !== null) {
