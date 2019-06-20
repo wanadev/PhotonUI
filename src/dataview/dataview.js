@@ -358,17 +358,6 @@ var DataView = Widget.$extend({
     },
 
     /**
-     * Select an item without using by the view.
-     *
-     * @method selectItem
-     * @public
-     * @param {Object} item the item
-     */
-    selectItem: function (item) {
-        this._selectItem(item);
-    },
-
-    /**
      * The list of identifiers wich will be added to every generated elements
      * of the widget as classnames.
      *
@@ -406,8 +395,10 @@ var DataView = Widget.$extend({
             .flatten()
             .uniq()
             .value()
-            .forEach(function (index) {
-                var item = this._getItemByIndex(index);
+            .forEach(function (item) {
+                if (typeof(item) === "number") {
+                    item = this._getItemByIndex(item);
+                }
 
                 if (item) {
                     this._selectItem(item, true);
@@ -427,8 +418,10 @@ var DataView = Widget.$extend({
             .flatten()
             .uniq()
             .value()
-            .forEach(function (index) {
-                var item = this._getItemByIndex(index);
+            .forEach(function (item) {
+                if (typeof(item) === "number") {
+                    item = this._getItemByIndex(item);
+                }
 
                 if (item) {
                     this._unselectItem(item, true);
