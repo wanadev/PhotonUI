@@ -358,6 +358,17 @@ var DataView = Widget.$extend({
     },
 
     /**
+     * Select an item without using by the view.
+     *
+     * @method selectItem
+     * @public
+     * @param {Object} item the item
+     */
+    selectItem: function (item) {
+        this._selectItem(item);
+    },
+
+    /**
      * The list of identifiers wich will be added to every generated elements
      * of the widget as classnames.
      *
