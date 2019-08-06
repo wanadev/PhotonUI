@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photonui = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
 var extractAnnotations = require("./annotation.js");
@@ -94,13 +94,29 @@ Object.defineProperty(Class, "$extend", {
         var computedPropertyName;
         var annotations;
         var i;
+        var mixin;
 
         // Copy properties from mixins
         if (properties.__include__) {
             for (i = properties.__include__.length - 1 ; i >= 0 ; i--) {
-                for (property in properties.__include__[i]) {
-                    if (properties[property] === undefined) {
-                        properties[property] = properties.__include__[i][property];
+                mixin = properties.__include__[i];
+                for (property in mixin) {
+                    if (property == "__classvars__") {
+                        continue;
+                    } else if (properties[property] === undefined) {
+                        properties[property] = mixin[property];
+                    }
+                }
+
+                // Merging mixin's static properties
+                if (mixin.__classvars__) {
+                    if (!properties.__classvars__) {
+                        properties.__classvars__ = {};
+                    }
+                    for (property in mixin.__classvars__) {
+                        if (properties.__classvars__[property] === undefined) {
+                            properties.__classvars__[property] = mixin.__classvars__[property];
+                        }
                     }
                 }
             }
@@ -396,7 +412,7 @@ function KeyCombo(keyComboStr) {
   this.subCombos = KeyCombo.parseComboStr(keyComboStr);
   this.keyNames  = this.subCombos.reduce(function(memo, nextSubCombo) {
     return memo.concat(nextSubCombo);
-  });
+  }, []);
 }
 
 // TODO: Add support for key combo sequences
@@ -545,6 +561,7 @@ function Keyboard(targetWindow, targetElement, platform, userAgent) {
   this._targetKeyUpBinding   = null;
   this._targetResetBinding   = null;
   this._paused               = false;
+  this._callerHandler        = null;
 
   this.setContext('global');
   this.watch(targetWindow, targetElement, platform, userAgent);
@@ -703,6 +720,7 @@ Keyboard.prototype.watch = function(targetWindow, targetElement, targetPlatform,
 
   this._targetKeyDownBinding = function(event) {
     _this.pressKey(event.keyCode, event);
+    _this._handleCommandBug(event, platform);
   };
   this._targetKeyUpBinding = function(event) {
     _this.releaseKey(event.keyCode, event);
@@ -880,11 +898,26 @@ Keyboard.prototype._clearBindings = function(event) {
     var listener = this._appliedListeners[i];
     var keyCombo = listener.keyCombo;
     if (keyCombo === null || !keyCombo.check(this._locale.pressedKeys)) {
-      listener.preventRepeat = listener.preventRepeatByDefault;
-      listener.releaseHandler.call(this, event);
+      if (this._callerHandler !== listener.releaseHandler) {
+        var oldCaller = this._callerHandler;
+        this._callerHandler = listener.releaseHandler;
+        listener.preventRepeat = listener.preventRepeatByDefault;
+        listener.releaseHandler.call(this, event);
+        this._callerHandler = oldCaller;
+      }
       this._appliedListeners.splice(i, 1);
       i -= 1;
     }
+  }
+};
+
+Keyboard.prototype._handleCommandBug = function(event, platform) {
+  // On Mac when the command key is kept pressed, keyup is not triggered for any other key.
+  // In this case force a keyup for non-modifier keys directly after the keypress.
+  var modifierKeys = ["shift", "ctrl", "alt", "capslock", "tab", "command"];
+  if (platform.match("Mac") && this._locale.pressedKeys.includes("command") &&
+      !modifierKeys.includes(this._locale.getKeyNames(event.keyCode)[0])) {
+    this._targetKeyUpBinding(event);
   }
 };
 
@@ -1077,7 +1110,6 @@ module.exports = function(locale, platform, userAgent) {
   locale.bindKeyCode(46,  ['delete', 'del']);
   locale.bindKeyCode(47,  ['help']);
   locale.bindKeyCode(145, ['scrolllock', 'scroll']);
-  locale.bindKeyCode(187, ['equal', 'equalsign', '=']);
   locale.bindKeyCode(188, ['comma', ',']);
   locale.bindKeyCode(190, ['period', '.']);
   locale.bindKeyCode(191, ['slash', 'forwardslash', '/']);
@@ -1154,6 +1186,12 @@ module.exports = function(locale, platform, userAgent) {
   locale.bindMacro('shift + !,', ['openanglebracket', '<']);
   locale.bindMacro('shift + .', ['closeanglebracket', '>']);
   locale.bindMacro('shift + /', ['questionmark', '?']);
+  
+  if (platform.match('Mac')) {
+    locale.bindMacro('command', ['mod', 'modifier']);
+  } else {
+    locale.bindMacro('ctrl', ['mod', 'modifier']);
+  }
 
   //a-z and A-Z
   for (var keyCode = 65; keyCode <= 90; keyCode += 1) {
@@ -1167,6 +1205,7 @@ module.exports = function(locale, platform, userAgent) {
   // browser caveats
   var semicolonKeyCode = userAgent.match('Firefox') ? 59  : 186;
   var dashKeyCode      = userAgent.match('Firefox') ? 173 : 189;
+  var equalKeyCode     = userAgent.match('Firefox') ? 61  : 187;
   var leftCommandKeyCode;
   var rightCommandKeyCode;
   if (platform.match('Mac') && (userAgent.match('Safari') || userAgent.match('Chrome'))) {
@@ -1181,6 +1220,7 @@ module.exports = function(locale, platform, userAgent) {
   }
   locale.bindKeyCode(semicolonKeyCode,    ['semicolon', ';']);
   locale.bindKeyCode(dashKeyCode,         ['dash', '-']);
+  locale.bindKeyCode(equalKeyCode,        ['equal', 'equalsign', '=']);
   locale.bindKeyCode(leftCommandKeyCode,  ['command', 'windows', 'win', 'super', 'leftcommand', 'leftwindows', 'leftwin', 'leftsuper']);
   locale.bindKeyCode(rightCommandKeyCode, ['command', 'windows', 'win', 'super', 'rightcommand', 'rightwindows', 'rightwin', 'rightsuper']);
 
@@ -1193,7 +1233,7 @@ module.exports = function(locale, platform, userAgent) {
 /**
  * @license
  * Lodash <https://lodash.com/>
- * Copyright JS Foundation and other contributors <https://js.foundation/>
+ * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1204,7 +1244,7 @@ module.exports = function(locale, platform, userAgent) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.4';
+  var VERSION = '4.17.15';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -1335,7 +1375,6 @@ module.exports = function(locale, platform, userAgent) {
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
       reIsPlainProp = /^\w*$/,
-      reLeadingDot = /^\./,
       rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 
   /**
@@ -1435,8 +1474,8 @@ module.exports = function(locale, platform, userAgent) {
       reOptMod = rsModifier + '?',
       rsOptVar = '[' + rsVarRange + ']?',
       rsOptJoin = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVar + reOptMod + ')*',
-      rsOrdLower = '\\d*(?:(?:1st|2nd|3rd|(?![123])\\dth)\\b)',
-      rsOrdUpper = '\\d*(?:(?:1ST|2ND|3RD|(?![123])\\dTH)\\b)',
+      rsOrdLower = '\\d*(?:1st|2nd|3rd|(?![123])\\dth)(?=\\b|[A-Z_])',
+      rsOrdUpper = '\\d*(?:1ST|2ND|3RD|(?![123])\\dTH)(?=\\b|[a-z_])',
       rsSeq = rsOptVar + reOptMod + rsOptJoin,
       rsEmoji = '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq,
       rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?', rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')';
@@ -1469,7 +1508,7 @@ module.exports = function(locale, platform, userAgent) {
   var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboRange + rsVarRange + ']');
 
   /** Used to detect strings that need a more robust regexp to match words. */
-  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
@@ -1629,6 +1668,14 @@ module.exports = function(locale, platform, userAgent) {
   /** Used to access faster Node.js helpers. */
   var nodeUtil = (function() {
     try {
+      // Use `util.types` for Node.js 10+.
+      var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+      if (types) {
+        return types;
+      }
+
+      // Legacy `process.binding('util')` for Node.js < 10.
       return freeProcess && freeProcess.binding && freeProcess.binding('util');
     } catch (e) {}
   }());
@@ -1642,34 +1689,6 @@ module.exports = function(locale, platform, userAgent) {
       nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
 
   /*--------------------------------------------------------------------------*/
-
-  /**
-   * Adds the key-value `pair` to `map`.
-   *
-   * @private
-   * @param {Object} map The map to modify.
-   * @param {Array} pair The key-value pair to add.
-   * @returns {Object} Returns `map`.
-   */
-  function addMapEntry(map, pair) {
-    // Don't return `map.set` because it's not chainable in IE 11.
-    map.set(pair[0], pair[1]);
-    return map;
-  }
-
-  /**
-   * Adds `value` to `set`.
-   *
-   * @private
-   * @param {Object} set The set to modify.
-   * @param {*} value The value to add.
-   * @returns {Object} Returns `set`.
-   */
-  function addSetEntry(set, value) {
-    // Don't return `set.add` because it's not chainable in IE 11.
-    set.add(value);
-    return set;
-  }
 
   /**
    * A faster alternative to `Function#apply`, this function invokes `func`
@@ -3869,7 +3888,7 @@ module.exports = function(locale, platform, userAgent) {
           if (!cloneableTags[tag]) {
             return object ? value : {};
           }
-          result = initCloneByTag(value, tag, baseClone, isDeep);
+          result = initCloneByTag(value, tag, isDeep);
         }
       }
       // Check for circular references and return its corresponding clone.
@@ -3879,6 +3898,16 @@ module.exports = function(locale, platform, userAgent) {
         return stacked;
       }
       stack.set(value, result);
+
+      if (isSet(value)) {
+        value.forEach(function(subValue) {
+          result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
+        });
+      } else if (isMap(value)) {
+        value.forEach(function(subValue, key) {
+          result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
+        });
+      }
 
       var keysFunc = isFull
         ? (isFlat ? getAllKeysIn : getAllKeys)
@@ -4801,13 +4830,13 @@ module.exports = function(locale, platform, userAgent) {
         return;
       }
       baseFor(source, function(srcValue, key) {
+        stack || (stack = new Stack);
         if (isObject(srcValue)) {
-          stack || (stack = new Stack);
           baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
         }
         else {
           var newValue = customizer
-            ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+            ? customizer(safeGet(object, key), srcValue, (key + ''), object, source, stack)
             : undefined;
 
           if (newValue === undefined) {
@@ -4834,8 +4863,8 @@ module.exports = function(locale, platform, userAgent) {
      *  counterparts.
      */
     function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
-      var objValue = object[key],
-          srcValue = source[key],
+      var objValue = safeGet(object, key),
+          srcValue = safeGet(source, key),
           stacked = stack.get(srcValue);
 
       if (stacked) {
@@ -4878,7 +4907,7 @@ module.exports = function(locale, platform, userAgent) {
           if (isArguments(objValue)) {
             newValue = toPlainObject(objValue);
           }
-          else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+          else if (!isObject(objValue) || isFunction(objValue)) {
             newValue = initCloneObject(srcValue);
           }
         }
@@ -5744,20 +5773,6 @@ module.exports = function(locale, platform, userAgent) {
     }
 
     /**
-     * Creates a clone of `map`.
-     *
-     * @private
-     * @param {Object} map The map to clone.
-     * @param {Function} cloneFunc The function to clone values.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @returns {Object} Returns the cloned map.
-     */
-    function cloneMap(map, isDeep, cloneFunc) {
-      var array = isDeep ? cloneFunc(mapToArray(map), CLONE_DEEP_FLAG) : mapToArray(map);
-      return arrayReduce(array, addMapEntry, new map.constructor);
-    }
-
-    /**
      * Creates a clone of `regexp`.
      *
      * @private
@@ -5768,20 +5783,6 @@ module.exports = function(locale, platform, userAgent) {
       var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
       result.lastIndex = regexp.lastIndex;
       return result;
-    }
-
-    /**
-     * Creates a clone of `set`.
-     *
-     * @private
-     * @param {Object} set The set to clone.
-     * @param {Function} cloneFunc The function to clone values.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @returns {Object} Returns the cloned set.
-     */
-    function cloneSet(set, isDeep, cloneFunc) {
-      var array = isDeep ? cloneFunc(setToArray(set), CLONE_DEEP_FLAG) : setToArray(set);
-      return arrayReduce(array, addSetEntry, new set.constructor);
     }
 
     /**
@@ -6647,7 +6648,7 @@ module.exports = function(locale, platform, userAgent) {
       return function(number, precision) {
         number = toNumber(number);
         precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
-        if (precision) {
+        if (precision && nativeIsFinite(number)) {
           // Shift with exponential notation to avoid floating-point issues.
           // See [MDN](https://mdn.io/round#Examples) for more details.
           var pair = (toString(number) + 'e').split('e'),
@@ -7378,7 +7379,7 @@ module.exports = function(locale, platform, userAgent) {
      */
     function initCloneArray(array) {
       var length = array.length,
-          result = array.constructor(length);
+          result = new array.constructor(length);
 
       // Add properties assigned by `RegExp#exec`.
       if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
@@ -7405,16 +7406,15 @@ module.exports = function(locale, platform, userAgent) {
      * Initializes an object clone based on its `toStringTag`.
      *
      * **Note:** This function only supports cloning values with tags of
-     * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+     * `Boolean`, `Date`, `Error`, `Map`, `Number`, `RegExp`, `Set`, or `String`.
      *
      * @private
      * @param {Object} object The object to clone.
      * @param {string} tag The `toStringTag` of the object to clone.
-     * @param {Function} cloneFunc The function to clone values.
      * @param {boolean} [isDeep] Specify a deep clone.
      * @returns {Object} Returns the initialized clone.
      */
-    function initCloneByTag(object, tag, cloneFunc, isDeep) {
+    function initCloneByTag(object, tag, isDeep) {
       var Ctor = object.constructor;
       switch (tag) {
         case arrayBufferTag:
@@ -7433,7 +7433,7 @@ module.exports = function(locale, platform, userAgent) {
           return cloneTypedArray(object, isDeep);
 
         case mapTag:
-          return cloneMap(object, isDeep, cloneFunc);
+          return new Ctor;
 
         case numberTag:
         case stringTag:
@@ -7443,7 +7443,7 @@ module.exports = function(locale, platform, userAgent) {
           return cloneRegExp(object);
 
         case setTag:
-          return cloneSet(object, isDeep, cloneFunc);
+          return new Ctor;
 
         case symbolTag:
           return cloneSymbol(object);
@@ -7490,10 +7490,13 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
      */
     function isIndex(value, length) {
+      var type = typeof value;
       length = length == null ? MAX_SAFE_INTEGER : length;
+
       return !!length &&
-        (typeof value == 'number' || reIsUint.test(value)) &&
-        (value > -1 && value % 1 == 0 && value < length);
+        (type == 'number' ||
+          (type != 'symbol' && reIsUint.test(value))) &&
+            (value > -1 && value % 1 == 0 && value < length);
     }
 
     /**
@@ -7828,6 +7831,26 @@ module.exports = function(locale, platform, userAgent) {
     }
 
     /**
+     * Gets the value at `key`, unless `key` is "__proto__" or "constructor".
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {string} key The key of the property to get.
+     * @returns {*} Returns the property value.
+     */
+    function safeGet(object, key) {
+      if (key === 'constructor' && typeof object[key] === 'function') {
+        return;
+      }
+
+      if (key == '__proto__') {
+        return;
+      }
+
+      return object[key];
+    }
+
+    /**
      * Sets metadata for `func`.
      *
      * **Note:** If this function becomes hot, i.e. is invoked a lot in a short
@@ -7943,11 +7966,11 @@ module.exports = function(locale, platform, userAgent) {
      */
     var stringToPath = memoizeCapped(function(string) {
       var result = [];
-      if (reLeadingDot.test(string)) {
+      if (string.charCodeAt(0) === 46 /* . */) {
         result.push('');
       }
-      string.replace(rePropName, function(match, number, quote, string) {
-        result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+      string.replace(rePropName, function(match, number, quote, subString) {
+        result.push(quote ? subString.replace(reEscapeChar, '$1') : (number || match));
       });
       return result;
     });
@@ -11555,9 +11578,11 @@ module.exports = function(locale, platform, userAgent) {
       function remainingWait(time) {
         var timeSinceLastCall = time - lastCallTime,
             timeSinceLastInvoke = time - lastInvokeTime,
-            result = wait - timeSinceLastCall;
+            timeWaiting = wait - timeSinceLastCall;
 
-        return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+        return maxing
+          ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+          : timeWaiting;
       }
 
       function shouldInvoke(time) {
@@ -11618,6 +11643,7 @@ module.exports = function(locale, platform, userAgent) {
           }
           if (maxing) {
             // Handle invocations in a tight loop.
+            clearTimeout(timerId);
             timerId = setTimeout(timerExpired, wait);
             return invokeFunc(lastCallTime);
           }
@@ -13989,9 +14015,35 @@ module.exports = function(locale, platform, userAgent) {
      * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
      * // => { 'a': 1, 'b': 2 }
      */
-    var defaults = baseRest(function(args) {
-      args.push(undefined, customDefaultsAssignIn);
-      return apply(assignInWith, undefined, args);
+    var defaults = baseRest(function(object, sources) {
+      object = Object(object);
+
+      var index = -1;
+      var length = sources.length;
+      var guard = length > 2 ? sources[2] : undefined;
+
+      if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+        length = 1;
+      }
+
+      while (++index < length) {
+        var source = sources[index];
+        var props = keysIn(source);
+        var propsIndex = -1;
+        var propsLength = props.length;
+
+        while (++propsIndex < propsLength) {
+          var key = props[propsIndex];
+          var value = object[key];
+
+          if (value === undefined ||
+              (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+            object[key] = source[key];
+          }
+        }
+      }
+
+      return object;
     });
 
     /**
@@ -14388,6 +14440,11 @@ module.exports = function(locale, platform, userAgent) {
      * // => { '1': 'c', '2': 'b' }
      */
     var invert = createInverter(function(result, value, key) {
+      if (value != null &&
+          typeof value.toString != 'function') {
+        value = nativeObjectToString.call(value);
+      }
+
       result[value] = key;
     }, constant(identity));
 
@@ -14418,6 +14475,11 @@ module.exports = function(locale, platform, userAgent) {
      * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
      */
     var invertBy = createInverter(function(result, value, key) {
+      if (value != null &&
+          typeof value.toString != 'function') {
+        value = nativeObjectToString.call(value);
+      }
+
       if (hasOwnProperty.call(result, value)) {
         result[value].push(key);
       } else {
@@ -15968,9 +16030,12 @@ module.exports = function(locale, platform, userAgent) {
       , 'g');
 
       // Use a sourceURL for easier debugging.
+      // The sourceURL gets injected into the source that's eval-ed, so be careful
+      // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
+      // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
       var sourceURL = '//# sourceURL=' +
-        ('sourceURL' in options
-          ? options.sourceURL
+        (hasOwnProperty.call(options, 'sourceURL')
+          ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -16003,7 +16068,9 @@ module.exports = function(locale, platform, userAgent) {
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      var variable = options.variable;
+      // Like with sourceURL, we take care to not check the option's prototype,
+      // as this configuration is a code injection vector.
+      var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
       }
@@ -18208,10 +18275,11 @@ module.exports = function(locale, platform, userAgent) {
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName];
       if (lodashFunc) {
-        var key = (lodashFunc.name + ''),
-            names = realNames[key] || (realNames[key] = []);
-
-        names.push({ 'name': methodName, 'func': lodashFunc });
+        var key = lodashFunc.name + '';
+        if (!hasOwnProperty.call(realNames, key)) {
+          realNames[key] = [];
+        }
+        realNames[key].push({ 'name': methodName, 'func': lodashFunc });
       }
     });
 
@@ -18433,9 +18501,26 @@ function lazyGettext(string, replacements) {
     return new LazyString(string, replacements);
 }
 
+function clearCatalogs() {
+    for (var locale in catalogs) {
+        delete catalogs[locale];
+    }
+}
+
+function listCatalogs() {
+    return Object.keys(catalogs);
+}
+
 function addCatalogs(newCatalogs) {
     for (var locale in newCatalogs) {
-        catalogs[locale] = newCatalogs[locale];
+        if (catalogs[locale]) {
+            catalogs[locale]["plural-forms"] = newCatalogs[locale]["plural-forms"];
+            for (var message in newCatalogs[locale].messages) {
+                catalogs[locale].messages[message] = newCatalogs[locale].messages[message];
+            }
+        } else {
+            catalogs[locale] = newCatalogs[locale];
+        }
     }
 }
 
@@ -18458,10 +18543,13 @@ function setBestMatchingLocale(l) {
 }
 
 module.exports = {
+    catalogs: catalogs,
     LazyString: LazyString,
     gettext: gettext,
     lazyGettext: lazyGettext,
+    clearCatalogs: clearCatalogs,
     addCatalogs: addCatalogs,
+    listCatalogs: listCatalogs,
     getLocale: getLocale,
     setLocale: setLocale,
     setBestMatchingLocale: setBestMatchingLocale
@@ -18757,9 +18845,11 @@ module.exports = {
     LazyString: gettext.LazyString,
     gettext: gettext.gettext,
     lazyGettext: gettext.lazyGettext,
+    clearCatalogs: gettext.clearCatalogs,
     addCatalogs: gettext.addCatalogs,
     getLocale: gettext.getLocale,
     setLocale: setLocale,
+    listCatalogs: gettext.listCatalogs,
     setBestMatchingLocale: gettext.setBestMatchingLocale,
     findBestMatchingLocale: helpers.findBestMatchingLocale,
     guessUserLanguage: guessUserLanguage,
@@ -18780,7 +18870,7 @@ module.exports = uuid;
 },{"./v1":16,"./v4":17}],14:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
  */
 var byteToHex = [];
 for (var i = 0; i < 256; ++i) {
@@ -18790,43 +18880,46 @@ for (var i = 0; i < 256; ++i) {
 function bytesToUuid(buf, offset) {
   var i = offset || 0;
   var bth = byteToHex;
-  return  bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]];
+  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+  return ([bth[buf[i++]], bth[buf[i++]], 
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]]]).join('');
 }
 
 module.exports = bytesToUuid;
 
 },{}],15:[function(require,module,exports){
-(function (global){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
 // feature-detection
-var rng;
 
-var crypto = global.crypto || global.msCrypto; // for IE 11
-if (crypto && crypto.getRandomValues) {
+// getRandomValues needs to be invoked in a context where "this" is a Crypto
+// implementation. Also, find the complete implementation of crypto on IE11.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+
+if (getRandomValues) {
   // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16);
-  rng = function whatwgRNG() {
-    crypto.getRandomValues(rnds8);
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
     return rnds8;
   };
-}
-
-if (!rng) {
+} else {
   // Math.random()-based (RNG)
   //
   // If all else fails, use Math.random().  It's fast, but is of unspecified
   // quality.
-  var  rnds = new Array(16);
-  rng = function() {
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
     for (var i = 0, r; i < 16; i++) {
       if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
       rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
@@ -18836,13 +18929,7 @@ if (!rng) {
   };
 }
 
-module.exports = rng;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],16:[function(require,module,exports){
-// Unique ID creation requires a high quality random # generator.  We feature
-// detect to determine the best RNG source, normalizing to a function that
-// returns 128-bits of randomness, since that's what's usually required
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -18851,20 +18938,12 @@ var bytesToUuid = require('./lib/bytesToUuid');
 // Inspired by https://github.com/LiosK/UUID.js
 // and http://docs.python.org/library/uuid.html
 
-// random #'s we need to init node and clockseq
-var _seedBytes = rng();
-
-// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-var _nodeId = [
-  _seedBytes[0] | 0x01,
-  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
-];
-
-// Per 4.2.2, randomize (14 bit) clockseq
-var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
+var _nodeId;
+var _clockseq;
 
 // Previous uuid creation time
-var _lastMSecs = 0, _lastNSecs = 0;
+var _lastMSecs = 0;
+var _lastNSecs = 0;
 
 // See https://github.com/broofa/node-uuid for API details
 function v1(options, buf, offset) {
@@ -18872,8 +18951,26 @@ function v1(options, buf, offset) {
   var b = buf || [];
 
   options = options || {};
-
+  var node = options.node || _nodeId;
   var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  }
 
   // UUID timestamps are 100 nano-second units since the Gregorian epoch,
   // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
@@ -18934,7 +19031,6 @@ function v1(options, buf, offset) {
   b[i++] = clockseq & 0xff;
 
   // `node`
-  var node = options.node || _nodeId;
   for (var n = 0; n < 6; ++n) {
     b[i + n] = node[n];
   }
@@ -18952,7 +19048,7 @@ function v4(options, buf, offset) {
   var i = buf && offset || 0;
 
   if (typeof(options) == 'string') {
-    buf = options == 'binary' ? new Array(16) : null;
+    buf = options === 'binary' ? new Array(16) : null;
     options = null;
   }
   options = options || {};
@@ -23122,8 +23218,6 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("totop-touch", this.__html.window, "touchstart", this.moveToFront.bind(this));
-        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
-                        function (event) { event.stopPropagation(); });
 
         // Update Properties
         this.moveToFront();
@@ -23386,7 +23480,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
      * @param {Object} event
      */
     __moveDragStart: function (event) {
-        if (!this.movable || event.button > 0) {
+        if (!this.movable || event.button > 0 || event.target === this.__html.windowTitleCloseButton) {
             return;
         }
         var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;

@@ -1,5 +1,5 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-abitbol v1.1.1 - License BSD-3-Clause
+abitbol v1.2.0 - License BSD-3-Clause
 downloaded from <https://www.npmjs.com/package/abitbol>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c) 2015, Wanadev <http://www.wanadev.fr/>
@@ -43,7 +43,7 @@ the project's page or at <http://spdx.org/licenses/(OFL-1.1 AND MIT)>.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-keyboardjs v2.3.3 - License MIT
+keyboardjs v2.5.1 - License MIT
 downloaded from <https://www.npmjs.com/package/keyboardjs>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The MIT License (MIT)
@@ -73,10 +73,10 @@ SOFTWARE.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-lodash v4.17.4 - License MIT
+lodash v4.17.15 - License MIT
 downloaded from <https://www.npmjs.com/package/lodash>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Copyright JS Foundation and other contributors <https://js.foundation/>
+Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
 
 Based on Underscore.js, copyright Jeremy Ashkenas,
 DocumentCloud and Investigative Reporters & Editors <http://underscorejs.org/>
@@ -129,7 +129,7 @@ terms above.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-stonejs v2.2.0 - License BSD-3-Clause
+stonejs v2.4.0 - License BSD-3-Clause
 downloaded from <https://www.npmjs.com/package/stonejs>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (c) 2014, Fabien LOISON <http://flozz.fr>
@@ -163,7 +163,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-uuid v3.0.1 - License MIT
+uuid v3.3.2 - License MIT
 downloaded from <https://www.npmjs.com/package/uuid>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The MIT License (MIT)

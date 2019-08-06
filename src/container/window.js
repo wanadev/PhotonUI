@@ -71,8 +71,6 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("totop-touch", this.__html.window, "touchstart", this.moveToFront.bind(this));
-        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
-                        function (event) { event.stopPropagation(); });
 
         // Update Properties
         this.moveToFront();
@@ -335,7 +333,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
      * @param {Object} event
      */
     __moveDragStart: function (event) {
-        if (!this.movable || event.button > 0) {
+        if (!this.movable || event.button > 0 || event.target === this.__html.windowTitleCloseButton) {
             return;
         }
         var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;
