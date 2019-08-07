@@ -1243,7 +1243,7 @@ module.exports = function(locale, platform, userAgent) {
 /**
  * @license
  * Lodash <https://lodash.com/>
- * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
+ * Copyright JS Foundation and other contributors <https://js.foundation/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1518,7 +1518,7 @@ module.exports = function(locale, platform, userAgent) {
   var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboRange + rsVarRange + ']');
 
   /** Used to detect strings that need a more robust regexp to match words. */
-  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
@@ -1678,14 +1678,6 @@ module.exports = function(locale, platform, userAgent) {
   /** Used to access faster Node.js helpers. */
   var nodeUtil = (function() {
     try {
-      // Use `util.types` for Node.js 10+.
-      var types = freeModule && freeModule.require && freeModule.require('util').types;
-
-      if (types) {
-        return types;
-      }
-
-      // Legacy `process.binding('util')` for Node.js < 10.
       return freeProcess && freeProcess.binding && freeProcess.binding('util');
     } catch (e) {}
   }());
@@ -4860,8 +4852,8 @@ module.exports = function(locale, platform, userAgent) {
         return;
       }
       baseFor(source, function(srcValue, key) {
-        stack || (stack = new Stack);
         if (isObject(srcValue)) {
+          stack || (stack = new Stack);
           baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
         }
         else {
@@ -4937,7 +4929,7 @@ module.exports = function(locale, platform, userAgent) {
           if (isArguments(objValue)) {
             newValue = toPlainObject(objValue);
           }
-          else if (!isObject(objValue) || isFunction(objValue)) {
+          else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
             newValue = initCloneObject(srcValue);
           }
         }
@@ -6678,7 +6670,7 @@ module.exports = function(locale, platform, userAgent) {
       return function(number, precision) {
         number = toNumber(number);
         precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
-        if (precision && nativeIsFinite(number)) {
+        if (precision) {
           // Shift with exponential notation to avoid floating-point issues.
           // See [MDN](https://mdn.io/round#Examples) for more details.
           var pair = (toString(number) + 'e').split('e'),
@@ -7858,26 +7850,6 @@ module.exports = function(locale, platform, userAgent) {
         array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined;
       }
       return array;
-    }
-
-    /**
-     * Gets the value at `key`, unless `key` is "__proto__" or "constructor".
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @param {string} key The key of the property to get.
-     * @returns {*} Returns the property value.
-     */
-    function safeGet(object, key) {
-      if (key === 'constructor' && typeof object[key] === 'function') {
-        return;
-      }
-
-      if (key == '__proto__') {
-        return;
-      }
-
-      return object[key];
     }
 
     /**
@@ -11673,7 +11645,6 @@ module.exports = function(locale, platform, userAgent) {
           }
           if (maxing) {
             // Handle invocations in a tight loop.
-            clearTimeout(timerId);
             timerId = setTimeout(timerExpired, wait);
             return invokeFunc(lastCallTime);
           }
@@ -16060,12 +16031,9 @@ module.exports = function(locale, platform, userAgent) {
       , 'g');
 
       // Use a sourceURL for easier debugging.
-      // The sourceURL gets injected into the source that's eval-ed, so be careful
-      // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
-      // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
       var sourceURL = '//# sourceURL=' +
-        (hasOwnProperty.call(options, 'sourceURL')
-          ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
+        ('sourceURL' in options
+          ? options.sourceURL
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -16098,9 +16066,7 @@ module.exports = function(locale, platform, userAgent) {
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      // Like with sourceURL, we take care to not check the option's prototype,
-      // as this configuration is a code injection vector.
-      var variable = hasOwnProperty.call(options, 'variable') && options.variable;
+      var variable = options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
       }
@@ -18305,11 +18271,10 @@ module.exports = function(locale, platform, userAgent) {
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName];
       if (lodashFunc) {
-        var key = lodashFunc.name + '';
-        if (!hasOwnProperty.call(realNames, key)) {
-          realNames[key] = [];
-        }
-        realNames[key].push({ 'name': methodName, 'func': lodashFunc });
+        var key = (lodashFunc.name + ''),
+            names = realNames[key] || (realNames[key] = []);
+
+        names.push({ 'name': methodName, 'func': lodashFunc });
       }
     });
 
@@ -18575,7 +18540,6 @@ module.exports = {
     lazyGettext: lazyGettext,
     clearCatalogs: clearCatalogs,
     addCatalogs: addCatalogs,
-    listCatalogs: listCatalogs,
     getLocale: getLocale,
     setLocale: setLocale,
     setBestMatchingLocale: setBestMatchingLocale
@@ -18875,7 +18839,6 @@ module.exports = {
     addCatalogs: gettext.addCatalogs,
     getLocale: gettext.getLocale,
     setLocale: setLocale,
-    listCatalogs: gettext.listCatalogs,
     setBestMatchingLocale: gettext.setBestMatchingLocale,
     findBestMatchingLocale: helpers.findBestMatchingLocale,
     guessUserLanguage: guessUserLanguage,
@@ -21876,6 +21839,7 @@ var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var Container = require("./container.js");
 var BaseIcon = require("../visual/baseicon.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Menu item.
@@ -21973,7 +21937,7 @@ var MenuItem = Container.$extend({
     },
 
     setIcon: function (icon) {
-        if (icon instanceof BaseIcon) {
+        if (icon instanceof BaseIcon || icon instanceof PhotonImage) {
             this.iconName = icon.name;
             return;
         }
@@ -22065,7 +22029,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":39,"../visual/baseicon.js":66,"../widget.js":76,"./container.js":25}],29:[function(require,module,exports){
+},{"../helpers.js":39,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76,"./container.js":25}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22431,6 +22395,7 @@ var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
 var IconButton = require("../interactive/iconbutton.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Tab Item.
@@ -22611,7 +22576,7 @@ var TabItem = Container.$extend({
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton || leftIcon instanceof PhotonImage) {
             this.leftIconName = leftIcon.name;
         } else {
             this.leftIconName = null;
@@ -22672,7 +22637,7 @@ var TabItem = Container.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton || rightIcon instanceof PhotonImage) {
             this.rightIconName = rightIcon.name;
         } else {
             this.rightIconName = null;
@@ -22775,7 +22740,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":39,"../interactive/iconbutton.js":45,"../visual/baseicon.js":66,"../widget.js":76,"./container.js":25}],32:[function(require,module,exports){
+},{"../helpers.js":39,"../interactive/iconbutton.js":45,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76,"./container.js":25}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23241,8 +23206,6 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("totop-touch", this.__html.window, "touchstart", this.moveToFront.bind(this));
-        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
-                        function (event) { event.stopPropagation(); });
 
         // Update Properties
         this.moveToFront();
@@ -23505,7 +23468,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
      * @param {Object} event
      */
     __moveDragStart: function (event) {
-        if (!this.movable || event.button > 0) {
+        if (!this.movable || event.button > 0 || event.target === this.__html.windowTitleCloseButton) {
             return;
         }
         var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;
@@ -23736,7 +23699,10 @@ var DataView = Widget.$extend({
     __init__: function (params) {
         this._lockItemsUpdate = true;
         this.$data.selectable = true;
+        this.$data.unselectOnOutsideClick = true;
         this.$data.multiSelectable = false;
+        this.$data.multiSelectWithCtrl = true;
+        this.$data.allowShiftSelect = true;
         this.$data.dragAndDroppable = false;
         this.$data.containerElement = "ul";
         this.$data.itemElement = "li";
@@ -23822,7 +23788,25 @@ var DataView = Widget.$extend({
     },
 
     /**
+     * If true, clicking outside of the items (in the container) will unselect
+     * currently selected items.
+     * Only used when "selectable" option is set to "true".
+     *
+     * @property unselectOnOutsideClick
+     * @type Boolean
+     * @default false
+     */
+    getUnselectOnOutsideClick: function () {
+        return this.$data.unselectOnOutsideClick;
+    },
+
+    setUnselectOnOutsideClick: function (unselectOnOutsideClick) {
+        this.$data.unselectOnOutsideClick = unselectOnOutsideClick;
+    },
+
+    /**
      * Defines if the data items can be multi-selected.
+     * Only used when "selectable" option is set to "true".
      *
      * @property multiSelectable
      * @type Boolean
@@ -23834,6 +23818,39 @@ var DataView = Widget.$extend({
 
     setMultiSelectable: function (multiSelectable) {
         this.$data.multiSelectable = multiSelectable;
+    },
+
+    /**
+     * Defines wether or not "ctrl" key has to be pressed to multi-select items.
+     * Only used when "multiSelectable" option is set to "true".
+     *
+     * @property multiSelectWithCtrl
+     * @type Boolean
+     * @default true
+     */
+    getMultiSelectWithCtrl: function () {
+        return this.$data.multiSelectWithCtrl;
+    },
+
+    setMultiSelectWithCtrl: function (multiSelectWithCtrl) {
+        this.$data.multiSelectWithCtrl = multiSelectWithCtrl;
+    },
+
+    /**
+     * If true, allow selecting multiple items with one click when pressing
+     * "shift" key.
+     * Only used when "multiSelectable" option is set to "true".
+     *
+     * @property allowShiftSelect
+     * @type Boolean
+     * @default true
+     */
+    getAllowShiftSelect: function () {
+        return this.$data.allowShiftSelect;
+    },
+
+    setAllowShiftSelect: function (allowShiftSelect) {
+        this.$data.allowShiftSelect = allowShiftSelect;
     },
 
     /**
@@ -24004,8 +24021,10 @@ var DataView = Widget.$extend({
             .flatten()
             .uniq()
             .value()
-            .forEach(function (index) {
-                var item = this._getItemByIndex(index);
+            .forEach(function (item) {
+                if (typeof(item) === "number") {
+                    item = this._getItemByIndex(item);
+                }
 
                 if (item) {
                     this._selectItem(item, true);
@@ -24025,8 +24044,10 @@ var DataView = Widget.$extend({
             .flatten()
             .uniq()
             .value()
-            .forEach(function (index) {
-                var item = this._getItemByIndex(index);
+            .forEach(function (item) {
+                if (typeof(item) === "number") {
+                    item = this._getItemByIndex(item);
+                }
 
                 if (item) {
                     this._unselectItem(item, true);
@@ -24347,22 +24368,31 @@ var DataView = Widget.$extend({
     _handleClick: function (clickedItem, modifiers) {
         if (this.selectable) {
             if (this.multiSelectable) {
+                // No item is selected, select clicked item
                 if (this.selectedItems.length === 0) {
                     this._selectItem(clickedItem);
                     this._initialSelectionItemIndex = clickedItem.index;
                 } else {
-                    if (modifiers.shift) {
+                    if (this.allowShiftSelect && modifiers.shift) {
                         this._selectItemsTo(clickedItem);
-                    } else if (modifiers.ctrl) {
+                    } else if (this.multiSelectWithCtrl) {
+                        if (modifiers.ctrl) {
+                            if (clickedItem.selected) {
+                                this._unselectItem(clickedItem);
+                            } else {
+                                this._selectItem(clickedItem);
+                            }
+                        } else {
+                            this.unselectAllItems();
+                            this._selectItem(clickedItem);
+                            this._initialSelectionItemIndex = clickedItem.index;
+                        }
+                    } else {
                         if (clickedItem.selected) {
                             this._unselectItem(clickedItem);
                         } else {
                             this._selectItem(clickedItem);
                         }
-                    } else {
-                        this.unselectAllItems();
-                        this._selectItem(clickedItem);
-                        this._initialSelectionItemIndex = clickedItem.index;
                     }
                 }
             } else {
@@ -24423,7 +24453,7 @@ var DataView = Widget.$extend({
             }
 
             this.__onItemClick(event, this._getItemFromNode(clickedItemNode));
-        } else {
+        } else if (this.unselectOnOutsideClick){
             this.unselectAllItems();
         }
     },
@@ -25452,6 +25482,7 @@ module.exports = Helpers;
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Button.
@@ -25559,7 +25590,7 @@ var Button = Widget.$extend({
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof PhotonImage) {
             this.leftIconName = leftIcon.name;
             return;
         }
@@ -25619,7 +25650,7 @@ var Button = Widget.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof PhotonImage) {
             this.rightIconName = rightIcon.name;
             return;
         }
@@ -25829,7 +25860,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":39,"../visual/baseicon.js":66,"../widget.js":76}],41:[function(require,module,exports){
+},{"../helpers.js":39,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27010,6 +27041,7 @@ module.exports = Field;
 var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Helpers = require("../helpers.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * A simple flat button that only contains an icon
@@ -27118,7 +27150,7 @@ var IconButton = Widget.$extend({
     },
 
     setIcon: function (icon) {
-        if (icon instanceof BaseIcon) {
+        if (icon instanceof BaseIcon || icon instanceof PhotonImage) {
             this.iconName = icon.name;
             return;
         }
@@ -27175,7 +27207,7 @@ var IconButton = Widget.$extend({
 
 module.exports = IconButton;
 
-},{"../helpers.js":39,"../visual/baseicon.js":66,"../widget.js":76}],46:[function(require,module,exports){
+},{"../helpers.js":39,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32958,8 +32990,7 @@ var MouseManager = Base.$extend({
         this._bindEvent("mouse-up", this.element, "mouseup", this.__onMouseUp.bind(this));
         this._bindEvent("double-click", this.element, "dblclick", this.__onDoubleClick.bind(this));
         this._bindEvent("mouse-move", this.element, "mousemove", this.__onMouseMove.bind(this));
-        this._bindEvent("mousewheel", this.element, "mousewheel", this.__onMouseWheel.bind(this));
-        this._bindEvent("mousewheel-firefox", this.element, "DOMMouseScroll", this.__onMouseWheel.bind(this));
+        this._bindEvent("wheel", this.element, "wheel", this.__onWheel.bind(this));
 
         this._bindEvent("document-mouse-up", document, "mouseup", this.__onDocumentMouseUp.bind(this));
         this._bindEvent("document-mouse-move", document, "mousemove", this.__onDocumentMouseMove.bind(this));
@@ -33197,26 +33228,15 @@ var MouseManager = Base.$extend({
     },
 
     /**
-     * @method __onMouseWheel
+     * @method __onWheel
      * @private
      * @param event
      */
-    __onMouseWheel: function (event) {
+    __onWheel: function (event) {
         var wheelDelta = null;
 
-        // Webkit
-        if (event.wheelDeltaY !== undefined) {
-            wheelDelta = event.wheelDeltaY;
-        }
-        // MSIE
-        if (event.wheelDelta !== undefined) {
-            wheelDelta = event.wheelDelta;
-        }
-        // Firefox
-        if (event.axis !== undefined && event.detail !== undefined) {
-            if (event.axis == 2) { // Y
-                wheelDelta = -event.detail;
-            }
+        if (event.deltaY !== undefined) {
+            wheelDelta = -event.deltaY;
         }
 
         if (wheelDelta !== null) {
