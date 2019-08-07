@@ -40,6 +40,7 @@ var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var Container = require("./container.js");
 var BaseIcon = require("../visual/baseicon.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Menu item.
@@ -137,7 +138,7 @@ var MenuItem = Container.$extend({
     },
 
     setIcon: function (icon) {
-        if (icon instanceof BaseIcon) {
+        if (icon instanceof BaseIcon || icon instanceof PhotonImage) {
             this.iconName = icon.name;
             return;
         }

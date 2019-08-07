@@ -90,6 +90,12 @@ Object.defineProperty(Class, "$extend", {
         __class__.prototype = inherit(this.$class);
 
         properties = properties || {};
+
+        var _preBuildHook = properties.__preBuild__ || _superClass.prototype.__preBuild__;
+        if (_preBuildHook) {
+            _preBuildHook(properties, __class__, _superClass);
+        }
+
         var property;
         var computedPropertyName;
         var annotations;
@@ -242,6 +248,11 @@ Object.defineProperty(Class, "$extend", {
             enumerable: false,
             value: _classMap
         });
+
+        var _postBuildHook = properties.__postBuild__ || _superClass.prototype.__postBuild__;
+        if (_postBuildHook) {
+            _postBuildHook(properties, __class__, _superClass);
+        }
 
         return __class__;
     }
@@ -1110,6 +1121,7 @@ module.exports = function(locale, platform, userAgent) {
   locale.bindKeyCode(46,  ['delete', 'del']);
   locale.bindKeyCode(47,  ['help']);
   locale.bindKeyCode(145, ['scrolllock', 'scroll']);
+  locale.bindKeyCode(187, ['equal', 'equalsign', '=']);
   locale.bindKeyCode(188, ['comma', ',']);
   locale.bindKeyCode(190, ['period', '.']);
   locale.bindKeyCode(191, ['slash', 'forwardslash', '/']);
@@ -1205,7 +1217,6 @@ module.exports = function(locale, platform, userAgent) {
   // browser caveats
   var semicolonKeyCode = userAgent.match('Firefox') ? 59  : 186;
   var dashKeyCode      = userAgent.match('Firefox') ? 173 : 189;
-  var equalKeyCode     = userAgent.match('Firefox') ? 61  : 187;
   var leftCommandKeyCode;
   var rightCommandKeyCode;
   if (platform.match('Mac') && (userAgent.match('Safari') || userAgent.match('Chrome'))) {
@@ -1220,7 +1231,6 @@ module.exports = function(locale, platform, userAgent) {
   }
   locale.bindKeyCode(semicolonKeyCode,    ['semicolon', ';']);
   locale.bindKeyCode(dashKeyCode,         ['dash', '-']);
-  locale.bindKeyCode(equalKeyCode,        ['equal', 'equalsign', '=']);
   locale.bindKeyCode(leftCommandKeyCode,  ['command', 'windows', 'win', 'super', 'leftcommand', 'leftwindows', 'leftwin', 'leftsuper']);
   locale.bindKeyCode(rightCommandKeyCode, ['command', 'windows', 'win', 'super', 'rightcommand', 'rightwindows', 'rightwin', 'rightsuper']);
 
@@ -1244,7 +1254,7 @@ module.exports = function(locale, platform, userAgent) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.15';
+  var VERSION = '4.17.5';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -2454,6 +2464,20 @@ module.exports = function(locale, platform, userAgent) {
       }
     }
     return result;
+  }
+
+  /**
+   * Gets the value at `key`, unless `key` is "__proto__".
+   *
+   * @private
+   * @param {Object} object The object to query.
+   * @param {string} key The key of the property to get.
+   * @returns {*} Returns the property value.
+   */
+  function safeGet(object, key) {
+    return key == '__proto__'
+      ? undefined
+      : object[key];
   }
 
   /**
@@ -3903,10 +3927,16 @@ module.exports = function(locale, platform, userAgent) {
         value.forEach(function(subValue) {
           result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
         });
-      } else if (isMap(value)) {
+
+        return result;
+      }
+
+      if (isMap(value)) {
         value.forEach(function(subValue, key) {
           result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
         });
+
+        return result;
       }
 
       var keysFunc = isFull
@@ -18507,10 +18537,6 @@ function clearCatalogs() {
     }
 }
 
-function listCatalogs() {
-    return Object.keys(catalogs);
-}
-
 function addCatalogs(newCatalogs) {
     for (var locale in newCatalogs) {
         if (catalogs[locale]) {
@@ -18880,15 +18906,14 @@ for (var i = 0; i < 256; ++i) {
 function bytesToUuid(buf, offset) {
   var i = offset || 0;
   var bth = byteToHex;
-  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([bth[buf[i++]], bth[buf[i++]], 
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]]]).join('');
+  return bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]];
 }
 
 module.exports = bytesToUuid;
@@ -18899,11 +18924,9 @@ module.exports = bytesToUuid;
 // and inconsistent support for the `crypto` API.  We do the best we can via
 // feature-detection
 
-// getRandomValues needs to be invoked in a context where "this" is a Crypto
-// implementation. Also, find the complete implementation of crypto on IE11.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-
+// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && msCrypto.getRandomValues.bind(msCrypto));
 if (getRandomValues) {
   // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
   var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
@@ -19383,7 +19406,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":34,"abitbol":1,"uuid":13}],19:[function(require,module,exports){
+},{"./helpers.js":39,"abitbol":1,"uuid":13}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19645,7 +19668,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":29,"../interactive/button.js":35,"../interactive/colorpalette.js":37,"../layout/boxlayout.js":47,"../nonvisual/color.js":54,"./colorpickerdialog.js":20,"stonejs":12}],20:[function(require,module,exports){
+},{"../container/popupwindow.js":29,"../interactive/button.js":40,"../interactive/colorpalette.js":42,"../layout/boxlayout.js":52,"../nonvisual/color.js":59,"./colorpickerdialog.js":20,"stonejs":12}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20060,7 +20083,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":26,"../interactive/button.js":35,"../interactive/colorpalette.js":37,"../interactive/colorpicker.js":38,"../interactive/slider.js":42,"../layout/boxlayout.js":47,"../layout/gridlayout.js":49,"../nonvisual/color.js":54,"../visual/faicon.js":63,"../visual/label.js":65,"../visual/separator.js":67,"stonejs":12}],21:[function(require,module,exports){
+},{"../container/dialog.js":26,"../interactive/button.js":40,"../interactive/colorpalette.js":42,"../interactive/colorpicker.js":43,"../interactive/slider.js":47,"../layout/boxlayout.js":52,"../layout/gridlayout.js":54,"../nonvisual/color.js":59,"../visual/faicon.js":68,"../visual/label.js":70,"../visual/separator.js":72,"stonejs":12}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20313,7 +20336,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":29,"../layout/menu.js":51}],23:[function(require,module,exports){
+},{"../container/popupwindow.js":29,"../layout/menu.js":56}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20730,7 +20753,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":28,"../helpers.js":34,"../widget.js":71,"./popupmenu.js":22,"stonejs":12}],24:[function(require,module,exports){
+},{"../container/menuitem.js":28,"../helpers.js":39,"../widget.js":76,"./popupmenu.js":22,"stonejs":12}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21102,7 +21125,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":71,"./container.js":25}],25:[function(require,module,exports){
+},{"../widget.js":76,"./container.js":25}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21329,7 +21352,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":71}],26:[function(require,module,exports){
+},{"../widget.js":76}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21580,7 +21603,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":34,"../widget.js":71,"./window.js":33}],27:[function(require,module,exports){
+},{"../helpers.js":39,"../widget.js":76,"./window.js":33}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21810,7 +21833,7 @@ var Expander = Container.$extend({
 
 module.exports = Expander;
 
-},{"../helpers.js":34,"../widget.js":71,"./container.js":25}],28:[function(require,module,exports){
+},{"../helpers.js":39,"../widget.js":76,"./container.js":25}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22042,7 +22065,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":34,"../visual/baseicon.js":61,"../widget.js":71,"./container.js":25}],29:[function(require,module,exports){
+},{"../helpers.js":39,"../visual/baseicon.js":66,"../widget.js":76,"./container.js":25}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22364,7 +22387,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":51,"../widget.js":71,"./menuitem.js":28}],31:[function(require,module,exports){
+},{"../layout/menu.js":56,"../widget.js":76,"./menuitem.js":28}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22752,7 +22775,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":34,"../interactive/iconbutton.js":40,"../visual/baseicon.js":61,"../widget.js":71,"./container.js":25}],32:[function(require,module,exports){
+},{"../helpers.js":39,"../interactive/iconbutton.js":45,"../visual/baseicon.js":66,"../widget.js":76,"./container.js":25}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23144,7 +23167,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":34,"./container.js":25}],33:[function(require,module,exports){
+},{"../helpers.js":39,"./container.js":25}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23218,6 +23241,8 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("totop-touch", this.__html.window, "touchstart", this.moveToFront.bind(this));
+        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
+                        function (event) { event.stopPropagation(); });
 
         // Update Properties
         this.moveToFront();
@@ -23329,13 +23354,13 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
     setModal: function (modal) {
         this._modal = modal;
-        if (modal) {
+        if (modal && !this.__html.modalBox) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
             var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
-        } else if (this.__html.modalBox) {
+        } else if (!modal && this.__html.modalBox) {
             this.__html.modalBox.parentNode.removeChild(this.__html.modalBox);
             delete this.__html.modalBox;
         }
@@ -23480,7 +23505,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
      * @param {Object} event
      */
     __moveDragStart: function (event) {
-        if (!this.movable || event.button > 0 || event.target === this.__html.windowTitleCloseButton) {
+        if (!this.movable || event.button > 0) {
             return;
         }
         var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;
@@ -23635,7 +23660,1510 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
 module.exports = Window;
 
-},{"../helpers.js":34,"../widget.js":71,"./basewindow.js":24,"stonejs":12}],34:[function(require,module,exports){
+},{"../helpers.js":39,"../widget.js":76,"./basewindow.js":24,"stonejs":12}],34:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Valentin Ledrapier
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule DataView
+ * @namespace photonui
+ */
+
+var lodash = require("lodash");
+
+var Helpers = require("../helpers.js");
+var Widget = require("../widget.js");
+var Text = require("../visual/text.js");
+
+/**
+ * DataView container.
+ *
+ * wEvents:
+ *
+ *   * item-click:
+ *     - description: called when an item is clicked.
+ *     - callback:    function (event, item)
+ *
+ *   * item-select:
+ *     - description: called when an item is selected.
+ *     - callback:    function (item)
+ *
+ *   * item-unselect:
+ *     - description: called when an item is unselected.
+ *     - callback:    function (item)
+ *
+ *   * item-sort:
+ *     - description: called when an item is moved to a new position.
+ *     - callback:    function (item, position)
+ *
+ * @class DataView
+ * @constructor
+ * @extends photonui.Widget
+ */
+var DataView = Widget.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        this._lockItemsUpdate = true;
+        this.$data.selectable = true;
+        this.$data.multiSelectable = false;
+        this.$data.dragAndDroppable = false;
+        this.$data.containerElement = "ul";
+        this.$data.itemElement = "li";
+        this.$data.columnElement = "span";
+        this.$data._manuallySetColumns = (params && params.columns) ? true : false;
+
+        if (params && params.containerElement) {
+            this.$data.containerElement = params.containerElement;
+            params.containerElement = null;
+        }
+
+        this._addIdentifier("dataview");
+        this._addIdentifier(params && params.identifier);
+
+        this._initialSelectionItemIndex = null;
+
+        this._registerWEvents([
+            "item-select",
+            "item-unselect",
+            "item-click",
+            "item-sort",
+        ]);
+        this.$super(params);
+
+        this._lockItemsUpdate = false;
+        this._buildItemsHtml();
+
+        this._bindEvent("click", this.__html.container, "click", this.__onClick.bind(this));
+        this._bindEvent("dragstart", this.__html.container, "dragstart", this.__onDragStart.bind(this));
+        this._bindEvent("dragenter", this.__html.container, "dragenter", this.__onDragEnter.bind(this));
+        this._bindEvent("dragend", this.__html.container, "dragend", this.__onDragEnd.bind(this));
+        this._bindEvent("dragover", this.__html.container, "dragover", this.__onDragOver.bind(this));
+        this._bindEvent("drop", this.__html.container, "drop", this.__onDrop.bind(this));
+    },
+
+    /**
+     * The collection of items displayed by the data view widget.
+     *
+     * @property items
+     * @type Array
+     * @default null
+     */
+    getItems: function () {
+        return this.$data.items;
+    },
+
+    setItems: function (items) {
+        items = items || [];
+        this.$data.items = items.map(function (item, index) {
+            return typeof(item) === "object" ? {
+                index: index,
+                selected: false,
+                value: item,
+            } : {
+                index: index,
+                selected: false,
+                value: {
+                    __generated__: item.toString(),
+                },
+            };
+        });
+
+        if (!this.$data._manuallySetColumns) {
+            this._generateColumns();
+        }
+
+        this._buildItemsHtml();
+    },
+
+    /**
+     * Defines if the data items can be selected.
+     *
+     * @property selectable
+     * @type Boolean
+     * @default false
+     */
+    isSelectable: function () {
+        return this.$data.selectable;
+    },
+
+    setSelectable: function (selectable) {
+        this.$data.selectable = selectable;
+    },
+
+    /**
+     * Defines if the data items can be multi-selected.
+     *
+     * @property multiSelectable
+     * @type Boolean
+     * @default false
+     */
+    isMultiSelectable: function () {
+        return this.$data.multiSelectable;
+    },
+
+    setMultiSelectable: function (multiSelectable) {
+        this.$data.multiSelectable = multiSelectable;
+    },
+
+    /**
+     * Defines if the data items can be drag & dropped.
+     *
+     * @property dragAndDroppable
+     * @type Boolean
+     * @default false
+     */
+    isDragAndDroppable: function () {
+        return this.$data.dragAndDroppable;
+    },
+
+    setDragAndDroppable: function (dragAndDroppable) {
+        this.$data.dragAndDroppable = dragAndDroppable;
+    },
+
+    /**
+     * A custom formater function which overrides the default rendering process
+     * of the widget.
+     *
+     * @property customWidgetFormater
+     * @type Function
+     * @default null
+     */
+    getCustomWidgetFormater: function () {
+        return this.$data.customWidgetFormater;
+    },
+
+    setCustomWidgetFormater: function (customWidgetFormater) {
+        this.$data.customWidgetFormater = customWidgetFormater;
+    },
+
+    /**
+     * The currently selected items.
+     *
+     * @property selectedItems
+     * @type Array
+     * @default []
+     */
+    getSelectedItems: function () {
+        return this.$data.items ?
+            this.$data.items.filter(function (item) {
+                return item.selected;
+            }) : [];
+    },
+
+    /**
+     * The list of columns which defines the structure of the items (if not
+     * setted manually, the columns are automatically generated).
+     *
+     * @property columns
+     * @type Array
+     * @default null
+     */
+    setColumns: function (columns) {
+        this.$data.columns = columns.map(function (column, index) {
+            return typeof(column) === "string" ? {
+                    id: column,
+                    value: column
+                } :
+                column.value ? lodash.merge({
+                    id: typeof(column.value) === "string" ? column.value : "column" + index,
+                }, column) :
+                null;
+        }).filter(function (col) {
+            return col !== null;
+        });
+
+        this._buildItemsHtml();
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function () {
+        return this.__html.container;
+    },
+
+    /**
+     * The type of the container DOM element which will be created during the
+     * render process.
+     *
+     * @property containerElement
+     * @type String
+     * @default "ul"
+     */
+    getContainerElement: function () {
+        return this.$data.containerElement;
+    },
+
+    setContainerElement: function (containerElement) {
+        this.$data.containerElement =  containerElement;
+    },
+
+    /**
+     * The type of the items DOM elements which will be created during the
+     * render process.
+     *
+     * @property itemElement
+     * @type String
+     * @default "li"
+     */
+    getItemElement: function () {
+        return this.$data.itemElement;
+    },
+
+    setItemElement: function (itemElement) {
+        this.$data.itemElement = itemElement;
+    },
+
+    /**
+     * The type of the columns DOM elements which will be created during the
+     * render process.
+     *
+     * @property columnElement
+     * @type String
+     * @default "span"
+     */
+    getColumnElement: function () {
+        return this.$data.columnElement;
+    },
+
+    setColumnElement: function (columnElement) {
+        this.$data.columnElement = columnElement;
+    },
+
+    /**
+     * The list of identifiers wich will be added to every generated elements
+     * of the widget as classnames.
+     *
+     * @property identifiers
+     * @type Array
+     * @default []
+     * @private
+     */
+    _addIdentifier: function (identifier) {
+        if (!identifier) {
+            return;
+        }
+        if (!this.$data._identifiers) {
+            this.$data._identifiers = [identifier];
+        } else if (this.$data._identifiers.indexOf(identifier) === -1) {
+            this.$data._identifiers.push(identifier);
+        }
+    },
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Selects the item(s) at given indexes.
+     *
+     * @method selectItems
+     * @param {...Number|Number[]} indexes
+     */
+    selectItems: function () {
+        lodash.chain(arguments)
+            .map()
+            .flatten()
+            .uniq()
+            .value()
+            .forEach(function (index) {
+                var item = this._getItemByIndex(index);
+
+                if (item) {
+                    this._selectItem(item, true);
+                }
+            }.bind(this));
+    },
+
+    /**
+     * Unselects the item(s) at given indexes.
+     *
+     * @method unselectItems
+     * @param {...Number|Number[]} indexes
+     */
+    unselectItems: function () {
+        lodash.chain(arguments)
+            .map()
+            .flatten()
+            .uniq()
+            .value()
+            .forEach(function (index) {
+                var item = this._getItemByIndex(index);
+
+                if (item) {
+                    this._unselectItem(item, true);
+                }
+            }.bind(this));
+    },
+
+    // ====== Private methods ======
+
+    /**
+     * Returns the item at a given index.
+     *
+     * @method _getItemByIndex
+     * @private
+     * @param {Number} index
+     * @return {Object} the item
+     */
+    _getItemByIndex: function (index) {
+        return lodash.find(this.items, function (item) {
+            return item.index === index;
+        });
+    },
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function () {
+        this._buildContainerHtml();
+    },
+
+    /**
+     * Build the widget container HTML.
+     *
+     * @method _buildContainerHtml
+     * @private
+     */
+    _buildContainerHtml: function () {
+        this.__html.container = document.createElement(this.containerElement);
+        this.__html.container.className = "photonui-widget";
+
+        this._addIdentifiersClasses(this.__html.container);
+        this._addIdentifiersClasses(this.__html.container, "container");
+    },
+
+    /**
+     * Build the items list HTML.
+     *
+     * @method _buildItemsHtml
+     * @private
+     */
+    _buildItemsHtml: function () {
+        if (this._lockItemsUpdate) {
+            return;
+        }
+
+        Helpers.cleanNode(this.__html.container);
+
+        if (this.$data.items) {
+            var fragment = document.createDocumentFragment();
+
+            this.$data.items.forEach(function (item) {
+                var itemNode = this._renderItem(item);
+
+                if (this.$data.dragAndDroppable) {
+                    itemNode.setAttribute("draggable", true);
+                }
+
+                item.node = itemNode;
+                fragment.appendChild(itemNode);
+            }.bind(this));
+
+            this.__html.container.appendChild(fragment);
+        }
+    },
+
+    /**
+     * Renders a given item.
+     *
+     * @method _renderItem
+     * @private
+     * @param {Object} item
+     * @return {Element} the rendered item
+     */
+    _renderItem: function (item) {
+        var node = document.createElement(this.itemElement);
+        node.className = "photonui-dataview-item";
+        node.setAttribute("data-photonui-dataview-item-index", item.index);
+
+        this._addIdentifiersClasses(node, "item");
+
+        if (this.customWidgetFormater && typeof(this.customWidgetFormater) === "function") {
+            var widget = this.customWidgetFormater.call(this, item.value);
+
+            if (widget && widget instanceof Widget) {
+                node.appendChild(widget.getHtml());
+                return node;
+            }
+        }
+
+        return this._renderItemInner(node, item);
+    },
+
+    /**
+     * Renders all the columns of a given item.
+     *
+     * @method _renderItemInner
+     * @private
+     * @param {Element} itemNode the container element of the item
+     * @param {Object} item the rendered item
+     * @return {Element} the rendered item
+     */
+    _renderItemInner: function (itemNode, item) {
+        if (this.$data.columns) {
+            this.$data.columns.forEach(function (column) {
+                var content = typeof(column.value) === "string" ? lodash.get(item.value, column.value) :
+                    typeof(column.value) === "function" ? column.value.call(this, item.value) :
+                    null;
+
+                itemNode.appendChild(this._renderColumn(content, column.id, column.rawHtml));
+            }.bind(this));
+        }
+
+        return itemNode;
+    },
+
+    /**
+     * Renders a given column.
+     *
+     * @method _renderColumn
+     * @private
+     * @param {photonui.Widget|String} content the content of the column
+     * @param {String} columnId the identifier of the column
+     * @return {Element} the rendered column
+     */
+    _renderColumn: function (content, columnId, rawHtml) {
+        var node = document.createElement(this.columnElement);
+
+        this._addIdentifiersClasses(node, "column");
+
+        if (columnId !== "__generated__") {
+            this._addIdentifiersClasses(node, "column-" + columnId);
+        }
+
+        if (content instanceof Widget) {
+            node.appendChild(content.getHtml());
+        } else if (rawHtml) {
+            node.innerHTML = content || "";
+        } else {
+            node.textContent = content || "";
+        }
+
+        return node;
+    },
+
+    /**
+     * Generate the list of columns.
+     *
+     * @method _generateColumns
+     * @private
+     */
+    _generateColumns: function () {
+        var keys = [];
+        if (this.$data.items) {
+            this.$data.items.forEach(function (item) {
+                if (typeof(item.value) === "object") {
+                    Object.keys(item.value).forEach(function (key) {
+                        if (keys.indexOf(key) === -1) {
+                            keys.push(key);
+                        }
+                    });
+                }
+            });
+
+            this.$data.columns = keys.map(function (key) {
+                return {
+                    value: key,
+                    id: key,
+                };
+            });
+
+            this._buildItemsHtml();
+        }
+    },
+
+    /**
+     * Adds classes defined by the identifiers property to a given element, with
+     * a given suffix.
+     *
+     * @method _addIdentifiersClasses
+     * @private
+     * @param {Element} node the node
+     * @param {String} suffix the suffix of the classes
+     */
+    _addIdentifiersClasses: function (node, suffix) {
+        if (this.$data._identifiers) {
+            this.$data._identifiers.forEach(function (identifier) {
+                node.classList.add(
+                    suffix ?
+                    "photonui-" + identifier + "-" + suffix
+                        .replace(/[^a-zA-Z0-9]+/gi, "-")
+                        .replace(/(^[^a-zA-Z0-9]|[^a-zA-Z0-9]$)/gi, "")
+                        .toLowerCase() :
+                    "photonui-" + identifier
+                );
+            });
+        }
+    },
+
+    /**
+     * Selects an item.
+     *
+     * @method _selectItem
+     * @private
+     * @param {Object} item the item
+     */
+    _selectItem: function (item, preventEvent) {
+        item.selected = true;
+        item.node.classList.add("selected");
+
+        if (!preventEvent) {
+            this._callCallbacks("item-select", [item]);
+        }
+    },
+
+    /**
+     * Unselects an item.
+     *
+     * @method _unselectItem
+     * @private
+     * @param {Object} item the item
+     */
+    _unselectItem: function (item, preventEvent) {
+        item.selected = false;
+        item.node.classList.remove("selected");
+
+        if (!preventEvent) {
+            this._callCallbacks("item-unselect", [item]);
+        }
+    },
+
+    /**
+     * Selects all items from the current selection to a given item.
+     *
+     * @method _selectItemsTo
+     * @private
+     * @param {Object} item the item
+     */
+    _selectItemsTo: function (item) {
+        this.unselectAllItems();
+
+        if (this._initialSelectionItemIndex < item.index) {
+            for (var i = this._initialSelectionItemIndex; i <= item.index; i++) {
+                this._selectItem(this.items[i]);
+            }
+        } else {
+            for (var j = this._initialSelectionItemIndex; j >= item.index; j--) {
+                this._selectItem(this.items[j]);
+            }
+        }
+    },
+
+    /**
+     * Unselects all items.
+     *
+     * @method unselectAllItems
+     * @private
+     */
+    unselectAllItems: function () {
+        this.getSelectedItems().forEach(function (item) {
+            this._unselectItem(item);
+        }.bind(this));
+    },
+
+    /**
+     * Gets an item of the collection from a given item DOM element.
+     *
+     * @method _getItemFromNode
+     * @private
+     * @param {Element} itemNode the item DOM element
+     * @return {Object} the item
+     */
+    _getItemFromNode: function (itemNode) {
+        var index = itemNode.getAttribute("data-photonui-dataview-item-index");
+        return index ? this.$data.items[parseInt(index, 10)] : null;
+    },
+
+    /**
+     * Moves the item at a givent index to another given index. Rebuilds the
+     * dataview.
+     *
+     * @method _moveItem
+     * @private
+     * @param {Number} itemIndex the index of the item to move
+     * @param {Number} destinationIndex the destination index
+     */
+    _moveItem: function (itemIndex, destinationIndex) {
+        this.items.splice(destinationIndex, 0, this.items.splice(itemIndex, 1)[0]);
+        this.setItems(
+            this.items.map(function (item) {
+                return item.value;
+            })
+        );
+    },
+
+    /**
+     * Handle item click events.
+     *
+     * @method _handleClick
+     * @private
+     * @param {Object} item the item
+     * @param {Object} modifiers the modifiers states
+     * @param {Object} modifiers.ctrl
+     * @param {Object} modifiers.shift
+     */
+    _handleClick: function (clickedItem, modifiers) {
+        if (this.selectable) {
+            if (this.multiSelectable) {
+                if (this.selectedItems.length === 0) {
+                    this._selectItem(clickedItem);
+                    this._initialSelectionItemIndex = clickedItem.index;
+                } else {
+                    if (modifiers.shift) {
+                        this._selectItemsTo(clickedItem);
+                    } else if (modifiers.ctrl) {
+                        if (clickedItem.selected) {
+                            this._unselectItem(clickedItem);
+                        } else {
+                            this._selectItem(clickedItem);
+                        }
+                    } else {
+                        this.unselectAllItems();
+                        this._selectItem(clickedItem);
+                        this._initialSelectionItemIndex = clickedItem.index;
+                    }
+                }
+            } else {
+                if (modifiers.ctrl && clickedItem.selected) {
+                    this._unselectItem(clickedItem);
+                } else {
+                    this.unselectAllItems();
+                    this._selectItem(clickedItem);
+                }
+            }
+        }
+    },
+
+    /**
+     * Generates a placeholder item element.
+     *
+     * @method _generatePlaceholderElement
+     * @private
+     * @return {Element} the placeholder item element
+     */
+    _generatePlaceholderElement: function (itemNode) {
+        var placeholderElement = document.createElement(this.$data.itemElement);
+
+        this.$data.columns.forEach(function () {
+            var column = document.createElement(this.$data.columnElement);
+            placeholderElement.appendChild(column);
+        }.bind(this));
+
+        placeholderElement.style.height = itemNode.offsetHeight + "px";
+        placeholderElement.style.width = itemNode.offsetWidth + "px";
+        placeholderElement.style.margin = itemNode.style.margin;
+
+        this._addIdentifiersClasses(placeholderElement, "item-placeholder");
+
+        return placeholderElement;
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * Called when an element is clicked.
+     *
+     * @method __onClick
+     * @private
+     * @param {Object} event the click event
+     */
+    __onClick: function (event) {
+        var clickedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+        event.stopPropagation();
+
+        if (clickedItemNode) {
+            var item = this._getItemFromNode(clickedItemNode);
+
+            if (!item) {
+                return;
+            }
+
+            this.__onItemClick(event, this._getItemFromNode(clickedItemNode));
+        } else {
+            this.unselectAllItems();
+        }
+    },
+
+    /**
+     * Called when an item is clicked.
+     *
+     * @method __onItemClick
+     * @private
+     * @param {Object} event the click event
+     * @param {item} item the clicked item
+     */
+    __onItemClick: function (event, item) {
+        this._handleClick(item, {
+            shift: event.shiftKey,
+            ctrl: event.ctrlKey,
+        });
+        this._callCallbacks("item-click", [item, event]);
+
+        event.stopPropagation();
+    },
+
+    /**
+     * Called when an item is dragged.
+     *
+     * @method __onDragStart
+     * @private
+     * @param {Object} event
+     */
+    __onDragStart: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
+        event.dataTransfer.setData("text", "");
+        var draggedItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+
+        if (draggedItemNode) {
+            this.$data._draggedItem = this._getItemFromNode(draggedItemNode);
+            this.unselectAllItems();
+
+            this.$data._placeholderElement = this._generatePlaceholderElement(draggedItemNode);
+
+            this.$data._lastPlaceholderIndex = this.$data._draggedItem.index;
+
+            lodash.defer(function () {
+                this.__html.container.insertBefore(this.$data._placeholderElement, draggedItemNode);
+                this.$data._draggedItem.node.style.display = "none";
+            }.bind(this));
+        }
+
+        event.stopPropagation();
+    },
+
+    /**
+     * Called when a dragged item enters into another element.
+     *
+     * @method __onDragEnter
+     * @private
+     * @param {Object} event
+     */
+    __onDragEnter: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
+        var enteredItemNode = Helpers.getClosest(event.target, ".photonui-dataview-item");
+
+        if (enteredItemNode) {
+            var enteredIndex = this._getItemFromNode(enteredItemNode).index;
+            var placeholderIndex =
+              enteredIndex + (this.$data._lastPlaceholderIndex <= enteredIndex ? 1 : 0);
+
+            var nextItem = this._getItemByIndex(placeholderIndex);
+
+            this.$data._lastPlaceholderIndex = placeholderIndex;
+
+            if (nextItem) {
+                this.__html.container.insertBefore(this.$data._placeholderElement, nextItem.node);
+            } else {
+                this.__html.container.appendChild(this.$data._placeholderElement);
+            }
+        }
+
+        event.stopPropagation();
+
+        return false;
+    },
+
+    /**
+     * Called when a item drag has ended.
+     *
+     * @method __onDragEnd
+     * @private
+     * @param {Object} event
+     */
+    __onDragEnd: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
+        this.$data._draggedItem.node.style.display = "";
+
+        if (this.$data._placeholderElement.parentNode === this.__html.container) {
+            var destIndex = this.$data._lastPlaceholderIndex > this.$data._draggedItem.index ?
+                this.$data._lastPlaceholderIndex - 1 :
+                this.$data._lastPlaceholderIndex;
+
+            this._moveItem(this.$data._draggedItem.index, destIndex);
+
+            this._callCallbacks("item-sort", [this.$data._draggedItem, destIndex, event]);
+        }
+
+        this.$data._placeholderElement = null;
+        this.$data._draggedItem = null;
+
+        event.stopPropagation();
+    },
+
+    /**
+     * Called when a item is dragged (fix for firefox).
+     *
+     * @method __onDragOver
+     * @private
+     * @param {Object} event
+     */
+    __onDragOver: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    /**
+     * Called when a item is dropped (fix for firefox).
+     *
+     * @method __onDrop
+     * @private
+     * @param {Object} event
+     */
+    __onDrop: function (event) {
+        if (!this.$data.dragAndDroppable) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function () {
+        this._buildItemsHtml();
+    },
+
+});
+
+module.exports = DataView;
+
+},{"../helpers.js":39,"../visual/text.js":75,"../widget.js":76,"lodash":8}],35:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Valentin Ledrapier
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule DataView
+ * @namespace photonui
+ */
+
+var lodash = require("lodash");
+
+var DataView = require("./dataview");
+
+/**
+ * FluidView container.
+ *
+ * @class FluidView
+ * @constructor
+ * @extends photonui.DataView
+ */
+var FluidView = DataView.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        params = lodash.assign({
+            verticalPadding: 0,
+            horizontalPadding: 0,
+            verticalSpacing: 0,
+            horizontalSpacing: 0,
+        }, params);
+
+        this._addIdentifier("fluidview");
+        this.$super(params);
+    },
+
+    /**
+     * The width of the items.
+     *
+     * @property itemsWidth
+     * @type Number
+     * @default 0
+     */
+    getItemsWidth: function () {
+        return this.$data.itemsWidth;
+    },
+
+    setItemsWidth: function (itemsWidth) {
+        this.$data.itemsWidth = itemsWidth;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * The height of the items.
+     *
+     * @property itemsHeight
+     * @type Number
+     * @default 0
+     */
+    getItemsHeight: function () {
+        return this.$data.itemsHeight;
+    },
+
+    setItemsHeight: function (itemsHeight) {
+        this.$data.itemsHeight = itemsHeight;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * The vertical padding of the container element.
+     *
+     * @property verticalPadding
+     * @type Number
+     * @default 0
+     */
+    getVerticalPadding: function () {
+        return this.$data.verticalPadding;
+    },
+
+    setVerticalPadding: function (verticalPadding) {
+        this.$data.verticalPadding = verticalPadding;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * The horizontal padding of the container element.
+     *
+     * @property horizontalPadding
+     * @type Number
+     * @default 0
+     */
+    getHorizontalPadding: function () {
+        return this.$data.horizontalPadding;
+    },
+
+    setHorizontalPadding: function (horizontalPadding) {
+        this.$data.horizontalPadding = horizontalPadding;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * The vertical spacing between the elements.
+     *
+     * @property verticalSpacing
+     * @type Number
+     * @default 0
+     */
+    getVerticalSpacing: function () {
+        return this.$data.verticalSpacing;
+    },
+
+    setVerticalSpacing: function (verticalSpacing) {
+        this.$data.verticalSpacing = verticalSpacing;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * The horizontal spacing between the elements.
+     *
+     * @property horizontalSpacing
+     * @type Number
+     * @default 0
+     */
+    getHorizontalSpacing: function () {
+        return this.$data.horizontalSpacing;
+    },
+
+    setHorizontalSpacing: function (horizontalSpacing) {
+        this.$data.horizontalSpacing = horizontalSpacing;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * Build the items list HTML.
+     *
+     * @method _buildItemsHtml
+     * @private
+     */
+    _buildItemsHtml: function () {
+        this.$super.apply(this, arguments);
+
+        this.__html.container.style.marginTop = this.$data.verticalSpacing ?
+            -this.$data.verticalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.marginBottom = this.$data.verticalSpacing ?
+            -this.$data.verticalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.marginLeft = this.$data.horizontalSpacing ?
+            -this.$data.horizontalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.marginRight = this.$data.horizontalSpacing ?
+            -this.$data.horizontalSpacing / 2 + "px" :
+            "";
+
+        this.__html.container.style.paddingTop = this.$data.verticalPadding ?
+            this.$data.verticalPadding + "px" :
+            "";
+
+        this.__html.container.style.paddingBottom = this.$data.verticalPadding ?
+            this.$data.verticalPadding + "px" :
+            "";
+
+        this.__html.container.style.paddingLeft = this.$data.horizontalPadding ?
+            this.$data.horizontalPadding + "px" :
+            "";
+
+        this.__html.container.style.paddingRight = this.$data.horizontalPadding ?
+            this.$data.horizontalPadding + "px" :
+            "";
+    },
+
+    _renderItem: function (item) {
+        var node = this.$super.apply(this, arguments);
+
+        if (this.$data.itemsWidth) {
+            node.style.width = this.$data.itemsWidth + "px";
+        }
+        if (this.$data.itemsHeight) {
+            node.style.height = this.$data.itemsHeight + "px";
+        }
+        if (this.$data.horizontalSpacing) {
+            node.style.marginLeft = this.$data.horizontalSpacing / 2 + "px";
+            node.style.marginRight = this.$data.horizontalSpacing / 2 + "px";
+        }
+        if (this.$data.verticalSpacing) {
+            node.style.marginTop = this.$data.verticalSpacing / 2 + "px";
+            node.style.marginBottom = this.$data.verticalSpacing / 2 + "px";
+        }
+
+        return node;
+    },
+});
+
+module.exports = FluidView;
+
+},{"./dataview":34,"lodash":8}],36:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Valentin Ledrapier
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule DataView
+ * @namespace photonui
+ */
+
+var lodash = require("lodash");
+
+var Helpers = require("../helpers");
+var Image = require("../visual/image");
+var FAIcon = require("../visual/faicon");
+
+var FluidView = require("./fluidview");
+
+/**
+ * IconView container.
+ *
+ * @class IconView
+ * @constructor
+ * @extends photonui.FluidView
+ */
+var IconView = FluidView.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        params = lodash.assign({
+            horizontalSpacing: 8,
+            horizontalPadding: 8,
+            verticalSpacing: 8,
+            verticalPadding: 8,
+            columnElement: "div",
+            columns: [{
+                id: "icon",
+                value: function (item) {
+                    return item.image ?
+                            new Image({
+                                url: item.image,
+                                height: this.iconHeight,
+                                width: this.iconWidth,
+                            }) :
+                        item.faIcon && item.faIcon.iconName ?
+                            new FAIcon(item.faIcon) :
+                        null;
+                },
+            },
+            "label",
+          ],
+        }, params);
+
+        this._addIdentifier("iconview");
+
+        this._registerWEvents([]);
+        this.$super(params);
+    },
+
+    /**
+     * The width of the icons.
+     *
+     * @property iconWidth
+     * @type Number
+     * @default 0
+     */
+    getIconWidth: function () {
+        return this.$data.iconWidth;
+    },
+
+    setIconWidth: function (iconWidth) {
+        this.$data.iconWidth = iconWidth;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * The width of the items.
+     *
+     * @property iconHeight
+     * @type Number
+     * @default 0
+     */
+    getIconHeight: function () {
+        return this.$data.iconHeight;
+    },
+
+    setIconHeight: function (iconHeight) {
+        this.$data.iconHeight = iconHeight;
+        this._buildItemsHtml();
+    },
+
+    /**
+     * Renders a given column.
+     *
+     * @method _renderColumn
+     * @private
+     * @param {photonui.Widget|String} content the content of the column
+     * @param {String} columnId the identifier of the column
+     * @return {Element} the rendered column
+     */
+    _renderColumn: function (content, columnId, rawHtml) {
+        var node = this.$super.apply(this, arguments);
+
+        if (columnId === "icon") {
+            if (this.$data.iconWidth) {
+                node.style.width = this.$data.iconWidth + "px";
+            }
+            if (this.$data.iconHeight) {
+                node.style.height = this.$data.iconHeight + "px";
+
+                var faIconNode = node.getElementsByClassName("fa")[0];
+
+                if (faIconNode) {
+                    faIconNode.style.lineHeight = this.$data.iconHeight + "px";
+                }
+            }
+        }
+
+        return node;
+    },
+});
+
+module.exports = IconView;
+
+},{"../helpers":39,"../visual/faicon":68,"../visual/image":69,"./fluidview":35,"lodash":8}],37:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Valentin Ledrapier
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule DataView
+ * @namespace photonui
+ */
+
+var lodash = require("lodash");
+
+var DataView = require("./dataview");
+var Helpers = require("../helpers.js");
+
+/**
+ * ListView container.
+ *
+ * @class ListView
+ * @constructor
+ * @extends photonui.DataView
+ */
+var ListView = DataView.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        params = lodash.assign({
+            containerElement: "ul",
+            itemElement: "li",
+            columnElement: "span",
+        }, params);
+
+        this._addIdentifier("listview");
+
+        this._registerWEvents([]);
+        this.$super(params);
+    },
+});
+
+module.exports = ListView;
+
+},{"../helpers.js":39,"./dataview":34,"lodash":8}],38:[function(require,module,exports){
+/*
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Valentin Ledrapier
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule DataView
+ * @namespace photonui
+ */
+
+var lodash = require("lodash");
+
+var Widget = require("../widget");
+var Helpers = require("../helpers.js");
+
+var DataView = require("./dataview");
+
+/**
+ * TableView container.
+ *
+ * @class TableView
+ * @constructor
+ * @extends photonui.DataView
+ */
+var TableView = DataView.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        params = lodash.assign({
+            containerElement: "table",
+            itemElement: "tr",
+            columnElement: "td",
+            showHeader: true,
+        }, params);
+
+        this._addIdentifier("tableview");
+
+        this._registerWEvents([]);
+        this.$super(params);
+    },
+
+    /**
+     * Defines if the header is displayed.
+     *
+     * @property showHeader
+     * @type Boolean
+     * @default true
+     */
+    getShowHeader: function () {
+        return this.$data.showHeader;
+    },
+
+    setShowHeader: function (showHeader) {
+        this.$data.showHeader = showHeader;
+    },
+
+    /**
+     * Build the items list HTML.
+     *
+     * @method _buildItemsHtml
+     * @private
+     */
+    _buildItemsHtml: function () {
+        this.$super.apply(this, arguments);
+        if (this.$data.showHeader) {
+            this.__html.container.insertBefore(this._renderHeader(), this.__html.container.firstChild);
+        }
+    },
+
+    /**
+     * Renders the table header.
+     *
+     * @method _renderHeader
+     * @private
+     * @return {Element} the rendered header
+     */
+    _renderHeader: function () {
+        var node = document.createElement("tr");
+        this._addIdentifiersClasses(node, "header");
+
+        if (this.$data.columns) {
+            this.$data.columns.forEach(function (column) {
+                var columnNode = document.createElement("th");
+                this._addIdentifiersClasses(columnNode, "column");
+                columnNode.textContent = column.label === undefined ? column.id : column.label;
+                node.appendChild(columnNode);
+            }.bind(this));
+        }
+
+        return node;
+    }
+});
+
+module.exports = TableView;
+
+},{"../helpers.js":39,"../widget":76,"./dataview":34,"lodash":8}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23840,9 +25368,49 @@ Helpers.log = function (level, message) {
     }
 };
 
+/**
+ * Get the closest matching element up the DOM tree.
+ * https://gomakethings.com/climbing-up-and-down-the-dom-tree-with-vanilla-javascript/
+ *
+ * @method getClosest
+ * @param  {Element} elem     Starting element
+ * @param  {String}  selector Selector to match against
+ * @return {Boolean|Element}  Returns null if not match found
+ */
+Helpers.getClosest = function (elem, selector) {
+
+    // Element.matches() polyfill
+    if (!Element.prototype.matches) {
+        Element.prototype.matches =
+            Element.prototype.matchesSelector ||
+            Element.prototype.mozMatchesSelector ||
+            Element.prototype.msMatchesSelector ||
+            Element.prototype.oMatchesSelector ||
+            Element.prototype.webkitMatchesSelector ||
+            function (s) {
+                var matches = (this.document || this.ownerDocument).querySelectorAll(s);
+                var i = matches.length;
+                // jscs:disable
+                while (--i >= 0 && matches.item(i) !== this) {}
+                // jscs:enable
+                return i > -1;
+            };
+    }
+
+    // Get closest match
+    for (; elem && elem !== document; elem = elem.parentNode) {
+        if (elem.matches(selector)) {
+            return elem;
+        }
+    }
+
+    return null;
+
+};
+
 module.exports = Helpers;
 
-},{"uuid":13}],35:[function(require,module,exports){
+},{"uuid":13}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24261,7 +25829,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":34,"../visual/baseicon.js":61,"../widget.js":71}],36:[function(require,module,exports){
+},{"../helpers.js":39,"../visual/baseicon.js":66,"../widget.js":76}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24443,7 +26011,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":71}],37:[function(require,module,exports){
+},{"../widget.js":76}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24648,7 +26216,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":34,"../nonvisual/color.js":54,"../widget.js":71}],38:[function(require,module,exports){
+},{"../helpers.js":39,"../nonvisual/color.js":59,"../widget.js":76}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25182,7 +26750,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":34,"../nonvisual/color.js":54,"../nonvisual/mousemanager.js":57,"../widget.js":71}],39:[function(require,module,exports){
+},{"../helpers.js":39,"../nonvisual/color.js":59,"../nonvisual/mousemanager.js":62,"../widget.js":76}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25400,7 +26968,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":71,"lodash":8}],40:[function(require,module,exports){
+},{"../widget.js":76,"lodash":8}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25607,7 +27175,7 @@ var IconButton = Widget.$extend({
 
 module.exports = IconButton;
 
-},{"../helpers.js":34,"../visual/baseicon.js":61,"../widget.js":71}],41:[function(require,module,exports){
+},{"../helpers.js":39,"../visual/baseicon.js":66,"../widget.js":76}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25992,7 +27560,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":39}],42:[function(require,module,exports){
+},{"./field.js":44}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26048,6 +27616,18 @@ var Slider = NumericField.$extend({
     __init__: function (params) {
         this.$super(params);
 
+        if (params && params.decimalDigits === undefined) {
+            this.decimalDigits = 0;
+        }
+
+        if (params && params.min === undefined) {
+            this.min = 0;
+        }
+
+        if (params && params.max === undefined) {
+            this.max = 100;
+        }
+
         this.inputId = this.name + "-field";
         this.__html.field.id = this.inputId;
 
@@ -26060,11 +27640,6 @@ var Slider = NumericField.$extend({
                         "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("field-contextmenu", this.__html.field, "contextmenu", this.__onFieldContextMenu.bind(this));
     },
-
-    // Default value (!= NumericField)
-    _min: 0,
-    _max: 100,
-    _decimalDigits: 0,
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -26359,7 +27934,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":34,"./numericfield.js":41}],43:[function(require,module,exports){
+},{"../helpers.js":39,"./numericfield.js":46}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26419,7 +27994,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":36}],44:[function(require,module,exports){
+},{"./checkbox.js":41}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26533,7 +28108,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":39}],45:[function(require,module,exports){
+},{"./field.js":44}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26647,7 +28222,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":39}],46:[function(require,module,exports){
+},{"./field.js":44}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26740,7 +28315,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":35,"./checkbox.js":36}],47:[function(require,module,exports){
+},{"./button.js":40,"./checkbox.js":41}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27111,7 +28686,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":34,"./layout.js":50}],48:[function(require,module,exports){
+},{"../helpers.js":39,"./layout.js":55}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27493,7 +29068,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":34,"./layout.js":50}],49:[function(require,module,exports){
+},{"../helpers.js":39,"./layout.js":55}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28130,7 +29705,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":34,"./layout.js":50}],50:[function(require,module,exports){
+},{"../helpers.js":39,"./layout.js":55}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28416,7 +29991,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":25,"../widget.js":71}],51:[function(require,module,exports){
+},{"../container/container.js":25,"../widget.js":76}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28556,7 +30131,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":34,"./layout.js":50}],52:[function(require,module,exports){
+},{"../helpers.js":39,"./layout.js":55}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28858,7 +30433,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":31,"../helpers.js":34,"../widget.js":71,"./layout.js":50}],53:[function(require,module,exports){
+},{"../container/tabitem.js":31,"../helpers.js":39,"../widget.js":76,"./layout.js":55}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29050,7 +30625,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":18,"keyboardjs":3}],54:[function(require,module,exports){
+},{"../base.js":18,"keyboardjs":3}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30087,7 +31662,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":18,"../helpers.js":34,"lodash":8}],55:[function(require,module,exports){
+},{"../base.js":18,"../helpers.js":39,"lodash":8}],60:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30404,7 +31979,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":18}],56:[function(require,module,exports){
+},{"../base.js":18}],61:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30488,6 +32063,9 @@ var KeyboardManager = Base.$extend({
     // Constructor
     __init__: function (element, params) {
         this._registerWEvents(["key-down", "key-up", "key-hold"]);
+
+        this.__keys = {};
+
         if (element && (element instanceof Widget || element instanceof HTMLElement || element === document)) {
             this.$super(params);
             this.element = element;
@@ -30597,9 +32175,9 @@ var KeyboardManager = Base.$extend({
      * @property __event
      * @private
      * @type Object
-     * @default {}
+     * @default null
      */
-    __event: {},
+    __event: null,
 
     /**
      * The currently active keys.
@@ -30609,17 +32187,17 @@ var KeyboardManager = Base.$extend({
      * @type Object
      * @default {}
      */
-    __keys: {},
+    __keys: null,
 
     /**
      * Last key concerned.
      *
      * @property __key
      * @private
-     * @type Object
-     * @default {}
+     * @type String
+     * @default null
      */
-    __key: {},
+    __key: null,
 
     /**
      * KeyCode correspondance to key name.
@@ -30633,7 +32211,7 @@ var KeyboardManager = Base.$extend({
     /**
      * Key name correspondance to key code.
      *
-     * @property __keyCache
+     * @property __keyCodeCache
      * @private
      * @type Array
      */
@@ -30888,7 +32466,7 @@ var KeyboardManager = Base.$extend({
         }
 
         this._action = "key-up";
-        this.__keys[event.keyCode] = undefined;
+        delete this.__keys[event.keyCode];
         this._callCallbacks(this._action, [this._dump()]);
 
         if (!this._noPreventDefault) {
@@ -30908,7 +32486,7 @@ var KeyboardManager = Base.$extend({
         this._event = undefined;
 
         for (var keyCode in this.__keys) {
-            this.__keys[keyCode] = undefined;
+            delete this.__keys[keyCode];
             this.__key = this.__keyCache[keyCode];
             this._callCallbacks(this._action, [this._dump()]);
         }
@@ -30917,7 +32495,7 @@ var KeyboardManager = Base.$extend({
 
 module.exports = KeyboardManager;
 
-},{"../base.js":18,"../helpers.js":34,"../widget.js":71}],57:[function(require,module,exports){
+},{"../base.js":18,"../helpers.js":39,"../widget.js":76}],62:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31594,6 +33172,11 @@ var MouseManager = Base.$extend({
         }
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("drag-end", event);
+        } else if (event.button === 0 && this._btnLeft ||
+            event.button === 1 && this._btnMiddle ||
+            event.button === 2 && this._btnRight) {
+
+            this._stateMachine("mouse-up", event);
         }
     },
 
@@ -31648,7 +33231,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":18,"../helpers.js":34,"../widget.js":71}],58:[function(require,module,exports){
+},{"../base.js":18,"../helpers.js":39,"../widget.js":76}],63:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31874,7 +33457,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":18}],59:[function(require,module,exports){
+},{"../base.js":18}],64:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32049,7 +33632,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":18,"stonejs":12}],60:[function(require,module,exports){
+},{"../base.js":18,"stonejs":12}],65:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32158,12 +33741,17 @@ photonui.TabItem = require("./container/tabitem.js");
 photonui.TabLayout = require("./layout/tablayout.js");
 photonui.IconButton = require("./interactive/iconbutton.js");
 photonui.Template = require("./visual/template.js");
+photonui.DataView = require("./dataview/dataview.js");
+photonui.FluidView = require("./dataview/fluidview.js");
+photonui.ListView = require("./dataview/listview.js");
+photonui.TableView = require("./dataview/tableview.js");
+photonui.IconView = require("./dataview/iconview.js");
 // [generator]
 // DO NOT MODIFY/REMOVE THE PREVIOUS COMMENT, IT IS USED BY THE WIDGET GENERATOR!
 
 module.exports = photonui;
 
-},{"./base.js":18,"./composite/colorbutton.js":19,"./composite/colorpickerdialog.js":20,"./composite/fontselect.js":21,"./composite/popupmenu.js":22,"./composite/select.js":23,"./container/basewindow.js":24,"./container/container.js":25,"./container/dialog.js":26,"./container/expander.js":27,"./container/menuitem.js":28,"./container/popupwindow.js":29,"./container/submenuitem.js":30,"./container/tabitem.js":31,"./container/viewport.js":32,"./container/window.js":33,"./helpers.js":34,"./interactive/button.js":35,"./interactive/checkbox.js":36,"./interactive/colorpalette.js":37,"./interactive/colorpicker.js":38,"./interactive/field.js":39,"./interactive/iconbutton.js":40,"./interactive/numericfield.js":41,"./interactive/slider.js":42,"./interactive/switch.js":43,"./interactive/textareafield.js":44,"./interactive/textfield.js":45,"./interactive/togglebutton.js":46,"./layout/boxlayout.js":47,"./layout/fluidlayout.js":48,"./layout/gridlayout.js":49,"./layout/layout.js":50,"./layout/menu.js":51,"./layout/tablayout.js":52,"./nonvisual/accelmanager.js":53,"./nonvisual/color.js":54,"./nonvisual/filemanager.js":55,"./nonvisual/keyboardmanager.js":56,"./nonvisual/mousemanager.js":57,"./nonvisual/spritesheet.js":58,"./nonvisual/translation.js":59,"./visual/baseicon.js":61,"./visual/canvas.js":62,"./visual/faicon.js":63,"./visual/image.js":64,"./visual/label.js":65,"./visual/progressbar.js":66,"./visual/separator.js":67,"./visual/spriteicon.js":68,"./visual/template.js":69,"./visual/text.js":70,"./widget.js":71,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":13}],61:[function(require,module,exports){
+},{"./base.js":18,"./composite/colorbutton.js":19,"./composite/colorpickerdialog.js":20,"./composite/fontselect.js":21,"./composite/popupmenu.js":22,"./composite/select.js":23,"./container/basewindow.js":24,"./container/container.js":25,"./container/dialog.js":26,"./container/expander.js":27,"./container/menuitem.js":28,"./container/popupwindow.js":29,"./container/submenuitem.js":30,"./container/tabitem.js":31,"./container/viewport.js":32,"./container/window.js":33,"./dataview/dataview.js":34,"./dataview/fluidview.js":35,"./dataview/iconview.js":36,"./dataview/listview.js":37,"./dataview/tableview.js":38,"./helpers.js":39,"./interactive/button.js":40,"./interactive/checkbox.js":41,"./interactive/colorpalette.js":42,"./interactive/colorpicker.js":43,"./interactive/field.js":44,"./interactive/iconbutton.js":45,"./interactive/numericfield.js":46,"./interactive/slider.js":47,"./interactive/switch.js":48,"./interactive/textareafield.js":49,"./interactive/textfield.js":50,"./interactive/togglebutton.js":51,"./layout/boxlayout.js":52,"./layout/fluidlayout.js":53,"./layout/gridlayout.js":54,"./layout/layout.js":55,"./layout/menu.js":56,"./layout/tablayout.js":57,"./nonvisual/accelmanager.js":58,"./nonvisual/color.js":59,"./nonvisual/filemanager.js":60,"./nonvisual/keyboardmanager.js":61,"./nonvisual/mousemanager.js":62,"./nonvisual/spritesheet.js":63,"./nonvisual/translation.js":64,"./visual/baseicon.js":66,"./visual/canvas.js":67,"./visual/faicon.js":68,"./visual/image.js":69,"./visual/label.js":70,"./visual/progressbar.js":71,"./visual/separator.js":72,"./visual/spriteicon.js":73,"./visual/template.js":74,"./visual/text.js":75,"./widget.js":76,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":13}],66:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32231,7 +33819,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":71}],62:[function(require,module,exports){
+},{"../widget.js":76}],67:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32512,7 +34100,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":71}],63:[function(require,module,exports){
+},{"../widget.js":76}],68:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32685,7 +34273,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":61}],64:[function(require,module,exports){
+},{"./baseicon.js":66}],69:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32840,7 +34428,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":71}],65:[function(require,module,exports){
+},{"../widget.js":76}],70:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33050,7 +34638,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":34,"../widget.js":71}],66:[function(require,module,exports){
+},{"../helpers.js":39,"../widget.js":76}],71:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33280,7 +34868,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":71}],67:[function(require,module,exports){
+},{"../widget.js":76}],72:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33421,7 +35009,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":71}],68:[function(require,module,exports){
+},{"../widget.js":76}],73:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33603,7 +35191,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":58,"./baseicon.js":61}],69:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":63,"./baseicon.js":66}],74:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33760,7 +35348,7 @@ var Template = Widget.$extend({
 
 module.exports = Template;
 
-},{"../helpers.js":34,"../widget.js":71,"lodash":8}],70:[function(require,module,exports){
+},{"../helpers.js":39,"../widget.js":76,"lodash":8}],75:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33906,7 +35494,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":34,"../widget.js":71,"stonejs":12}],71:[function(require,module,exports){
+},{"../helpers.js":39,"../widget.js":76,"stonejs":12}],76:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -34439,5 +36027,5 @@ var Widget = Base.$extend({
 
 module.exports = Widget;
 
-},{"./base.js":18,"./container/popupwindow.js":29,"./helpers.js":34,"stonejs":12,"uuid":13}]},{},[60])(60)
+},{"./base.js":18,"./container/popupwindow.js":29,"./helpers.js":39,"stonejs":12,"uuid":13}]},{},[65])(65)
 });

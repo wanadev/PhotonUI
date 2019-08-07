@@ -81,6 +81,9 @@ var KeyboardManager = Base.$extend({
     // Constructor
     __init__: function (element, params) {
         this._registerWEvents(["key-down", "key-up", "key-hold"]);
+
+        this.__keys = {};
+
         if (element && (element instanceof Widget || element instanceof HTMLElement || element === document)) {
             this.$super(params);
             this.element = element;
@@ -190,9 +193,9 @@ var KeyboardManager = Base.$extend({
      * @property __event
      * @private
      * @type Object
-     * @default {}
+     * @default null
      */
-    __event: {},
+    __event: null,
 
     /**
      * The currently active keys.
@@ -202,17 +205,17 @@ var KeyboardManager = Base.$extend({
      * @type Object
      * @default {}
      */
-    __keys: {},
+    __keys: null,
 
     /**
      * Last key concerned.
      *
      * @property __key
      * @private
-     * @type Object
-     * @default {}
+     * @type String
+     * @default null
      */
-    __key: {},
+    __key: null,
 
     /**
      * KeyCode correspondance to key name.
@@ -226,7 +229,7 @@ var KeyboardManager = Base.$extend({
     /**
      * Key name correspondance to key code.
      *
-     * @property __keyCache
+     * @property __keyCodeCache
      * @private
      * @type Array
      */
@@ -481,7 +484,7 @@ var KeyboardManager = Base.$extend({
         }
 
         this._action = "key-up";
-        this.__keys[event.keyCode] = undefined;
+        delete this.__keys[event.keyCode];
         this._callCallbacks(this._action, [this._dump()]);
 
         if (!this._noPreventDefault) {
@@ -501,7 +504,7 @@ var KeyboardManager = Base.$extend({
         this._event = undefined;
 
         for (var keyCode in this.__keys) {
-            this.__keys[keyCode] = undefined;
+            delete this.__keys[keyCode];
             this.__key = this.__keyCache[keyCode];
             this._callCallbacks(this._action, [this._dump()]);
         }
