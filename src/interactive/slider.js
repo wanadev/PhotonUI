@@ -119,11 +119,6 @@ var Slider = NumericField.$extend({
      * @readOnly
      */
     getHtml: function () {
-        // Hack: force grip position after insertion into the DOM...
-        setTimeout(function () {
-            this.value = this.value;
-        }.bind(this), 10);
-
         return this.__html.outer;
     },
 
@@ -144,8 +139,8 @@ var Slider = NumericField.$extend({
         var v = this.value - this.min;
         var m = this.max - this.min;
         var p = Math.min(Math.max(v / m, 0), 1);
-        this.__html.grip.style.left = "calc(" + Math.floor(p * 100) + "% - " +
-                                      Math.floor(this.__html.grip.offsetWidth * p) + "px)";
+        this.__html.grip.style.left = Math.floor(p * 100) + "%";
+        this.__html.grip.style.transform = "translateX(" + (-100 * p) + "%)";
     },
 
     /**
