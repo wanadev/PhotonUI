@@ -88,7 +88,8 @@
  */
 .photonui-widget {
   display: inline-block;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   margin: 0;
   font-family: Arial, sans-serif;
   font-size: 11pt;
@@ -213,18 +214,24 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .photonui-select {
   min-width: 75px;
   min-height: 30px;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   outline: none;
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-align: center;
-      align-items: center;
-  -ms-flex-direction: row;
-      flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 .photonui-select .photonui-menuitem {
-  -ms-flex-positive: 1;
-      flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 .photonui-select .photonui-menuitem .photonui-menuitem-icon {
   width: auto;
@@ -340,7 +347,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Alexis BREUST
  */
 .photonui-expander {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   display: block;
 }
 .photonui-expander-title {
@@ -354,7 +362,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-expander-content {
   display: block;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   width: 100%;
 }
 /*
@@ -387,21 +396,25 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 .photonui-menuitem {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-align: center;
-      align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   height: 30px;
   padding: 0 5px;
   text-align: left;
 }
 .photonui-menuitem .photonui-menuitem-icon {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   width: 16px;
   min-width: 16px;
   max-width: 16px;
@@ -413,8 +426,9 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   color: inherit;
 }
 .photonui-menuitem .photonui-menuitem-text {
-  -ms-flex-positive: 1;
-      flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -453,7 +467,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  */
 .photonui-popupwindow {
   z-index: 4000;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
@@ -556,7 +571,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 .photonui-viewport {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   vertical-align: middle;
 }
 .photonui-viewport > * {
@@ -592,46 +608,58 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 .photonui-boxlayout {
+  display: -webkit-box !important;
   display: -ms-flexbox !important;
   display: flex !important;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-boxlayout.photonui-layout-orientation-horizontal {
-  -ms-flex-direction: row;
-      flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 .photonui-boxlayout.photonui-layout-orientation-vertical {
-  -ms-flex-direction: column;
-      flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 .photonui-boxlayout > .photonui-boxlayout-item {
   -webit-flex-grow: 1;
-  -ms-flex-positive: 1;
-      flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: row;
-      flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 .photonui-boxlayout > .photonui-boxlayout-item > * {
   display: block;
   width: 100%;
 }
 .photonui-boxlayout > .photonui-layout-align-stretch {
+  -webkit-align-self: stretch;
   -ms-flex-item-align: stretch;
-      -ms-grid-row-align: stretch;
       align-self: stretch;
 }
 .photonui-boxlayout > .photonui-layout-align-start {
+  -webkit-align-self: flex-start;
   -ms-flex-item-align: start;
       align-self: flex-start;
 }
 .photonui-boxlayout > .photonui-layout-align-center {
+  -webkit-align-self: center;
   -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
       align-self: center;
 }
 .photonui-boxlayout > .photonui-layout-align-end {
+  -webkit-align-self: flex-end;
   -ms-flex-item-align: end;
       align-self: flex-end;
 }
@@ -666,12 +694,15 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  */
 .photonui-fluidlayout {
   overflow: hidden;
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-align: stretch;
-      align-items: stretch;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
 }
 .photonui-fluidlayout > .photonui-fluidlayout-innerbox {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
@@ -683,7 +714,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-fluidlayout > .photonui-fluidlayout-innerbox > .photonui-container.photonui-layout-align-stretch {
   -ms-flex-item-align: stretch;
-      -ms-grid-row-align: stretch;
       align-self: stretch;
   height: 100%;
 }
@@ -696,7 +726,6 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-fluidlayout > .photonui-fluidlayout-innerbox > .photonui-container.photonui-layout-align-center {
   -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
       align-self: center;
 }
 .photonui-fluidlayout > .photonui-fluidlayout-innerbox > .photonui-container.photonui-layout-align-end {
@@ -734,17 +763,20 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  */
 .photonui-gridlayout {
   display: inline-block;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-gridlayout > table {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   border-collapse: collapse;
   width: 100%;
   height: 100%;
 }
 .photonui-gridlayout > table > tbody > tr > td.photonui-gridlayout-cell {
   padding: 0;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-gridlayout > table > tbody > tr > td.photonui-gridlayout-cell > .photonui-gridlayout-wrapper {
   display: inline-block;
@@ -817,7 +849,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 .photonui-menu {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   vertical-align: middle;
 }
 .photonui-menu > * {
@@ -940,7 +973,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   text-align: center;
 }
 .photonui-colorpicker .photonui-colorpicker-previewouter {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   width: 100%;
   display: block;
   height: 35px;
@@ -951,7 +985,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   height: 35px;
   border: none;
   width: 100%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
@@ -983,7 +1018,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 .photonui-field {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   min-height: 30px;
 }
 /*
@@ -1016,23 +1052,30 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  * Authored by: Fabien LOISON <http://flozz.fr/>
  */
 .photonui-slider {
+  display: -webkit-box !important;
   display: -ms-flexbox !important;
   display: flex !important;
-  -ms-flex-direction: row;
-      flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
   flew-wrap: nowrap;
-  -ms-flex-align: center;
-      align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 .photonui-slider .photonui-slider-slider {
-  box-sizing: border-box;
-  -ms-flex-positive: 1;
-      flex-grow: 1;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 .photonui-slider .photonui-slider-slider .photonui-slider-grip {
   position: relative;
   display: block;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-slider .photonui-field {
   width: 25%;
@@ -1075,7 +1118,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   display: none;
 }
 .photonui-switch span {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   display: block;
 }
 .photonui-switch span:after {
@@ -1083,7 +1127,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   display: block;
   width: 50%;
   height: 100%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-switch input:checked + span:after {
   margin-left: 50%;
@@ -1324,7 +1369,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  */
 .photonui-progressbar {
   position: relative;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   min-height: 26px;
   min-width: 26px;
   cursor: default;
@@ -1332,7 +1378,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-progressbar .photonui-progressbar-bar {
   z-index: 1;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   position: absolute;
   top: 0;
   left: 0;
@@ -1340,7 +1387,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .photonui-progressbar .photonui-progressbar-text {
   z-index: 2;
   position: absolute;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   white-space: nowrap;
   text-align: center;
   width: 100%;
@@ -1380,7 +1428,43 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
     left: 100% ;
   }
 }
+@-webkit-keyframes photonui-progressbar-pulsate-horizontal {
+  0% {
+    width: 0% ;
+    left: 0% ;
+  }
+  33% {
+    width: 30% ;
+    left: 0% ;
+  }
+  75% {
+    width: 30% ;
+    left: 70% ;
+  }
+  100% {
+    width: 0% ;
+    left: 100% ;
+  }
+}
 @keyframes photonui-progressbar-pulsate-vertical {
+  0% {
+    height: 0% ;
+    bottom: 0% ;
+  }
+  25% {
+    height: 30% ;
+    bottom: 0% ;
+  }
+  75% {
+    height: 30% ;
+    bottom: 70% ;
+  }
+  100% {
+    height: 0% ;
+    bottom: 100% ;
+  }
+}
+@-webkit-keyframes photonui-progressbar-pulsate-vertical {
   0% {
     height: 0% ;
     bottom: 0% ;
@@ -1403,14 +1487,16 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 }
 .photonui-progressbar.photonui-progressbar-pulsate.photonui-progressbar-horizontal .photonui-progressbar-bar {
   width: 20%;
-  animation: photonui-progressbar-pulsate-horizontal linear 1.5s infinite;
+  -webkit-animation: photonui-progressbar-pulsate-horizontal linear 1.5s infinite;
+          animation: photonui-progressbar-pulsate-horizontal linear 1.5s infinite;
 }
 .photonui-progressbar.photonui-progressbar-pulsate.photonui-progressbar-vertical .photonui-progressbar-text {
   display: none;
 }
 .photonui-progressbar.photonui-progressbar-pulsate.photonui-progressbar-vertical .photonui-progressbar-bar {
   height: 20%;
-  animation: photonui-progressbar-pulsate-vertical linear 1.5s infinite;
+  -webkit-animation: photonui-progressbar-pulsate-vertical linear 1.5s infinite;
+          animation: photonui-progressbar-pulsate-vertical linear 1.5s infinite;
 }
 /*
  * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
@@ -1568,9 +1654,11 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .photonui-tablayout {
   display: inline-block;
   height: 100%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-tablayout .photonui-tablayout-innerbox {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: nowrap;
@@ -1579,14 +1667,18 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   height: 100%;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-tabs .photonui-tabitem-tab {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   min-width: 10px;
   max-width: 150px;
   overflow: hidden;
@@ -1606,47 +1698,65 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   vertical-align: baseline;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   min-height: 20px;
   min-width: 20px;
-  -ms-flex-positive: 1;
-      flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 .photonui-tablayout .photonui-tablayout-innerbox .photonui-tablayout-content > * {
   height: 100%;
   width: 100%;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox {
-  -ms-flex-direction: column;
-      flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-top > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: row;
-      flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox {
-  -ms-flex-direction: column-reverse;
-      flex-direction: column-reverse;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: column-reverse;
+          flex-direction: column-reverse;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-bottom > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: row;
-      flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox {
-  -ms-flex-direction: row;
-      flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-left > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: column;
-      flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox {
-  -ms-flex-direction: row-reverse;
-      flex-direction: row-reverse;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse;
 }
 .photonui-tablayout.photonui-tablayout-tabposition-right > .photonui-tablayout-innerbox > .photonui-tablayout-tabs {
-  -ms-flex-direction: column;
-      flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
@@ -1743,8 +1853,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('assets/fontawesome-webfont.eot?v=4.7.0');
-  src: url('assets/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('assets/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('assets/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('assets/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('assets/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
+  src: url('./assets/fontawesome-webfont.eot?v=4.7.0');
+  src: url('./assets/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('./assets/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('./assets/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('./assets/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('./assets/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -1797,9 +1907,9 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   left: -1.85714286em;
 }
 .fa-border {
-  padding: .2em .25em .15em;
+  padding: 0.2em 0.25em 0.15em;
   border: solid 0.08em #eee;
-  border-radius: .1em;
+  border-radius: 0.1em;
 }
 .fa-pull-left {
   float: left;
@@ -1808,10 +1918,10 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   float: right;
 }
 .fa.fa-pull-left {
-  margin-right: .3em;
+  margin-right: 0.3em;
 }
 .fa.fa-pull-right {
-  margin-left: .3em;
+  margin-left: 0.3em;
 }
 /* Deprecated as of 4.4.0 */
 .pull-right {
@@ -1821,43 +1931,62 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   float: left;
 }
 .fa.pull-left {
-  margin-right: .3em;
+  margin-right: 0.3em;
 }
 .fa.pull-right {
-  margin-left: .3em;
+  margin-left: 0.3em;
 }
 .fa-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
   animation: fa-spin 2s infinite linear;
 }
 .fa-pulse {
+  -webkit-animation: fa-spin 1s infinite steps(8);
   animation: fa-spin 1s infinite steps(8);
 }
-@keyframes fa-spin {
+@-webkit-keyframes fa-spin {
   0% {
+    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
   100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
 }
 .fa-rotate-90 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
+  -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 .fa-rotate-180 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
+  -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
 }
 .fa-rotate-270 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
+  -webkit-transform: rotate(270deg);
   transform: rotate(270deg);
 }
 .fa-flip-horizontal {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
+  -webkit-transform: scale(-1, 1);
   transform: scale(-1, 1);
 }
 .fa-flip-vertical {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
+  -webkit-transform: scale(1, -1);
   transform: scale(1, -1);
 }
 :root .fa-rotate-90,
@@ -1865,7 +1994,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 :root .fa-rotate-270,
 :root .fa-flip-horizontal,
 :root .fa-flip-vertical {
-  filter: none;
+  -webkit-filter: none;
+          filter: none;
 }
 .fa-stack {
   position: relative;
@@ -4276,7 +4406,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
  */
 .photonui-template {
   height: 100%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-dataview-item[draggable] {
   cursor: -webkit-grab;
@@ -4322,6 +4453,7 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
@@ -4376,7 +4508,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
 .photonui-listview .photonui-listview-item {
   padding: 6px 8px;
   border-bottom: 1px solid #fff;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .photonui-listview .photonui-listview-item.selected {
   background-color: #aaa;
