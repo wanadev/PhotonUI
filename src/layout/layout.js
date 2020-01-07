@@ -258,7 +258,7 @@ var Layout = Container.$extend({
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var children = this.children;
         for (var i = 0 ; i < children.length ; i++) {
-            if (!(this.child instanceof Widget)) {
+            if (!(children[i] instanceof Widget)) {
                 continue;
             }
             children[i]._visibilityChanged(visibility);
