@@ -117,6 +117,28 @@ var Image_ = Widget.$extend({
     },
 
     /**
+     * The image loading
+     *
+     * @property loading
+     * @type Number
+     * @default null
+     */
+    _loading: null,
+
+    getLoading: function () {
+        return this._loading;
+    },
+
+    setLoading: function (loading) {
+        if (loading !== null) {
+            this._loading = loading;
+            this.__html.image.loading = loading;
+        } else {
+            this.__html.image.loading = "";
+        }
+    },
+
+    /**
      * Html outer element of the widget (if any).
      *
      * @property html
@@ -145,6 +167,7 @@ var Image_ = Widget.$extend({
         this.__html.div.className = "photonui-widget photonui-image";
 
         this.__html.image = document.createElement("img");
+        this.__html.image.setAttribute("loading", this._loading);
         this.__html.div.appendChild(this.__html.image);
     }
 
