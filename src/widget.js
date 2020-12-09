@@ -511,7 +511,7 @@ var Widget = Base.$extend({
         /**
          * Insert a widget in the DOM.
          *
-         * method domInsert
+         * @method domInsert
          * @static
          * @param {photonui.Widget} widget The widget to insert.
          * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
