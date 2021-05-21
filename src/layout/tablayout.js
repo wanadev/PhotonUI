@@ -55,7 +55,6 @@ var TabLayout = Layout.$extend({
     __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
-        this.activeTab = this.activeTab;
     },
 
     //////////////////////////////////////////
@@ -173,14 +172,6 @@ var TabLayout = Layout.$extend({
         if (tab instanceof Widget) {
             this.activeTabName = tab.name;
         } else {
-            this.activeTabName = null;
-        }
-    },
-
-    //
-    setChildrenNames: function (childrenNames) {
-        this.$super(childrenNames);
-        if (!this.activeTabName) {
             this.activeTabName = null;
         }
     },
