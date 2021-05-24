@@ -182,6 +182,11 @@ var TabLayout = Layout.$extend({
 
     // ====== Public methods ======
 
+    show() {
+        this.$super();
+        if (!this._activeTabName) this.activeTabName = null;
+    },
+
     addChild: function (widget, layoutOptions) {
         this.$super(widget, layoutOptions);
         if (!this.activeTabName && widget instanceof TabItem) {
