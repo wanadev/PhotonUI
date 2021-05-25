@@ -182,8 +182,8 @@ var TabLayout = Layout.$extend({
 
     // ====== Public methods ======
 
-    show() {
-        this.$super();
+    setVisible: function (visible) {
+        this.$super(visible);
         if (!this._activeTabName) this.activeTabName = null;
     },
 
