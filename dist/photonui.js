@@ -23423,7 +23423,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
         this.__html.windowTitleCloseButton = document.createElement("button");
         this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button fa fa-times";
-        this.__html.windowTitleCloseButton.title = Stone.lazyGettext("Close");
+        this.__html.windowTitleCloseButton.title = _("Close");
         this.__html.windowTitle.appendChild(this.__html.windowTitleCloseButton);
 
         this.__html.windowTitleText = document.createElement("span");
@@ -30216,7 +30216,6 @@ var TabLayout = Layout.$extend({
     __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
-        this.activeTab = this.activeTab;
     },
 
     //////////////////////////////////////////
@@ -30338,19 +30337,16 @@ var TabLayout = Layout.$extend({
         }
     },
 
-    //
-    setChildrenNames: function (childrenNames) {
-        this.$super(childrenNames);
-        if (!this.activeTabName) {
-            this.activeTabName = null;
-        }
-    },
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
     // ====== Public methods ======
+
+    setVisible: function (visible) {
+        this.$super(visible);
+        if (!this._activeTabName) this.activeTabName = null;
+    },
 
     addChild: function (widget, layoutOptions) {
         this.$super(widget, layoutOptions);
