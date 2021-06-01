@@ -77,13 +77,13 @@ var Widget = Base.$extend({
         // wEvents
         this._registerWEvents(["show", "hide"]);
 
+        // Name must be set before other properties (e.g. needed when setting children)
+        if (!this._name) {
+            this.name = params && params.name ? params.name : "widget-" + uuid.v4();
+        }
+
         // Parent constructor
         this.$super(params);
-
-        // Default name
-        if (!this.name) {
-            this.name = "widget-" + uuid.v4();
-        }
 
         // Additional className
         if (params && params.className) {
