@@ -184,7 +184,9 @@ var TabLayout = Layout.$extend({
 
     setVisible: function (visible) {
         this.$super(visible);
-        if (!this._activeTabName) this.activeTabName = null;
+        if (!this._activeTabName) {
+            this.activeTabName = null;
+        }
     },
 
     addChild: function (widget, layoutOptions) {
