@@ -506,31 +506,23 @@ var MouseManager = Base.$extend({
         // Load the current state
         this._action = action;
         this.__event = event;
-        this._button = null;
-        if (event.button === 0) {
-            this._button = "left";
-        }
-        if (event.button === 1) {
-            this._button = "middle";
-        }
-        if (event.button === 2) {
-            this._button = "right";
-        }
-
         // Analyze the event
 
         // Mouse Down / Mouse Up
         if (action == "mouse-down") {
             this.__mouseDownEvent = event;
-
+    
             if (event.button === 0) {
                 this._btnLeft = true;
+                this._button = "left";
             }
             if (event.button === 1) {
                 this._btnMiddle = true;
+                this._button = "middle";
             }
             if (event.button === 2) {
                 this._btnRight = true;
+                this._button = "right";
             }
 
             this._callCallbacks("mouse-event", [this._dump()]);
