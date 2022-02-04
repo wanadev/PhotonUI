@@ -511,7 +511,6 @@ var MouseManager = Base.$extend({
         // Mouse Down / Mouse Up
         if (action == "mouse-down") {
             this.__mouseDownEvent = event;
-    
             if (event.button === 0) {
                 this._btnLeft = true;
                 this._button = "left";
