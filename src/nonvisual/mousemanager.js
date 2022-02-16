@@ -704,15 +704,26 @@ var MouseManager = Base.$extend({
     },
 
     /**
-     * @method __onWheel
+     * @method __onMouseWheel
      * @private
      * @param event
      */
-    __onWheel: function (event) {
+      __onMouseWheel: function (event) {
         var wheelDelta = null;
 
-        if (event.deltaY !== undefined) {
-            wheelDelta = -event.deltaY;
+        // Webkit
+        if (event.wheelDeltaY !== undefined) {
+            wheelDelta = event.wheelDeltaY;
+        }
+        // MSIE
+        if (event.wheelDelta !== undefined) {
+            wheelDelta = event.wheelDelta;
+        }
+        // Firefox
+        if (event.axis !== undefined && event.detail !== undefined) {
+            if (event.axis == 2) { // Y
+                wheelDelta = -event.detail;
+            }
         }
 
         if (wheelDelta !== null) {
