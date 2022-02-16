@@ -704,7 +704,7 @@ var MouseManager = Base.$extend({
      * @private
      * @param event
      */
-     __onMouseWheel: function (event) {
+    __onMouseWheel: function (event) {
         var wheelDelta = null;
 
         // Webkit
