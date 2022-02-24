@@ -132,7 +132,6 @@ var MouseManager = Base.$extend({
         } else {
             this.$super(element);
         }
-        this.__dragStartButton = null; // used for state manager
     },
 
     //////////////////////////////////////////
@@ -436,6 +435,22 @@ var MouseManager = Base.$extend({
      * @default {}
      */
     __event: {},
+
+    /**
+     * The button that triggered the drag start event
+     *
+     *   * null
+     *   * "left"
+     *   * "middle"
+     *   * "right"
+     *
+     * @property __dragStartButton
+     * @private
+     * @type String
+     * @default null
+     */
+    __dragStartButton = null;
+
 
     //////////////////////////////////////////
     // Methods                              //
