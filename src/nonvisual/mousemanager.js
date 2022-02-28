@@ -436,6 +436,22 @@ var MouseManager = Base.$extend({
      */
     __event: {},
 
+    /**
+     * The button that triggered the drag start event
+     *
+     *   * null
+     *   * "left"
+     *   * "middle"
+     *   * "right"
+     *
+     * @property __dragStartButton
+     * @private
+     * @type String
+     * @default null
+     */
+    __dragStartButton = null;
+
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -506,13 +522,16 @@ var MouseManager = Base.$extend({
         this._action = action;
         this.__event = event;
         this._button = null;
-        if (event.button === 0) {
+        if (this.__dragStartButton) {
+            this._button = this.__dragStartButton;
+        }
+        else if (event.button === 0) {
             this._button = "left";
         }
-        if (event.button === 1) {
+        else if (event.button === 1) {
             this._button = "middle";
         }
-        if (event.button === 2) {
+        else if (event.button === 2) {
             this._button = "right";
         }
 
@@ -585,6 +604,7 @@ var MouseManager = Base.$extend({
             this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
             if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold ||
                 Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
+                this.__dragStartButton = this._button;
                 // Drag Start
                 this._action = "drag-start";
                 this.__event = this.__mouseDownEvent;
@@ -609,6 +629,7 @@ var MouseManager = Base.$extend({
         } else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
                  this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
+            this.__dragStartButton = null;
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         }
