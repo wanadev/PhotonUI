@@ -449,7 +449,7 @@ var MouseManager = Base.$extend({
      * @type String
      * @default null
      */
-    __dragStartButton = null;
+    __dragStartButton: null,
 
 
     //////////////////////////////////////////
