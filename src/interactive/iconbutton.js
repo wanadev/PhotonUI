@@ -72,6 +72,19 @@ var IconButton = Widget.$extend({
     // ====== Public properties ======
 
     /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.iconName && this.icon) {
+            this.icon.destroy();
+        }
+
+        this.$super();
+    },
+
+    /**
      * Button width
      *
      * @property width

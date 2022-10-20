@@ -75,6 +75,23 @@ var TabItem = Container.$extend({
     // ====== Public properties ======
 
     /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+        }
+
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+        }
+
+        this.$super();
+    },
+
+    /**
      * Tab title.
      *
      * @property title
@@ -188,12 +205,12 @@ var TabItem = Container.$extend({
     },
 
     /**
-        * Left icon widget name
-        *
-        * @property leftIconName
-        * @type String
-        * @default null
-        */
+     * Left icon widget name
+     *
+     * @property leftIconName
+     * @type String
+     * @default null
+     */
     _leftIconName: null,
 
     getLeftIconName: function () {
@@ -211,12 +228,12 @@ var TabItem = Container.$extend({
     },
 
     /**
-    * Left icon widget
-    *
-    * @property leftIcon
-    * @type photonui.Icon
-    * @default null
-    */
+     * Left icon widget
+     *
+     * @property leftIcon
+     * @type photonui.Icon
+     * @default null
+     */
     getLeftIcon: function () {
         return Widget.getWidget(this._leftIconName);
     },

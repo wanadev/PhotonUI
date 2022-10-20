@@ -75,6 +75,23 @@ var Button = Widget.$extend({
     // ====== Public properties ======
 
     /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+        }
+
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+        }
+
+        this.$super();
+    },
+
+    /**
      * The button text.
      *
      * @property text

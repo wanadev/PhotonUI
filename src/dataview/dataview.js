@@ -40,7 +40,7 @@ var lodash = require("lodash");
 
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
-var Text = require("../visual/text.js");
+var Layout = require("../layout/layout.js");
 
 /**
  * DataView container.
@@ -65,9 +65,9 @@ var Text = require("../visual/text.js");
  *
  * @class DataView
  * @constructor
- * @extends photonui.Widget
+ * @extends photonui.Layout
  */
-var DataView = Widget.$extend({
+var DataView = Layout.$extend({
 
     // Constructor
     __init__: function (params) {
@@ -124,6 +124,8 @@ var DataView = Widget.$extend({
     },
 
     setItems: function (items) {
+        this.empty();
+
         items = items || [];
         this.$data.items = items.map(function (item, index) {
             return typeof(item) === "object" ? {
@@ -481,6 +483,7 @@ var DataView = Widget.$extend({
         }
 
         Helpers.cleanNode(this.__html.container);
+        this._childrenNames = [];
 
         if (this.$data.items) {
             var fragment = document.createDocumentFragment();
@@ -519,6 +522,7 @@ var DataView = Widget.$extend({
             var widget = this.customWidgetFormater.call(this, item.value);
 
             if (widget && widget instanceof Widget) {
+                this.addChild(widget);
                 node.appendChild(widget.getHtml());
                 return node;
             }
@@ -569,6 +573,7 @@ var DataView = Widget.$extend({
         }
 
         if (content instanceof Widget) {
+            this.addChild(content);
             node.appendChild(content.getHtml());
         } else if (rawHtml) {
             node.innerHTML = content || "";
@@ -802,6 +807,15 @@ var DataView = Widget.$extend({
         this._addIdentifiersClasses(placeholderElement, "item-placeholder");
 
         return placeholderElement;
+    },
+
+    /**
+     * Update the layout.
+     *
+     * @method _updateLayout
+     * @private
+     */
+     _updateLayout: function () {
     },
 
     //////////////////////////////////////////
