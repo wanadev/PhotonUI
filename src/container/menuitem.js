@@ -68,19 +68,6 @@ var MenuItem = Container.$extend({
     // ====== Public properties ======
 
     /**
-     * Destroy the widget.
-     *
-     * @method destroy
-     */
-    destroy: function () {
-        if (this.iconName && this.icon) {
-            this.icon.destroy();
-        }
-
-        this.$super();
-    },
-
-    /**
      * An optional value for the item (can be used in select).
      *
      * @property value
@@ -208,6 +195,21 @@ var MenuItem = Container.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.iconName && this.icon) {
+            this.icon.destroy();
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 

@@ -75,23 +75,6 @@ var TabItem = Container.$extend({
     // ====== Public properties ======
 
     /**
-     * Destroy the widget.
-     *
-     * @method destroy
-     */
-    destroy: function () {
-        if (this.leftIconName && this.leftIcon) {
-            this.leftIcon.destroy();
-        }
-
-        if (this.rightIconName && this.rightIcon) {
-            this.rightIcon.destroy();
-        }
-
-        this.$super();
-    },
-
-    /**
      * Tab title.
      *
      * @property title
@@ -328,6 +311,25 @@ var TabItem = Container.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+        }
+
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 
