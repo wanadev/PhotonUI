@@ -141,7 +141,11 @@ var DataView = Layout.$extend({
             };
         });
 
-        this._updateLayout();
+        if (!this.$data._manuallySetColumns) {
+            this._generateColumns();
+        }
+
+        this._buildItemsHtml();
     },
 
     /**
@@ -811,13 +815,7 @@ var DataView = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function () {
-        if (!this.$data._manuallySetColumns) {
-            this._generateColumns();
-        }
-
-        this._buildItemsHtml();
-    },
+    _updateLayout: function () {},
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
