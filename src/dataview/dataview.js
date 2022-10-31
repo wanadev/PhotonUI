@@ -40,7 +40,6 @@ var lodash = require("lodash");
 
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
-var Layout = require("../layout/layout.js");
 
 /**
  * DataView container.
@@ -65,9 +64,9 @@ var Layout = require("../layout/layout.js");
  *
  * @class DataView
  * @constructor
- * @extends photonui.Layout
+ * @extends photonui.Widget
  */
-var DataView = Layout.$extend({
+var DataView = Widget.$extend({
 
     // Constructor
     __init__: function (params) {
@@ -113,6 +112,44 @@ var DataView = Layout.$extend({
     },
 
     /**
+     * Dataview children widgets name.
+     *
+     * @property childrenNames
+     * @type Array
+     * @default []
+     */
+    _childrenNames: [],
+
+     /**
+     * Layout children widgets.
+     *
+     * @property children
+     * @type Array
+     * @default []
+     */
+    getChildren: function () {
+        var children = [];
+        var widget;
+        for (var i = 0 ; i < this._childrenNames.length ; i++) {
+            widget = Widget.getWidget(this._childrenNames[i]);
+            if (widget instanceof Widget) {
+                children.push(widget);
+            }
+        }
+        return children;
+    },
+
+    setChildren: function (children) {
+        var childrenNames = [];
+        for (var i = 0 ; i < children.length ; i++) {
+            if (children[i] instanceof Widget) {
+                childrenNames.push(children[i].name);
+            }
+        }
+        this._childrenNames = childrenNames;
+    },
+
+    /**
      * The collection of items displayed by the data view widget.
      *
      * @property items
@@ -141,11 +178,7 @@ var DataView = Layout.$extend({
             };
         });
 
-        if (!this.$data._manuallySetColumns) {
-            this._generateColumns();
-        }
-
-        this._buildItemsHtml();
+        this._updateLayout();
     },
 
     /**
@@ -386,6 +419,30 @@ var DataView = Layout.$extend({
     // ====== Public methods ======
 
     /**
+     * Destroy all children of the layout
+     *
+     * @method empty
+     */
+    empty: function () {
+        var children = this.children;
+        for (var i = 0 ; i < children.length ; i++) {
+            if (children[i]) {
+                children[i].destroy();
+            }
+        }
+    },
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+      destroy: function () {
+        this.empty();
+        this.$super();
+    },
+
+    /**
      * Selects the item(s) at given indexes.
      *
      * @method selectItems
@@ -522,7 +579,7 @@ var DataView = Layout.$extend({
             var widget = this.customWidgetFormater.call(this, item.value);
 
             if (widget && widget instanceof Widget) {
-                this.addChild(widget);
+                this._childrenNames.push(widget.name);
                 node.appendChild(widget.getHtml());
                 return node;
             }
@@ -573,7 +630,7 @@ var DataView = Layout.$extend({
         }
 
         if (content instanceof Widget) {
-            this.addChild(content);
+            this._childrenNames.push(content.name);
             node.appendChild(content.getHtml());
         } else if (rawHtml) {
             node.innerHTML = content || "";
@@ -815,7 +872,13 @@ var DataView = Layout.$extend({
      * @method _updateLayout
      * @private
      */
-    _updateLayout: function () {},
+    _updateLayout: function () {
+        if (!this.$data._manuallySetColumns) {
+            this._generateColumns();
+        }
+
+        this._buildItemsHtml();
+    },
 
     //////////////////////////////////////////
     // Internal Events Callbacks            //
