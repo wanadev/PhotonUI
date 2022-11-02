@@ -127,7 +127,7 @@ var DataView = Widget.$extend({
      * @type Array
      * @default []
      */
-    getChildren: function () {
+    _getChildren: function () {
         var children = [];
         var widget;
         for (var i = 0 ; i < this._childrenNames.length ; i++) {
@@ -139,7 +139,7 @@ var DataView = Widget.$extend({
         return children;
     },
 
-    setChildren: function (children) {
+    _setChildren: function (children) {
         var childrenNames = [];
         for (var i = 0 ; i < children.length ; i++) {
             if (children[i] instanceof Widget) {
@@ -161,7 +161,7 @@ var DataView = Widget.$extend({
     },
 
     setItems: function (items) {
-        this.empty();
+        this._empty();
 
         items = items || [];
         this.$data.items = items.map(function (item, index) {
@@ -178,7 +178,11 @@ var DataView = Widget.$extend({
             };
         });
 
-        this._updateLayout();
+        if (!this.$data._manuallySetColumns) {
+            this._generateColumns();
+        }
+
+        this._buildItemsHtml();
     },
 
     /**
@@ -419,26 +423,12 @@ var DataView = Widget.$extend({
     // ====== Public methods ======
 
     /**
-     * Destroy all children of the layout
-     *
-     * @method empty
-     */
-    empty: function () {
-        var children = this.children;
-        for (var i = 0 ; i < children.length ; i++) {
-            if (children[i]) {
-                children[i].destroy();
-            }
-        }
-    },
-
-    /**
      * Destroy the widget.
      *
      * @method destroy
      */
-      destroy: function () {
-        this.empty();
+    destroy: function () {
+        this._empty();
         this.$super();
     },
 
@@ -489,6 +479,20 @@ var DataView = Widget.$extend({
     },
 
     // ====== Private methods ======
+
+    /**
+     * Destroy all children of the layout
+     *
+     * @method _empty
+     */
+    _empty: function () {
+        var children = this._getChildren();
+        for (var i = 0 ; i < children.length ; i++) {
+            if (children[i]) {
+                children[i].destroy();
+            }
+        }
+    },
 
     /**
      * Returns the item at a given index.
@@ -864,20 +868,6 @@ var DataView = Widget.$extend({
         this._addIdentifiersClasses(placeholderElement, "item-placeholder");
 
         return placeholderElement;
-    },
-
-    /**
-     * Update the layout.
-     *
-     * @method _updateLayout
-     * @private
-     */
-    _updateLayout: function () {
-        if (!this.$data._manuallySetColumns) {
-            this._generateColumns();
-        }
-
-        this._buildItemsHtml();
     },
 
     //////////////////////////////////////////
