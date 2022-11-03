@@ -112,7 +112,7 @@ var DataView = Widget.$extend({
     },
 
     /**
-     * Dataview children widgets name.
+     * Dataview children widgets names.
      *
      * @property childrenNames
      * @type Array
