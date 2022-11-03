@@ -71,6 +71,7 @@ var DataView = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this._lockItemsUpdate = true;
+        this.$data._childrenNames = [];
         this.$data.selectable = true;
         this.$data.unselectOnOutsideClick = true;
         this.$data.multiSelectable = false;
@@ -109,44 +110,6 @@ var DataView = Widget.$extend({
         this._bindEvent("dragend", this.__html.container, "dragend", this.__onDragEnd.bind(this));
         this._bindEvent("dragover", this.__html.container, "dragover", this.__onDragOver.bind(this));
         this._bindEvent("drop", this.__html.container, "drop", this.__onDrop.bind(this));
-    },
-
-    /**
-     * Dataview children widgets names.
-     *
-     * @property childrenNames
-     * @type Array
-     * @default []
-     */
-    _childrenNames: [],
-
-     /**
-     * Layout children widgets.
-     *
-     * @property children
-     * @type Array
-     * @default []
-     */
-    _getChildren: function () {
-        var children = [];
-        var widget;
-        for (var i = 0 ; i < this._childrenNames.length ; i++) {
-            widget = Widget.getWidget(this._childrenNames[i]);
-            if (widget instanceof Widget) {
-                children.push(widget);
-            }
-        }
-        return children;
-    },
-
-    _setChildren: function (children) {
-        var childrenNames = [];
-        for (var i = 0 ; i < children.length ; i++) {
-            if (children[i] instanceof Widget) {
-                childrenNames.push(children[i].name);
-            }
-        }
-        this._childrenNames = childrenNames;
     },
 
     /**
@@ -484,6 +447,7 @@ var DataView = Widget.$extend({
      * Destroy all children of the layout
      *
      * @method _empty
+     * @private
      */
     _empty: function () {
         var children = this._getChildren();
@@ -492,6 +456,26 @@ var DataView = Widget.$extend({
                 children[i].destroy();
             }
         }
+        this.$data._childrenNames = [];
+    },
+
+    /**
+     * Layout children widgets.
+     *
+     * @method _getChildren
+     * @private
+     * @return {Array} the childen widget 
+     */
+    _getChildren: function () {
+        var children = [];
+        var widget;
+        for (var i = 0 ; i < this.$data._childrenNames.length ; i++) {
+            widget = Widget.getWidget(this.$data._childrenNames[i]);
+            if (widget instanceof Widget) {
+                children.push(widget);
+            }
+        }
+        return children;
     },
 
     /**
@@ -544,7 +528,7 @@ var DataView = Widget.$extend({
         }
 
         Helpers.cleanNode(this.__html.container);
-        this._childrenNames = [];
+        this.$data._childrenNames = [];
 
         if (this.$data.items) {
             var fragment = document.createDocumentFragment();
@@ -583,7 +567,7 @@ var DataView = Widget.$extend({
             var widget = this.customWidgetFormater.call(this, item.value);
 
             if (widget && widget instanceof Widget) {
-                this._childrenNames.push(widget.name);
+                this.$data._childrenNames.push(widget.name);
                 node.appendChild(widget.getHtml());
                 return node;
             }
@@ -634,7 +618,7 @@ var DataView = Widget.$extend({
         }
 
         if (content instanceof Widget) {
-            this._childrenNames.push(content.name);
+            this.$data._childrenNames.push(content.name);
             node.appendChild(content.getHtml());
         } else if (rawHtml) {
             node.innerHTML = content || "";
