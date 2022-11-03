@@ -306,6 +306,27 @@ var Button = Widget.$extend({
     // Methods                              //
     //////////////////////////////////////////
 
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+            this.leftIconName = null;
+        }
+        
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+            this.rightIconName = null;
+        }
+
+        this.$super();
+    },
+
     // ====== Private methods ======
 
     /**

@@ -40,7 +40,6 @@ var lodash = require("lodash");
 
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
-var Text = require("../visual/text.js");
 
 /**
  * DataView container.
@@ -72,6 +71,7 @@ var DataView = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this._lockItemsUpdate = true;
+        this.$data._childrenNames = [];
         this.$data.selectable = true;
         this.$data.unselectOnOutsideClick = true;
         this.$data.multiSelectable = false;
@@ -124,6 +124,8 @@ var DataView = Widget.$extend({
     },
 
     setItems: function (items) {
+        this._empty();
+
         items = items || [];
         this.$data.items = items.map(function (item, index) {
             return typeof(item) === "object" ? {
@@ -384,6 +386,16 @@ var DataView = Widget.$extend({
     // ====== Public methods ======
 
     /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        this._empty();
+        this.$super();
+    },
+
+    /**
      * Selects the item(s) at given indexes.
      *
      * @method selectItems
@@ -430,6 +442,41 @@ var DataView = Widget.$extend({
     },
 
     // ====== Private methods ======
+
+    /**
+     * Destroy all children of the layout
+     *
+     * @method _empty
+     * @private
+     */
+    _empty: function () {
+        var children = this._getChildren();
+        for (var i = 0 ; i < children.length ; i++) {
+            if (children[i]) {
+                children[i].destroy();
+            }
+        }
+        this.$data._childrenNames = [];
+    },
+
+    /**
+     * Layout children widgets.
+     *
+     * @method _getChildren
+     * @private
+     * @return {Array} the childen widget 
+     */
+    _getChildren: function () {
+        var children = [];
+        var widget;
+        for (var i = 0 ; i < this.$data._childrenNames.length ; i++) {
+            widget = Widget.getWidget(this.$data._childrenNames[i]);
+            if (widget instanceof Widget) {
+                children.push(widget);
+            }
+        }
+        return children;
+    },
 
     /**
      * Returns the item at a given index.
@@ -481,6 +528,7 @@ var DataView = Widget.$extend({
         }
 
         Helpers.cleanNode(this.__html.container);
+        this.$data._childrenNames = [];
 
         if (this.$data.items) {
             var fragment = document.createDocumentFragment();
@@ -519,6 +567,7 @@ var DataView = Widget.$extend({
             var widget = this.customWidgetFormater.call(this, item.value);
 
             if (widget && widget instanceof Widget) {
+                this.$data._childrenNames.push(widget.name);
                 node.appendChild(widget.getHtml());
                 return node;
             }
@@ -569,6 +618,7 @@ var DataView = Widget.$extend({
         }
 
         if (content instanceof Widget) {
+            this.$data._childrenNames.push(content.name);
             node.appendChild(content.getHtml());
         } else if (rawHtml) {
             node.innerHTML = content || "";

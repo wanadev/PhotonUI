@@ -171,6 +171,21 @@ var IconButton = Widget.$extend({
     // Methods                              //
     //////////////////////////////////////////
 
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.iconName && this.icon) {
+            this.icon.destroy();
+        }
+
+        this.$super();
+    },
+
     // ====== Private methods ======
 
     /**
