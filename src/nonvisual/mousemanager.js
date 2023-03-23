@@ -132,7 +132,6 @@ var MouseManager = Base.$extend({
         } else {
             this.$super(element);
         }
-        this.__dragStartButton = null; // used for state manager
     },
 
     //////////////////////////////////////////
@@ -461,7 +460,8 @@ var MouseManager = Base.$extend({
         this._bindEvent("mouse-up", this.element, "mouseup", this.__onMouseUp.bind(this));
         this._bindEvent("double-click", this.element, "dblclick", this.__onDoubleClick.bind(this));
         this._bindEvent("mouse-move", this.element, "mousemove", this.__onMouseMove.bind(this));
-        this._bindEvent("wheel", this.element, "wheel", this.__onWheel.bind(this));
+        this._bindEvent("mousewheel", this.element, "mousewheel", this.__onMouseWheel.bind(this));
+        this._bindEvent("mousewheel-firefox", this.element, "DOMMouseScroll", this.__onMouseWheel.bind(this));
 
         this._bindEvent("document-mouse-up", document, "mouseup", this.__onDocumentMouseUp.bind(this));
         this._bindEvent("document-mouse-move", document, "mousemove", this.__onDocumentMouseMove.bind(this));
@@ -507,16 +507,13 @@ var MouseManager = Base.$extend({
         this._action = action;
         this.__event = event;
         this._button = null;
-        if (this.__dragStartButton) {
-            this._button = this.__dragStartButton;
-        }
-        else if (event.button === 0) {
+        if (event.button === 0) {
             this._button = "left";
         }
-        else if (event.button === 1) {
+        if (event.button === 1) {
             this._button = "middle";
         }
-        else if (event.button === 2) {
+        if (event.button === 2) {
             this._button = "right";
         }
 
@@ -589,7 +586,6 @@ var MouseManager = Base.$extend({
             this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
             if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold ||
                 Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
-                this.__dragStartButton = this._button;
                 // Drag Start
                 this._action = "drag-start";
                 this.__event = this.__mouseDownEvent;
@@ -614,7 +610,6 @@ var MouseManager = Base.$extend({
         } else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
                  this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
-            this.__dragStartButton = null;
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         }
@@ -679,11 +674,6 @@ var MouseManager = Base.$extend({
         }
         if (this.action == "dragging" || this.action == "drag-start") {
             this._stateMachine("drag-end", event);
-        } else if (event.button === 0 && this._btnLeft ||
-            event.button === 1 && this._btnMiddle ||
-            event.button === 2 && this._btnRight) {
-
-            this._stateMachine("mouse-up", event);
         }
     },
 
@@ -704,15 +694,26 @@ var MouseManager = Base.$extend({
     },
 
     /**
-     * @method __onWheel
+     * @method __onMouseWheel
      * @private
      * @param event
      */
-    __onWheel: function (event) {
+    __onMouseWheel: function (event) {
         var wheelDelta = null;
 
-        if (event.deltaY !== undefined) {
-            wheelDelta = -event.deltaY;
+        // Webkit
+        if (event.wheelDeltaY !== undefined) {
+            wheelDelta = event.wheelDeltaY;
+        }
+        // MSIE
+        if (event.wheelDelta !== undefined) {
+            wheelDelta = event.wheelDelta;
+        }
+        // Firefox
+        if (event.axis !== undefined && event.detail !== undefined) {
+            if (event.axis == 2) { // Y
+                wheelDelta = -event.detail;
+            }
         }
 
         if (wheelDelta !== null) {
