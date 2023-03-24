@@ -327,7 +327,7 @@ var Select = Widget.$extend({
      */
     destroy: function () {
         if (this.__displayValue) this.__displayValue.destroy()
-        if(this.__popupMenu) this.__popupMenu.destroy()
+        if (this.__popupMenu) this.__popupMenu.destroy()
         this.$super()
     },
 
