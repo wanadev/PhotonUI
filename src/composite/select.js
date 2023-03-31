@@ -326,9 +326,9 @@ var Select = Widget.$extend({
      * @method destroy
      */
     destroy: function () {
-        if (this.__displayValue) this.__displayValue.destroy()
-        if (this.__popupMenu) this.__popupMenu.destroy()
-        this.$super()
+        if (this.__displayValue) this.__displayValue.destroy();
+        if (this.__popupMenu) this.__popupMenu.destroy();
+        this.$super();
     },
 
     // ====== Private methods ======
