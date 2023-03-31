@@ -451,7 +451,6 @@ var MouseManager = Base.$extend({
      */
     __dragStartButton: null,
 
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -524,14 +523,11 @@ var MouseManager = Base.$extend({
         this._button = null;
         if (this.__dragStartButton) {
             this._button = this.__dragStartButton;
-        }
-        else if (event.button === 0) {
+        } else if (event.button === 0) {
             this._button = "left";
-        }
-        else if (event.button === 1) {
+        } else if (event.button === 1) {
             this._button = "middle";
-        }
-        else if (event.button === 2) {
+        } else if (event.button === 2) {
             this._button = "right";
         }
 
