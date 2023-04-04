@@ -464,7 +464,7 @@ var DataView = Widget.$extend({
      *
      * @method _getChildren
      * @private
-     * @return {Array} the childen widget 
+     * @return {Array} the childen widget
      */
     _getChildren: function () {
         var children = [];

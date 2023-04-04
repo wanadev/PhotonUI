@@ -238,7 +238,9 @@ var Base = Class.$extend({
      * @param {Object} [options] options for `addEventListener`
      */
     _bindEvent: function (id, element, evName, callback, options) {
-        if (options === undefined) options = false;
+        if (options === undefined) {
+            options = false;
+        }
         this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,

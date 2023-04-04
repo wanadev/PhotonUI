@@ -1,0 +1,44 @@
+name: "Tests"
+
+on:
+  push:
+    paths:
+      - "src/**"
+      - ".jshintrc"
+      - ".jscsrc"
+      - ".github/workflows/lint.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - ".jshintrc"
+      - ".jscsrc"
+      - ".github/workflows/lint.yml"
+
+jobs:
+
+  build:
+
+    name: "Lint"
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: "Checkout the repository"
+        uses: actions/checkout@v3
+
+      - name: "Set up Node 16"
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: "Install Node dependencies"
+        run: |
+          npm install
+
+      - name: "Lint with JSHint"
+        run: |
+          npx grunt jshint
+
+      - name: "Check codding style with JSCS"
+        run: |
+          npx grunt jscs

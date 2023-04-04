@@ -318,7 +318,7 @@ var Button = Widget.$extend({
             this.leftIcon.destroy();
             this.leftIconName = null;
         }
-        
+
         if (this.rightIconName && this.rightIcon) {
             this.rightIcon.destroy();
             this.rightIconName = null;
