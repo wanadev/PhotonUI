@@ -167,7 +167,7 @@ creates all required files for you:
 
 ## Changelog:
 
-* **[NEXT]** (changes not released yet):
+* **[NEXT]** (changes on `master` that have not been released yet):
   * feat(DataView): New DataView widget to display data in customizable way (@risq, #90, #95)
   * feat(DataView): New ListView widget, an high level DataView to display data as list (@risq, #90, #95)
   * feat(DataView): New TableView widget, an high level DataView to display data as table (@risq, #90, #95)
@@ -195,58 +195,58 @@ creates all required files for you:
   * misc(ci): removed Travis (@flozz)
   * misc(deps): Updated dependencies (@breush, #130)
 
-* **1.7.2:**
+* **v1.7.2:**
   * New event on ColorPicker: `value-changed-final` called when the value is no more modified after continuous changes
 
-* **1.7.1:**
+* **v1.7.1:**
   * Dependencies updated (uuid 2.0.3 → 3.0.0)
 
-* **1.7.0:**
+* **v1.7.0:**
   * `photonui.Color` improved: it can now import/export colors from/to many format
   * Dependencies updated
 
-* **1.6.4:**
+* **v1.6.4:**
   * Fields new event: `value-changed-final` called when the value is no more modified after continuous changes
 
-* **1.6.3:**
+* **v1.6.3:**
   * Fixes an issue when unregistering a callback in `photonui.AccelManager` (#73)
   * Fixes translation not updated on selected elements of `photonui.Select` widget (#71)
   * Fixes absolute widget calculation (partially fixes #70)
 
-* **1.6.2:**
+* **v1.6.2:**
   * Fixes regression in the `photonui.ColorPicker` widget (#68)
 
-* **1.6.1:**
+* **v1.6.1:**
   * Fixes wrong import path of fontawesome files when importing photonui less files from the module.
 
-* **1.6.0:**
+* **v1.6.0:**
   * New widget: `photonui.Expander` (thx @Breush),
   * `Base.prototype._updateProperties()` is now deprecated: the `@photonui-update` annotation replaces it (#55),
   * Various fixes (issue #51, issue #58, issue #60, PR #53,...).
 
-* **1.5.1:**
+* **v1.5.1:**
   * Fixes an issue with `FileManager`,
   * cleanup build / test dependencies
 
-* **1.5.0:**
+* **v1.5.0:**
   * New widget: `photonui.KeyboardManager` (thx @Breush)
 
-* **1.4.1:**
+* **v1.4.1:**
   * various fixes
 
-* **1.4.0:**
+* **v1.4.0:**
   * New widgets: `Template`, `IconButton`,
   * All widgets have now a `data` property that can contain anything you want,
   * Font Awesome updated to 4.5
 
-* **1.3.0:**
+* **v1.3.0:**
   * Fixes vertical sizing issue in GridLayout with latest Gecko versions...
   * Better split of Less files
 
-* **1.2.1:**
+* **v1.2.1:**
   * Fixes minor display issues
 
-* **1.2.0:**
+* **v1.2.0:**
   * TabItem can now have icons
   * Touch support on Window and Slider
   * Window: fullscreen option added
@@ -255,16 +255,16 @@ creates all required files for you:
   * FluidLayout: re-implemented using CSS flexbox, new properties and layoutOptions available,
   * Stone.js updated
 
-* **1.1.0:**
+* **v1.1.0:**
   * Classy replaced by Abitbol
   * Scaling support added to MouseManager
   * "click" wEvent added to TabItem
 
-* **1.0.1:**
+* **v1.0.1:**
   * Fixes (GridLayout exception on some edge cases, flat ToggleButton theme)
   * Optimizations (destroying a layout widget)
 
-* **1.0.0:**
+* **v1.0.0:**
   * First release
 
 
