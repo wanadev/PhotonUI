@@ -181,7 +181,7 @@ creates all required files for you:
   * fix(KeyboardManager): Fixed interferences between different KeyboardManagers (@breush, #109)
   * fix(Window#setModal): fixed modalBox duplicated (@flozz)
   * fix(MouseManager): Replaced deprecated mousewheel and DOMMouseScroll events by the wheel event (@clementlevasseur, #149)
-  * fix(Window): Allow event propagation on Window's close button (@VSerain)
+  * fix(Window): Allow event propagation on Window's close button (@VSerain, #78, #152)
   * fix(Slider): Calculate Slider grip position in JavaScript instead of CSS (@VSerain)
   * fix(Layout): Fixed visibility propagation to Layout child widgets (@jbghoul-wanadev, #154)
   * fix(Dialog): Fixed visibility propagation to Dialog buttons (@jbghoul-wanadev, #154)
