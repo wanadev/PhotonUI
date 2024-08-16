@@ -5,7 +5,6 @@
 [![Discord](https://img.shields.io/badge/chat-Discord-8c9eff?logo=discord&logoColor=ffffff)](https://discord.gg/BmUkEdMuFp)
 
 
-
 PhotonUI javascript framework to create rich web user interfaces without having to manipulate any HTML nor CSS.
 
 * **Website:** http://wanadev.github.io/PhotonUI/
