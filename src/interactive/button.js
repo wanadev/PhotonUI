@@ -39,6 +39,7 @@
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Button.
@@ -146,7 +147,7 @@ var Button = Widget.$extend({
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof PhotonImage) {
             this.leftIconName = leftIcon.name;
             return;
         }
@@ -206,7 +207,7 @@ var Button = Widget.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof PhotonImage) {
             this.rightIconName = rightIcon.name;
             return;
         }
@@ -304,6 +305,27 @@ var Button = Widget.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+            this.leftIconName = null;
+        }
+
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+            this.rightIconName = null;
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 

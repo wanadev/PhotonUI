@@ -71,8 +71,6 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
                         this.__closeButtonClicked.bind(this));
         this._bindEvent("totop", this.__html.window, "mousedown", this.moveToFront.bind(this));
         this._bindEvent("totop-touch", this.__html.window, "touchstart", this.moveToFront.bind(this));
-        this._bindEvent("closeButton.mousedown", this.__html.windowTitleCloseButton, "mousedown",
-                        function (event) { event.stopPropagation(); });
 
         // Update Properties
         this.moveToFront();
@@ -184,13 +182,13 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
     setModal: function (modal) {
         this._modal = modal;
-        if (modal) {
+        if (modal && !this.__html.modalBox) {
             this.__html.modalBox = document.createElement("div");
             this.__html.modalBox.className = "photonui-window-modalbox";
             var parentNode = Widget.e_parent || document.getElementsByTagName("body")[0];
             parentNode.appendChild(this.__html.modalBox);
             this.visible = this.visible; // Force update
-        } else if (this.__html.modalBox) {
+        } else if (!modal && this.__html.modalBox) {
             this.__html.modalBox.parentNode.removeChild(this.__html.modalBox);
             delete this.__html.modalBox;
         }
@@ -290,7 +288,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
         this.__html.windowTitleCloseButton = document.createElement("button");
         this.__html.windowTitleCloseButton.className = "photonui-window-title-close-button fa fa-times";
-        this.__html.windowTitleCloseButton.title = Stone.lazyGettext("Close");
+        this.__html.windowTitleCloseButton.title = _("Close");
         this.__html.windowTitle.appendChild(this.__html.windowTitleCloseButton);
 
         this.__html.windowTitleText = document.createElement("span");
@@ -335,7 +333,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
      * @param {Object} event
      */
     __moveDragStart: function (event) {
-        if (!this.movable || event.button > 0) {
+        if (!this.movable || event.button > 0 || event.target === this.__html.windowTitleCloseButton) {
             return;
         }
         var offsetX = (event.offsetX !== undefined) ? event.offsetX : event.layerX;

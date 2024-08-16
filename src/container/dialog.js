@@ -237,7 +237,7 @@ var Dialog = Window.$extend({
         visibility = (visibility !== undefined) ? visibility : this.visible;
         var buttons = this.buttons;
         for (var i = 0 ; i < buttons.length ; i++) {
-            if (!(this.child instanceof Widget)) {
+            if (!(buttons[i] instanceof Widget)) {
                 continue;
             }
             buttons[i]._visibilityChanged(visibility);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Wanadev <http://www.wanadev.fr/>
+ * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,30 +25,44 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Authored by: Fabien LOISON <http://flozz.fr/>
+ * Authored by: Valentin Ledrapier
  */
 
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule DataView
+ * @namespace photonui
+ */
 
-.photonui-slider {
-    display: flex !important;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
+var lodash = require("lodash");
 
-    .photonui-slider-slider {
-        box-sizing: border-box;
-        flex-grow: 1;
+var DataView = require("./dataview");
+var Helpers = require("../helpers.js");
 
-        .photonui-slider-grip {
-            position: relative;
-            display: block;
-            box-sizing: border-box;
-        }
-    }
+/**
+ * ListView container.
+ *
+ * @class ListView
+ * @constructor
+ * @extends photonui.DataView
+ */
+var ListView = DataView.$extend({
 
-    .photonui-field {
-        width: 25%;
-        min-width: 50px;
-        max-width: 75px;
-    }
-}
+    // Constructor
+    __init__: function (params) {
+        params = lodash.assign({
+            containerElement: "ul",
+            itemElement: "li",
+            columnElement: "span",
+        }, params);
+
+        this._addIdentifier("listview");
+
+        this._registerWEvents([]);
+        this.$super(params);
+    },
+});
+
+module.exports = ListView;

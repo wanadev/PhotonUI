@@ -40,6 +40,7 @@ var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
 var Container = require("./container.js");
 var BaseIcon = require("../visual/baseicon.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Menu item.
@@ -137,7 +138,7 @@ var MenuItem = Container.$extend({
     },
 
     setIcon: function (icon) {
-        if (icon instanceof BaseIcon) {
+        if (icon instanceof BaseIcon || icon instanceof PhotonImage) {
             this.iconName = icon.name;
             return;
         }
@@ -194,6 +195,21 @@ var MenuItem = Container.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.iconName && this.icon) {
+            this.icon.destroy();
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 

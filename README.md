@@ -169,6 +169,34 @@ creates all required files for you:
 
 ## Changelog:
 
+* **[NEXT]** (changes not released yet):
+  * feat(DataView): New DataView widget to display data in customizable way (@risq, #90, #95)
+  * feat(DataView): New ListView widget, an high level DataView to display data as list (@risq, #90, #95)
+  * feat(DataView): New TableView widget, an high level DataView to display data as table (@risq, #90, #95)
+  * feat(DataView): New FluidView widget, an high level DataView to display data as block that are line-wrapped (@risq, #90, #95)
+  * feat(DataView): New IconView widget, a DataView similare to the FluidView but specialized to display images and icons (@risq, #90, #95)
+  * feat: Allowed to use Image widget as icon in MenuItem, TabItem, Button and IconButton widget (@Rincelent, #134, #136)
+  * feat(Base): Allow to pass options to addEventListener via `Base#_bindEvent()` (@jbghoul-wanadev, #166)
+  * fix(MouseManager): Fixed mouse up event not fired when not dragging (@risq)
+  * fix(KeyboardManager): Fixed interferences between different KeyboardManagers (@breush, #109)
+  * fix(Window#setModal): fixed modalBox duplicated (@flozz)
+  * fix(MouseManager): Replaced deprecated mousewheel and DOMMouseScroll events by the wheel event (@clementlevasseur, #149)
+  * fix(Window): Allow event propagation on Window's close button (@VSerain, #78, #152)
+  * fix(Slider): Calculate Slider grip position in JavaScript instead of CSS (@VSerain)
+  * fix(Layout): Fixed visibility propagation to Layout child widgets (@jbghoul-wanadev, #154)
+  * fix(Dialog): Fixed visibility propagation to Dialog buttons (@jbghoul-wanadev, #154)
+  * fix(Window): Standardized Stone.js gettext function call on Window close button text (@Krenodeno, #158)
+  * fix(TabLayout): Set the active tab only when needed (@robincartier, #160)
+  * fix: Set widgets name before setting children so parenting will work (@robincartier, #163)
+  * fix(MouseManager): Fixed wrong button when dragging with the right mouse button (@Rincelent, #165)
+  * fix(FileManager): Fixed file extention check in FileManager (@flozz)
+  * fix: Fixed destroy propagation to children widgets (@robincartier, #170)
+  * fix(Select): Fixed a memory leak in the Select widget (@Rincelent, #171)
+  * fix(Select): Fixed a typo in the Slider widget CSS (@jbghoul, #173)
+  * docs: Fixed an error in a jsdoc comment (@Krenodeno, #159)
+  * misc(ci): removed Travis (@flozz)
+  * misc(deps): Updated dependencies (@breush, #130)
+
 * **1.7.2:**
   * New event on ColorPicker: `value-changed-final` called when the value is no more modified after continuous changes
 

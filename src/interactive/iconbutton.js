@@ -39,6 +39,7 @@
 var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Helpers = require("../helpers.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * A simple flat button that only contains an icon
@@ -147,7 +148,7 @@ var IconButton = Widget.$extend({
     },
 
     setIcon: function (icon) {
-        if (icon instanceof BaseIcon) {
+        if (icon instanceof BaseIcon || icon instanceof PhotonImage) {
             this.iconName = icon.name;
             return;
         }
@@ -169,6 +170,21 @@ var IconButton = Widget.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.iconName && this.icon) {
+            this.icon.destroy();
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 

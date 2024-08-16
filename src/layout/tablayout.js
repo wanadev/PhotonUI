@@ -55,7 +55,6 @@ var TabLayout = Layout.$extend({
     __init__: function (params) {
         this._registerWEvents([]);
         this.$super(params);
-        this.activeTab = this.activeTab;
     },
 
     //////////////////////////////////////////
@@ -177,19 +176,18 @@ var TabLayout = Layout.$extend({
         }
     },
 
-    //
-    setChildrenNames: function (childrenNames) {
-        this.$super(childrenNames);
-        if (!this.activeTabName) {
-            this.activeTabName = null;
-        }
-    },
-
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
 
     // ====== Public methods ======
+
+    setVisible: function (visible) {
+        this.$super(visible);
+        if (!this._activeTabName) {
+            this.activeTabName = null;
+        }
+    },
 
     addChild: function (widget, layoutOptions) {
         this.$super(widget, layoutOptions);

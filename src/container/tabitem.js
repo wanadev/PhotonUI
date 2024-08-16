@@ -41,6 +41,7 @@ var Widget = require("../widget.js");
 var BaseIcon = require("../visual/baseicon.js");
 var Container = require("./container.js");
 var IconButton = require("../interactive/iconbutton.js");
+var PhotonImage = require("../visual/image.js");
 
 /**
  * Tab Item.
@@ -187,12 +188,12 @@ var TabItem = Container.$extend({
     },
 
     /**
-        * Left icon widget name
-        *
-        * @property leftIconName
-        * @type String
-        * @default null
-        */
+     * Left icon widget name
+     *
+     * @property leftIconName
+     * @type String
+     * @default null
+     */
     _leftIconName: null,
 
     getLeftIconName: function () {
@@ -210,18 +211,18 @@ var TabItem = Container.$extend({
     },
 
     /**
-    * Left icon widget
-    *
-    * @property leftIcon
-    * @type photonui.Icon
-    * @default null
-    */
+     * Left icon widget
+     *
+     * @property leftIcon
+     * @type photonui.Icon
+     * @default null
+     */
     getLeftIcon: function () {
         return Widget.getWidget(this._leftIconName);
     },
 
     setLeftIcon: function (leftIcon) {
-        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton) {
+        if (leftIcon instanceof BaseIcon || leftIcon instanceof IconButton || leftIcon instanceof PhotonImage) {
             this.leftIconName = leftIcon.name;
         } else {
             this.leftIconName = null;
@@ -282,7 +283,7 @@ var TabItem = Container.$extend({
     },
 
     setRightIcon: function (rightIcon) {
-        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton) {
+        if (rightIcon instanceof BaseIcon || rightIcon instanceof IconButton || rightIcon instanceof PhotonImage) {
             this.rightIconName = rightIcon.name;
         } else {
             this.rightIconName = null;
@@ -310,6 +311,25 @@ var TabItem = Container.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+        }
+
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 

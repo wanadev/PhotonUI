@@ -114,9 +114,12 @@ var Select = Widget.$extend({
         }
 
         this._value = "";
-        var item = new MenuItem({text: this.placeholder, className: "photonui-select-placeholder"});
+        if (this.__displayValue) {
+            this.__displayValue.destroy();
+        }
+        this.__displayValue = new MenuItem({text: this.placeholder, className: "photonui-select-placeholder"});
         Helpers.cleanNode(this.__html.select);
-        this.__html.select.appendChild(item.html);
+        this.__html.select.appendChild(this.__displayValue.html);
     },
 
     /**
@@ -325,7 +328,12 @@ var Select = Widget.$extend({
      * @method destroy
      */
     destroy: function () {
-        this.__popupMenu.destroy();
+        if (this.__displayValue) {
+            this.__displayValue.destroy();
+        }
+        if (this.__popupMenu) {
+            this.__popupMenu.destroy();
+        }
         this.$super();
     },
 

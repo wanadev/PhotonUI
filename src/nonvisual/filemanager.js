@@ -255,7 +255,7 @@ var FileManager = Base.$extend({
 
         // Validate ext
         if (!match) {
-            var ext = file.name.split(".").splice(-1);
+            var ext = file.name.split(".").splice(-1)[0].toLowerCase();
             for (var e = 0 ; e < this.acceptedExts.length ; e++) {
                 if (ext == this.acceptedExts[e]) {
                     match = true;

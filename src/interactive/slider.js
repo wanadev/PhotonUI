@@ -53,6 +53,18 @@ var Slider = NumericField.$extend({
     __init__: function (params) {
         this.$super(params);
 
+        if (params && params.decimalDigits === undefined) {
+            this.decimalDigits = 0;
+        }
+
+        if (params && params.min === undefined) {
+            this.min = 0;
+        }
+
+        if (params && params.max === undefined) {
+            this.max = 100;
+        }
+
         this.inputId = this.name + "-field";
         this.__html.field.id = this.inputId;
 
@@ -65,11 +77,6 @@ var Slider = NumericField.$extend({
                         "DOMMouseScroll", this.__onSliderMouseWheel.bind(this));
         this._bindEvent("field-contextmenu", this.__html.field, "contextmenu", this.__onFieldContextMenu.bind(this));
     },
-
-    // Default value (!= NumericField)
-    _min: 0,
-    _max: 100,
-    _decimalDigits: 0,
 
     //////////////////////////////////////////
     // Properties and Accessors             //
@@ -112,11 +119,6 @@ var Slider = NumericField.$extend({
      * @readOnly
      */
     getHtml: function () {
-        // Hack: force grip position after insertion into the DOM...
-        setTimeout(function () {
-            this.value = this.value;
-        }.bind(this), 10);
-
         return this.__html.outer;
     },
 
@@ -137,8 +139,8 @@ var Slider = NumericField.$extend({
         var v = this.value - this.min;
         var m = this.max - this.min;
         var p = Math.min(Math.max(v / m, 0), 1);
-        this.__html.grip.style.left = "calc(" + Math.floor(p * 100) + "% - " +
-                                      Math.floor(this.__html.grip.offsetWidth * p) + "px)";
+        this.__html.grip.style.left = Math.floor(p * 100) + "%";
+        this.__html.grip.style.transform = "translateX(" + (-100 * p) + "%)";
     },
 
     /**

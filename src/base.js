@@ -235,8 +235,12 @@ var Base = Class.$extend({
      * @param {DOMElement} element The element on which the event will be bind.
      * @param {String} evName The event name (e.g. "mousemove", "click",...).
      * @param {Function} callback The function that will be called when the event occured.
+     * @param {Object} [options] options for `addEventListener`
      */
-    _bindEvent: function (id, element, evName, callback) {
+    _bindEvent: function (id, element, evName, callback, options) {
+        if (options === undefined) {
+            options = false;
+        }
         this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
@@ -246,7 +250,7 @@ var Base = Class.$extend({
         this.__events[id].element.addEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,
-                false
+                options
         );
     },
 
