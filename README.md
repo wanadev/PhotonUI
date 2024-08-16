@@ -167,6 +167,9 @@ creates all required files for you:
 ## Changelog:
 
 * **[NEXT]** (changes on `master` that have not been released yet):
+  * Nothing yet ;)
+
+* **v1.8.0:**
   * feat(DataView): New DataView widget to display data in customizable way (@risq, #90, #95)
   * feat(DataView): New ListView widget, an high level DataView to display data as list (@risq, #90, #95)
   * feat(DataView): New TableView widget, an high level DataView to display data as table (@risq, #90, #95)

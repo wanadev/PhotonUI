@@ -1020,7 +1020,8 @@ input[type="submit"].photonui-widget::-moz-focus-inner {
   display: flex !important;
   -ms-flex-direction: row;
       flex-direction: row;
-  flew-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
   -ms-flex-align: center;
       align-items: center;
 }

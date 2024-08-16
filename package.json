@@ -1,23 +1,11 @@
 {
   "name": "photonui",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "description": "A javascript framework to create user interfaces",
   "homepage": "http://wanadev.github.io/PhotonUI/",
   "author": "Wanadev (http://wanadev.fr/)",
   "license": "BSD-3-Clause",
   "main": "src/photonui.js",
-  "maintainers": [
-    {
-      "name": "Tribex",
-      "email": "",
-      "web": "http://github.com/Tribex"
-    },
-    {
-      "name": "Wanadev",
-      "email": "",
-      "web": "http://wanadev.fr/"
-    }
-  ],
   "scripts": {
     "test": "grunt test && grunt && karma start",
     "update-credits": "brlicenses -m font-awesome -b src/photonui.js -f full -o CREDITS.txt"

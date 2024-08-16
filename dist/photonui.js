@@ -19295,8 +19295,12 @@ var Base = Class.$extend({
      * @param {DOMElement} element The element on which the event will be bind.
      * @param {String} evName The event name (e.g. "mousemove", "click",...).
      * @param {Function} callback The function that will be called when the event occured.
+     * @param {Object} [options] options for `addEventListener`
      */
-    _bindEvent: function (id, element, evName, callback) {
+    _bindEvent: function (id, element, evName, callback, options) {
+        if (options === undefined) {
+            options = false;
+        }
         this._unbindEvent(id);
         this.__events[id] = {
             evName: evName,
@@ -19306,7 +19310,7 @@ var Base = Class.$extend({
         this.__events[id].element.addEventListener(
                 this.__events[id].evName,
                 this.__events[id].callback,
-                false
+                options
         );
     },
 
@@ -20416,9 +20420,12 @@ var Select = Widget.$extend({
         }
 
         this._value = "";
-        var item = new MenuItem({text: this.placeholder, className: "photonui-select-placeholder"});
+        if (this.__displayValue) {
+            this.__displayValue.destroy();
+        }
+        this.__displayValue = new MenuItem({text: this.placeholder, className: "photonui-select-placeholder"});
         Helpers.cleanNode(this.__html.select);
-        this.__html.select.appendChild(item.html);
+        this.__html.select.appendChild(this.__displayValue.html);
     },
 
     /**
@@ -20627,7 +20634,12 @@ var Select = Widget.$extend({
      * @method destroy
      */
     destroy: function () {
-        this.__popupMenu.destroy();
+        if (this.__displayValue) {
+            this.__displayValue.destroy();
+        }
+        if (this.__popupMenu) {
+            this.__popupMenu.destroy();
+        }
         this.$super();
     },
 
@@ -21995,6 +22007,21 @@ var MenuItem = Container.$extend({
     // Methods                              //
     //////////////////////////////////////////
 
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.iconName && this.icon) {
+            this.icon.destroy();
+        }
+
+        this.$super();
+    },
+
     // ====== Private methods ======
 
     /**
@@ -22542,12 +22569,12 @@ var TabItem = Container.$extend({
     },
 
     /**
-        * Left icon widget name
-        *
-        * @property leftIconName
-        * @type String
-        * @default null
-        */
+     * Left icon widget name
+     *
+     * @property leftIconName
+     * @type String
+     * @default null
+     */
     _leftIconName: null,
 
     getLeftIconName: function () {
@@ -22565,12 +22592,12 @@ var TabItem = Container.$extend({
     },
 
     /**
-    * Left icon widget
-    *
-    * @property leftIcon
-    * @type photonui.Icon
-    * @default null
-    */
+     * Left icon widget
+     *
+     * @property leftIcon
+     * @type photonui.Icon
+     * @default null
+     */
     getLeftIcon: function () {
         return Widget.getWidget(this._leftIconName);
     },
@@ -22665,6 +22692,25 @@ var TabItem = Container.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+        }
+
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 
@@ -23666,7 +23712,6 @@ var lodash = require("lodash");
 
 var Helpers = require("../helpers.js");
 var Widget = require("../widget.js");
-var Text = require("../visual/text.js");
 
 /**
  * DataView container.
@@ -23698,6 +23743,7 @@ var DataView = Widget.$extend({
     // Constructor
     __init__: function (params) {
         this._lockItemsUpdate = true;
+        this.$data._childrenNames = [];
         this.$data.selectable = true;
         this.$data.unselectOnOutsideClick = true;
         this.$data.multiSelectable = false;
@@ -23750,6 +23796,8 @@ var DataView = Widget.$extend({
     },
 
     setItems: function (items) {
+        this._empty();
+
         items = items || [];
         this.$data.items = items.map(function (item, index) {
             return typeof(item) === "object" ? {
@@ -24010,6 +24058,16 @@ var DataView = Widget.$extend({
     // ====== Public methods ======
 
     /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        this._empty();
+        this.$super();
+    },
+
+    /**
      * Selects the item(s) at given indexes.
      *
      * @method selectItems
@@ -24056,6 +24114,41 @@ var DataView = Widget.$extend({
     },
 
     // ====== Private methods ======
+
+    /**
+     * Destroy all children of the layout
+     *
+     * @method _empty
+     * @private
+     */
+    _empty: function () {
+        var children = this._getChildren();
+        for (var i = 0 ; i < children.length ; i++) {
+            if (children[i]) {
+                children[i].destroy();
+            }
+        }
+        this.$data._childrenNames = [];
+    },
+
+    /**
+     * Layout children widgets.
+     *
+     * @method _getChildren
+     * @private
+     * @return {Array} the childen widget
+     */
+    _getChildren: function () {
+        var children = [];
+        var widget;
+        for (var i = 0 ; i < this.$data._childrenNames.length ; i++) {
+            widget = Widget.getWidget(this.$data._childrenNames[i]);
+            if (widget instanceof Widget) {
+                children.push(widget);
+            }
+        }
+        return children;
+    },
 
     /**
      * Returns the item at a given index.
@@ -24107,6 +24200,7 @@ var DataView = Widget.$extend({
         }
 
         Helpers.cleanNode(this.__html.container);
+        this.$data._childrenNames = [];
 
         if (this.$data.items) {
             var fragment = document.createDocumentFragment();
@@ -24145,6 +24239,7 @@ var DataView = Widget.$extend({
             var widget = this.customWidgetFormater.call(this, item.value);
 
             if (widget && widget instanceof Widget) {
+                this.$data._childrenNames.push(widget.name);
                 node.appendChild(widget.getHtml());
                 return node;
             }
@@ -24195,6 +24290,7 @@ var DataView = Widget.$extend({
         }
 
         if (content instanceof Widget) {
+            this.$data._childrenNames.push(content.name);
             node.appendChild(content.getHtml());
         } else if (rawHtml) {
             node.innerHTML = content || "";
@@ -24619,7 +24715,7 @@ var DataView = Widget.$extend({
 
 module.exports = DataView;
 
-},{"../helpers.js":39,"../visual/text.js":75,"../widget.js":76,"lodash":8}],35:[function(require,module,exports){
+},{"../helpers.js":39,"../widget.js":76,"lodash":8}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25748,6 +25844,27 @@ var Button = Widget.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.leftIconName && this.leftIcon) {
+            this.leftIcon.destroy();
+            this.leftIconName = null;
+        }
+
+        if (this.rightIconName && this.rightIcon) {
+            this.rightIcon.destroy();
+            this.rightIconName = null;
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 
@@ -27172,6 +27289,21 @@ var IconButton = Widget.$extend({
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        if (this.iconName && this.icon) {
+            this.icon.destroy();
+        }
+
+        this.$super();
+    },
 
     // ====== Private methods ======
 
@@ -30345,7 +30477,9 @@ var TabLayout = Layout.$extend({
 
     setVisible: function (visible) {
         this.$super(visible);
-        if (!this._activeTabName) this.activeTabName = null;
+        if (!this._activeTabName) {
+            this.activeTabName = null;
+        }
     },
 
     addChild: function (widget, layoutOptions) {
@@ -31943,7 +32077,7 @@ var FileManager = Base.$extend({
 
         // Validate ext
         if (!match) {
-            var ext = file.name.split(".").splice(-1);
+            var ext = file.name.split(".").splice(-1)[0].toLowerCase();
             for (var e = 0 ; e < this.acceptedExts.length ; e++) {
                 if (ext == this.acceptedExts[e]) {
                     match = true;
@@ -32957,6 +33091,21 @@ var MouseManager = Base.$extend({
      */
     __event: {},
 
+    /**
+     * The button that triggered the drag start event
+     *
+     *   * null
+     *   * "left"
+     *   * "middle"
+     *   * "right"
+     *
+     * @property __dragStartButton
+     * @private
+     * @type String
+     * @default null
+     */
+    __dragStartButton: null,
+
     //////////////////////////////////////////
     // Methods                              //
     //////////////////////////////////////////
@@ -33027,13 +33176,13 @@ var MouseManager = Base.$extend({
         this._action = action;
         this.__event = event;
         this._button = null;
-        if (event.button === 0) {
+        if (this.__dragStartButton) {
+            this._button = this.__dragStartButton;
+        } else if (event.button === 0) {
             this._button = "left";
-        }
-        if (event.button === 1) {
+        } else if (event.button === 1) {
             this._button = "middle";
-        }
-        if (event.button === 2) {
+        } else if (event.button === 2) {
             this._button = "right";
         }
 
@@ -33106,6 +33255,7 @@ var MouseManager = Base.$extend({
             this.__prevState.action != "dragging" && (this.btnLeft || this.btnMiddle || this.btnRight)) {
             if (Math.abs(this.pageX - this.__mouseDownEvent.pageX) > this._threshold ||
                 Math.abs(this.pageY - this.__mouseDownEvent.pageY) > this._threshold) {
+                this.__dragStartButton = this._button;
                 // Drag Start
                 this._action = "drag-start";
                 this.__event = this.__mouseDownEvent;
@@ -33130,6 +33280,7 @@ var MouseManager = Base.$extend({
         } else if (action == "drag-end" || (action == "mouse-up" && (this.__prevState.action == "dragging" ||
                  this.__prevState.action == "drag-start") && !(this.btnLeft || this.btnMiddle || this.btnRight))) {
             this._action = "drag-end";
+            this.__dragStartButton = null;
             this._callCallbacks("mouse-event", [this._dump()]);
             this._callCallbacks(this.action, [this._dump()]);
         }
@@ -35585,13 +35736,13 @@ var Widget = Base.$extend({
         // wEvents
         this._registerWEvents(["show", "hide"]);
 
+        // Name must be set before other properties (e.g. needed when setting children)
+        if (!this._name) {
+            this.name = params && params.name ? params.name : "widget-" + uuid.v4();
+        }
+
         // Parent constructor
         this.$super(params);
-
-        // Default name
-        if (!this.name) {
-            this.name = "widget-" + uuid.v4();
-        }
 
         // Additional className
         if (params && params.className) {
@@ -36019,7 +36170,7 @@ var Widget = Base.$extend({
         /**
          * Insert a widget in the DOM.
          *
-         * method domInsert
+         * @method domInsert
          * @static
          * @param {photonui.Widget} widget The widget to insert.
          * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
