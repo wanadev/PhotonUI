@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/base.js - photonui</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="photonui" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.8.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/photonui.AccelManager.html">photonui.AccelManager</a></li>
+                                <li><a href="../classes/photonui.Base.html">photonui.Base</a></li>
+                                <li><a href="../classes/photonui.BaseIcon.html">photonui.BaseIcon</a></li>
+                                <li><a href="../classes/photonui.BaseWindow.html">photonui.BaseWindow</a></li>
+                                <li><a href="../classes/photonui.BoxLayout.html">photonui.BoxLayout</a></li>
+                                <li><a href="../classes/photonui.Button.html">photonui.Button</a></li>
+                                <li><a href="../classes/photonui.Canvas.html">photonui.Canvas</a></li>
+                                <li><a href="../classes/photonui.CheckBox.html">photonui.CheckBox</a></li>
+                                <li><a href="../classes/photonui.Color.html">photonui.Color</a></li>
+                                <li><a href="../classes/photonui.ColorButton.html">photonui.ColorButton</a></li>
+                                <li><a href="../classes/photonui.ColorPalette.html">photonui.ColorPalette</a></li>
+                                <li><a href="../classes/photonui.ColorPicker.html">photonui.ColorPicker</a></li>
+                                <li><a href="../classes/photonui.ColorPickerDialog.html">photonui.ColorPickerDialog</a></li>
+                                <li><a href="../classes/photonui.Container.html">photonui.Container</a></li>
+                                <li><a href="../classes/photonui.DataView.html">photonui.DataView</a></li>
+                                <li><a href="../classes/photonui.Dialog.html">photonui.Dialog</a></li>
+                                <li><a href="../classes/photonui.Expander.html">photonui.Expander</a></li>
+                                <li><a href="../classes/photonui.FAIcon.html">photonui.FAIcon</a></li>
+                                <li><a href="../classes/photonui.Field.html">photonui.Field</a></li>
+                                <li><a href="../classes/photonui.FileManager.html">photonui.FileManager</a></li>
+                                <li><a href="../classes/photonui.FluidLayout.html">photonui.FluidLayout</a></li>
+                                <li><a href="../classes/photonui.FluidView.html">photonui.FluidView</a></li>
+                                <li><a href="../classes/photonui.FontSelect.html">photonui.FontSelect</a></li>
+                                <li><a href="../classes/photonui.GridLayout.html">photonui.GridLayout</a></li>
+                                <li><a href="../classes/photonui.Helpers.html">photonui.Helpers</a></li>
+                                <li><a href="../classes/photonui.IconButton.html">photonui.IconButton</a></li>
+                                <li><a href="../classes/photonui.IconView.html">photonui.IconView</a></li>
+                                <li><a href="../classes/photonui.Image.html">photonui.Image</a></li>
+                                <li><a href="../classes/photonui.KeyboardManager.html">photonui.KeyboardManager</a></li>
+                                <li><a href="../classes/photonui.Label.html">photonui.Label</a></li>
+                                <li><a href="../classes/photonui.Layout.html">photonui.Layout</a></li>
+                                <li><a href="../classes/photonui.ListView.html">photonui.ListView</a></li>
+                                <li><a href="../classes/photonui.Menu.html">photonui.Menu</a></li>
+                                <li><a href="../classes/photonui.MenuItem.html">photonui.MenuItem</a></li>
+                                <li><a href="../classes/photonui.MouseManager.html">photonui.MouseManager</a></li>
+                                <li><a href="../classes/photonui.NumericField.html">photonui.NumericField</a></li>
+                                <li><a href="../classes/photonui.PopupMenu.html">photonui.PopupMenu</a></li>
+                                <li><a href="../classes/photonui.PopupWindow.html">photonui.PopupWindow</a></li>
+                                <li><a href="../classes/photonui.ProgressBar.html">photonui.ProgressBar</a></li>
+                                <li><a href="../classes/photonui.Select.html">photonui.Select</a></li>
+                                <li><a href="../classes/photonui.Separator.html">photonui.Separator</a></li>
+                                <li><a href="../classes/photonui.Slider.html">photonui.Slider</a></li>
+                                <li><a href="../classes/photonui.SpriteIcon.html">photonui.SpriteIcon</a></li>
+                                <li><a href="../classes/photonui.SpriteSheet.html">photonui.SpriteSheet</a></li>
+                                <li><a href="../classes/photonui.SubMenuItem.html">photonui.SubMenuItem</a></li>
+                                <li><a href="../classes/photonui.Switch.html">photonui.Switch</a></li>
+                                <li><a href="../classes/photonui.TabItem.html">photonui.TabItem</a></li>
+                                <li><a href="../classes/photonui.TabLayout.html">photonui.TabLayout</a></li>
+                                <li><a href="../classes/photonui.TableView.html">photonui.TableView</a></li>
+                                <li><a href="../classes/photonui.Template.html">photonui.Template</a></li>
+                                <li><a href="../classes/photonui.Text.html">photonui.Text</a></li>
+                                <li><a href="../classes/photonui.TextAreaField.html">photonui.TextAreaField</a></li>
+                                <li><a href="../classes/photonui.TextField.html">photonui.TextField</a></li>
+                                <li><a href="../classes/photonui.ToggleButton.html">photonui.ToggleButton</a></li>
+                                <li><a href="../classes/photonui.Translation.html">photonui.Translation</a></li>
+                                <li><a href="../classes/photonui.Viewport.html">photonui.Viewport</a></li>
+                                <li><a href="../classes/photonui.Widget.html">photonui.Widget</a></li>
+                                <li><a href="../classes/photonui.Window.html">photonui.Window</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Composite.html">Composite</a></li>
+                                <li><a href="../modules/Container.html">Container</a></li>
+                                <li><a href="../modules/DataView.html">DataView</a></li>
+                                <li><a href="../modules/Helpers.html">Helpers</a></li>
+                                <li><a href="../modules/Interactive.html">Interactive</a></li>
+                                <li><a href="../modules/Layout.html">Layout</a></li>
+                                <li><a href="../modules/NonVisual.html">NonVisual</a></li>
+                                <li><a href="../modules/PhotonUI.html">PhotonUI</a></li>
+                                <li><a href="../modules/Visual.html">Visual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/base.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*
+ * Copyright (c) 2014-2015, Wanadev &lt;http://www.wanadev.fr/&gt;
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON &lt;http://flozz.fr/&gt;
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @namespace photonui
+ */
+
+var Class = require(&quot;abitbol&quot;);
+var uuid = require(&quot;uuid&quot;);
+
+var Helpers = require(&quot;./helpers.js&quot;);
+
+/**
+ * Base class for all PhotonUI Classes.
+ *
+ * wEvents:
+ *
+ *   * destroy:
+ *      - description: called before the widget was destroyed.
+ *      - callback:    function (widget)
+ *
+ * @class Base
+ * @constructor
+ * @param {Object} params An object that can contain any property that will be set to the class (optional).
+ */
+var Base = Class.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        // New instances for object properties
+        this.__events = {};
+        this._data = {};
+
+        // wEvents
+        this._registerWEvents([&quot;destroy&quot;]);
+
+        // Apply params
+        params = params || {};
+        for (var param in params) {
+            if (this.$map.computedProperties[param]) {
+                this[param] = params[param];
+            }
+        }
+
+        // Update properties
+        for (var propName in this.$map.computedProperties) {
+            var prop = this.$map.computedProperties[propName];
+            if (params[propName] === undefined &amp;&amp;
+                prop.annotations[&quot;photonui-update&quot;] &amp;&amp;
+                prop.get &amp;&amp; prop.set) {
+                this[propName] = this[propName];
+            }
+        }
+
+        // Register callbacks
+        var ev = null;
+        var i = 0;
+        var evId = &quot;&quot;;
+        if (params.callbacks) {
+            for (var wEvent in params.callbacks) {
+                ev = params.callbacks[wEvent];
+                if (typeof(ev) == &quot;function&quot;) {
+                    this.registerCallback(uuid.v4(), wEvent, ev);
+                } else if (ev instanceof Array) {
+                    for (i = 0 ; i &lt; ev.length ; i++) {
+                        this.registerCallback(uuid.v4(), wEvent, ev[i]);
+                    }
+                } else {
+                    for (evId in ev) {
+                        this.registerCallback(evId, wEvent, ev[evId]);
+                    }
+                }
+            }
+        }
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * Arbitrary data
+     *
+     * @property data
+     * @type object
+     * @default {}
+     */
+    _data: null,
+
+    getData: function () {
+        return this._data;
+    },
+
+    setData: function (data) {
+        this._data = data;
+    },
+
+    // ====== Private properties ======
+
+    /**
+     * Object containing references javascript events binding (for widget
+     * internal use).
+     *
+     * @property __events
+     * @type Object
+     * @private
+     */
+    __events: null,    // Javascript internal event
+
+    /**
+     * Object containing references to registered callbacks.
+     *
+     * @property __callbacks
+     * @type Object
+     * @private
+     */
+    __callbacks: null,  // Registered callback
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Destroy the class.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        this._callCallbacks(&quot;destroy&quot;);
+        for (var id in this.__events) {
+            this._unbindEvent(id);
+        }
+    },
+
+    /**
+     * Register a callback for any PhotonUI/Widget event (called wEvent).
+     *
+     * Callback signature:
+     *
+     *     function (Object(Base/Widget) [, arg1 [, arg2 [, ...]]])
+     *
+     * @method registerCallback
+     * @param {String} id An unique id for the callback.
+     * @param {String} wEvent the PhotonUI/Widget event name.
+     * @param {Function} callback The callback function.
+     * @param {Object} thisArg The value of this (optionnal, default = current widget).
+     */
+    registerCallback: function (id, wEvent, callback, thisArg) {
+        if (!this.__callbacks[wEvent]) {
+            Helpers.log(&quot;error&quot;, &quot;This widget has no &#x27;&quot; + wEvent + &quot;&#x27; wEvent.&quot;);
+            return;
+        }
+        this.__callbacks[wEvent][id] = {
+            callback: callback,
+            thisArg: thisArg || null
+        };
+    },
+
+    /**
+     * Remove a registered callback.
+     *
+     * @method removeCallback
+     * @param {String} id The id of the callback.
+     */
+    removeCallback: function (id) {
+        for (var wEvent in this.__callbacks) {
+            if (this.__callbacks[wEvent][id]) {
+                delete this.__callbacks[wEvent][id];
+            }
+        }
+    },
+
+    // ====== Private methods ======
+
+    /**
+     * Force the update of the given properties.
+     *
+     * This method is deprecated.
+     * One should use &#x27;@photonui-update&#x27; abitbol&#x27;s annotation on concerned properties.
+     *
+     * @method _updateProperties
+     * @private
+     * @deprecated
+     * @param {Array} properties The properties to update.
+     */
+    _updateProperties: function (properties) {
+        Helpers.log(&quot;warn&quot;, &quot;&#x27;photonui.Base._updateProperties()&#x27; is deprecated.&quot; +
+                            &quot; One should use &#x27;@photonui-update&#x27; abitbol&#x27;s annotation on concerned properties.&quot;);
+
+        for (var i = 0 ; i &lt; properties.length ; i++) {
+            this[properties[i]] = this[properties[i]];
+        }
+    },
+
+    /**
+     * Javascript event binding (for internal use).
+     *
+     * @method _bindEvent
+     * @private
+     * @param {String} id An unique id for the event.
+     * @param {DOMElement} element The element on which the event will be bind.
+     * @param {String} evName The event name (e.g. &quot;mousemove&quot;, &quot;click&quot;,...).
+     * @param {Function} callback The function that will be called when the event occured.
+     * @param {Object} [options] options for &#x60;addEventListener&#x60;
+     */
+    _bindEvent: function (id, element, evName, callback, options) {
+        if (options === undefined) {
+            options = false;
+        }
+        this._unbindEvent(id);
+        this.__events[id] = {
+            evName: evName,
+            element: element,
+            callback: callback
+        };
+        this.__events[id].element.addEventListener(
+                this.__events[id].evName,
+                this.__events[id].callback,
+                options
+        );
+    },
+
+    /**
+     * Unbind javascript event.
+     *
+     * @method _unbindEvent
+     * @private
+     * @param {String} id The id of the event.
+     */
+    _unbindEvent: function (id) {
+        if (!this.__events[id]) {
+            return;
+        }
+        this.__events[id].element.removeEventListener(
+                this.__events[id].evName,
+                this.__events[id].callback,
+                false
+        );
+        delete this.__events[id];
+    },
+
+    /**
+     * Register available wEvent.
+     *
+     * @method _registerWEvents
+     * @private
+     * @param {Array} wEvents
+     */
+    _registerWEvents: function (wEvents) {
+        if (this.__callbacks === null) {
+            this.__callbacks = {};
+        }
+        for (var i in wEvents) {
+            this.__callbacks[wEvents[i]] = {};
+        }
+    },
+
+    /**
+     * Call all callbacks for the given wEvent.
+     *
+     * NOTE: the first argument passed to the callback is the current widget.
+     * NOTE²: if the thisArg of the callback is null, this will be binded to the current widget.
+     *
+     * @method _callCallbacks
+     * @private
+     * @param {String} wEvent The widget event.
+     * @param {Array} params Parametters that will be sent to the callbacks.
+     */
+    _callCallbacks: function (wEvent, params) {
+        params = params || [];
+        for (var id in this.__callbacks[wEvent]) {
+            this.__callbacks[wEvent][id].callback.apply(
+                    this.__callbacks[wEvent][id].thisArg || this,
+                    [this].concat(params)
+            );
+        }
+    }
+});
+
+module.exports = Base;
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

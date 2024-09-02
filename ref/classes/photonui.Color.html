@@ -1,0 +1,2941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>photonui.Color - photonui</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="photonui" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.8.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/photonui.AccelManager.html">photonui.AccelManager</a></li>
+                                <li><a href="../classes/photonui.Base.html">photonui.Base</a></li>
+                                <li><a href="../classes/photonui.BaseIcon.html">photonui.BaseIcon</a></li>
+                                <li><a href="../classes/photonui.BaseWindow.html">photonui.BaseWindow</a></li>
+                                <li><a href="../classes/photonui.BoxLayout.html">photonui.BoxLayout</a></li>
+                                <li><a href="../classes/photonui.Button.html">photonui.Button</a></li>
+                                <li><a href="../classes/photonui.Canvas.html">photonui.Canvas</a></li>
+                                <li><a href="../classes/photonui.CheckBox.html">photonui.CheckBox</a></li>
+                                <li><a href="../classes/photonui.Color.html">photonui.Color</a></li>
+                                <li><a href="../classes/photonui.ColorButton.html">photonui.ColorButton</a></li>
+                                <li><a href="../classes/photonui.ColorPalette.html">photonui.ColorPalette</a></li>
+                                <li><a href="../classes/photonui.ColorPicker.html">photonui.ColorPicker</a></li>
+                                <li><a href="../classes/photonui.ColorPickerDialog.html">photonui.ColorPickerDialog</a></li>
+                                <li><a href="../classes/photonui.Container.html">photonui.Container</a></li>
+                                <li><a href="../classes/photonui.DataView.html">photonui.DataView</a></li>
+                                <li><a href="../classes/photonui.Dialog.html">photonui.Dialog</a></li>
+                                <li><a href="../classes/photonui.Expander.html">photonui.Expander</a></li>
+                                <li><a href="../classes/photonui.FAIcon.html">photonui.FAIcon</a></li>
+                                <li><a href="../classes/photonui.Field.html">photonui.Field</a></li>
+                                <li><a href="../classes/photonui.FileManager.html">photonui.FileManager</a></li>
+                                <li><a href="../classes/photonui.FluidLayout.html">photonui.FluidLayout</a></li>
+                                <li><a href="../classes/photonui.FluidView.html">photonui.FluidView</a></li>
+                                <li><a href="../classes/photonui.FontSelect.html">photonui.FontSelect</a></li>
+                                <li><a href="../classes/photonui.GridLayout.html">photonui.GridLayout</a></li>
+                                <li><a href="../classes/photonui.Helpers.html">photonui.Helpers</a></li>
+                                <li><a href="../classes/photonui.IconButton.html">photonui.IconButton</a></li>
+                                <li><a href="../classes/photonui.IconView.html">photonui.IconView</a></li>
+                                <li><a href="../classes/photonui.Image.html">photonui.Image</a></li>
+                                <li><a href="../classes/photonui.KeyboardManager.html">photonui.KeyboardManager</a></li>
+                                <li><a href="../classes/photonui.Label.html">photonui.Label</a></li>
+                                <li><a href="../classes/photonui.Layout.html">photonui.Layout</a></li>
+                                <li><a href="../classes/photonui.ListView.html">photonui.ListView</a></li>
+                                <li><a href="../classes/photonui.Menu.html">photonui.Menu</a></li>
+                                <li><a href="../classes/photonui.MenuItem.html">photonui.MenuItem</a></li>
+                                <li><a href="../classes/photonui.MouseManager.html">photonui.MouseManager</a></li>
+                                <li><a href="../classes/photonui.NumericField.html">photonui.NumericField</a></li>
+                                <li><a href="../classes/photonui.PopupMenu.html">photonui.PopupMenu</a></li>
+                                <li><a href="../classes/photonui.PopupWindow.html">photonui.PopupWindow</a></li>
+                                <li><a href="../classes/photonui.ProgressBar.html">photonui.ProgressBar</a></li>
+                                <li><a href="../classes/photonui.Select.html">photonui.Select</a></li>
+                                <li><a href="../classes/photonui.Separator.html">photonui.Separator</a></li>
+                                <li><a href="../classes/photonui.Slider.html">photonui.Slider</a></li>
+                                <li><a href="../classes/photonui.SpriteIcon.html">photonui.SpriteIcon</a></li>
+                                <li><a href="../classes/photonui.SpriteSheet.html">photonui.SpriteSheet</a></li>
+                                <li><a href="../classes/photonui.SubMenuItem.html">photonui.SubMenuItem</a></li>
+                                <li><a href="../classes/photonui.Switch.html">photonui.Switch</a></li>
+                                <li><a href="../classes/photonui.TabItem.html">photonui.TabItem</a></li>
+                                <li><a href="../classes/photonui.TabLayout.html">photonui.TabLayout</a></li>
+                                <li><a href="../classes/photonui.TableView.html">photonui.TableView</a></li>
+                                <li><a href="../classes/photonui.Template.html">photonui.Template</a></li>
+                                <li><a href="../classes/photonui.Text.html">photonui.Text</a></li>
+                                <li><a href="../classes/photonui.TextAreaField.html">photonui.TextAreaField</a></li>
+                                <li><a href="../classes/photonui.TextField.html">photonui.TextField</a></li>
+                                <li><a href="../classes/photonui.ToggleButton.html">photonui.ToggleButton</a></li>
+                                <li><a href="../classes/photonui.Translation.html">photonui.Translation</a></li>
+                                <li><a href="../classes/photonui.Viewport.html">photonui.Viewport</a></li>
+                                <li><a href="../classes/photonui.Widget.html">photonui.Widget</a></li>
+                                <li><a href="../classes/photonui.Window.html">photonui.Window</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Composite.html">Composite</a></li>
+                                <li><a href="../modules/Container.html">Container</a></li>
+                                <li><a href="../modules/DataView.html">DataView</a></li>
+                                <li><a href="../modules/Helpers.html">Helpers</a></li>
+                                <li><a href="../modules/Interactive.html">Interactive</a></li>
+                                <li><a href="../modules/Layout.html">Layout</a></li>
+                                <li><a href="../modules/NonVisual.html">NonVisual</a></li>
+                                <li><a href="../modules/PhotonUI.html">PhotonUI</a></li>
+                                <li><a href="../modules/Visual.html">Visual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1>photonui.Color Class</h1>
+<div class="box meta">
+
+        <div class="extends">
+            Extends <a href="../classes/photonui.Base.html" class="crosslink">photonui.Base</a>
+        </div>
+
+        <div class="foundat">
+            Defined in: <a href="../files/src_nonvisual_color.js.html#l194"><code>src&#x2F;nonvisual&#x2F;color.js:194</code></a>
+        </div>
+
+            Module: <a href="../modules/NonVisual.html">NonVisual</a><br>
+            Parent Module: <a href="../modules/PhotonUI.html">PhotonUI</a>
+
+</div>
+
+
+<div class="box intro">
+    <p>Handle colors.</p>
+<p>wEvents:</p>
+<ul>
+<li>value-changed:
+<ul>
+<li>description: the selected color changed.</li>
+<li>callback:    function(photonui.Color)</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+    <div class="constructor">
+        <h2>Constructor</h2>
+<div id="method_photonui.Color" class="method item">
+    <h3 class="name"><code>photonui.Color</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code></code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l194"><code>src&#x2F;nonvisual&#x2F;color.js:194</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name"></code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+                        <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
+
+                    <div class="param-description">
+                        <p>An object that can contain any property of the Color class (optional).</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+    </div>
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+            <li class="api-class-tab properties"><a href="#properties">Properties</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods extends">
+                            <li class="index-item method private inherited">
+                                <a href="#method__bindEvent">_bindEvent</a>
+
+                            </li>
+                            <li class="index-item method private inherited">
+                                <a href="#method__callCallbacks">_callCallbacks</a>
+
+                            </li>
+                            <li class="index-item method private inherited">
+                                <a href="#method__registerWEvents">_registerWEvents</a>
+
+                            </li>
+                            <li class="index-item method private inherited">
+                                <a href="#method__unbindEvent">_unbindEvent</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__updateHSB">_updateHSB</a>
+
+                            </li>
+                            <li class="index-item method private deprecated inherited">
+                                <a href="#method__updateProperties">_updateProperties</a>
+
+                                    <span class="flag deprecated">deprecated</span>
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__updateRGB">_updateRGB</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_destroy">destroy</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_FormatToCssRgbaString">FormatToCssRgbaString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_FormatToCssRgbString">FormatToCssRgbString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_FormatToRgbaHexString">FormatToRgbaHexString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_FormatToRgbHexString">FormatToRgbHexString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_fromString">fromString</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_getRGB">getRGB</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_getRGBA">getRGBA</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_NormalizeRgbaColor">NormalizeRgbaColor</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_NormalizeRgbColor">NormalizeRgbColor</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_ParseCssRgbaString">ParseCssRgbaString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_ParseCssRgbString">ParseCssRgbString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_ParseNamedColor">ParseNamedColor</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_ParseRgbaHexString">ParseRgbaHexString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_ParseRgbHexString">ParseRgbHexString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_ParseString">ParseString</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_registerCallback">registerCallback</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_removeCallback">removeCallback</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_setHSB">setHSB</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_setRGB">setRGB</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_setRGBA">setRGBA</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+                <div class="index-section properties">
+                    <h3>Properties</h3>
+
+                    <ul class="index-list properties extends">
+                            <li class="index-item property private inherited">
+                                <a href="#property___callbacks">__callbacks</a>
+
+                            </li>
+                            <li class="index-item property private inherited">
+                                <a href="#property___events">__events</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_alpha">alpha</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_blue">blue</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_brightness">brightness</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_cssRgbaString">cssRgbaString</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_cssRgbString">cssRgbString</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_data">data</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_green">green</a>
+
+                            </li>
+                            <li class="index-item property deprecated">
+                                <a href="#property_hexString">hexString</a>
+
+                                    <span class="flag deprecated">deprecated</span>
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_hue">hue</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_NAMED_COLORS">NAMED_COLORS</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_red">red</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_rgbaHexString">rgbaHexString</a>
+
+                            </li>
+                            <li class="index-item property deprecated">
+                                <a href="#property_rgbaString">rgbaString</a>
+
+                                    <span class="flag deprecated">deprecated</span>
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_rgbHexString">rgbHexString</a>
+
+                            </li>
+                            <li class="index-item property deprecated">
+                                <a href="#property_rgbString">rgbString</a>
+
+                                    <span class="flag deprecated">deprecated</span>
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_saturation">saturation</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method__bindEvent" class="method item private inherited">
+    <h3 class="name"><code>_bindEvent</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>id</code>
+                </li>
+                <li class="arg">
+                        <code>element</code>
+                </li>
+                <li class="arg">
+                        <code>evName</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[options]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method__bindEvent">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l229"><code>src&#x2F;base.js:229</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Javascript event binding (for internal use).
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">id</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        An unique id for the event.
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">element</code>
+                        <span class="type">DOMElement</span>
+
+
+                    <div class="param-description">
+                        The element on which the event will be bind.
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">evName</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        The event name (e.g. "mousemove", "click",...).
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+
+                    <div class="param-description">
+                        The function that will be called when the event occured.
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[options]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        options for <code>addEventListener</code>
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method__callCallbacks" class="method item private inherited">
+    <h3 class="name"><code>_callCallbacks</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>wEvent</code>
+                </li>
+                <li class="arg">
+                        <code>params</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method__callCallbacks">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l292"><code>src&#x2F;base.js:292</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Call all callbacks for the given wEvent.
+
+NOTE: the first argument passed to the callback is the current widget.
+NOTE²: if the thisArg of the callback is null, this will be binded to the current widget.
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">wEvent</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        The widget event.
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">params</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+
+                    <div class="param-description">
+                        Parametters that will be sent to the callbacks.
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method__registerWEvents" class="method item private inherited">
+    <h3 class="name"><code>_registerWEvents</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>wEvents</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method__registerWEvents">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l276"><code>src&#x2F;base.js:276</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Register available wEvent.
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">wEvents</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method__unbindEvent" class="method item private inherited">
+    <h3 class="name"><code>_unbindEvent</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method__unbindEvent">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l257"><code>src&#x2F;base.js:257</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Unbind javascript event.
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">id</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        The id of the event.
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method__updateHSB" class="method item private">
+    <h3 class="name"><code>_updateHSB</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l937"><code>src&#x2F;nonvisual&#x2F;color.js:937</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Update HSB from RGB.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__updateProperties" class="method item private deprecated inherited">
+    <h3 class="name"><code>_updateProperties</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>properties</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+        <span class="flag deprecated">deprecated</span>
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method__updateProperties">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l209"><code>src&#x2F;base.js:209</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Force the update of the given properties.
+
+This method is deprecated.
+One should use '@photonui-update' abitbol's annotation on concerned properties.
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">properties</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+
+                    <div class="param-description">
+                        The properties to update.
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method__updateRGB" class="method item private">
+    <h3 class="name"><code>_updateRGB</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l978"><code>src&#x2F;nonvisual&#x2F;color.js:978</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Update RGB from HSB.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_destroy" class="method item inherited">
+    <h3 class="name"><code>destroy</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method_destroy">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l157"><code>src&#x2F;base.js:157</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Destroy the class.
+    </div>
+
+
+
+
+</div>
+<div id="method_FormatToCssRgbaString" class="method item">
+    <h3 class="name"><code>FormatToCssRgbaString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+                <li class="arg">
+                        <code>alpha</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l501"><code>src&#x2F;nonvisual&#x2F;color.js:501</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Format an RGBA color to CSS RGBA string (e.g. <code>rgba(255, 0, 0, 1.00)</code>).</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The red component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The green component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The blue component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">alpha</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The opacity of the color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+                    <p>The formatted color string.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_FormatToCssRgbString" class="method item">
+    <h3 class="name"><code>FormatToCssRgbString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l487"><code>src&#x2F;nonvisual&#x2F;color.js:487</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Format an RGB color to CSS RGB string (e.g. <code>rgb(255, 0, 0)</code>).</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The red component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The green component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The blue component</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+                    <p>The formatted color string.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_FormatToRgbaHexString" class="method item">
+    <h3 class="name"><code>FormatToRgbaHexString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+                <li class="arg">
+                        <code>alpha</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l468"><code>src&#x2F;nonvisual&#x2F;color.js:468</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Format an RGBA color to hexadecimal RGBA string (e.g. <code>#FF0000FF</code>).</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The red component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The green component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The blue component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">alpha</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The opacity of the color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+                    <p>The formatted color string.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_FormatToRgbHexString" class="method item">
+    <h3 class="name"><code>FormatToRgbHexString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l442"><code>src&#x2F;nonvisual&#x2F;color.js:442</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Format an RGB color to hexadecimal RGB string (e.g. <code>#FF0000</code>).</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The red component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The green component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The blue component</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+                    <p>The formatted color string.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_fromString" class="method item">
+    <h3 class="name"><code>fromString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>color</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l827"><code>src&#x2F;nonvisual&#x2F;color.js:827</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Defines the color from any supported string format.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">color</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_getRGB" class="method item">
+    <h3 class="name"><code>getRGB</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l885"><code>src&#x2F;nonvisual&#x2F;color.js:885</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get RGB.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p>[red(0-255), green(0-255), blue(0-255)]</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_getRGBA" class="method item">
+    <h3 class="name"><code>getRGBA</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l895"><code>src&#x2F;nonvisual&#x2F;color.js:895</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get RGBA.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p>[red(0-255), green(0-255), blue(0-255), alpha(0-255)]</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_NormalizeRgbaColor" class="method item">
+    <h3 class="name"><code>NormalizeRgbaColor</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+                <li class="arg">
+                        <code>alpha</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l535"><code>src&#x2F;nonvisual&#x2F;color.js:535</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Normalize an RGBA color.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The red component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The green component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The blue component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">alpha</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The opacity of the color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p>The normalized array <code>[r, g, b, a]</code> where each component is an integer between 0-255.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_NormalizeRgbColor" class="method item">
+    <h3 class="name"><code>NormalizeRgbColor</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l517"><code>src&#x2F;nonvisual&#x2F;color.js:517</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Normalize an RGB color.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The red component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The green component</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>The blue component</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p>The normalized array <code>[r, g, b]</code> where each component is an integer between 0-255.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_ParseCssRgbaString" class="method item">
+    <h3 class="name"><code>ParseCssRgbaString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>color</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l404"><code>src&#x2F;nonvisual&#x2F;color.js:404</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts a CSS RGBA color (e.g. <code>rgba(255, 0, 0, 0.3)</code>) to an <code>[r, g, b, a]</code> array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">color</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>The CSS RGBA color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p><code>[r, g, b, a]</code> where each component is an integer between 0-255</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_ParseCssRgbString" class="method item">
+    <h3 class="name"><code>ParseCssRgbString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>color</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l372"><code>src&#x2F;nonvisual&#x2F;color.js:372</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts a CSS RGB color (e.g. <code>rgb(255, 0, 0)</code>) to an <code>[r, g, b]</code> array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">color</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>The CSS RGB color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p><code>[r, g, b]</code> where each component is an integer between 0-255</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_ParseNamedColor" class="method item">
+    <h3 class="name"><code>ParseNamedColor</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>color</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l288"><code>src&#x2F;nonvisual&#x2F;color.js:288</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts a named color (e.g. &quot;red&quot;) to an <code>[r, g, b]</code> array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">color</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>The named color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p><code>[r, g, b]</code> where each component is an integer between 0-255</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_ParseRgbaHexString" class="method item">
+    <h3 class="name"><code>ParseRgbaHexString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>color</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l337"><code>src&#x2F;nonvisual&#x2F;color.js:337</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts an hexadecimal RGBA color (e.g. <code>#FF0000FF</code>, <code>#F00F</code>) to an <code>[r, g, b, a]</code> array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">color</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>The hexadecimal RGBA color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p><code>[r, g, b, a]</code> where each component is an integer between 0-255</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_ParseRgbHexString" class="method item">
+    <h3 class="name"><code>ParseRgbHexString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>color</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l304"><code>src&#x2F;nonvisual&#x2F;color.js:304</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts an hexadecimal RGB color (e.g. <code>#FF0000</code>, <code>#F00</code>) to an <code>[r, g, b]</code> array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">color</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>The hexadecimal RGB color</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p><code>[r, g, b]</code> where each component is an integer between 0-255</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_ParseString" class="method item">
+    <h3 class="name"><code>ParseString</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>color</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l242"><code>src&#x2F;nonvisual&#x2F;color.js:242</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts any supported color format to an <code>[r, g, b, a]</code> array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">color</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                    <p><code>[r, g, b, a]</code> where each components is an integer between 0-255</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_registerCallback" class="method item inherited">
+    <h3 class="name"><code>registerCallback</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>id</code>
+                </li>
+                <li class="arg">
+                        <code>wEvent</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
+                <li class="arg">
+                        <code>thisArg</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method_registerCallback">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l169"><code>src&#x2F;base.js:169</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Register a callback for any PhotonUI/Widget event (called wEvent).
+
+Callback signature:
+
+    function (Object(Base/Widget) [, arg1 [, arg2 [, ...]]])
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">id</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        An unique id for the callback.
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">wEvent</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        the PhotonUI/Widget event name.
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+
+                    <div class="param-description">
+                        The callback function.
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">thisArg</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        The value of this (optionnal, default = current widget).
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_removeCallback" class="method item inherited">
+    <h3 class="name"><code>removeCallback</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#method_removeCallback">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l193"><code>src&#x2F;base.js:193</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        Remove a registered callback.
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">id</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        The id of the callback.
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_setHSB" class="method item">
+    <h3 class="name"><code>setHSB</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>hue</code>
+                </li>
+                <li class="arg">
+                        <code>saturation</code>
+                </li>
+                <li class="arg">
+                        <code>brightness</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l905"><code>src&#x2F;nonvisual&#x2F;color.js:905</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set HSB color</p>
+<p>The params can also be replaced by an array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">hue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-360)</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">saturation</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-100)</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">brightness</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-100)</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_setRGB" class="method item">
+    <h3 class="name"><code>setRGB</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l841"><code>src&#x2F;nonvisual&#x2F;color.js:841</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set RGB(A) color (alias for setRGBA).</p>
+<p>The params can also be replaced by an array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-255)</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-255)</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-255)</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_setRGBA" class="method item">
+    <h3 class="name"><code>setRGBA</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>red</code>
+                </li>
+                <li class="arg">
+                        <code>green</code>
+                </li>
+                <li class="arg">
+                        <code>blue</code>
+                </li>
+                <li class="arg">
+                        <code>alpha</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l855"><code>src&#x2F;nonvisual&#x2F;color.js:855</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set RGBA color.</p>
+<p>The params can also be replaced by an array.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">red</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-255)</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">green</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-255)</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">blue</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(0-255)</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">alpha</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+                    <div class="param-description">
+                        <p>(optional, 0-255)</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+            </div>
+
+            <div id="properties" class="api-class-tabpanel">
+                <h2 class="off-left">Properties</h2>
+
+<div id="property___callbacks" class="property item private inherited">
+    <h3 class="name"><code>__callbacks</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+        <span class="flag private">private</span>
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#property___callbacks">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l142"><code>src&#x2F;base.js:142</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        Object containing references to registered callbacks.
+    </div>
+
+
+
+</div>
+<div id="property___events" class="property item private inherited">
+    <h3 class="name"><code>__events</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+        <span class="flag private">private</span>
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#property___events">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l132"><code>src&#x2F;base.js:132</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        Object containing references javascript events binding (for widget
+internal use).
+    </div>
+
+
+
+</div>
+<div id="property_alpha" class="property item">
+    <h3 class="name"><code>alpha</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l753"><code>src&#x2F;nonvisual&#x2F;color.js:753</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Alpha channel (0-255)</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_blue" class="property item">
+    <h3 class="name"><code>blue</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l736"><code>src&#x2F;nonvisual&#x2F;color.js:736</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Blue (0-255).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_brightness" class="property item">
+    <h3 class="name"><code>brightness</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l804"><code>src&#x2F;nonvisual&#x2F;color.js:804</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Brightness (0-100).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_cssRgbaString" class="property item">
+    <h3 class="name"><code>cssRgbaString</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l684"><code>src&#x2F;nonvisual&#x2F;color.js:684</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The color in CSS RGBA format (e.g. &quot;rgb(255, 0, 0, 1.0)&quot;).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_cssRgbString" class="property item">
+    <h3 class="name"><code>cssRgbString</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l666"><code>src&#x2F;nonvisual&#x2F;color.js:666</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The color in CSS RGB format (e.g. &quot;rgb(255, 0, 0)&quot;).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_data" class="property item inherited">
+    <h3 class="name"><code>data</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/photonui.Base.html#property_data">photonui.Base</a>:
+        <a href="../files/src_base.js.html#l113"><code>src&#x2F;base.js:113</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        Arbitrary data
+    </div>
+
+        <p><strong>Default:</strong> {}</p>
+
+
+</div>
+<div id="property_green" class="property item">
+    <h3 class="name"><code>green</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l719"><code>src&#x2F;nonvisual&#x2F;color.js:719</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Green (0-255).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_hexString" class="property item deprecated">
+    <h3 class="name"><code>hexString</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+        <span class="flag deprecated">deprecated</span>
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l566"><code>src&#x2F;nonvisual&#x2F;color.js:566</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The color in RGB hexadecimal format (e.g. &quot;#FF0000&quot;).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_hue" class="property item">
+    <h3 class="name"><code>hue</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l770"><code>src&#x2F;nonvisual&#x2F;color.js:770</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Hue (0-360).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_NAMED_COLORS" class="property item">
+    <h3 class="name"><code>NAMED_COLORS</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+
+
+        <span class="flag static">static</span>
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l233"><code>src&#x2F;nonvisual&#x2F;color.js:233</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Object containing all known named colors (<code>colorName: [r, g, b]</code>).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_red" class="property item">
+    <h3 class="name"><code>red</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l702"><code>src&#x2F;nonvisual&#x2F;color.js:702</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Red (0-255).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_rgbaHexString" class="property item">
+    <h3 class="name"><code>rgbaHexString</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l648"><code>src&#x2F;nonvisual&#x2F;color.js:648</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The color in RGBA hexadecimal format (e.g. &quot;#FF0000FF&quot;).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_rgbaString" class="property item deprecated">
+    <h3 class="name"><code>rgbaString</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+        <span class="flag deprecated">deprecated</span>
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l617"><code>src&#x2F;nonvisual&#x2F;color.js:617</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The color in CSS RGBA format (e.g. &quot;rgba(255, 0, 0, 1.0)&quot;).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_rgbHexString" class="property item">
+    <h3 class="name"><code>rgbHexString</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l630"><code>src&#x2F;nonvisual&#x2F;color.js:630</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The color in RGB hexadecimal format (e.g. &quot;#FF0000&quot;).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_rgbString" class="property item deprecated">
+    <h3 class="name"><code>rgbString</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+        <span class="flag deprecated">deprecated</span>
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l604"><code>src&#x2F;nonvisual&#x2F;color.js:604</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The color in CSS RGB format (e.g. &quot;rgb(255, 0, 0)&quot;).</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_saturation" class="property item">
+    <h3 class="name"><code>saturation</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_nonvisual_color.js.html#l787"><code>src&#x2F;nonvisual&#x2F;color.js:787</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Saturation (0-100).</p>
+
+    </div>
+
+
+
+</div>
+            </div>
+
+
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

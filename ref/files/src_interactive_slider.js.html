@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/interactive/slider.js - photonui</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="photonui" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.8.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/photonui.AccelManager.html">photonui.AccelManager</a></li>
+                                <li><a href="../classes/photonui.Base.html">photonui.Base</a></li>
+                                <li><a href="../classes/photonui.BaseIcon.html">photonui.BaseIcon</a></li>
+                                <li><a href="../classes/photonui.BaseWindow.html">photonui.BaseWindow</a></li>
+                                <li><a href="../classes/photonui.BoxLayout.html">photonui.BoxLayout</a></li>
+                                <li><a href="../classes/photonui.Button.html">photonui.Button</a></li>
+                                <li><a href="../classes/photonui.Canvas.html">photonui.Canvas</a></li>
+                                <li><a href="../classes/photonui.CheckBox.html">photonui.CheckBox</a></li>
+                                <li><a href="../classes/photonui.Color.html">photonui.Color</a></li>
+                                <li><a href="../classes/photonui.ColorButton.html">photonui.ColorButton</a></li>
+                                <li><a href="../classes/photonui.ColorPalette.html">photonui.ColorPalette</a></li>
+                                <li><a href="../classes/photonui.ColorPicker.html">photonui.ColorPicker</a></li>
+                                <li><a href="../classes/photonui.ColorPickerDialog.html">photonui.ColorPickerDialog</a></li>
+                                <li><a href="../classes/photonui.Container.html">photonui.Container</a></li>
+                                <li><a href="../classes/photonui.DataView.html">photonui.DataView</a></li>
+                                <li><a href="../classes/photonui.Dialog.html">photonui.Dialog</a></li>
+                                <li><a href="../classes/photonui.Expander.html">photonui.Expander</a></li>
+                                <li><a href="../classes/photonui.FAIcon.html">photonui.FAIcon</a></li>
+                                <li><a href="../classes/photonui.Field.html">photonui.Field</a></li>
+                                <li><a href="../classes/photonui.FileManager.html">photonui.FileManager</a></li>
+                                <li><a href="../classes/photonui.FluidLayout.html">photonui.FluidLayout</a></li>
+                                <li><a href="../classes/photonui.FluidView.html">photonui.FluidView</a></li>
+                                <li><a href="../classes/photonui.FontSelect.html">photonui.FontSelect</a></li>
+                                <li><a href="../classes/photonui.GridLayout.html">photonui.GridLayout</a></li>
+                                <li><a href="../classes/photonui.Helpers.html">photonui.Helpers</a></li>
+                                <li><a href="../classes/photonui.IconButton.html">photonui.IconButton</a></li>
+                                <li><a href="../classes/photonui.IconView.html">photonui.IconView</a></li>
+                                <li><a href="../classes/photonui.Image.html">photonui.Image</a></li>
+                                <li><a href="../classes/photonui.KeyboardManager.html">photonui.KeyboardManager</a></li>
+                                <li><a href="../classes/photonui.Label.html">photonui.Label</a></li>
+                                <li><a href="../classes/photonui.Layout.html">photonui.Layout</a></li>
+                                <li><a href="../classes/photonui.ListView.html">photonui.ListView</a></li>
+                                <li><a href="../classes/photonui.Menu.html">photonui.Menu</a></li>
+                                <li><a href="../classes/photonui.MenuItem.html">photonui.MenuItem</a></li>
+                                <li><a href="../classes/photonui.MouseManager.html">photonui.MouseManager</a></li>
+                                <li><a href="../classes/photonui.NumericField.html">photonui.NumericField</a></li>
+                                <li><a href="../classes/photonui.PopupMenu.html">photonui.PopupMenu</a></li>
+                                <li><a href="../classes/photonui.PopupWindow.html">photonui.PopupWindow</a></li>
+                                <li><a href="../classes/photonui.ProgressBar.html">photonui.ProgressBar</a></li>
+                                <li><a href="../classes/photonui.Select.html">photonui.Select</a></li>
+                                <li><a href="../classes/photonui.Separator.html">photonui.Separator</a></li>
+                                <li><a href="../classes/photonui.Slider.html">photonui.Slider</a></li>
+                                <li><a href="../classes/photonui.SpriteIcon.html">photonui.SpriteIcon</a></li>
+                                <li><a href="../classes/photonui.SpriteSheet.html">photonui.SpriteSheet</a></li>
+                                <li><a href="../classes/photonui.SubMenuItem.html">photonui.SubMenuItem</a></li>
+                                <li><a href="../classes/photonui.Switch.html">photonui.Switch</a></li>
+                                <li><a href="../classes/photonui.TabItem.html">photonui.TabItem</a></li>
+                                <li><a href="../classes/photonui.TabLayout.html">photonui.TabLayout</a></li>
+                                <li><a href="../classes/photonui.TableView.html">photonui.TableView</a></li>
+                                <li><a href="../classes/photonui.Template.html">photonui.Template</a></li>
+                                <li><a href="../classes/photonui.Text.html">photonui.Text</a></li>
+                                <li><a href="../classes/photonui.TextAreaField.html">photonui.TextAreaField</a></li>
+                                <li><a href="../classes/photonui.TextField.html">photonui.TextField</a></li>
+                                <li><a href="../classes/photonui.ToggleButton.html">photonui.ToggleButton</a></li>
+                                <li><a href="../classes/photonui.Translation.html">photonui.Translation</a></li>
+                                <li><a href="../classes/photonui.Viewport.html">photonui.Viewport</a></li>
+                                <li><a href="../classes/photonui.Widget.html">photonui.Widget</a></li>
+                                <li><a href="../classes/photonui.Window.html">photonui.Window</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Composite.html">Composite</a></li>
+                                <li><a href="../modules/Container.html">Container</a></li>
+                                <li><a href="../modules/DataView.html">DataView</a></li>
+                                <li><a href="../modules/Helpers.html">Helpers</a></li>
+                                <li><a href="../modules/Interactive.html">Interactive</a></li>
+                                <li><a href="../modules/Layout.html">Layout</a></li>
+                                <li><a href="../modules/NonVisual.html">NonVisual</a></li>
+                                <li><a href="../modules/PhotonUI.html">PhotonUI</a></li>
+                                <li><a href="../modules/Visual.html">Visual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/interactive/slider.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*
+ * Copyright (c) 2014-2015, Wanadev &lt;http://www.wanadev.fr/&gt;
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON &lt;http://flozz.fr/&gt;
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule Interactive
+ * @namespace photonui
+ */
+
+var Helpers = require(&quot;../helpers.js&quot;);
+var NumericField = require(&quot;./numericfield.js&quot;);
+
+/**
+ * Slider
+ *
+ * @class Slider
+ * @constructor
+ * @extends photonui.NumericField
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var Slider = NumericField.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        this.$super(params);
+
+        if (params &amp;&amp; params.decimalDigits === undefined) {
+            this.decimalDigits = 0;
+        }
+
+        if (params &amp;&amp; params.min === undefined) {
+            this.min = 0;
+        }
+
+        if (params &amp;&amp; params.max === undefined) {
+            this.max = 100;
+        }
+
+        this.inputId = this.name + &quot;-field&quot;;
+        this.__html.field.id = this.inputId;
+
+        this._bindEvent(&quot;slider-mousedown&quot;, this.__html.slider, &quot;mousedown&quot;, this.__onSliderMouseDown.bind(this));
+        this._bindEvent(&quot;slider-touchstart&quot;, this.__html.slider, &quot;touchstart&quot;, this.__onSliderTouchStart.bind(this));
+
+        this._bindEvent(&quot;slider-keydown&quot;, this.__html.slider, &quot;keydown&quot;, this.__onSliderKeyDown.bind(this));
+        this._bindEvent(&quot;slider-mousewheel&quot;, this.__html.slider, &quot;mousewheel&quot;, this.__onSliderMouseWheel.bind(this));
+        this._bindEvent(&quot;slider-mousewheel-firefox&quot;, this.__html.slider,
+                        &quot;DOMMouseScroll&quot;, this.__onSliderMouseWheel.bind(this));
+        this._bindEvent(&quot;field-contextmenu&quot;, this.__html.field, &quot;contextmenu&quot;, this.__onFieldContextMenu.bind(this));
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * Define if the numeric field should be displayed.
+     *
+     * @property fieldVisible
+     * @type Boolean
+     * @default: true
+     */
+    _fieldVisible: true,
+
+    isFieldVisible: function () {
+        &quot;@photonui-update&quot;;
+        return this._fieldVisible;
+    },
+
+    setFieldVisible: function (fieldVisible) {
+        this._fieldVisible = fieldVisible;
+
+        if (fieldVisible) {
+            this.__html.field.style.display = &quot;&quot;;
+            this.removeClass(&quot;photonui-slider-nofield&quot;);
+        } else {
+            this.__html.field.style.display = &quot;none&quot;;
+            this.addClass(&quot;photonui-slider-nofield&quot;);
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function () {
+        return this.__html.outer;
+    },
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Private methods ======
+
+    /**
+     * Update the value in the html field.
+     *
+     * @method _updateFieldValue
+     * @private
+     */
+    _updateFieldValue: function () {
+        this.$super();
+        var v = this.value - this.min;
+        var m = this.max - this.min;
+        var p = Math.min(Math.max(v / m, 0), 1);
+        this.__html.grip.style.left = Math.floor(p * 100) + &quot;%&quot;;
+        this.__html.grip.style.transform = &quot;translateX(&quot; + (-100 * p) + &quot;%)&quot;;
+    },
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function () {
+        this.$super();
+
+        this.__html.outer = document.createElement(&quot;div&quot;);
+        this.__html.outer.className = &quot;photonui-widget photonui-slider photonui-widget-fixed-height&quot;;
+
+        this.__html.slider = document.createElement(&quot;div&quot;);
+        this.__html.slider.className = &quot;photonui-slider-slider&quot;;
+        this.__html.slider.tabIndex = 0;
+        this.__html.outer.appendChild(this.__html.slider);
+
+        this.__html.grip = document.createElement(&quot;div&quot;);
+        this.__html.grip.className = &quot;photonui-slider-grip&quot;;
+        this.__html.slider.appendChild(this.__html.grip);
+
+        this.__html.outer.appendChild(this.__html.field);
+    },
+
+    /**
+     * Update the value form a mouse event occured on the slider.
+     *
+     * @method _updateFromMouseEvent
+     * @private
+     * @param event
+     */
+    _updateFromMouseEvent: function (event) {
+        // Prevent reset on touchend.
+        if (typeof(event.pageX) === &quot;undefined&quot;) {
+            return;
+        }
+
+        var wx = Helpers.getAbsolutePosition(this.__html.slider).x;
+        var gw = this.__html.grip.offsetWidth;
+        var x = Math.round(event.pageX - wx - gw / 2);
+        var w = this.__html.slider.offsetWidth - gw - 3;
+        var v = (this.max - this.min) * x / w + this.min;
+        this.value = Math.round(v / this.step) * this.step;
+        this._callCallbacks(&quot;value-changed&quot;, [this.value]);
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * @method __onSliderMouseDown
+     * @private
+     * @param event
+     */
+    __onSliderMouseDown: function (event) {
+        this._updateFromMouseEvent(event);
+        this._bindEvent(&quot;slider-mousemove&quot;, document, &quot;mousemove&quot;, this.__onSliderMouseMove.bind(this));
+        this._bindEvent(&quot;slider-mouseup&quot;, document, &quot;mouseup&quot;, this.__onSliderMouseUp.bind(this));
+    },
+
+    /**
+     * @method __onSliderMouseMove
+     * @private
+     * @param event
+     */
+    __onSliderMouseMove: function (event) {
+        this._updateFromMouseEvent(event);
+    },
+
+    /**
+     * @method __onSliderMouseUp
+     * @private
+     * @param event
+     */
+    __onSliderMouseUp: function (event) {
+        this._unbindEvent(&quot;slider-mousemove&quot;);
+        this._unbindEvent(&quot;slider-mouseup&quot;);
+        this._updateFromMouseEvent(event);
+        this.__debValueChangedFinal();
+    },
+
+    /**
+     * @method __onSliderTouchStart
+     * @private
+     * @param event
+     */
+    __onSliderTouchStart: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+        this._bindEvent(&quot;slider-touchmove&quot;, document, &quot;touchmove&quot;, this.__onSliderTouchMove.bind(this));
+        this._bindEvent(&quot;slider-touchend&quot;, document, &quot;touchend&quot;, this.__onSliderTouchEnd.bind(this));
+        this._bindEvent(&quot;slider-touchcancel&quot;, document, &quot;touchcancel&quot;, this.__onSliderTouchEnd.bind(this));
+    },
+
+    /**
+     * @method __onSliderTouchMove
+     * @private
+     * @param event
+     */
+    __onSliderTouchMove: function (event) {
+        this._updateFromMouseEvent(this.__getTouchEvent(event));
+    },
+
+    /**
+     * @method __onSliderTouchEnd
+     * @private
+     * @param event
+     */
+    __onSliderTouchEnd: function (event) {
+        this._unbindEvent(&quot;slider-touchmove&quot;);
+        this._unbindEvent(&quot;slider-touchend&quot;);
+        this._unbindEvent(&quot;slider-touchcancel&quot;);
+        this.__debValueChangedFinal();
+    },
+
+    /**
+     * Gets the first touch event and normalizes pageX/Y and offsetX/Y properties.
+     *
+     * @method _moveTouchEnd
+     * @private
+     * @param {Object} event
+     */
+    __getTouchEvent: function (event) {
+        if (event.touches &amp;&amp; event.touches.length) {
+            event.preventDefault();
+            var evt = event.touches[0];
+            evt.pageX = evt.pageX || evt.clientX;
+            evt.pageY = evt.pageX || evt.clientY;
+
+            var position = Helpers.getAbsolutePosition(event.target);
+            evt.offsetX = evt.offsetX || evt.pageX - position.x;
+            evt.offsetY = evt.offsetY || evt.pageY - position.y;
+            return evt;
+        }
+
+        return event;
+    },
+
+    /*
+     * @method __onSliderKeyPress
+     * @private
+     * @param event
+     */
+    __onSliderKeyDown: function (event) {
+        if (event.keyCode == 38 || event.keyCode == 39) {  // Up, Right
+            event.preventDefault();
+            event.stopPropagation();
+            this.value += this.step;
+            this._callCallbacks(&quot;value-changed&quot;, [this.value]);
+            this.__debValueChangedFinal();
+        } else if (event.keyCode == 40 || event.keyCode == 37) {  // Down, Left
+            event.preventDefault();
+            event.stopPropagation();
+            this.value -= this.step;
+            this._callCallbacks(&quot;value-changed&quot;, [this.value]);
+            this.__debValueChangedFinal();
+        }
+    },
+
+    /**
+     * @method __onSliderMouseWheel
+     * @private
+     * @param event
+     */
+    __onSliderMouseWheel: function (event) {
+        var wheelDelta = null;
+
+        // Webkit
+        if (event.wheelDeltaY !== undefined) {
+            wheelDelta = event.wheelDeltaY;
+        }
+        // MSIE
+        if (event.wheelDelta !== undefined) {
+            wheelDelta = event.wheelDelta;
+        }
+        // Firefox
+        if (event.axis !== undefined &amp;&amp; event.detail !== undefined) {
+            if (event.axis == 2) { // Y
+                wheelDelta = -event.detail;
+            }
+        }
+
+        if (wheelDelta !== null) {
+            if (wheelDelta &gt;= 0) {
+                this.value += this.step;
+            } else {
+                this.value -= this.step;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        this._callCallbacks(&quot;value-changed&quot;, [this.value]);
+        this.__debValueChangedFinal();
+    },
+
+    /**
+     * Called when the context menu should be displayed.
+     *
+     * @method __onContextMenu
+     * @private
+     * @param event
+     */
+    __onContextMenu: function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.contextMenuName) {
+            this.contextMenu.popupXY(event.pageX, event.pageY);
+        }
+    },
+
+    /**
+     * @method __onFieldContextMenu
+     * @private
+     * @param event
+     */
+    __onFieldContextMenu: function (event) {
+        event.stopPropagation();
+    }
+});
+
+module.exports = Slider;
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

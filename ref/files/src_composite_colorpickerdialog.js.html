@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/composite/colorpickerdialog.js - photonui</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="photonui" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.8.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/photonui.AccelManager.html">photonui.AccelManager</a></li>
+                                <li><a href="../classes/photonui.Base.html">photonui.Base</a></li>
+                                <li><a href="../classes/photonui.BaseIcon.html">photonui.BaseIcon</a></li>
+                                <li><a href="../classes/photonui.BaseWindow.html">photonui.BaseWindow</a></li>
+                                <li><a href="../classes/photonui.BoxLayout.html">photonui.BoxLayout</a></li>
+                                <li><a href="../classes/photonui.Button.html">photonui.Button</a></li>
+                                <li><a href="../classes/photonui.Canvas.html">photonui.Canvas</a></li>
+                                <li><a href="../classes/photonui.CheckBox.html">photonui.CheckBox</a></li>
+                                <li><a href="../classes/photonui.Color.html">photonui.Color</a></li>
+                                <li><a href="../classes/photonui.ColorButton.html">photonui.ColorButton</a></li>
+                                <li><a href="../classes/photonui.ColorPalette.html">photonui.ColorPalette</a></li>
+                                <li><a href="../classes/photonui.ColorPicker.html">photonui.ColorPicker</a></li>
+                                <li><a href="../classes/photonui.ColorPickerDialog.html">photonui.ColorPickerDialog</a></li>
+                                <li><a href="../classes/photonui.Container.html">photonui.Container</a></li>
+                                <li><a href="../classes/photonui.DataView.html">photonui.DataView</a></li>
+                                <li><a href="../classes/photonui.Dialog.html">photonui.Dialog</a></li>
+                                <li><a href="../classes/photonui.Expander.html">photonui.Expander</a></li>
+                                <li><a href="../classes/photonui.FAIcon.html">photonui.FAIcon</a></li>
+                                <li><a href="../classes/photonui.Field.html">photonui.Field</a></li>
+                                <li><a href="../classes/photonui.FileManager.html">photonui.FileManager</a></li>
+                                <li><a href="../classes/photonui.FluidLayout.html">photonui.FluidLayout</a></li>
+                                <li><a href="../classes/photonui.FluidView.html">photonui.FluidView</a></li>
+                                <li><a href="../classes/photonui.FontSelect.html">photonui.FontSelect</a></li>
+                                <li><a href="../classes/photonui.GridLayout.html">photonui.GridLayout</a></li>
+                                <li><a href="../classes/photonui.Helpers.html">photonui.Helpers</a></li>
+                                <li><a href="../classes/photonui.IconButton.html">photonui.IconButton</a></li>
+                                <li><a href="../classes/photonui.IconView.html">photonui.IconView</a></li>
+                                <li><a href="../classes/photonui.Image.html">photonui.Image</a></li>
+                                <li><a href="../classes/photonui.KeyboardManager.html">photonui.KeyboardManager</a></li>
+                                <li><a href="../classes/photonui.Label.html">photonui.Label</a></li>
+                                <li><a href="../classes/photonui.Layout.html">photonui.Layout</a></li>
+                                <li><a href="../classes/photonui.ListView.html">photonui.ListView</a></li>
+                                <li><a href="../classes/photonui.Menu.html">photonui.Menu</a></li>
+                                <li><a href="../classes/photonui.MenuItem.html">photonui.MenuItem</a></li>
+                                <li><a href="../classes/photonui.MouseManager.html">photonui.MouseManager</a></li>
+                                <li><a href="../classes/photonui.NumericField.html">photonui.NumericField</a></li>
+                                <li><a href="../classes/photonui.PopupMenu.html">photonui.PopupMenu</a></li>
+                                <li><a href="../classes/photonui.PopupWindow.html">photonui.PopupWindow</a></li>
+                                <li><a href="../classes/photonui.ProgressBar.html">photonui.ProgressBar</a></li>
+                                <li><a href="../classes/photonui.Select.html">photonui.Select</a></li>
+                                <li><a href="../classes/photonui.Separator.html">photonui.Separator</a></li>
+                                <li><a href="../classes/photonui.Slider.html">photonui.Slider</a></li>
+                                <li><a href="../classes/photonui.SpriteIcon.html">photonui.SpriteIcon</a></li>
+                                <li><a href="../classes/photonui.SpriteSheet.html">photonui.SpriteSheet</a></li>
+                                <li><a href="../classes/photonui.SubMenuItem.html">photonui.SubMenuItem</a></li>
+                                <li><a href="../classes/photonui.Switch.html">photonui.Switch</a></li>
+                                <li><a href="../classes/photonui.TabItem.html">photonui.TabItem</a></li>
+                                <li><a href="../classes/photonui.TabLayout.html">photonui.TabLayout</a></li>
+                                <li><a href="../classes/photonui.TableView.html">photonui.TableView</a></li>
+                                <li><a href="../classes/photonui.Template.html">photonui.Template</a></li>
+                                <li><a href="../classes/photonui.Text.html">photonui.Text</a></li>
+                                <li><a href="../classes/photonui.TextAreaField.html">photonui.TextAreaField</a></li>
+                                <li><a href="../classes/photonui.TextField.html">photonui.TextField</a></li>
+                                <li><a href="../classes/photonui.ToggleButton.html">photonui.ToggleButton</a></li>
+                                <li><a href="../classes/photonui.Translation.html">photonui.Translation</a></li>
+                                <li><a href="../classes/photonui.Viewport.html">photonui.Viewport</a></li>
+                                <li><a href="../classes/photonui.Widget.html">photonui.Widget</a></li>
+                                <li><a href="../classes/photonui.Window.html">photonui.Window</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Composite.html">Composite</a></li>
+                                <li><a href="../modules/Container.html">Container</a></li>
+                                <li><a href="../modules/DataView.html">DataView</a></li>
+                                <li><a href="../modules/Helpers.html">Helpers</a></li>
+                                <li><a href="../modules/Interactive.html">Interactive</a></li>
+                                <li><a href="../modules/Layout.html">Layout</a></li>
+                                <li><a href="../modules/NonVisual.html">NonVisual</a></li>
+                                <li><a href="../modules/PhotonUI.html">PhotonUI</a></li>
+                                <li><a href="../modules/Visual.html">Visual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/composite/colorpickerdialog.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*
+ * Copyright (c) 2014-2015, Wanadev &lt;http://www.wanadev.fr/&gt;
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON &lt;http://flozz.fr/&gt;
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule Composite
+ * @namespace photonui
+ */
+
+var _ = require(&quot;stonejs&quot;).gettext;
+var Dialog = require(&quot;../container/dialog.js&quot;);
+var BoxLayout = require(&quot;../layout/boxlayout.js&quot;);
+var GridLayout = require(&quot;../layout/gridlayout.js&quot;);
+var Color = require(&quot;../nonvisual/color.js&quot;);
+var ColorPalette = require(&quot;../interactive/colorpalette.js&quot;);
+var ColorPicker = require(&quot;../interactive/colorpicker.js&quot;);
+var Button = require(&quot;../interactive/button.js&quot;);
+var Slider = require(&quot;../interactive/slider.js&quot;);
+var Separator = require(&quot;../visual/separator.js&quot;);
+var Label = require(&quot;../visual/label.js&quot;);
+var FAIcon = require(&quot;../visual/faicon.js&quot;);
+
+/**
+ * Color Picker Dialog.
+ *
+ * wEvents:
+ *
+ *   * value-changed:
+ *      - description: the selected color changed.
+ *      - callback:    function(widget, color)
+ *
+ * @class ColorPickerDialog
+ * @constructor
+ * @extends photonui.Dialog
+ */
+var ColorPickerDialog = Dialog.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        this.__widgets = {};
+        this._color = new Color();
+
+        params = params || {};
+        if (params.title === undefined) {
+            params.title = _(&quot;Select a color...&quot;);
+        }
+
+        this._registerWEvents([&quot;value-changed&quot;]);
+
+        this.$super(params);
+
+        this._buildUi();
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    _padding: 10,
+
+    /**
+     * The color.
+     *
+     * @property color
+     * @type photonui.Color
+     */
+    _color: null,
+
+    getColor: function () {
+        &quot;@photonui-update&quot;;
+        return this._color;
+    },
+
+    setColor: function (color) {
+        if (color instanceof Color) {
+            if (this._color) {
+                this._color.removeCallback(&quot;photonui.colorpickerdialog.value-changed::&quot; + this.name);
+            }
+            this._color = color;
+            this._color.registerCallback(&quot;photonui.colorpickerdialog.value-changed::&quot; + this.name, &quot;value-changed&quot;,
+                                         this.__onColorChanged, this);
+            this.__onColorChanged();
+        }
+    },
+
+    /**
+     * The color as hex string (shorthand to ColorPickerDialog.color.rgbHexString).
+     *
+     * @property value
+     * @type String
+     */
+    getValue: function () {
+        return this._color.rgbHexString;
+    },
+
+    setValue: function (value) {
+        this._color.fromString(value);
+    },
+
+    setVisible: function (visible) {
+        this.$super(visible);
+        if (this._color &amp;&amp; visible &amp;&amp; this.__widgets.labelRed) {
+            this._updateUi();
+        }
+    },
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    destroy: function () {
+        this._color.removeCallback(&quot;photonui.colorpickerdialog.value-changed::&quot; + this.name);
+        this.$super();
+    },
+
+    // ====== Private methods ======
+
+    /**
+     * Make the UI.
+     *
+     * @method _buildUi
+     * @private
+     */
+    _buildUi: function () {
+        this.html.className += &quot; photonui-colorpickerdialog&quot;;
+
+        // == Main UI ==
+        this.__widgets.hbox = new BoxLayout({
+            orientation: &quot;horizontal&quot;
+        });
+        this.child = this.__widgets.hbox;
+
+        // Color Picker
+        this.__widgets.colorPicker = new ColorPicker();
+        if (this._color !== null) {
+            this.__widgets.colorPicker.color.setHSB(
+                    this._color.hue,
+                    this._color.saturation,
+                    this._color.brightness
+            );
+        }
+        this.__widgets.hbox.addChild(this.__widgets.colorPicker);
+
+        // Color Palette
+        this.__widgets.colorPalette = new ColorPalette();
+        this.__widgets.hbox.addChild(this.__widgets.colorPalette);
+
+        // Separator
+        this.__widgets.separator = new Separator({orientation: &quot;vertical&quot;});
+        this.__widgets.hbox.addChild(this.__widgets.separator);
+
+        this.__widgets.grid = new GridLayout();
+        this.__widgets.hbox.addChild(this.__widgets.grid);
+
+        // Red field + label
+        this.__widgets.fieldRed = new Slider({
+            value: (this._color) ? this._color.red : undefined,
+            min: 0,
+            max: 255,
+            decimalDigits: 0
+        });
+
+        this.__widgets.labelRed = new Label({
+            text: _(&quot;Red:&quot;),
+            forInput: this.__widgets.fieldRed
+        });
+
+        this.__widgets.grid.addChild(this.__widgets.labelRed, {gridX: 0, gridY: 0, verticalExpansion: false});
+        this.__widgets.grid.addChild(this.__widgets.fieldRed, {gridX: 1, gridY: 0, verticalExpansion: false});
+
+        // Green field + label
+        this.__widgets.fieldGreen = new Slider({
+            value: (this._color) ? this._color.green : undefined,
+            min: 0,
+            max: 255,
+            decimalDigits: 0
+        });
+
+        this.__widgets.labelGreen = new Label({
+            text: _(&quot;Green:&quot;),
+            forInput: this.__widgets.fieldGreen
+        });
+
+        this.__widgets.grid.addChild(this.__widgets.labelGreen, {gridX: 0, gridY: 1, verticalExpansion: false});
+        this.__widgets.grid.addChild(this.__widgets.fieldGreen, {gridX: 1, gridY: 1, verticalExpansion: false});
+
+        // Blue field + label
+        this.__widgets.fieldBlue = new Slider({
+            value: (this._color) ? this._color.blue : undefined,
+            min: 0,
+            max: 255,
+            decimalDigits: 0
+        });
+
+        this.__widgets.labelBlue = new Label({
+            text: _(&quot;Blue:&quot;),
+            forInput: this.__widgets.fieldBlue
+        });
+
+        this.__widgets.grid.addChild(this.__widgets.labelBlue, {gridX: 0, gridY: 2, verticalExpansion: false});
+        this.__widgets.grid.addChild(this.__widgets.fieldBlue, {gridX: 1, gridY: 2, verticalExpansion: false});
+
+        // Separator
+        this.__widgets.separator2 = new Separator();
+        this.__widgets.grid.addChild(this.__widgets.separator2, {
+            gridX: 0,
+            gridY: 3,
+            verticalExpansion: false,
+            gridWidth: 2
+        });
+
+        // Hue field + label
+        this.__widgets.fieldHue = new Slider({
+            value: (this._color) ? this._color.hue : undefined,
+            min: 0,
+            max: 360,
+            decimalDigits: 0
+        });
+
+        this.__widgets.labelHue = new Label({
+            text: _(&quot;Hue:&quot;),
+            forInput: this.__widgets.fieldHue
+        });
+
+        this.__widgets.grid.addChild(this.__widgets.labelHue, {gridX: 0, gridY: 4, verticalExpansion: false});
+        this.__widgets.grid.addChild(this.__widgets.fieldHue, {gridX: 1, gridY: 4, verticalExpansion: false});
+
+        // Saturation field + label
+        this.__widgets.fieldSaturation = new Slider({
+            value: (this._color) ? this._color.saturation : undefined,
+            min: 0,
+            max: 100,
+            decimalDigits: 0
+        });
+
+        this.__widgets.labelSaturation = new Label({
+            text: _(&quot;Saturation:&quot;),
+            forInput: this.__widgets.fieldSaturation
+        });
+
+        this.__widgets.grid.addChild(this.__widgets.labelSaturation, {gridX: 0, gridY: 5, verticalExpansion: false});
+        this.__widgets.grid.addChild(this.__widgets.fieldSaturation, {gridX: 1, gridY: 5, verticalExpansion: false});
+
+        // Brightness field + label
+        this.__widgets.fieldBrightness = new Slider({
+            value: (this._color) ? this._color.brightness : undefined,
+            min: 0,
+            max: 100,
+            decimalDigits: 0
+        });
+
+        this.__widgets.labelBrightness = new Label({
+            text: _(&quot;Brightness:&quot;),
+            forInput: this.__widgets.fieldBrightness
+        });
+
+        this.__widgets.grid.addChild(this.__widgets.labelBrightness, {gridX: 0, gridY: 6, verticalExpansion: false});
+        this.__widgets.grid.addChild(this.__widgets.fieldBrightness, {gridX: 1, gridY: 6, verticalExpansion: false});
+
+        // == Dialog Buttons ==
+        this.__widgets.buttonOk = new Button({text: _(&quot;Ok&quot;)});
+        if (FAIcon) {
+            this.__widgets.buttonOk.leftIcon = new FAIcon(&quot;fa-check&quot;);
+        }
+
+        this.__widgets.buttonCancel = new Button({text: _(&quot;Cancel&quot;)});
+        this.buttons = [this.__widgets.buttonOk, this.__widgets.buttonCancel];
+
+        if (FAIcon) {
+            this.__widgets.buttonCancel.leftIcon = new FAIcon(&quot;fa-times&quot;);
+        }
+
+        // == Bindings ==
+        this.__widgets.colorPalette.color = this.__widgets.colorPicker.color;
+
+        this.__widgets.colorPicker.color.registerCallback(
+            &quot;colorpickerdialog.colorPicker.value-changed&quot;, &quot;value-changed&quot;, this._updateUi, this);
+
+        this.__widgets.fieldRed.registerCallback(
+            &quot;colorpickerdialog.fieldRed.value-changed&quot;, &quot;value-changed&quot;, function (widget, value) {
+            this.__widgets.colorPicker.color.red = value;
+        }, this);
+
+        this.__widgets.fieldGreen.registerCallback(
+            &quot;colorpickerdialog.fieldGreen.value-changed&quot;, &quot;value-changed&quot;, function (widget, value) {
+            this.__widgets.colorPicker.color.green = value;
+        }, this);
+
+        this.__widgets.fieldBlue.registerCallback(
+            &quot;colorpickerdialog.fieldBlue.value-changed&quot;, &quot;value-changed&quot;, function (widget, value) {
+            this.__widgets.colorPicker.color.blue = value;
+        }, this);
+
+        this.__widgets.fieldHue.registerCallback(
+            &quot;colorpickerdialog.fieldHue.value-changed&quot;, &quot;value-changed&quot;, function (widget, value) {
+            this.__widgets.colorPicker.color.hue = value;
+        }, this);
+
+        this.__widgets.fieldSaturation.registerCallback(
+            &quot;colorpickerdialog.fieldSaturation.value-changed&quot;, &quot;value-changed&quot;, function (widget, value) {
+            this.__widgets.colorPicker.color.saturation = value;
+        }, this);
+
+        this.__widgets.fieldBrightness.registerCallback(
+            &quot;colorpickerdialog.fieldBrightness.value-changed&quot;, &quot;value-changed&quot;, function (widget, value) {
+            this.__widgets.colorPicker.color.brightness = value;
+        }, this);
+
+        this.__widgets.buttonOk.registerCallback(
+            &quot;colorpickerdialog.buttonOk.click&quot;, &quot;click&quot;, this.__onValidate, this);
+        this.__widgets.buttonCancel.registerCallback(
+            &quot;colorpickerdialog.buttonCancel.click&quot;, &quot;click&quot;, this.__onCancel, this);
+        this.registerCallback(&quot;colorpickerdialog.close&quot;, &quot;close-button-clicked&quot;, this.__onCancel, this);
+    },
+
+    /**
+     * Update the fields of the UI.
+     *
+     * @method _updateUi
+     * @private
+     */
+    _updateUi: function (color) {
+        color = color || this.color;
+        this.__widgets.fieldRed.value = color.red;
+        this.__widgets.fieldGreen.value = color.green;
+        this.__widgets.fieldBlue.value = color.blue;
+        this.__widgets.fieldHue.value = color.hue;
+        this.__widgets.fieldSaturation.value = color.saturation;
+        this.__widgets.fieldBrightness.value = color.brightness;
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * @method __onCancel
+     * @private
+     */
+    __onCancel: function () {
+        this.__widgets.colorPicker.color.setHSB(
+                this._color.hue,
+                this._color.saturation,
+                this._color.brightness
+        );
+        this.hide();
+    },
+
+    /**
+     * @method __onValidate
+     * @private
+     */
+    __onValidate: function () {
+        this._color.setHSB(
+                this.__widgets.colorPicker.color.hue,
+                this.__widgets.colorPicker.color.saturation,
+                this.__widgets.colorPicker.color.brightness
+        );
+        this.hide();
+        this._callCallbacks(&quot;value-changed&quot;, [this.color]);
+    },
+
+    /**
+     * @method __onColorChanged
+     * @private
+     */
+    __onColorChanged: function () {
+        if (!this.__widgets.colorPicker) {
+            return;
+        }
+
+        this.__widgets.colorPicker.color.setHSB(
+                this._color.hue,
+                this._color.saturation,
+                this._color.brightness
+        );
+    }
+});
+
+module.exports = ColorPickerDialog;
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

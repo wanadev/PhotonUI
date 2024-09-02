@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/interactive/colorpicker.js - photonui</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="photonui" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.8.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/photonui.AccelManager.html">photonui.AccelManager</a></li>
+                                <li><a href="../classes/photonui.Base.html">photonui.Base</a></li>
+                                <li><a href="../classes/photonui.BaseIcon.html">photonui.BaseIcon</a></li>
+                                <li><a href="../classes/photonui.BaseWindow.html">photonui.BaseWindow</a></li>
+                                <li><a href="../classes/photonui.BoxLayout.html">photonui.BoxLayout</a></li>
+                                <li><a href="../classes/photonui.Button.html">photonui.Button</a></li>
+                                <li><a href="../classes/photonui.Canvas.html">photonui.Canvas</a></li>
+                                <li><a href="../classes/photonui.CheckBox.html">photonui.CheckBox</a></li>
+                                <li><a href="../classes/photonui.Color.html">photonui.Color</a></li>
+                                <li><a href="../classes/photonui.ColorButton.html">photonui.ColorButton</a></li>
+                                <li><a href="../classes/photonui.ColorPalette.html">photonui.ColorPalette</a></li>
+                                <li><a href="../classes/photonui.ColorPicker.html">photonui.ColorPicker</a></li>
+                                <li><a href="../classes/photonui.ColorPickerDialog.html">photonui.ColorPickerDialog</a></li>
+                                <li><a href="../classes/photonui.Container.html">photonui.Container</a></li>
+                                <li><a href="../classes/photonui.DataView.html">photonui.DataView</a></li>
+                                <li><a href="../classes/photonui.Dialog.html">photonui.Dialog</a></li>
+                                <li><a href="../classes/photonui.Expander.html">photonui.Expander</a></li>
+                                <li><a href="../classes/photonui.FAIcon.html">photonui.FAIcon</a></li>
+                                <li><a href="../classes/photonui.Field.html">photonui.Field</a></li>
+                                <li><a href="../classes/photonui.FileManager.html">photonui.FileManager</a></li>
+                                <li><a href="../classes/photonui.FluidLayout.html">photonui.FluidLayout</a></li>
+                                <li><a href="../classes/photonui.FluidView.html">photonui.FluidView</a></li>
+                                <li><a href="../classes/photonui.FontSelect.html">photonui.FontSelect</a></li>
+                                <li><a href="../classes/photonui.GridLayout.html">photonui.GridLayout</a></li>
+                                <li><a href="../classes/photonui.Helpers.html">photonui.Helpers</a></li>
+                                <li><a href="../classes/photonui.IconButton.html">photonui.IconButton</a></li>
+                                <li><a href="../classes/photonui.IconView.html">photonui.IconView</a></li>
+                                <li><a href="../classes/photonui.Image.html">photonui.Image</a></li>
+                                <li><a href="../classes/photonui.KeyboardManager.html">photonui.KeyboardManager</a></li>
+                                <li><a href="../classes/photonui.Label.html">photonui.Label</a></li>
+                                <li><a href="../classes/photonui.Layout.html">photonui.Layout</a></li>
+                                <li><a href="../classes/photonui.ListView.html">photonui.ListView</a></li>
+                                <li><a href="../classes/photonui.Menu.html">photonui.Menu</a></li>
+                                <li><a href="../classes/photonui.MenuItem.html">photonui.MenuItem</a></li>
+                                <li><a href="../classes/photonui.MouseManager.html">photonui.MouseManager</a></li>
+                                <li><a href="../classes/photonui.NumericField.html">photonui.NumericField</a></li>
+                                <li><a href="../classes/photonui.PopupMenu.html">photonui.PopupMenu</a></li>
+                                <li><a href="../classes/photonui.PopupWindow.html">photonui.PopupWindow</a></li>
+                                <li><a href="../classes/photonui.ProgressBar.html">photonui.ProgressBar</a></li>
+                                <li><a href="../classes/photonui.Select.html">photonui.Select</a></li>
+                                <li><a href="../classes/photonui.Separator.html">photonui.Separator</a></li>
+                                <li><a href="../classes/photonui.Slider.html">photonui.Slider</a></li>
+                                <li><a href="../classes/photonui.SpriteIcon.html">photonui.SpriteIcon</a></li>
+                                <li><a href="../classes/photonui.SpriteSheet.html">photonui.SpriteSheet</a></li>
+                                <li><a href="../classes/photonui.SubMenuItem.html">photonui.SubMenuItem</a></li>
+                                <li><a href="../classes/photonui.Switch.html">photonui.Switch</a></li>
+                                <li><a href="../classes/photonui.TabItem.html">photonui.TabItem</a></li>
+                                <li><a href="../classes/photonui.TabLayout.html">photonui.TabLayout</a></li>
+                                <li><a href="../classes/photonui.TableView.html">photonui.TableView</a></li>
+                                <li><a href="../classes/photonui.Template.html">photonui.Template</a></li>
+                                <li><a href="../classes/photonui.Text.html">photonui.Text</a></li>
+                                <li><a href="../classes/photonui.TextAreaField.html">photonui.TextAreaField</a></li>
+                                <li><a href="../classes/photonui.TextField.html">photonui.TextField</a></li>
+                                <li><a href="../classes/photonui.ToggleButton.html">photonui.ToggleButton</a></li>
+                                <li><a href="../classes/photonui.Translation.html">photonui.Translation</a></li>
+                                <li><a href="../classes/photonui.Viewport.html">photonui.Viewport</a></li>
+                                <li><a href="../classes/photonui.Widget.html">photonui.Widget</a></li>
+                                <li><a href="../classes/photonui.Window.html">photonui.Window</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Composite.html">Composite</a></li>
+                                <li><a href="../modules/Container.html">Container</a></li>
+                                <li><a href="../modules/DataView.html">DataView</a></li>
+                                <li><a href="../modules/Helpers.html">Helpers</a></li>
+                                <li><a href="../modules/Interactive.html">Interactive</a></li>
+                                <li><a href="../modules/Layout.html">Layout</a></li>
+                                <li><a href="../modules/NonVisual.html">NonVisual</a></li>
+                                <li><a href="../modules/PhotonUI.html">PhotonUI</a></li>
+                                <li><a href="../modules/Visual.html">Visual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/interactive/colorpicker.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*
+ * Copyright (c) 2014-2015, Wanadev &lt;http://www.wanadev.fr/&gt;
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON &lt;http://flozz.fr/&gt;
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule Interactive
+ * @namespace photonui
+ */
+
+var Helpers = require(&quot;../helpers.js&quot;);
+var Widget = require(&quot;../widget.js&quot;);
+var Color = require(&quot;../nonvisual/color.js&quot;);
+var MouseManager = require(&quot;../nonvisual/mousemanager.js&quot;);
+
+/**
+ * A Color Picker.
+ *
+ * wEvents:
+ *
+ *   * value-changed:
+ *      - description: the selected color changed.
+ *      - callback:    function (widget, color)
+ *
+* value-changed-final:
+ *      - description: called when the value is no more modified after continuous changes
+ *      - callback:    function (widget, color)
+ *
+ * @class ColorPicker
+ * @constructor
+ * @extends photonui.Widget
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var ColorPicker = Widget.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        this._registerWEvents([&quot;value-changed&quot;, &quot;value-changed-final&quot;]);
+        this._color = new Color();
+        this.__buffH = document.createElement(&quot;canvas&quot;);
+        this.__buffH.width = 200;
+        this.__buffH.height = 200;
+        this.__buffSB = document.createElement(&quot;canvas&quot;);
+        this.__buffSB.width = 100;
+        this.__buffSB.height = 100;
+        this.__buffSBmask = document.createElement(&quot;canvas&quot;);
+        this.__buffSBmask.width = 100;
+        this.__buffSBmask.height = 100;
+        this.$super(params);
+        this._updateH();
+        this._updateSBmask();
+        this._updateSB();
+        this._updateCanvas();
+
+        this.__mouseManager = new MouseManager(this.__html.canvas);
+
+        this.__mouseManager.registerCallback(&quot;click&quot;, &quot;mouse-move&quot;, this.__onMouseMove.bind(this));
+        this.__mouseManager.registerCallback(&quot;mouse-down&quot;, &quot;mouse-down&quot;, this.__onMouseDown.bind(this));
+        this.__mouseManager.registerCallback(&quot;mouse-up&quot;, &quot;mouse-up&quot;, this.__onMouseUp.bind(this));
+        this.__mouseManager.registerCallback(&quot;drag-start&quot;, &quot;drag-start&quot;, this.__onDragStart.bind(this));
+
+        // Bind js events
+        this._bindEvent(&quot;value-changed&quot;, this.__html.preview, &quot;change&quot;, this.__onValueChanged.bind(this));
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * The value (color in rgb hexadecimal format (e.g. &quot;#ff0000&quot;)).
+     *
+     * @property value
+     * @type String
+     */
+    getValue: function () {
+        return this.color.rgbHexString;
+    },
+
+    setValue: function (value) {
+        this.color.fromString(value);
+        this._updateSB();
+        this._updateCanvas();
+    },
+
+    /**
+     * The color.
+     *
+     * @property color
+     * @type photonui.Color
+     */
+    _color: null,
+
+    getColor: function () {
+        &quot;@photonui-update&quot;;
+        return this._color;
+    },
+
+    setColor: function (color) {
+        if (color instanceof Color) {
+            if (this._color) {
+                this._color.removeCallback(&quot;photonui.colorpicker.value-changed::&quot; + this.name);
+            }
+            this._color = color;
+            this._color.registerCallback(&quot;photonui.colorpicker.value-changed::&quot; +
+                this.name, &quot;value-changed&quot;,
+                function () {
+                    this._updateSB();
+                    this._updateCanvas();
+                }.bind(this));
+            this._updateSB();
+            this._updateCanvas();
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function () {
+        return this.__html.outer;
+    },
+
+    // ====== Private properties ======
+
+    /**
+     * Buffer canvas for hue circle.
+     *
+     * @property __buffH
+     * @private
+     * @type HTMLCanvasElement
+     */
+    __buffH: null,
+
+    /**
+     * Buffer canvas for saturation/brightness square.
+     *
+     * @property __buffSB
+     * @private
+     * @type HTMLCanvasElement
+     */
+    __buffSB: null,
+
+    /**
+     * Mouse manager.
+     *
+     * @property __mouseManager
+     * @private
+     * @type photonui.MouseManager
+     */
+    __mouseManager: null,
+
+    /**
+     * FLAG: Disable SB square update.
+     *
+     * @property __disableSBUpdate
+     * @private
+     * @type Boolean
+     * @default false
+     */
+    __disableSBUpdate: false,
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    destroy: function () {
+        this.__mouseManager.destroy();
+        this._color.removeCallback(&quot;photonui.colorpicker.value-changed::&quot; + this.name);
+        this.$super();
+    },
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function () {
+        this.__html.outer = document.createElement(&quot;div&quot;);
+        this.__html.outer.className = &quot;photonui-widget photonui-colorpicker&quot;;
+        this.__html.canvas = document.createElement(&quot;canvas&quot;);
+        this.__html.canvas.width = 200;
+        this.__html.canvas.height = 200;
+        this.__html.outer.appendChild(this.__html.canvas);
+
+        this.__html.previewOuter = document.createElement(&quot;span&quot;);
+        this.__html.previewOuter.className = &quot;photonui-colorpicker-previewouter&quot;;
+        this.__html.outer.appendChild(this.__html.previewOuter);
+
+        this.__html.preview = document.createElement(&quot;input&quot;);
+        this.__html.preview.type = &quot;text&quot;;
+        this.__html.preview.autocomplete = &quot;off&quot;;
+        this.__html.preview.spellcheck = false;
+        this.__html.preview.className = &quot;photonui-colorpicker-preview&quot;;
+        this.__html.previewOuter.appendChild(this.__html.preview);
+    },
+
+    /**
+     * Update hue circle
+     *
+     * @method _updateH
+     * @private
+     */
+    _updateH: function () {
+        var canvas = this.__buffH;
+        var ctx = canvas.getContext(&quot;2d&quot;);
+        var color = new Color();
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i &lt; 360; i++) {
+            color.hue = 360 - i;
+            ctx.beginPath();
+            ctx.fillStyle = color.rgbHexString;
+            ctx.arc(100, 100, 90, Math.PI * i / 180, Math.PI * ((i + 2) % 360) / 180, false);
+            ctx.lineTo(100, 100);
+            ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.fillStyle = &quot;#000&quot;;
+        ctx.arc(100, 100, 73, 2 * Math.PI, false);
+        ctx.globalCompositeOperation = &quot;destination-out&quot;;
+        ctx.fill();
+    },
+
+    /**
+     * Update saturation/brightness square mask
+     *
+     * @method _updateSBmask
+     * @private
+     */
+    _updateSBmask: function () {
+        var canvas = this.__buffSBmask;
+        var ctx = canvas.getContext(&quot;2d&quot;);
+        var pix = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        var i = 0;
+        var saturation = 0;
+        var b = 0;
+        var s = 0;
+        for (b = 0; b &lt; 100; b++) {
+            for (s = 0; s &lt; 100; s++) {
+                i = 400 * b + 4 * s;
+
+                // some magic here
+                saturation = ((0.5 * (1 - s / 100) + 0.5) * (1 - b / 100) * 255) &lt;&lt; 0;
+
+                pix.data[i + 0] = saturation;
+                pix.data[i + 1] = saturation;
+                pix.data[i + 2] = saturation;
+
+                // more magic
+                pix.data[i + 3] = ((1 - (((s / 100)) * (1 - (b / 100)))) * 255) &lt;&lt; 0;
+            }
+        }
+
+        ctx.putImageData(pix, 0, 0);
+    },
+
+    /**
+     * Update saturation/brightness square
+     *
+     * @method _updateSB
+     * @private
+     */
+    _updateSB: function () {
+        if (this.__disableSBUpdate) {
+            return;
+        }
+
+        var canvas = this.__buffSB;
+        var ctx = canvas.getContext(&quot;2d&quot;);
+
+        var color = new Color({
+            hue: this.color.hue,
+            saturation: 100,
+            brightness: 100
+        });
+
+        ctx.save();
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // fill the whole canvas with the current color
+        ctx.fillStyle = color.rgbHexString;
+        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.fill();
+
+        // draw a mask on it, it will do the trick
+        ctx.drawImage(this.__buffSBmask, 0, 0);
+
+        ctx.restore();
+    },
+
+    /**
+     * Update the canvas
+     *
+     * @method _updateCanvas
+     * @private
+     */
+    _updateCanvas: function () {
+        var canvas = this.__html.canvas;
+        var ctx = canvas.getContext(&quot;2d&quot;);
+
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(this.__buffH, 0, 0);
+        ctx.drawImage(this.__buffSB, 50, 50);
+
+        ctx.strokeStyle = &quot;#fff&quot;;
+        ctx.shadowColor = &quot;rgba(0, 0, 0, .7)&quot;;
+        ctx.shadowBlur = 3;
+        ctx.lineWidth = 2;
+
+        // Square cursor
+        ctx.beginPath();
+        ctx.arc(this.color.saturation + 50, 100 - this.color.brightness + 50, 6, 2 * Math.PI, false);
+        ctx.stroke();
+
+        // Square cursor
+        ctx.translate(100, 100);
+        ctx.rotate(-this.color.hue * Math.PI / 180);
+        ctx.beginPath();
+        ctx.arc(81, 0, 6, 2 * Math.PI, false);
+        ctx.stroke();
+
+        ctx.restore();
+
+        // Color preview
+        this.__html.preview.style.backgroundColor = this.color.cssRgbaString;
+        this.__html.preview.value = this.color.rgbHexString;
+    },
+
+    /**
+     * Is the pointer on the SB Square?
+     *
+     * @method _pointerOnSquare
+     * @private
+     * @param mstate
+     * @return {Boolean}
+     */
+    _pointerOnSquare: function (mstate) {
+        return (mstate.x &gt;= 50 &amp;&amp; mstate.x &lt;= 150 &amp;&amp; mstate.y &gt;= 50 &amp;&amp; mstate.y &lt;= 150);
+    },
+
+    /**
+     * Is the pointer on the hue circle?
+     *
+     * @method _pointerOnCircle
+     * @private
+     * @param mstate
+     * @return {Boolean}
+     */
+    _pointerOnCircle: function (mstate) {
+        var dx = Math.abs(100 - mstate.x);
+        var dy = Math.abs(100 - mstate.y);
+        var h = Math.sqrt(dx * dx + dy * dy);
+        return (h &gt;= 74 &amp;&amp; h &lt;= 90);
+    },
+
+    /**
+     * the angle of the pointer with the horizontal line that pass by the center of the hue circle.
+     *
+     * @method _pointerAngle
+     * @private
+     * @param mstate
+     * @return {Number} the angle in degree.
+     */
+    _pointerAngle: function (mstate) {
+        var dx = Math.abs(100 - mstate.x);
+        var dy = Math.abs(100 - mstate.y);
+        var angle = Math.atan(dy / dx) * 180 / Math.PI;
+
+        if (mstate.x &lt; 100 &amp;&amp; mstate.y &lt; 100) {
+            angle = 180 - angle;
+        } else if (mstate.x &lt; 100 &amp;&amp; mstate.y &gt;= 100) {
+            angle += 180;
+        } else if (mstate.x &gt;= 100 &amp;&amp; mstate.y &gt; 100) {
+            angle = 360 - angle;
+        }
+
+        return angle | 0;
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * @method __onMouseMove
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onMouseMove: function (manager, mstate) {
+        if (this._pointerOnSquare(mstate) || this._pointerOnCircle(mstate)) {
+            this.__html.canvas.style.cursor = &quot;crosshair&quot;;
+        } else {
+            this.__html.canvas.style.cursor = &quot;default&quot;;
+        }
+    },
+
+    /**
+     * @method __onMouseDown
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onMouseDown: function (manager, mstate) {
+        if (this._pointerOnSquare(mstate)) {
+            this.__disableSBUpdate = true;
+            this.color.saturation = mstate.x - 50;
+            this.color.brightness = 150 - mstate.y;
+            this.__disableSBUpdate = false;
+            this._callCallbacks(&quot;value-changed&quot;, this.color);
+        } else if (this._pointerOnCircle(mstate)) {
+            this.color.hue = this._pointerAngle(mstate);
+            this._callCallbacks(&quot;value-changed&quot;, this.color);
+        }
+    },
+
+    /**
+     * @method __onMouseUp
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onMouseUp: function (manager, mstate) {
+        this._callCallbacks(&quot;value-changed-final&quot;, this.color);
+    },
+
+    /**
+     * @method __onDragStart
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDragStart: function (manager, mstate) {
+        if (this._pointerOnSquare(mstate)) {
+            this.__disableSBUpdate = true;
+            this.__mouseManager.registerCallback(&quot;dragging&quot;, &quot;dragging&quot;, this.__onDraggingSquare.bind(this));
+            this.__mouseManager.registerCallback(&quot;drag-end&quot;, &quot;drag-end&quot;, this.__onDragEnd.bind(this));
+        } else if (this._pointerOnCircle(mstate)) {
+            this.__mouseManager.registerCallback(&quot;dragging&quot;, &quot;dragging&quot;, this.__onDraggingCircle.bind(this));
+            this.__mouseManager.registerCallback(&quot;drag-end&quot;, &quot;drag-end&quot;, this.__onDragEnd.bind(this));
+        }
+    },
+
+    /**
+     * @method __onDraggingSquare
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDraggingSquare: function (manager, mstate) {
+        this.color.saturation = mstate.x - 50;
+        this.color.brightness = 150 - mstate.y;
+        this._callCallbacks(&quot;value-changed&quot;, this.color);
+    },
+
+    /**
+     * @method __onDraggingCircle
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDraggingCircle: function (manager, mstate) {
+        this.color.hue = this._pointerAngle(mstate);
+        this._callCallbacks(&quot;value-changed&quot;, this.color);
+    },
+
+    /**
+     * @method __onDragEnd
+     * @private
+     * @param {photonui.MouseManager} manager
+     * @param {Object} mstate
+     */
+    __onDragEnd: function (manager, mstate) {
+        this.__mouseManager.removeCallback(&quot;dragging&quot;);
+        this.__mouseManager.removeCallback(&quot;drag-end&quot;);
+        this.__disableSBUpdate = false;
+    },
+
+    /**
+     * @method __onValueChanged
+     * @private
+     */
+    __onValueChanged: function () {
+        this.color.fromString(this.__html.preview.value);
+        this.__html.preview.value = this.color.rgbHexString;
+        this._callCallbacks(&quot;value-changed&quot;, this.color);
+    },
+});
+
+module.exports = ColorPicker;
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

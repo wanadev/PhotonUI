@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <meta charset="UTF-8" />
+        <title>BoxLayout - PhotonUI</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" type="image/png" href="/PhotonUI/images/favicon.png" />
+        <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,700,300italic' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/PhotonUI/style/style.css" type="text/css">
+        <script src="/PhotonUI/js/photonui.js" type="text/javascript"></script>
+        <script src="/PhotonUI/js/highlight.pack.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+
+        <header>
+    <div class="page">
+
+        <div class="header-left">
+            <img src="/PhotonUI/images/photonui-logo_white_300x300.png" alt="PhotonUI logo" />
+        </div>
+
+        <div class="header-right">
+            <h1>PhotonUI</h1>
+            <p>A javascript framework to create user interfaces</p>
+            <nav class="nav">
+                
+                    <a href="/PhotonUI/">Home</a>
+                
+                    <a href="/PhotonUI/doc/">Documentation</a>
+                
+                    <a href="https://github.com/wanadev/PhotonUI">GitHub</a>
+                
+                    <a href="https://github.com/wanadev/PhotonUI/archive/master.zip">Download</a>
+                
+            </nav>
+        </div>
+
+    </div>
+</header>
+
+
+        <div id="content">
+            
+
+    <div class="demo-runner">
+        <div class="page">
+            <div class="left">
+                
+                    <h2>BoxLayout</h2>
+                
+                <div id="demo"></div>
+            </div>
+            <div class="right">
+                <div id="demo-error"></div>
+                <script type="text/plain" id="demo-code-content">var box = new photonui.BoxLayout({
+    orientation: "vertical",  // "vertical" or "horizontal"
+    spacing: 5,               // spacing between widgets
+    children: [
+        new photonui.Button(),
+        new photonui.Button(),
+        new photonui.Button()
+    ]
+});
+
+photonui.domInsert(box, "demo");
+</script>
+                <div id="demo-code"></div>
+                <button id="run-script"><i class="fa fa-play"></i> Run (Ctrl+Enter)</button>
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+    <script src="/PhotonUI/js/codemirror.js" type="text/javascript"></script>
+    <script src="/PhotonUI/js/codemirror-mode-javascript.js" type="text/javascript"></script>
+    <script src="/PhotonUI/js/script-runner.js" type="text/javascript"></script>
+
+
+<div class="page">
+    <article id="page-width-demo-undefined" class="article article-type-page-width-demo">
+        <p><code>photonui.BoxLayout</code> is a layout widget that allows you to align widgets on vertical or horizontal boxes (1D grid).</p>
+<h3 id="Global-Options"><a href="#Global-Options" class="headerlink" title="Global Options"></a>Global Options</h3><p><code>photonui.BoxLayout</code> provides options to define its look and feel. Global options are applied to the layout itself.</p>
+<h4 id="orientation"><a href="#orientation" class="headerlink" title="orientation"></a>orientation</h4><p>Defines if the widgets must be displayed vertically or horizontally.</p>
+<p>Possible values:</p>
+<ul>
+<li><code>vertical</code> (default)</li>
+<li><code>horizontal</code></li>
+</ul>
+<p style="text-align: center;"><img src="boxlayout-orientation.png" alt="BoxLayout Orientation Schema"></p>
+
+
+<h4 id="spacing"><a href="#spacing" class="headerlink" title="spacing"></a>spacing</h4><p>Defines the spacing between the widgets (5px by default). </p>
+<p style="text-align: center;"><img src="boxlayout-spacing.png" alt="BoxLayout Spacing Schema"></p>
+
+
+<h4 id="verticalPadding"><a href="#verticalPadding" class="headerlink" title="verticalPadding"></a>verticalPadding</h4><p>Defines the spacing between the widgets and the left and right edges of the layout (0px by default).</p>
+<p style="text-align: center;"><img src="boxlayout-verticalpadding.png" alt="BoxLayout Vertical Padding Schema"></p>
+
+
+<h4 id="horizontalPadding"><a href="#horizontalPadding" class="headerlink" title="horizontalPadding"></a>horizontalPadding</h4><p>Defines the spacing between the widgets and the top and bottom edges of the layout (0px by default).</p>
+<p style="text-align: center;"><img src="boxlayout-horizontalpadding.png" alt="BoxLayout Horizontal Padding Schema"></p>
+
+
+<h3 id="Layout-Options"><a href="#Layout-Options" class="headerlink" title="Layout Options"></a>Layout Options</h3><p><code>photonui.BoxLayout</code> allows widgets to set plenty of options to customize the way they are displayed in the layout. Layout options are associated with only one widget of the layout.</p>
+<h4 id="align"><a href="#align" class="headerlink" title="align"></a>align</h4><p>Defines how the widget must be aligned in the layout.</p>
+<p>Possible values:</p>
+<ul>
+<li><p><code>stretch</code> (default, alias: <code>expand</code>): the widget is stretched to use all the available space in its box,</p>
+</li>
+<li><p><code>start</code> (alias: <code>top</code>, <code>left</code>): the widget is placed at the top or on the left of its box depending on the layout orientation,</p>
+</li>
+<li><p><code>center</code> (alias: <code>middle</code>): the widget is centered in its box,</p>
+</li>
+<li><p><code>end</code> (alias: <code>bottom</code>, <code>right</code>): the widget is placed at the bottom or on the right of its box depending on the layout orientation.</p>
+</li>
+</ul>
+<p style="text-align: center;"><img src="boxlayout-lo-align.png" alt="BoxLayout Align Layout Option Schema"></p>
+
+
+<h4 id="order"><a href="#order" class="headerlink" title="order"></a>order</h4><p>Defines the order of the widgets (0 by default).</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> box = <span class="keyword">new</span> photonui.BoxLayout(&#123;</span><br><span class="line">    children: [</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"Third"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                order: <span class="number">42</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"First"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                order: <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"Second"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                order: <span class="number">2</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    ]</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">photonui.domInsert(box, <span class="string">"demo"</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="width"><a href="#width" class="headerlink" title="width"></a>width</h4><p>Defines the fixed width of the widget (default = <code>null</code>, <code>null</code> means “auto”).</p>
+<h4 id="minWidth"><a href="#minWidth" class="headerlink" title="minWidth"></a>minWidth</h4><p>Defines the minimum width of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h4 id="maxWidth"><a href="#maxWidth" class="headerlink" title="maxWidth"></a>maxWidth</h4><p>Defines the maximum width of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h4 id="height"><a href="#height" class="headerlink" title="height"></a>height</h4><p>Defines the fixed height of the widget (default = <code>null</code>, <code>null</code> means “auto”).</p>
+<h4 id="minHeight"><a href="#minHeight" class="headerlink" title="minHeight"></a>minHeight</h4><p>Defines the minimum height of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h4 id="maxHeight"><a href="#maxHeight" class="headerlink" title="maxHeight"></a>maxHeight</h4><p>Defines the maximum height of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h3 id="Class-Reference"><a href="#Class-Reference" class="headerlink" title="Class Reference"></a>Class Reference</h3><ul>
+<li><a href="../../ref/classes/photonui.BoxLayout.html">BoxLayout class reference</a></li>
+</ul>
+<h3 id="More-examples"><a href="#More-examples" class="headerlink" title="More examples"></a>More examples</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> box = <span class="keyword">new</span> photonui.BoxLayout(&#123;</span><br><span class="line">    orientation: <span class="string">"vertical"</span>,  <span class="comment">// "vertical" or "horizontal"</span></span><br><span class="line">    spacing: <span class="number">10</span>,              <span class="comment">// spacing between widgets</span></span><br><span class="line">    children: [</span><br><span class="line"></span><br><span class="line">        <span class="comment">// "align" layout option</span></span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"align: stretch"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                align: <span class="string">"stretch"</span> <span class="comment">// default, alias: expand</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"align: start"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                align: <span class="string">"start"</span>   <span class="comment">// alias: left, top</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"align: center"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                align: <span class="string">"center"</span>  <span class="comment">// alias: middle</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"align: end"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                align: <span class="string">"end"</span>     <span class="comment">// alias: right, bottom</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line"></span><br><span class="line">        <span class="comment">// "order" layout option (if not defined, order = 0)</span></span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"order: -1"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                order: -<span class="number">1</span>,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"order: 2"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                order: <span class="number">2</span>,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"order: 1"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                order: <span class="number">1</span>,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line"></span><br><span class="line">        <span class="comment">// widget sizing layout options</span></span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"width: 100px"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                width: <span class="number">100</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"maxWidth: 200px"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                maxWidth: <span class="number">200</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"minWidth: 300px"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                minWidth: <span class="number">300</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"height: 100px"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                height: <span class="number">100</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="comment">// ... and so on with minHeight and maxHeight</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Of course you can mix options</span></span><br><span class="line">        <span class="keyword">new</span> photonui.Button(&#123;</span><br><span class="line">            text: <span class="string">"MIX"</span>,</span><br><span class="line">            layoutOptions: &#123;</span><br><span class="line">                align: <span class="string">"center"</span>,</span><br><span class="line">                order: <span class="number">42</span>,</span><br><span class="line">                width: <span class="number">100</span>,</span><br><span class="line">                height: <span class="number">100</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;),</span><br><span class="line">    ]</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">photonui.domInsert(box, <span class="string">"demo"</span>);</span><br></pre></td></tr></table></figure>
+
+    </article>
+</div>
+
+
+        </div>
+
+        <footer id="footer">
+    <p>
+        Copyright (c)  2014-2024 Wanadev
+         - <a href="http://www.wanadev.fr">www.wanadev.fr</a><br />
+        Unless otherwise specified, all content of this site is published under the
+        <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.en">cc by-sa 3.0</a> license
+    </p>
+</footer>
+
+
+    </body>
+
+</html>
+

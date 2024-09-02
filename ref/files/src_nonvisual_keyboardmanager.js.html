@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/nonvisual/keyboardmanager.js - photonui</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="photonui" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.8.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/photonui.AccelManager.html">photonui.AccelManager</a></li>
+                                <li><a href="../classes/photonui.Base.html">photonui.Base</a></li>
+                                <li><a href="../classes/photonui.BaseIcon.html">photonui.BaseIcon</a></li>
+                                <li><a href="../classes/photonui.BaseWindow.html">photonui.BaseWindow</a></li>
+                                <li><a href="../classes/photonui.BoxLayout.html">photonui.BoxLayout</a></li>
+                                <li><a href="../classes/photonui.Button.html">photonui.Button</a></li>
+                                <li><a href="../classes/photonui.Canvas.html">photonui.Canvas</a></li>
+                                <li><a href="../classes/photonui.CheckBox.html">photonui.CheckBox</a></li>
+                                <li><a href="../classes/photonui.Color.html">photonui.Color</a></li>
+                                <li><a href="../classes/photonui.ColorButton.html">photonui.ColorButton</a></li>
+                                <li><a href="../classes/photonui.ColorPalette.html">photonui.ColorPalette</a></li>
+                                <li><a href="../classes/photonui.ColorPicker.html">photonui.ColorPicker</a></li>
+                                <li><a href="../classes/photonui.ColorPickerDialog.html">photonui.ColorPickerDialog</a></li>
+                                <li><a href="../classes/photonui.Container.html">photonui.Container</a></li>
+                                <li><a href="../classes/photonui.DataView.html">photonui.DataView</a></li>
+                                <li><a href="../classes/photonui.Dialog.html">photonui.Dialog</a></li>
+                                <li><a href="../classes/photonui.Expander.html">photonui.Expander</a></li>
+                                <li><a href="../classes/photonui.FAIcon.html">photonui.FAIcon</a></li>
+                                <li><a href="../classes/photonui.Field.html">photonui.Field</a></li>
+                                <li><a href="../classes/photonui.FileManager.html">photonui.FileManager</a></li>
+                                <li><a href="../classes/photonui.FluidLayout.html">photonui.FluidLayout</a></li>
+                                <li><a href="../classes/photonui.FluidView.html">photonui.FluidView</a></li>
+                                <li><a href="../classes/photonui.FontSelect.html">photonui.FontSelect</a></li>
+                                <li><a href="../classes/photonui.GridLayout.html">photonui.GridLayout</a></li>
+                                <li><a href="../classes/photonui.Helpers.html">photonui.Helpers</a></li>
+                                <li><a href="../classes/photonui.IconButton.html">photonui.IconButton</a></li>
+                                <li><a href="../classes/photonui.IconView.html">photonui.IconView</a></li>
+                                <li><a href="../classes/photonui.Image.html">photonui.Image</a></li>
+                                <li><a href="../classes/photonui.KeyboardManager.html">photonui.KeyboardManager</a></li>
+                                <li><a href="../classes/photonui.Label.html">photonui.Label</a></li>
+                                <li><a href="../classes/photonui.Layout.html">photonui.Layout</a></li>
+                                <li><a href="../classes/photonui.ListView.html">photonui.ListView</a></li>
+                                <li><a href="../classes/photonui.Menu.html">photonui.Menu</a></li>
+                                <li><a href="../classes/photonui.MenuItem.html">photonui.MenuItem</a></li>
+                                <li><a href="../classes/photonui.MouseManager.html">photonui.MouseManager</a></li>
+                                <li><a href="../classes/photonui.NumericField.html">photonui.NumericField</a></li>
+                                <li><a href="../classes/photonui.PopupMenu.html">photonui.PopupMenu</a></li>
+                                <li><a href="../classes/photonui.PopupWindow.html">photonui.PopupWindow</a></li>
+                                <li><a href="../classes/photonui.ProgressBar.html">photonui.ProgressBar</a></li>
+                                <li><a href="../classes/photonui.Select.html">photonui.Select</a></li>
+                                <li><a href="../classes/photonui.Separator.html">photonui.Separator</a></li>
+                                <li><a href="../classes/photonui.Slider.html">photonui.Slider</a></li>
+                                <li><a href="../classes/photonui.SpriteIcon.html">photonui.SpriteIcon</a></li>
+                                <li><a href="../classes/photonui.SpriteSheet.html">photonui.SpriteSheet</a></li>
+                                <li><a href="../classes/photonui.SubMenuItem.html">photonui.SubMenuItem</a></li>
+                                <li><a href="../classes/photonui.Switch.html">photonui.Switch</a></li>
+                                <li><a href="../classes/photonui.TabItem.html">photonui.TabItem</a></li>
+                                <li><a href="../classes/photonui.TabLayout.html">photonui.TabLayout</a></li>
+                                <li><a href="../classes/photonui.TableView.html">photonui.TableView</a></li>
+                                <li><a href="../classes/photonui.Template.html">photonui.Template</a></li>
+                                <li><a href="../classes/photonui.Text.html">photonui.Text</a></li>
+                                <li><a href="../classes/photonui.TextAreaField.html">photonui.TextAreaField</a></li>
+                                <li><a href="../classes/photonui.TextField.html">photonui.TextField</a></li>
+                                <li><a href="../classes/photonui.ToggleButton.html">photonui.ToggleButton</a></li>
+                                <li><a href="../classes/photonui.Translation.html">photonui.Translation</a></li>
+                                <li><a href="../classes/photonui.Viewport.html">photonui.Viewport</a></li>
+                                <li><a href="../classes/photonui.Widget.html">photonui.Widget</a></li>
+                                <li><a href="../classes/photonui.Window.html">photonui.Window</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Composite.html">Composite</a></li>
+                                <li><a href="../modules/Container.html">Container</a></li>
+                                <li><a href="../modules/DataView.html">DataView</a></li>
+                                <li><a href="../modules/Helpers.html">Helpers</a></li>
+                                <li><a href="../modules/Interactive.html">Interactive</a></li>
+                                <li><a href="../modules/Layout.html">Layout</a></li>
+                                <li><a href="../modules/NonVisual.html">NonVisual</a></li>
+                                <li><a href="../modules/PhotonUI.html">PhotonUI</a></li>
+                                <li><a href="../modules/Visual.html">Visual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/nonvisual/keyboardmanager.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*
+ * Copyright (c) 2014-2015, Wanadev &lt;http://www.wanadev.fr/&gt;
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: A. Breust &lt;https://github.com/Breush&gt;
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @submodule NonVisual
+ * @namespace photonui
+ */
+
+var Helpers = require(&quot;../helpers.js&quot;);
+var Base = require(&quot;../base.js&quot;);
+var Widget = require(&quot;../widget.js&quot;);
+
+/**
+ * Manage document-wide keyboard events.
+ *
+ * wEvents:
+ *
+ *   * key-down:
+ *      - description: When a key is pushed (event launched just once until key is released).
+ *      - callback:    function(manager, kstate)
+ *
+ *   * key-up:
+ *      - description: When a key is released.
+ *      - callback:    function(manager, kstate)
+ *
+ *   * key-hold:
+ *      - description: When the last key pressed is held down.
+ *      - callback:    function(manager, kstate)
+ *
+ *
+ * kstate:
+ *
+ *   A snapshot of the keyboard state when the event occured.
+ *
+ *     {
+ *         event: &lt;Object&gt;,       // The original js event
+ *         action: &lt;String&gt;,      // The event name (key-down/up, key-hold)
+ *         keys: &lt;String&gt;,        // The object of active keys
+ *         key: &lt;String&gt;,         // User-friendly key name
+ *     }
+ *
+ * @class KeyboardManager
+ * @constructor
+ * @extends photonui.Base
+ * @param {photonui.Widget} element Any PhotonUI Widget (optional).
+ * @param {HTMLElement} element Any HTML element (optional).
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var KeyboardManager = Base.$extend({
+
+    // Constructor
+    __init__: function (element, params) {
+        this._registerWEvents([&quot;key-down&quot;, &quot;key-up&quot;, &quot;key-hold&quot;]);
+
+        this.__keys = {};
+
+        if (element &amp;&amp; (element instanceof Widget || element instanceof HTMLElement || element === document)) {
+            this.$super(params);
+            this.element = element;
+        } else {
+            this.$super(element);
+        }
+
+        this._initKeyCache();
+
+        // NOTE Holding event might be broken on old versions of Ubuntu + GTK
+        // for an event &quot;keyup&quot; is fired before the &quot;keydown&quot; repeat.
+        // One work-around would be to send by ourself the events inside an animation loop,
+        // according to the last and the current states of active keys.
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * Disable the keyboard manager callbacks when focusing a input field-like element.
+     *
+     * @property safe
+     * @type Boolean
+     * @default true
+     */
+    _safe: true,
+
+    getSafe: function () {
+        &quot;@photonui-update&quot;;
+        return this._safe;
+    },
+
+    setSafe: function (safe) {
+        this._safe = safe;
+    },
+
+    /**
+     * Disable concerned events default actions.
+     *
+     * @property noPreventDefault
+     * @type Boolean
+     * @default false
+     */
+    _noPreventDefault: false,
+
+    getNoPreventDefault: function () {
+        &quot;@photonui-update&quot;;
+        return this._noPreventDefault;
+    },
+
+    setNoPreventDefault: function (noPreventDefault) {
+        this._noPreventDefault = noPreventDefault;
+    },
+
+    /**
+     * The HTML Element on which the events are binded.
+     *
+     * NOTE: If a photonui.Widget object is assigned to this property,
+     *       its HTML Element will be automatically assigned to the property instead.
+     *
+     * @property element
+     * @type HTMLElement
+     * @default null
+     */
+    _element: null,
+
+    getElement: function () {
+        return this._element || document;
+    },
+
+    setElement: function (element) {
+        if (element instanceof Widget) {
+            this._element = element.interactiveNode || element.html;
+        } else if (element instanceof HTMLElement || element === document) {
+            this._element = element;
+        } else {
+            this._element = null;
+        }
+        this._updateEvents();
+    },
+
+    /**
+     * The action:
+     *
+     *   * &quot;key-down&quot;
+     *   * &quot;key-up&quot;
+     *   * &quot;key-hold&quot;
+     *
+     * @property action
+     * @readOnly
+     * @type String
+     */
+    _action: &quot;&quot;,
+
+    getAction: function () {
+        return this._action;
+    },
+
+    // ====== Private properties ======
+
+    /**
+     * Last event object.
+     *
+     * @property __event
+     * @private
+     * @type Object
+     * @default null
+     */
+    __event: null,
+
+    /**
+     * The currently active keys.
+     *
+     * @property keys
+     * @private
+     * @type Object
+     * @default {}
+     */
+    __keys: null,
+
+    /**
+     * Last key concerned.
+     *
+     * @property __key
+     * @private
+     * @type String
+     * @default null
+     */
+    __key: null,
+
+    /**
+     * KeyCode correspondance to key name.
+     *
+     * @property __keyCache
+     * @private
+     * @type Array
+     */
+    __keyCache: [],
+
+    /**
+     * Key name correspondance to key code.
+     *
+     * @property __keyCodeCache
+     * @private
+     * @type Array
+     */
+    __keyCodeCache: [],
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Bind events on the HTML Element.
+     *
+     * @method _updateEvents
+     * @private
+     */
+    _updateEvents: function () {
+        // Unbind all existing events
+        for (var id in this.__events) {
+            this._unbindEvent(id);
+        }
+        // Check if we have an html element
+        if (!this.element) {
+            return;
+        }
+        // Bind new events
+        // We will simulate the standard &quot;keypress&quot; event because some browsers
+        // do not emit one for special keys (alt, ctrl, shift, escape).
+        this._bindEvent(&quot;key-down&quot;, this.getElement(), &quot;keydown&quot;, this.__onDocumentKeyDown.bind(this));
+        this._bindEvent(&quot;key-up&quot;, this.getElement(), &quot;keyup&quot;, this.__onDocumentKeyUp.bind(this));
+
+        this._bindEvent(&quot;lost-focus&quot;, window, &quot;blur&quot;, this.__onWindowBlur.bind(this));
+    },
+
+    /**
+     * Check if a specific key is currently pressed.
+     *
+     * @method isKeyPressed
+     * @param {String} key The key name
+     * @return {Boolean}
+     */
+    isKeyPressed: function (key) {
+        var keyState = this.__keys[this.__keyCodeCache[key]];
+        return (keyState) ? true : false;
+    },
+
+    /**
+     * Check if a specific key is currently released.
+     *
+     * @method isKeyReleased
+     * @param {String} key The key name
+     * @return {Boolean}
+     */
+    isKeyReleased: function (key) {
+        var keyState = this.__keys[this.__keyCodeCache[key]];
+        return (keyState) ? false : true;
+    },
+
+    // ====== Private methods ======
+
+    /**
+     * Take a snapshot of the KeyboardManager
+     *
+     * @method _dump
+     * @private
+     * @return {Object}
+     */
+    _dump: function () {
+        return {
+            event: this.__event,
+            action: this._action,
+            key: this.__key
+        };
+    },
+
+    /**
+     * Check if the user has not focused an input element
+     *
+     * @method _checkFocus
+     * @private
+     * @return {Boolean}
+     */
+    _checkFocus: function () {
+        return !(this._safe &amp;&amp; (document.activeElement instanceof HTMLInputElement ||
+               document.activeElement instanceof HTMLSelectElement ||
+               document.activeElement instanceof HTMLTextAreaElement));
+    },
+
+    /**
+     * Check the validity of the keyboard event
+     *
+     * @method _checkEvent
+     * @private
+     * @param {KeyboardEvent} event The keyboard event
+     * @return {Boolean}
+     */
+    _checkEvent: function (event) {
+        this.__event = event;
+        this.__key = this._keyFromEvent(event);
+
+        if (!this.__key || this.__key === &quot;Dead&quot;) {
+            return false;
+        }
+
+        this.__keyCodeCache[this.__key] = event.keyCode;
+
+        return this._checkFocus();
+    },
+
+    /**
+     * Create the key correspondance cache for basic touches
+     *
+     * @method _initKeyCache
+     * @private
+     */
+    _initKeyCache: function () {
+        // General
+        this.__keyCache[3] = &quot;cancel&quot;;
+        this.__keyCache[8] = &quot;backspace&quot;;
+        this.__keyCache[9] = &quot;tab&quot;;
+        this.__keyCache[12] = &quot;clear&quot;;
+        this.__keyCache[13] = &quot;enter&quot;;
+        this.__keyCache[16] = &quot;shift&quot;;
+        this.__keyCache[17] = &quot;ctrl&quot;;
+        this.__keyCache[18] = &quot;alt&quot;;
+        this.__keyCache[19] = &quot;pause&quot;;
+        this.__keyCache[20] = &quot;capslock&quot;;
+        this.__keyCache[27] = &quot;escape&quot;;
+        this.__keyCache[32] = &quot;space&quot;;
+        this.__keyCache[33] = &quot;pageup&quot;;
+        this.__keyCache[34] = &quot;pagedown&quot;;
+        this.__keyCache[35] = &quot;end&quot;;
+        this.__keyCache[36] = &quot;home&quot;;
+        this.__keyCache[37] = &quot;left&quot;;
+        this.__keyCache[38] = &quot;up&quot;;
+        this.__keyCache[39] = &quot;right&quot;;
+        this.__keyCache[40] = &quot;down&quot;;
+        this.__keyCache[41] = &quot;select&quot;;
+        this.__keyCache[42] = &quot;printscreen&quot;;
+        this.__keyCache[43] = &quot;execute&quot;;
+        this.__keyCache[44] = &quot;snapshot&quot;;
+        this.__keyCache[45] = &quot;insert&quot;;
+        this.__keyCache[46] = &quot;delete&quot;;
+        this.__keyCache[47] = &quot;help&quot;;
+
+        // 0-9
+        this.__keyCache[48] = &quot;0&quot;;
+        this.__keyCache[49] = &quot;1&quot;;
+        this.__keyCache[50] = &quot;2&quot;;
+        this.__keyCache[51] = &quot;3&quot;;
+        this.__keyCache[52] = &quot;4&quot;;
+        this.__keyCache[53] = &quot;5&quot;;
+        this.__keyCache[54] = &quot;6&quot;;
+        this.__keyCache[55] = &quot;7&quot;;
+        this.__keyCache[56] = &quot;8&quot;;
+        this.__keyCache[57] = &quot;9&quot;;
+
+        // A-Z
+        for (var keyCode = 65; keyCode &lt;= 90; ++keyCode) {
+            this.__keyCache[keyCode] = String.fromCharCode(keyCode);
+        }
+
+        // numpad
+        this.__keyCache[96] = &quot;num0&quot;;
+        this.__keyCache[97] = &quot;num1&quot;;
+        this.__keyCache[98] = &quot;num2&quot;;
+        this.__keyCache[99] = &quot;num3&quot;;
+        this.__keyCache[100] = &quot;num4&quot;;
+        this.__keyCache[101] = &quot;num5&quot;;
+        this.__keyCache[102] = &quot;num6&quot;;
+        this.__keyCache[103] = &quot;num7&quot;;
+        this.__keyCache[104] = &quot;num8&quot;;
+        this.__keyCache[105] = &quot;num9&quot;;
+        this.__keyCache[106] = &quot;num*&quot;;
+        this.__keyCache[107] = &quot;num+&quot;;
+        this.__keyCache[108] = &quot;numenter&quot;;
+        this.__keyCache[109] = &quot;num-&quot;;
+        this.__keyCache[110] = &quot;num.&quot;;
+        this.__keyCache[111] = &quot;num/&quot;;
+        this.__keyCache[144] = &quot;numlock&quot;;
+        this.__keyCache[145] = &quot;scrolllock&quot;;
+
+        // function keys
+        this.__keyCache[112] = &quot;f1&quot;;
+        this.__keyCache[113] = &quot;f2&quot;;
+        this.__keyCache[114] = &quot;f3&quot;;
+        this.__keyCache[115] = &quot;f4&quot;;
+        this.__keyCache[116] = &quot;f5&quot;;
+        this.__keyCache[117] = &quot;f6&quot;;
+        this.__keyCache[118] = &quot;f7&quot;;
+        this.__keyCache[119] = &quot;f8&quot;;
+        this.__keyCache[120] = &quot;f9&quot;;
+        this.__keyCache[121] = &quot;f10&quot;;
+        this.__keyCache[122] = &quot;f11&quot;;
+        this.__keyCache[123] = &quot;f12&quot;;
+    },
+
+    /**
+     * Get the key name from a native keyboard event
+     *
+     * @method _keyFromEvent
+     * @private
+     * @param {KeyboardEvent} event The keyboard event
+     * @return {String}
+     */
+    _keyFromEvent: function (keyboardEvent) {
+        var key = this.__keyCache[keyboardEvent.keyCode];
+        if (!key) {
+            key = keyboardEvent.key;
+            this.__keyCache[keyboardEvent.keyCode] = key;
+        }
+        return key;
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * Used to grab all keyboard events
+     *
+     * @method __onDocumentKeyDown
+     * @private
+     * @param event
+     */
+    __onDocumentKeyDown: function (event) {
+        if (!this._checkEvent(event)) {
+            return;
+        }
+
+        this._action = (this.__keys[event.keyCode]) ? &quot;key-hold&quot; : &quot;key-down&quot;;
+        this.__keys[event.keyCode] = true;
+        this._callCallbacks(this._action, [this._dump()]);
+
+        if (!this._noPreventDefault) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Used to grab all keyboard events
+     *
+     * @method __onDocumentKeyUp
+     * @private
+     * @param event
+     */
+    __onDocumentKeyUp: function (event) {
+        if (!this._checkEvent(event) || !this.__keys[event.keyCode]) {
+            return;
+        }
+
+        this._action = &quot;key-up&quot;;
+        delete this.__keys[event.keyCode];
+        this._callCallbacks(this._action, [this._dump()]);
+
+        if (!this._noPreventDefault) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Called when the window loose focus
+     *
+     * @method __onWindowBlur
+     * @private
+     */
+    __onWindowBlur: function () {
+        this._action = &quot;key-up&quot;;
+        this._event = undefined;
+
+        for (var keyCode in this.__keys) {
+            delete this.__keys[keyCode];
+            this.__key = this.__keyCache[keyCode];
+            this._callCallbacks(this._action, [this._dump()]);
+        }
+    }
+});
+
+module.exports = KeyboardManager;
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

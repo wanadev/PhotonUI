@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="200"
+   height="150"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.91 r13725"
+   version="1.1"
+   sodipodi:docname="switch.svg"
+   inkscape:export-filename="/home/flo/wanadev/devel/public/PhotonUI/photonui-site/source/doc/widgets/switch.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#4ec8db"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="120.17367"
+     inkscape:cy="68.954129"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="1920"
+     inkscape:window-height="1014"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     showgrid="false"
+     units="px"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-902.36216)">
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4133"
+       width="75"
+       height="41"
+       x="62"
+       y="957.36218"
+       rx="4"
+       ry="3.9999995" />
+    <path
+       style="opacity:1;fill:#f9f9f9;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 102 60 C 101.446 60 101 60.446 101 61 L 101 90 C 101 90.554 101.446 91 102 91 L 131 91 C 131.554 91 132 90.554 132 90 L 132 61 C 132 60.446 131.554 60 131 60 L 102 60 z M 108 64 L 109 64 C 109.554 64 110 64.446 110 65 L 110 86 C 110 86.554 109.554 87 109 87 L 108 87 C 107.446 87 107 86.554 107 86 L 107 65 C 107 64.446 107.446 64 108 64 z M 116 64 L 117 64 C 117.554 64 118 64.446 118 65 L 118 86 C 118 86.554 117.554 87 117 87 L 116 87 C 115.446 87 115 86.554 115 86 L 115 65 C 115 64.446 115.446 64 116 64 z M 124 64 L 125 64 C 125.554 64 126 64.446 126 65 L 126 86 C 126 86.554 125.554 87 125 87 L 124 87 C 123.446 87 123 86.554 123 86 L 123 65 C 123 64.446 123.446 64 124 64 z "
+       transform="translate(0,902.36216)"
+       id="rect4136" />
+  </g>
+</svg>

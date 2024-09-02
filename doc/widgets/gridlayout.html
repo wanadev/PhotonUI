@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <meta charset="UTF-8" />
+        <title>GridLayout - PhotonUI</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" type="image/png" href="/PhotonUI/images/favicon.png" />
+        <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,700,300italic' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/PhotonUI/style/style.css" type="text/css">
+        <script src="/PhotonUI/js/photonui.js" type="text/javascript"></script>
+        <script src="/PhotonUI/js/highlight.pack.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+
+        <header>
+    <div class="page">
+
+        <div class="header-left">
+            <img src="/PhotonUI/images/photonui-logo_white_300x300.png" alt="PhotonUI logo" />
+        </div>
+
+        <div class="header-right">
+            <h1>PhotonUI</h1>
+            <p>A javascript framework to create user interfaces</p>
+            <nav class="nav">
+                
+                    <a href="/PhotonUI/">Home</a>
+                
+                    <a href="/PhotonUI/doc/">Documentation</a>
+                
+                    <a href="https://github.com/wanadev/PhotonUI">GitHub</a>
+                
+                    <a href="https://github.com/wanadev/PhotonUI/archive/master.zip">Download</a>
+                
+            </nav>
+        </div>
+
+    </div>
+</header>
+
+
+        <div id="content">
+            
+
+    <div class="demo-runner">
+        <div class="page">
+            <div class="left">
+                
+                    <h2>GridLayout</h2>
+                
+                <div id="demo"></div>
+            </div>
+            <div class="right">
+                <div id="demo-error"></div>
+                <script type="text/plain" id="demo-code-content">var grid = new photonui.GridLayout({
+    horizontalPadding: 0,
+    verticalPadding: 0,
+    horizontalSpacing: 5,
+    verticalSpacing: 5,
+    children: [
+        new photonui.Button({
+            text: "Widget 1",
+            layoutOptions: {
+                x: 0, y: 0,
+                cols: 1, rows: 1
+            }
+        }),
+        new photonui.Button({
+            text: "Widget 2",
+            layoutOptions: {
+                x: 1, y: 0,
+                cols: 1, rows: 1
+            }
+        }),
+        new photonui.Button({
+            text: "Widget 3",
+            layoutOptions: {
+                x: 2, y: 0,
+                cols: 1, rows: 2
+            }
+        }),
+        new photonui.Button({
+            text: "Widget 4",
+            layoutOptions: {
+                x: 0, y: 1,
+                cols: 2, rows: 1
+            }
+        })
+    ]
+});
+
+photonui.domInsert(grid, "demo");
+</script>
+                <div id="demo-code"></div>
+                <button id="run-script"><i class="fa fa-play"></i> Run (Ctrl+Enter)</button>
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+    <script src="/PhotonUI/js/codemirror.js" type="text/javascript"></script>
+    <script src="/PhotonUI/js/codemirror-mode-javascript.js" type="text/javascript"></script>
+    <script src="/PhotonUI/js/script-runner.js" type="text/javascript"></script>
+
+
+<div class="page">
+    <article id="page-width-demo-undefined" class="article article-type-page-width-demo">
+        <p><code>photonui.GridLayout</code> is a layout widget that allows you to align widgets on a 2D grid.</p>
+<h3 id="Global-Options"><a href="#Global-Options" class="headerlink" title="Global Options"></a>Global Options</h3><p><code>photonui.GridLayout</code> provides options to define its look and feel. Global options are applied to the layout itself.</p>
+<h4 id="verticalSpacing"><a href="#verticalSpacing" class="headerlink" title="verticalSpacing"></a>verticalSpacing</h4><p>Defines the vertical spacing between the widgets (5px by default).</p>
+<p style="text-align: center;"><img src="gridlayout-verticalspacing.png" alt="GridLayout verticalSpacing Schema"></p>
+
+
+<h4 id="horizontalSpacing"><a href="#horizontalSpacing" class="headerlink" title="horizontalSpacing"></a>horizontalSpacing</h4><p>Defines the horizontal spacing between the widgets (5px by default).</p>
+<p style="text-align: center;"><img src="gridlayout-horizontalspacing.png" alt="GridLayout horizontalSpacing Schema"></p>
+
+
+<h4 id="verticalPadding"><a href="#verticalPadding" class="headerlink" title="verticalPadding"></a>verticalPadding</h4><p>Defines the spacing between the widgets and the left and right edges of the layout (0px by default).</p>
+<p style="text-align: center;"><img src="gridlayout-verticalpadding.png" alt="GridLayout verticalPadding Schema"></p>
+
+
+<h4 id="horizontalPadding"><a href="#horizontalPadding" class="headerlink" title="horizontalPadding"></a>horizontalPadding</h4><p>Defines the spacing between the widgets and the top and bottom edges of the layout (0px by default).</p>
+<p style="text-align: center;"><img src="gridlayout-horizontalpadding.png" alt="GridLayout horizontalPadding Schema"></p>
+
+
+<h3 id="Layout-Options"><a href="#Layout-Options" class="headerlink" title="Layout Options"></a>Layout Options</h3><p><code>photonui.GridLayout</code> allows widgets to set plenty of options to customize the way they are displayed in the layout. Layout options are associated with only one widget of the layout.</p>
+<h4 id="x-y"><a href="#x-y" class="headerlink" title="x, y"></a>x, y</h4><p>Defines the widget’s position on the grid.</p>
+<p style="text-align: center;"><img src="gridlayout-lo-xy.png" alt="GridLayout x and y layout options Schema"></p>
+
+
+
+<h4 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h4><p>Defines the number of rows the widget will fill (default = <code>1</code>).</p>
+<p style="text-align: center;"><img src="gridlayout-lo-rows.png" alt="GridLayout rows layout option Schema"></p>
+
+
+<h4 id="cols"><a href="#cols" class="headerlink" title="cols"></a>cols</h4><p>Defines the number of columns the widget will fill (default = <code>1</code>).</p>
+<p style="text-align: center;"><img src="gridlayout-lo-cols.png" alt="GridLayout cols layout option Schema"></p>
+
+
+<h4 id="verticalAlign"><a href="#verticalAlign" class="headerlink" title="verticalAlign"></a>verticalAlign</h4><p>Defines how the widget must be vertically aligned in the layout.</p>
+<p>Possible values:</p>
+<ul>
+<li><p><code>stretch</code> (default, alias: <code>expand</code>): the widget is stretched to use all the available vertical space in its box,</p>
+</li>
+<li><p><code>start</code> (alias: <code>top</code>): the widget is placed at the top of its box,</p>
+</li>
+<li><p><code>center</code> (alias: <code>middle</code>): the widget is vertically centered in its box,</p>
+</li>
+<li><p><code>end</code> (alias: <code>bottom</code>): the widget is placed at the bottom of its box.</p>
+</li>
+</ul>
+<p style="text-align: center;"><img src="gridlayout-lo-verticalalign.png" alt="GridLayout verticalAlign layout option Schema"></p>
+
+
+<h4 id="horizontalAlign"><a href="#horizontalAlign" class="headerlink" title="horizontalAlign"></a>horizontalAlign</h4><p>Defines how the widget must be vertically aligned in the layout.</p>
+<p>Possible values:</p>
+<ul>
+<li><p><code>stretch</code> (default, alias: <code>expand</code>): the widget is stretched to use all the available horizontal space in its box,</p>
+</li>
+<li><p><code>start</code> (alias: <code>left</code>): the widget is placed at the left of its box,</p>
+</li>
+<li><p><code>center</code> (alias: <code>middle</code>): the widget is horizontally centered in its box,</p>
+</li>
+<li><p><code>end</code> (alias: <code>right</code>): the widget is placed at the right of its box.</p>
+</li>
+</ul>
+<p style="text-align: center;"><img src="gridlayout-lo-horizontalalign.png" alt="GridLayout horizontalAlign layout option Schema"></p>
+
+
+<h4 id="width"><a href="#width" class="headerlink" title="width"></a>width</h4><p>Defines the fixed width of the widget (default = <code>null</code>, <code>null</code> means “auto”).</p>
+<h4 id="minWidth"><a href="#minWidth" class="headerlink" title="minWidth"></a>minWidth</h4><p>Defines the minimum width of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h4 id="maxWidth"><a href="#maxWidth" class="headerlink" title="maxWidth"></a>maxWidth</h4><p>Defines the maximum width of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h4 id="height"><a href="#height" class="headerlink" title="height"></a>height</h4><p>Defines the fixed height of the widget (default = <code>null</code>, <code>null</code> means “auto”).</p>
+<h4 id="minHeight"><a href="#minHeight" class="headerlink" title="minHeight"></a>minHeight</h4><p>Defines the minimum height of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h4 id="maxHeight"><a href="#maxHeight" class="headerlink" title="maxHeight"></a>maxHeight</h4><p>Defines the maximum height of the widget (default = <code>null</code>, <code>null</code> means no limitation).</p>
+<h3 id="Class-Reference"><a href="#Class-Reference" class="headerlink" title="Class Reference"></a>Class Reference</h3><ul>
+<li><a href="../../ref/classes/photonui.GridLayout.html">GridLayout class reference</a></li>
+</ul>
+
+    </article>
+</div>
+
+
+        </div>
+
+        <footer id="footer">
+    <p>
+        Copyright (c)  2014-2024 Wanadev
+         - <a href="http://www.wanadev.fr">www.wanadev.fr</a><br />
+        Unless otherwise specified, all content of this site is published under the
+        <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.en">cc by-sa 3.0</a> license
+    </p>
+</footer>
+
+
+    </body>
+
+</html>
+

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/widget.js - photonui</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="photonui" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.8.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/photonui.AccelManager.html">photonui.AccelManager</a></li>
+                                <li><a href="../classes/photonui.Base.html">photonui.Base</a></li>
+                                <li><a href="../classes/photonui.BaseIcon.html">photonui.BaseIcon</a></li>
+                                <li><a href="../classes/photonui.BaseWindow.html">photonui.BaseWindow</a></li>
+                                <li><a href="../classes/photonui.BoxLayout.html">photonui.BoxLayout</a></li>
+                                <li><a href="../classes/photonui.Button.html">photonui.Button</a></li>
+                                <li><a href="../classes/photonui.Canvas.html">photonui.Canvas</a></li>
+                                <li><a href="../classes/photonui.CheckBox.html">photonui.CheckBox</a></li>
+                                <li><a href="../classes/photonui.Color.html">photonui.Color</a></li>
+                                <li><a href="../classes/photonui.ColorButton.html">photonui.ColorButton</a></li>
+                                <li><a href="../classes/photonui.ColorPalette.html">photonui.ColorPalette</a></li>
+                                <li><a href="../classes/photonui.ColorPicker.html">photonui.ColorPicker</a></li>
+                                <li><a href="../classes/photonui.ColorPickerDialog.html">photonui.ColorPickerDialog</a></li>
+                                <li><a href="../classes/photonui.Container.html">photonui.Container</a></li>
+                                <li><a href="../classes/photonui.DataView.html">photonui.DataView</a></li>
+                                <li><a href="../classes/photonui.Dialog.html">photonui.Dialog</a></li>
+                                <li><a href="../classes/photonui.Expander.html">photonui.Expander</a></li>
+                                <li><a href="../classes/photonui.FAIcon.html">photonui.FAIcon</a></li>
+                                <li><a href="../classes/photonui.Field.html">photonui.Field</a></li>
+                                <li><a href="../classes/photonui.FileManager.html">photonui.FileManager</a></li>
+                                <li><a href="../classes/photonui.FluidLayout.html">photonui.FluidLayout</a></li>
+                                <li><a href="../classes/photonui.FluidView.html">photonui.FluidView</a></li>
+                                <li><a href="../classes/photonui.FontSelect.html">photonui.FontSelect</a></li>
+                                <li><a href="../classes/photonui.GridLayout.html">photonui.GridLayout</a></li>
+                                <li><a href="../classes/photonui.Helpers.html">photonui.Helpers</a></li>
+                                <li><a href="../classes/photonui.IconButton.html">photonui.IconButton</a></li>
+                                <li><a href="../classes/photonui.IconView.html">photonui.IconView</a></li>
+                                <li><a href="../classes/photonui.Image.html">photonui.Image</a></li>
+                                <li><a href="../classes/photonui.KeyboardManager.html">photonui.KeyboardManager</a></li>
+                                <li><a href="../classes/photonui.Label.html">photonui.Label</a></li>
+                                <li><a href="../classes/photonui.Layout.html">photonui.Layout</a></li>
+                                <li><a href="../classes/photonui.ListView.html">photonui.ListView</a></li>
+                                <li><a href="../classes/photonui.Menu.html">photonui.Menu</a></li>
+                                <li><a href="../classes/photonui.MenuItem.html">photonui.MenuItem</a></li>
+                                <li><a href="../classes/photonui.MouseManager.html">photonui.MouseManager</a></li>
+                                <li><a href="../classes/photonui.NumericField.html">photonui.NumericField</a></li>
+                                <li><a href="../classes/photonui.PopupMenu.html">photonui.PopupMenu</a></li>
+                                <li><a href="../classes/photonui.PopupWindow.html">photonui.PopupWindow</a></li>
+                                <li><a href="../classes/photonui.ProgressBar.html">photonui.ProgressBar</a></li>
+                                <li><a href="../classes/photonui.Select.html">photonui.Select</a></li>
+                                <li><a href="../classes/photonui.Separator.html">photonui.Separator</a></li>
+                                <li><a href="../classes/photonui.Slider.html">photonui.Slider</a></li>
+                                <li><a href="../classes/photonui.SpriteIcon.html">photonui.SpriteIcon</a></li>
+                                <li><a href="../classes/photonui.SpriteSheet.html">photonui.SpriteSheet</a></li>
+                                <li><a href="../classes/photonui.SubMenuItem.html">photonui.SubMenuItem</a></li>
+                                <li><a href="../classes/photonui.Switch.html">photonui.Switch</a></li>
+                                <li><a href="../classes/photonui.TabItem.html">photonui.TabItem</a></li>
+                                <li><a href="../classes/photonui.TabLayout.html">photonui.TabLayout</a></li>
+                                <li><a href="../classes/photonui.TableView.html">photonui.TableView</a></li>
+                                <li><a href="../classes/photonui.Template.html">photonui.Template</a></li>
+                                <li><a href="../classes/photonui.Text.html">photonui.Text</a></li>
+                                <li><a href="../classes/photonui.TextAreaField.html">photonui.TextAreaField</a></li>
+                                <li><a href="../classes/photonui.TextField.html">photonui.TextField</a></li>
+                                <li><a href="../classes/photonui.ToggleButton.html">photonui.ToggleButton</a></li>
+                                <li><a href="../classes/photonui.Translation.html">photonui.Translation</a></li>
+                                <li><a href="../classes/photonui.Viewport.html">photonui.Viewport</a></li>
+                                <li><a href="../classes/photonui.Widget.html">photonui.Widget</a></li>
+                                <li><a href="../classes/photonui.Window.html">photonui.Window</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Composite.html">Composite</a></li>
+                                <li><a href="../modules/Container.html">Container</a></li>
+                                <li><a href="../modules/DataView.html">DataView</a></li>
+                                <li><a href="../modules/Helpers.html">Helpers</a></li>
+                                <li><a href="../modules/Interactive.html">Interactive</a></li>
+                                <li><a href="../modules/Layout.html">Layout</a></li>
+                                <li><a href="../modules/NonVisual.html">NonVisual</a></li>
+                                <li><a href="../modules/PhotonUI.html">PhotonUI</a></li>
+                                <li><a href="../modules/Visual.html">Visual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/widget.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*
+ * Copyright (c) 2014-2015, Wanadev &lt;http://www.wanadev.fr/&gt;
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Wanadev nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without specific
+ *     prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Authored by: Fabien LOISON &lt;http://flozz.fr/&gt;
+ */
+
+/**
+ * PhotonUI - Javascript Web User Interface.
+ *
+ * @module PhotonUI
+ * @namespace photonui
+ */
+
+var Stone = require(&quot;stonejs&quot;);
+var uuid = require(&quot;uuid&quot;);
+
+var Base = require(&quot;./base.js&quot;);
+var Helpers = require(&quot;./helpers.js&quot;);
+
+var _widgets = {};
+
+/**
+ * Base class for all PhotonUI widgets.
+ *
+ * wEvents:
+ *
+ *   * show:
+ *      - description: called when the widget is displayed (a change in the parent&#x27;s
+ *                     visibility can also trigger this event).
+ *      - callback:    function(widget)
+ *
+ *   * hide:
+ *      - description: called when the widget is hidden (a change in the parent&#x27;s visibility
+ *                     can also trigger this event).
+ *      - callback:    function(widget)
+ *
+ * @class Widget
+ * @constructor
+ * @extends photonui.Base
+ * @param {Object} params An object that can contain any property of the widget (optional).
+ */
+var Widget = Base.$extend({
+
+    // Constructor
+    __init__: function (params) {
+        // New instances for object properties
+        this.__html = {};
+        this._layoutOptions = {};
+
+        // Build the html
+        this._buildHtml();
+
+        // wEvents
+        this._registerWEvents([&quot;show&quot;, &quot;hide&quot;]);
+
+        // Name must be set before other properties (e.g. needed when setting children)
+        if (!this._name) {
+            this.name = params &amp;&amp; params.name ? params.name : &quot;widget-&quot; + uuid.v4();
+        }
+
+        // Parent constructor
+        this.$super(params);
+
+        // Additional className
+        if (params &amp;&amp; params.className) {
+            this.addClass(params.className);
+        }
+
+        // Bind some events
+        if (this.html) {
+            this._bindEvent(&quot;pop-contextmenu&quot;, this.html, &quot;contextmenu&quot;, this.__onContextMenu.bind(this));
+        }
+        this._bindEvent(&quot;locale-changed&quot;, document, &quot;stonejs-locale-changed&quot;, this.__onLocaleChanged.bind(this));
+
+        // Register the widget
+        _widgets[this.name] = this;
+    },
+
+    //////////////////////////////////////////
+    // Properties and Accessors             //
+    //////////////////////////////////////////
+
+    // ====== Public properties ======
+
+    /**
+     * The unique name of the widget.
+     *
+     * @property name
+     * @type String
+     * @default &quot;widget-&quot; + uuid.v4()
+     */
+    _name: null,
+
+    getName: function () {
+        return this._name;
+    },
+
+    setName: function (name) {
+        delete _widgets[this.name];
+        this._name = name;
+        _widgets[name] = this;
+        if (this.html) {
+            this.html.id = this.name;
+        }
+    },
+
+    /**
+     * The parent widget name.
+     *
+     * @property parentName
+     * @type String
+     * @readOnly
+     * @default null (no parent)
+     */
+    _parentName: null,
+
+    getParentName: function () {
+        return this._parentName;
+    },
+
+    /**
+     * The parent widget.
+     *
+     * @property parent
+     * @type photonui.Widget
+     * @readOnly
+     * @default null (no parent)
+     */
+    getParent: function () {
+        return Widget.getWidget(this.parentName);
+    },
+
+    /**
+     * Is the widget visible or hidden.
+     *
+     * @property visible
+     * @type Boolean
+     * @default true
+     */
+    _visible: true,
+
+    isVisible: function () {
+        &quot;@photonui-update&quot;;
+        return this._visible;
+    },
+
+    setVisible: function (visible) {
+        this._visible = Boolean(visible);
+        if (!this.html) {
+            return;
+        }
+        if (visible) {
+            this.html.style.display = &quot;&quot;;
+        } else {
+            this.html.style.setProperty(&quot;display&quot;, &quot;none&quot;, &quot;important&quot;);
+        }
+        this._visibilityChanged();
+    },
+
+    /**
+     * Tooltip.
+     *
+     * @property tooltip
+     * @type String
+     * @default null
+     */
+    _tooltip: null,
+
+    getTooltip: function () {
+        return this._tooltip;
+    },
+
+    setTooltip: function (tooltip) {
+        this._tooltip = tooltip;
+        if (tooltip) {
+            this.html.title = tooltip;
+        } else {
+            this.html.removeAttribute(&quot;title&quot;);
+        }
+    },
+
+    /**
+     * The name of the managed contextual menu (&#x60;photonui.PopupWindow().name&#x60;).
+     *
+     * @property contextMenuName
+     * @type String
+     * @default null (= no context menu)
+     */
+    _contextMenuName: null,
+
+    getContextMenuName: function () {
+        return this._contextMenuName;
+    },
+
+    setContextMenuName: function (contextMenuName) {
+        this._contextMenuName = contextMenuName;
+    },
+
+    /**
+     * The managed contextual menu.
+     *
+     * @property contextMenu
+     * @type photonui.PopupWindow
+     * @default null (= no context menu)
+     */
+    getContextMenu: function () {
+        return Widget.getWidget(this.contextMenuName);
+    },
+
+    setContextMenu: function (contextMenu) {
+        var PopupWindow = require(&quot;./container/popupwindow.js&quot;);
+        if (contextMenu instanceof PopupWindow) {
+            this.contextMenuName = contextMenu.name;
+        } else {
+            this.contextMenuName = null;
+        }
+    },
+
+    /**
+     * Layout options.
+     *
+     * @property layoutOptions
+     * @type Object
+     * @default {}
+     */
+    _layoutOptions: {},
+
+    getLayoutOptions: function () {
+        return this._layoutOptions;
+    },
+
+    setLayoutOptions: function (layoutOptions) {
+        for (var option in layoutOptions) {
+            this._layoutOptions[option] = layoutOptions[option];
+        }
+    },
+
+    /**
+     * Html outer element of the widget (if any).
+     *
+     * @property html
+     * @type HTMLElement
+     * @default null
+     * @readOnly
+     */
+    getHtml: function () {
+        Helpers.log(&quot;debug&quot;, &quot;getHtml() method is not implemented on this widget.&quot;);
+        return null;
+    },
+
+    /**
+     * Absolute position of the widget on the page.
+     *
+     * &#x60;{x: Number, y: Number}&#x60;
+     *
+     * @property absolutePosition
+     * @type Object
+     * @readOnly
+     */
+    getAbsolutePosition: function () {
+        if (!this.html) {
+            return {x: 0, y: 0};
+        }
+        return Helpers.getAbsolutePosition(this.html);
+    },
+
+    /**
+     * Widget width (outer HTML element).
+     *
+     * @property offsetWidth
+     * @type Number
+     * @readOnly
+     */
+    getOffsetWidth: function () {
+        if (!this.html) {
+            return 0;
+        }
+        return this.html.offsetWidth;
+    },
+
+    /**
+     * Widget height (outer HTML element).
+     *
+     * @property offsetHeight
+     * @type Number
+     * @readOnly
+     */
+    getOffsetHeight: function () {
+        if (!this.html) {
+            return 0;
+        }
+        return this.html.offsetHeight;
+    },
+
+    // ====== Private properties ======
+
+    /**
+     * Object containing references to the widget HTML elements
+     *
+     * @property __html
+     * @type Object
+     * @private
+     */
+    __html: {},      // HTML Elements
+
+    //////////////////////////////////////////
+    // Methods                              //
+    //////////////////////////////////////////
+
+    // ====== Public methods ======
+
+    /**
+     * Display the widget (equivalent to widget.visible = true).
+     *
+     * @method show
+     */
+    show: function () {
+        this.visible = true;
+    },
+
+    /**
+     * Hide the widget (equivalent to widget.visible = false).
+     *
+     * @method hide
+     */
+    hide: function () {
+        this.visible = false;
+    },
+
+    /**
+     * Detache the widget from its parent.
+     *
+     * @method unparent
+     */
+    unparent: function () {
+        if (this.parent) {
+            this.parent.removeChild(this);
+        } else if (this.html &amp;&amp; this.html.parentNode) {
+            this.html.parentNode.removeChild(this.html);
+        }
+    },
+
+    /**
+     * Destroy the widget.
+     *
+     * @method destroy
+     */
+    destroy: function () {
+        this.$super();
+        this.unparent();
+        delete _widgets[this.name];
+    },
+
+    /**
+     * Add a class to the outer HTML element of the widget.
+     *
+     * @method addClass
+     * @param {String} className The class to add.
+     */
+    addClass: function (className) {
+        if (!this.html) {
+            return;
+        }
+        var classes = this.html.className.split(&quot; &quot;);
+        if (classes.indexOf(className) &lt; 0) {
+            classes.push(className);
+        }
+        this.html.className = classes.join(&quot; &quot;);
+    },
+
+    /**
+     * Remove a class from the outer HTML element of the widget.
+     *
+     * @method removeClass
+     * @param {String} className The class to remove.
+     */
+    removeClass: function (className) {
+        if (!this.html) {
+            return;
+        }
+        var classes = this.html.className.split(&quot; &quot;);
+        var index = classes.indexOf(className);
+        if (index &gt;= 0) {
+            classes.splice(index, 1);
+        }
+        this.html.className = classes.join(&quot; &quot;);
+    },
+
+    // ====== Private methods ======
+
+    /**
+     * Build the widget HTML.
+     *
+     * @method _buildHtml
+     * @private
+     */
+    _buildHtml: function () {
+        Helpers.log(&quot;debug&quot;, &quot;_buildHtml() method not implemented on this widget.&quot;);
+    },
+
+    /**
+     * Called when the visibility changes.
+     *
+     * @method _visibilityChanged
+     * @private
+     * @param {Boolean} visibility Current visibility state (otptional, defaut=this.visible)
+     */
+    _visibilityChanged: function (visibility) {
+        visibility = (visibility !== undefined) ? visibility : this.visible;
+        if (visibility &amp;&amp; this.visible) {
+            this._callCallbacks(&quot;show&quot;);
+        } else {
+            this._callCallbacks(&quot;hide&quot;);
+        }
+    },
+
+    //////////////////////////////////////////
+    // Internal Events Callbacks            //
+    //////////////////////////////////////////
+
+    /**
+     * Called when the context menu should be displayed.
+     *
+     * @method __onContextMenu
+     * @private
+     * @param event
+     */
+    __onContextMenu: function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.contextMenuName) {
+            this.contextMenu.popupXY(event.pageX, event.pageY);
+        }
+    },
+
+    /**
+     * Called when the locale is changed.
+     *
+     * @method __onLocaleChanged
+     * @private
+     */
+    __onLocaleChanged: function () {
+        // Update lazy strings...
+        for (var prop in this.$map.computedProperties) {
+            if (this[prop] instanceof Stone.LazyString) {
+                this[prop] = this[prop];
+            }
+        }
+    },
+
+    __classvars__: {
+
+        /**
+         * @property e_parent
+         * @static
+         * @type HTMLElement
+         * @default null
+         */
+        e_parent: null,
+
+        /**
+         * Get a widget.
+         *
+         * @method getWidget
+         * @static
+         * @param {String} name The widget name.
+         * @return {Widget} The widget or null.
+         */
+        getWidget: function (name) {
+            if (_widgets[name] !== undefined) {
+                return _widgets[name];
+            }
+            return null;
+        },
+
+        /**
+         * Get all instanciated PhotonUI widgets.
+         *
+         * @method getAllWidgets
+         * @static
+         * @return {Object} An object containing all widgets &#x60;{&quot;widgetName&quot;: Widget, ...}&#x60;
+         */
+        getAllWidgets: function (name) {
+            return _widgets;
+        },
+
+        /**
+         * Insert a widget in the DOM.
+         *
+         * @method domInsert
+         * @static
+         * @param {photonui.Widget} widget The widget to insert.
+         * @param {HTMLElement} element The DOM node or its id (optional, default=Widget.e_parent)
+         */
+        domInsert: function (widget, element) {
+            element = element || Widget.e_parent || document.getElementsByTagName(&quot;body&quot;)[0];
+            if (typeof(element) == &quot;string&quot;) {
+                element = document.getElementById(element);
+            }
+            element.appendChild(widget.html);
+        }
+
+    }
+
+});
+
+module.exports = Widget;
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
