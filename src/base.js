@@ -36,7 +36,6 @@
  */
 
 var Class = require("abitbol");
-var uuid = require("uuid");
 
 var Helpers = require("./helpers.js");
 
@@ -90,10 +89,10 @@ var Base = Class.$extend({
             for (var wEvent in params.callbacks) {
                 ev = params.callbacks[wEvent];
                 if (typeof(ev) == "function") {
-                    this.registerCallback(uuid.v4(), wEvent, ev);
+                    this.registerCallback(Helpers.uuid4(), wEvent, ev);
                 } else if (ev instanceof Array) {
                     for (i = 0 ; i < ev.length ; i++) {
-                        this.registerCallback(uuid.v4(), wEvent, ev[i]);
+                        this.registerCallback(Helpers.uuid4(), wEvent, ev[i]);
                     }
                 } else {
                     for (evId in ev) {
