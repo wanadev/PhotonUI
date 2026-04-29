@@ -169,6 +169,10 @@ creates all required files for you:
 * **[NEXT]** (changes on `master` that have not been released yet):
   * Nothing yet ;)
 
+* **v1.9.0:**
+  * feat(helpers): Replaced uuid dependency by browser's secure implementation (@av-wanadev, #177)
+  * **!! Breaking change:** `photonui.lib.uuid` removed!
+
 * **v1.8.0:**
   * feat(DataView): New DataView widget to display data in customizable way (@risq, #90, #95)
   * feat(DataView): New ListView widget, an high level DataView to display data as list (@risq, #90, #95)

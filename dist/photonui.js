@@ -550,7 +550,7 @@ KeyCombo.prototype._checkSubCombo = function(subCombo, startingKeyNameIndex, pre
 module.exports = KeyCombo;
 
 },{}],5:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 
 var Locale = require('./locale');
 var KeyCombo = require('./key-combo');
@@ -934,7 +934,7 @@ Keyboard.prototype._handleCommandBug = function(event, platform) {
 
 module.exports = Keyboard;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./key-combo":4,"./locale":6}],6:[function(require,module,exports){
 
 var KeyCombo = require('./key-combo');
@@ -1239,11 +1239,11 @@ module.exports = function(locale, platform, userAgent) {
 };
 
 },{}],8:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /**
  * @license
  * Lodash <https://lodash.com/>
- * Copyright JS Foundation and other contributors <https://js.foundation/>
+ * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1254,14 +1254,16 @@ module.exports = function(locale, platform, userAgent) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.5';
+  var VERSION = '4.18.1';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
 
   /** Error message constants. */
   var CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.',
-      FUNC_ERROR_TEXT = 'Expected a function';
+      FUNC_ERROR_TEXT = 'Expected a function',
+      INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`',
+      INVALID_TEMPL_IMPORTS_ERROR_TEXT = 'Invalid `imports` option passed into `_.template`';
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -1394,10 +1396,11 @@ module.exports = function(locale, platform, userAgent) {
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g,
       reHasRegExpChar = RegExp(reRegExpChar.source);
 
-  /** Used to match leading and trailing whitespace. */
-  var reTrim = /^\s+|\s+$/g,
-      reTrimStart = /^\s+/,
-      reTrimEnd = /\s+$/;
+  /** Used to match leading whitespace. */
+  var reTrimStart = /^\s+/;
+
+  /** Used to match a single whitespace character. */
+  var reWhitespace = /\s/;
 
   /** Used to match wrap detail comments. */
   var reWrapComment = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/,
@@ -1406,6 +1409,18 @@ module.exports = function(locale, platform, userAgent) {
 
   /** Used to match words composed of alphanumeric characters. */
   var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
+
+  /**
+   * Used to validate the `validate` option in `_.template` variable.
+   *
+   * Forbids characters which could potentially change the meaning of the function argument definition:
+   * - "()," (modification of function parameters)
+   * - "=" (default value)
+   * - "[]{}" (destructuring of function parameters)
+   * - "/" (beginning of a comment)
+   * - whitespace
+   */
+  var reForbiddenIdentifierChars = /[()=,{}\[\]\/\s]/;
 
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;
@@ -1518,7 +1533,7 @@ module.exports = function(locale, platform, userAgent) {
   var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboRange + rsVarRange + ']');
 
   /** Used to detect strings that need a more robust regexp to match words. */
-  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+  var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
@@ -1678,6 +1693,14 @@ module.exports = function(locale, platform, userAgent) {
   /** Used to access faster Node.js helpers. */
   var nodeUtil = (function() {
     try {
+      // Use `util.types` for Node.js 10+.
+      var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+      if (types) {
+        return types;
+      }
+
+      // Legacy `process.binding('util')` for Node.js < 10.
       return freeProcess && freeProcess.binding && freeProcess.binding('util');
     } catch (e) {}
   }());
@@ -2228,6 +2251,19 @@ module.exports = function(locale, platform, userAgent) {
   }
 
   /**
+   * The base implementation of `_.trim`.
+   *
+   * @private
+   * @param {string} string The string to trim.
+   * @returns {string} Returns the trimmed string.
+   */
+  function baseTrim(string) {
+    return string
+      ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
+      : string;
+  }
+
+  /**
    * The base implementation of `_.unary` without support for storing metadata.
    *
    * @private
@@ -2459,20 +2495,6 @@ module.exports = function(locale, platform, userAgent) {
   }
 
   /**
-   * Gets the value at `key`, unless `key` is "__proto__".
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @param {string} key The key of the property to get.
-   * @returns {*} Returns the property value.
-   */
-  function safeGet(object, key) {
-    return key == '__proto__'
-      ? undefined
-      : object[key];
-  }
-
-  /**
    * Converts `set` to an array of its values.
    *
    * @private
@@ -2572,6 +2594,21 @@ module.exports = function(locale, platform, userAgent) {
     return hasUnicode(string)
       ? unicodeToArray(string)
       : asciiToArray(string);
+  }
+
+  /**
+   * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+   * character of `string`.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the index of the last non-whitespace character.
+   */
+  function trimmedEndIndex(string) {
+    var index = string.length;
+
+    while (index-- && reWhitespace.test(string.charAt(index))) {}
+    return index;
   }
 
   /**
@@ -2957,6 +2994,10 @@ module.exports = function(locale, platform, userAgent) {
      * By default, the template delimiters used by lodash are like those in
      * embedded Ruby (ERB) as well as ES2015 template strings. Change the
      * following template settings to use alternative delimiters.
+     *
+     * **Security:** See
+     * [threat model](https://github.com/lodash/lodash/blob/main/threat-model.md)
+     * — `_.template` is insecure and will be removed in v5.
      *
      * @static
      * @memberOf _
@@ -3506,7 +3547,7 @@ module.exports = function(locale, platform, userAgent) {
      * @name has
      * @memberOf SetCache
      * @param {*} value The value to search for.
-     * @returns {number} Returns `true` if `value` is found, else `false`.
+     * @returns {boolean} Returns `true` if `value` is found, else `false`.
      */
     function setCacheHas(value) {
       return this.__data__.has(value);
@@ -3919,16 +3960,10 @@ module.exports = function(locale, platform, userAgent) {
         value.forEach(function(subValue) {
           result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
         });
-
-        return result;
-      }
-
-      if (isMap(value)) {
+      } else if (isMap(value)) {
         value.forEach(function(subValue, key) {
           result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
         });
-
-        return result;
       }
 
       var keysFunc = isFull
@@ -4852,8 +4887,8 @@ module.exports = function(locale, platform, userAgent) {
         return;
       }
       baseFor(source, function(srcValue, key) {
+        stack || (stack = new Stack);
         if (isObject(srcValue)) {
-          stack || (stack = new Stack);
           baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
         }
         else {
@@ -4929,7 +4964,7 @@ module.exports = function(locale, platform, userAgent) {
           if (isArguments(objValue)) {
             newValue = toPlainObject(objValue);
           }
-          else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+          else if (!isObject(objValue) || isFunction(objValue)) {
             newValue = initCloneObject(srcValue);
           }
         }
@@ -4973,8 +5008,21 @@ module.exports = function(locale, platform, userAgent) {
      * @returns {Array} Returns the new sorted array.
      */
     function baseOrderBy(collection, iteratees, orders) {
+      if (iteratees.length) {
+        iteratees = arrayMap(iteratees, function(iteratee) {
+          if (isArray(iteratee)) {
+            return function(value) {
+              return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
+            };
+          }
+          return iteratee;
+        });
+      } else {
+        iteratees = [identity];
+      }
+
       var index = -1;
-      iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(getIteratee()));
+      iteratees = arrayMap(iteratees, baseUnary(getIteratee()));
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {
@@ -5231,6 +5279,10 @@ module.exports = function(locale, platform, userAgent) {
         var key = toKey(path[index]),
             newValue = value;
 
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          return object;
+        }
+
         if (index != lastIndex) {
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
@@ -5383,11 +5435,14 @@ module.exports = function(locale, platform, userAgent) {
      *  into `array`.
      */
     function baseSortedIndexBy(array, value, iteratee, retHighest) {
-      value = iteratee(value);
-
       var low = 0,
-          high = array == null ? 0 : array.length,
-          valIsNaN = value !== value,
+          high = array == null ? 0 : array.length;
+      if (high === 0) {
+        return 0;
+      }
+
+      value = iteratee(value);
+      var valIsNaN = value !== value,
           valIsNull = value === null,
           valIsSymbol = isSymbol(value),
           valIsUndefined = value === undefined;
@@ -5562,8 +5617,34 @@ module.exports = function(locale, platform, userAgent) {
      */
     function baseUnset(object, path) {
       path = castPath(path, object);
-      object = parent(object, path);
-      return object == null || delete object[toKey(last(path))];
+
+      // Prevent prototype pollution:
+      // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
+      // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
+      var index = -1,
+          length = path.length;
+
+      if (!length) {
+        return true;
+      }
+
+      while (++index < length) {
+        var key = toKey(path[index]);
+
+        // Always block "__proto__" anywhere in the path if it's not expected
+        if (key === '__proto__' && !hasOwnProperty.call(object, '__proto__')) {
+          return false;
+        }
+
+        // Block constructor/prototype as non-terminal traversal keys to prevent
+        // escaping the object graph into built-in constructors and prototypes.
+        if ((key === 'constructor' || key === 'prototype') && index < length - 1) {
+          return false;
+        }
+      }
+
+      var obj = parent(object, path);
+      return obj == null || delete obj[toKey(last(path))];
     }
 
     /**
@@ -6670,7 +6751,7 @@ module.exports = function(locale, platform, userAgent) {
       return function(number, precision) {
         number = toNumber(number);
         precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
-        if (precision) {
+        if (precision && nativeIsFinite(number)) {
           // Shift with exponential notation to avoid floating-point issues.
           // See [MDN](https://mdn.io/round#Examples) for more details.
           var pair = (toString(number) + 'e').split('e'),
@@ -6872,10 +6953,11 @@ module.exports = function(locale, platform, userAgent) {
       if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
         return false;
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(array);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var arrStacked = stack.get(array);
+      var othStacked = stack.get(other);
+      if (arrStacked && othStacked) {
+        return arrStacked == other && othStacked == array;
       }
       var index = -1,
           result = true,
@@ -7037,10 +7119,11 @@ module.exports = function(locale, platform, userAgent) {
           return false;
         }
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(object);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var objStacked = stack.get(object);
+      var othStacked = stack.get(other);
+      if (objStacked && othStacked) {
+        return objStacked == other && othStacked == object;
       }
       var result = true;
       stack.set(object, other);
@@ -7853,6 +7936,26 @@ module.exports = function(locale, platform, userAgent) {
     }
 
     /**
+     * Gets the value at `key`, unless `key` is "__proto__" or "constructor".
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {string} key The key of the property to get.
+     * @returns {*} Returns the property value.
+     */
+    function safeGet(object, key) {
+      if (key === 'constructor' && typeof object[key] === 'function') {
+        return;
+      }
+
+      if (key == '__proto__') {
+        return;
+      }
+
+      return object[key];
+    }
+
+    /**
      * Sets metadata for `func`.
      *
      * **Note:** If this function becomes hot, i.e. is invoked a lot in a short
@@ -8092,7 +8195,7 @@ module.exports = function(locale, platform, userAgent) {
 
     /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
-     * `0`, `""`, `undefined`, and `NaN` are falsey.
+     * `0`, `-0`, `0n`, `""`, `undefined`, and `NaN` are falsy.
      *
      * @static
      * @memberOf _
@@ -8631,7 +8734,7 @@ module.exports = function(locale, platform, userAgent) {
 
       while (++index < length) {
         var pair = pairs[index];
-        result[pair[0]] = pair[1];
+        baseAssignValue(result, pair[0], pair[1]);
       }
       return result;
     }
@@ -10401,6 +10504,10 @@ module.exports = function(locale, platform, userAgent) {
      * // The `_.property` iteratee shorthand.
      * _.filter(users, 'active');
      * // => objects for ['barney']
+     *
+     * // Combining several predicates using `_.overEvery` or `_.overSome`.
+     * _.filter(users, _.overSome([{ 'age': 36 }, ['age', 40]]));
+     * // => objects for ['fred', 'barney']
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -11150,15 +11257,15 @@ module.exports = function(locale, platform, userAgent) {
      * var users = [
      *   { 'user': 'fred',   'age': 48 },
      *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'fred',   'age': 30 },
      *   { 'user': 'barney', 'age': 34 }
      * ];
      *
      * _.sortBy(users, [function(o) { return o.user; }]);
-     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
+     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 30]]
      *
      * _.sortBy(users, ['user', 'age']);
-     * // => objects for [['barney', 34], ['barney', 36], ['fred', 40], ['fred', 48]]
+     * // => objects for [['barney', 34], ['barney', 36], ['fred', 30], ['fred', 48]]
      */
     var sortBy = baseRest(function(collection, iteratees) {
       if (collection == null) {
@@ -11645,6 +11752,7 @@ module.exports = function(locale, platform, userAgent) {
           }
           if (maxing) {
             // Handle invocations in a tight loop.
+            clearTimeout(timerId);
             timerId = setTimeout(timerExpired, wait);
             return invokeFunc(lastCallTime);
           }
@@ -13701,7 +13809,7 @@ module.exports = function(locale, platform, userAgent) {
       if (typeof value != 'string') {
         return value === 0 ? value : +value;
       }
-      value = value.replace(reTrim, '');
+      value = baseTrim(value);
       var isBinary = reIsBinary.test(value);
       return (isBinary || reIsOctal.test(value))
         ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
@@ -15286,6 +15394,8 @@ module.exports = function(locale, platform, userAgent) {
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
      *
+     * **Note:** If `lower` is greater than `upper`, the values are swapped.
+     *
      * @static
      * @memberOf _
      * @since 0.7.0
@@ -15299,8 +15409,15 @@ module.exports = function(locale, platform, userAgent) {
      * _.random(0, 5);
      * // => an integer between 0 and 5
      *
+     * // when lower is greater than upper the values are swapped
+     * _.random(5, 0);
+     * // => an integer between 0 and 5
+     *
      * _.random(5);
      * // => also an integer between 0 and 5
+     *
+     * _.random(-5);
+     * // => an integer between -5 and 0
      *
      * _.random(5, true);
      * // => a floating-point number between 0 and 5
@@ -15903,6 +16020,10 @@ module.exports = function(locale, platform, userAgent) {
      * properties may be accessed as free variables in the template. If a setting
      * object is given, it takes precedence over `_.templateSettings` values.
      *
+     * **Security:** `_.template` is insecure and should not be used. It will be
+     * removed in Lodash v5. Avoid untrusted input. See
+     * [threat model](https://github.com/lodash/lodash/blob/main/threat-model.md).
+     *
      * **Note:** In the development build `_.template` utilizes
      * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for easier debugging.
@@ -16010,11 +16131,17 @@ module.exports = function(locale, platform, userAgent) {
         options = undefined;
       }
       string = toString(string);
-      options = assignInWith({}, options, settings, customDefaultsAssignIn);
+      options = assignWith({}, options, settings, customDefaultsAssignIn);
 
-      var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
+      var imports = assignWith({}, options.imports, settings.imports, customDefaultsAssignIn),
           importsKeys = keys(imports),
           importsValues = baseValues(imports, importsKeys);
+
+      arrayEach(importsKeys, function(key) {
+        if (reForbiddenIdentifierChars.test(key)) {
+          throw new Error(INVALID_TEMPL_IMPORTS_ERROR_TEXT);
+        }
+      });
 
       var isEscaping,
           isEvaluating,
@@ -16031,9 +16158,12 @@ module.exports = function(locale, platform, userAgent) {
       , 'g');
 
       // Use a sourceURL for easier debugging.
+      // The sourceURL gets injected into the source that's eval-ed, so be careful
+      // to normalize all kinds of whitespace, so e.g. newlines (and unicode versions of it) can't sneak in
+      // and escape the comment, thus injecting code that gets evaled.
       var sourceURL = '//# sourceURL=' +
-        ('sourceURL' in options
-          ? options.sourceURL
+        (hasOwnProperty.call(options, 'sourceURL')
+          ? (options.sourceURL + '').replace(/\s/g, ' ')
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -16066,10 +16196,16 @@ module.exports = function(locale, platform, userAgent) {
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      var variable = options.variable;
+      var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
       }
+      // Throw an error if a forbidden character was found in `variable`, to prevent
+      // potential command injection attacks.
+      else if (reForbiddenIdentifierChars.test(variable)) {
+        throw new Error(INVALID_TEMPL_VAR_ERROR_TEXT);
+      }
+
       // Cleanup code by stripping empty strings.
       source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
         .replace(reEmptyStringMiddle, '$1')
@@ -16183,7 +16319,7 @@ module.exports = function(locale, platform, userAgent) {
     function trim(string, chars, guard) {
       string = toString(string);
       if (string && (guard || chars === undefined)) {
-        return string.replace(reTrim, '');
+        return baseTrim(string);
       }
       if (!string || !(chars = baseToString(chars))) {
         return string;
@@ -16218,7 +16354,7 @@ module.exports = function(locale, platform, userAgent) {
     function trimEnd(string, chars, guard) {
       string = toString(string);
       if (string && (guard || chars === undefined)) {
-        return string.replace(reTrimEnd, '');
+        return string.slice(0, trimmedEndIndex(string) + 1);
       }
       if (!string || !(chars = baseToString(chars))) {
         return string;
@@ -16772,6 +16908,9 @@ module.exports = function(locale, platform, userAgent) {
      * values against any array or object value, respectively. See `_.isEqual`
      * for a list of supported value comparisons.
      *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
+     *
      * @static
      * @memberOf _
      * @since 3.0.0
@@ -16787,6 +16926,10 @@ module.exports = function(locale, platform, userAgent) {
      *
      * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
      * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
+     *
+     * // Checking for several possible values
+     * _.filter(objects, _.overSome([_.matches({ 'a': 1 }), _.matches({ 'a': 4 })]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matches(source) {
       return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
@@ -16800,6 +16943,9 @@ module.exports = function(locale, platform, userAgent) {
      * **Note:** Partial comparisons will match empty array and empty object
      * `srcValue` values against any array or object value, respectively. See
      * `_.isEqual` for a list of supported value comparisons.
+     *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
      *
      * @static
      * @memberOf _
@@ -16817,6 +16963,10 @@ module.exports = function(locale, platform, userAgent) {
      *
      * _.find(objects, _.matchesProperty('a', 4));
      * // => { 'a': 4, 'b': 5, 'c': 6 }
+     *
+     * // Checking for several possible values
+     * _.filter(objects, _.overSome([_.matchesProperty('a', 1), _.matchesProperty('a', 4)]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matchesProperty(path, srcValue) {
       return baseMatchesProperty(path, baseClone(srcValue, CLONE_DEEP_FLAG));
@@ -17040,6 +17190,10 @@ module.exports = function(locale, platform, userAgent) {
      * Creates a function that checks if **all** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -17066,6 +17220,10 @@ module.exports = function(locale, platform, userAgent) {
      * Creates a function that checks if **any** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -17085,6 +17243,9 @@ module.exports = function(locale, platform, userAgent) {
      *
      * func(NaN);
      * // => false
+     *
+     * var matchesFunc = _.overSome([{ 'a': 1 }, { 'a': 2 }])
+     * var matchesPropertyFunc = _.overSome([['a', 1], ['a', 2]])
      */
     var overSome = createOver(arraySome);
 
@@ -18271,10 +18432,11 @@ module.exports = function(locale, platform, userAgent) {
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName];
       if (lodashFunc) {
-        var key = (lodashFunc.name + ''),
-            names = realNames[key] || (realNames[key] = []);
-
-        names.push({ 'name': methodName, 'func': lodashFunc });
+        var key = lodashFunc.name + '';
+        if (!hasOwnProperty.call(realNames, key)) {
+          realNames[key] = [];
+        }
+        realNames[key].push({ 'name': methodName, 'func': lodashFunc });
       }
     });
 
@@ -18338,7 +18500,7 @@ module.exports = function(locale, platform, userAgent) {
   }
 }.call(this));
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],9:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Fabien LOISON <http://flozz.fr>
@@ -18847,217 +19009,6 @@ module.exports = {
 };
 
 },{"./dom.js":9,"./gettext.js":10,"./helpers.js":11}],13:[function(require,module,exports){
-var v1 = require('./v1');
-var v4 = require('./v4');
-
-var uuid = v4;
-uuid.v1 = v1;
-uuid.v4 = v4;
-
-module.exports = uuid;
-
-},{"./v1":16,"./v4":17}],14:[function(require,module,exports){
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  return bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] + '-' +
-          bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]] +
-          bth[buf[i++]] + bth[buf[i++]];
-}
-
-module.exports = bytesToUuid;
-
-},{}],15:[function(require,module,exports){
-// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
-
-// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && msCrypto.getRandomValues.bind(msCrypto));
-if (getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-
-  module.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
-  };
-} else {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
-
-  module.exports = function mathRNG() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return rnds;
-  };
-}
-
-},{}],16:[function(require,module,exports){
-var rng = require('./lib/rng');
-var bytesToUuid = require('./lib/bytesToUuid');
-
-// **`v1()` - Generate time-based UUID**
-//
-// Inspired by https://github.com/LiosK/UUID.js
-// and http://docs.python.org/library/uuid.html
-
-var _nodeId;
-var _clockseq;
-
-// Previous uuid creation time
-var _lastMSecs = 0;
-var _lastNSecs = 0;
-
-// See https://github.com/broofa/node-uuid for API details
-function v1(options, buf, offset) {
-  var i = buf && offset || 0;
-  var b = buf || [];
-
-  options = options || {};
-  var node = options.node || _nodeId;
-  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
-
-  // node and clockseq need to be initialized to random values if they're not
-  // specified.  We do this lazily to minimize issues related to insufficient
-  // system entropy.  See #189
-  if (node == null || clockseq == null) {
-    var seedBytes = rng();
-    if (node == null) {
-      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-      node = _nodeId = [
-        seedBytes[0] | 0x01,
-        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
-      ];
-    }
-    if (clockseq == null) {
-      // Per 4.2.2, randomize (14 bit) clockseq
-      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-    }
-  }
-
-  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
-
-  // Per 4.2.1.2, use count of uuid's generated during the current clock
-  // cycle to simulate higher resolution clock
-  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
-
-  // Time since last uuid creation (in msecs)
-  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
-
-  // Per 4.2.1.2, Bump clockseq on clock regression
-  if (dt < 0 && options.clockseq === undefined) {
-    clockseq = clockseq + 1 & 0x3fff;
-  }
-
-  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-  // time interval
-  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-    nsecs = 0;
-  }
-
-  // Per 4.2.1.2 Throw error if too many uuids are requested
-  if (nsecs >= 10000) {
-    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
-  }
-
-  _lastMSecs = msecs;
-  _lastNSecs = nsecs;
-  _clockseq = clockseq;
-
-  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-  msecs += 12219292800000;
-
-  // `time_low`
-  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-  b[i++] = tl >>> 24 & 0xff;
-  b[i++] = tl >>> 16 & 0xff;
-  b[i++] = tl >>> 8 & 0xff;
-  b[i++] = tl & 0xff;
-
-  // `time_mid`
-  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
-  b[i++] = tmh >>> 8 & 0xff;
-  b[i++] = tmh & 0xff;
-
-  // `time_high_and_version`
-  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-  b[i++] = tmh >>> 16 & 0xff;
-
-  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-  b[i++] = clockseq >>> 8 | 0x80;
-
-  // `clock_seq_low`
-  b[i++] = clockseq & 0xff;
-
-  // `node`
-  for (var n = 0; n < 6; ++n) {
-    b[i + n] = node[n];
-  }
-
-  return buf ? buf : bytesToUuid(b);
-}
-
-module.exports = v1;
-
-},{"./lib/bytesToUuid":14,"./lib/rng":15}],17:[function(require,module,exports){
-var rng = require('./lib/rng');
-var bytesToUuid = require('./lib/bytesToUuid');
-
-function v4(options, buf, offset) {
-  var i = buf && offset || 0;
-
-  if (typeof(options) == 'string') {
-    buf = options === 'binary' ? new Array(16) : null;
-    options = null;
-  }
-  options = options || {};
-
-  var rnds = options.random || (options.rng || rng)();
-
-  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-
-  // Copy bytes to buffer, if provided
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
-    }
-  }
-
-  return buf || bytesToUuid(rnds);
-}
-
-module.exports = v4;
-
-},{"./lib/bytesToUuid":14,"./lib/rng":15}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19096,7 +19047,6 @@ module.exports = v4;
  */
 
 var Class = require("abitbol");
-var uuid = require("uuid");
 
 var Helpers = require("./helpers.js");
 
@@ -19150,10 +19100,10 @@ var Base = Class.$extend({
             for (var wEvent in params.callbacks) {
                 ev = params.callbacks[wEvent];
                 if (typeof(ev) == "function") {
-                    this.registerCallback(uuid.v4(), wEvent, ev);
+                    this.registerCallback(Helpers.uuid4(), wEvent, ev);
                 } else if (ev instanceof Array) {
                     for (i = 0 ; i < ev.length ; i++) {
-                        this.registerCallback(uuid.v4(), wEvent, ev[i]);
+                        this.registerCallback(Helpers.uuid4(), wEvent, ev[i]);
                     }
                 } else {
                     for (evId in ev) {
@@ -19373,7 +19323,7 @@ var Base = Class.$extend({
 
 module.exports = Base;
 
-},{"./helpers.js":39,"abitbol":1,"uuid":13}],19:[function(require,module,exports){
+},{"./helpers.js":34,"abitbol":1}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -19635,7 +19585,7 @@ var ColorButton = Button.$extend({
 
 module.exports = ColorButton;
 
-},{"../container/popupwindow.js":29,"../interactive/button.js":40,"../interactive/colorpalette.js":42,"../layout/boxlayout.js":52,"../nonvisual/color.js":59,"./colorpickerdialog.js":20,"stonejs":12}],20:[function(require,module,exports){
+},{"../container/popupwindow.js":24,"../interactive/button.js":35,"../interactive/colorpalette.js":37,"../layout/boxlayout.js":47,"../nonvisual/color.js":54,"./colorpickerdialog.js":15,"stonejs":12}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20050,7 +20000,7 @@ var ColorPickerDialog = Dialog.$extend({
 
 module.exports = ColorPickerDialog;
 
-},{"../container/dialog.js":26,"../interactive/button.js":40,"../interactive/colorpalette.js":42,"../interactive/colorpicker.js":43,"../interactive/slider.js":47,"../layout/boxlayout.js":52,"../layout/gridlayout.js":54,"../nonvisual/color.js":59,"../visual/faicon.js":68,"../visual/label.js":70,"../visual/separator.js":72,"stonejs":12}],21:[function(require,module,exports){
+},{"../container/dialog.js":21,"../interactive/button.js":35,"../interactive/colorpalette.js":37,"../interactive/colorpicker.js":38,"../interactive/slider.js":42,"../layout/boxlayout.js":47,"../layout/gridlayout.js":49,"../nonvisual/color.js":54,"../visual/faicon.js":63,"../visual/label.js":65,"../visual/separator.js":67,"stonejs":12}],16:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20185,7 +20135,7 @@ var FontSelect = Select.$extend({
 
 module.exports = FontSelect;
 
-},{"../container/menuitem.js":28,"./select.js":23,"stonejs":12}],22:[function(require,module,exports){
+},{"../container/menuitem.js":23,"./select.js":18,"stonejs":12}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20303,7 +20253,7 @@ var PopupMenu = PopupWindow.$extend({
 
 module.exports = PopupMenu;
 
-},{"../container/popupwindow.js":29,"../layout/menu.js":56}],23:[function(require,module,exports){
+},{"../container/popupwindow.js":24,"../layout/menu.js":51}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -20728,7 +20678,7 @@ var Select = Widget.$extend({
 
 module.exports = Select;
 
-},{"../container/menuitem.js":28,"../helpers.js":39,"../widget.js":76,"./popupmenu.js":22,"stonejs":12}],24:[function(require,module,exports){
+},{"../container/menuitem.js":23,"../helpers.js":34,"../widget.js":71,"./popupmenu.js":17,"stonejs":12}],19:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21100,7 +21050,7 @@ var BaseWindow = Container.$extend({
 
 module.exports = BaseWindow;
 
-},{"../widget.js":76,"./container.js":25}],25:[function(require,module,exports){
+},{"../widget.js":71,"./container.js":20}],20:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21327,7 +21277,7 @@ var Container = Widget.$extend({
 
 module.exports = Container;
 
-},{"../widget.js":76}],26:[function(require,module,exports){
+},{"../widget.js":71}],21:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21578,7 +21528,7 @@ var Dialog = Window.$extend({
 
 module.exports = Dialog;
 
-},{"../helpers.js":39,"../widget.js":76,"./window.js":33}],27:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"./window.js":28}],22:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -21808,7 +21758,7 @@ var Expander = Container.$extend({
 
 module.exports = Expander;
 
-},{"../helpers.js":39,"../widget.js":76,"./container.js":25}],28:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"./container.js":20}],23:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22056,7 +22006,7 @@ var MenuItem = Container.$extend({
 
 module.exports = MenuItem;
 
-},{"../helpers.js":39,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76,"./container.js":25}],29:[function(require,module,exports){
+},{"../helpers.js":34,"../visual/baseicon.js":61,"../visual/image.js":64,"../widget.js":71,"./container.js":20}],24:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22229,7 +22179,7 @@ var PopupWindow = BaseWindow.$extend({
 
 module.exports = PopupWindow;
 
-},{"./basewindow.js":24}],30:[function(require,module,exports){
+},{"./basewindow.js":19}],25:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22378,7 +22328,7 @@ var SubMenuItem = MenuItem.$extend({
 
 module.exports = SubMenuItem;
 
-},{"../layout/menu.js":56,"../widget.js":76,"./menuitem.js":28}],31:[function(require,module,exports){
+},{"../layout/menu.js":51,"../widget.js":71,"./menuitem.js":23}],26:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -22786,7 +22736,7 @@ var TabItem = Container.$extend({
 module.exports = TabItem;
 
 
-},{"../helpers.js":39,"../interactive/iconbutton.js":45,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76,"./container.js":25}],32:[function(require,module,exports){
+},{"../helpers.js":34,"../interactive/iconbutton.js":40,"../visual/baseicon.js":61,"../visual/image.js":64,"../widget.js":71,"./container.js":20}],27:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23178,7 +23128,7 @@ var Viewport = Container.$extend({
 
 module.exports = Viewport;
 
-},{"../helpers.js":39,"./container.js":25}],33:[function(require,module,exports){
+},{"../helpers.js":34,"./container.js":20}],28:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -23669,7 +23619,7 @@ var Window = BaseWindow.$extend({  // jshint ignore:line
 
 module.exports = Window;
 
-},{"../helpers.js":39,"../widget.js":76,"./basewindow.js":24,"stonejs":12}],34:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"./basewindow.js":19,"stonejs":12}],29:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24715,7 +24665,7 @@ var DataView = Widget.$extend({
 
 module.exports = DataView;
 
-},{"../helpers.js":39,"../widget.js":76,"lodash":8}],35:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"lodash":8}],30:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -24942,7 +24892,7 @@ var FluidView = DataView.$extend({
 
 module.exports = FluidView;
 
-},{"./dataview":34,"lodash":8}],36:[function(require,module,exports){
+},{"./dataview":29,"lodash":8}],31:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25095,7 +25045,7 @@ var IconView = FluidView.$extend({
 
 module.exports = IconView;
 
-},{"../helpers":39,"../visual/faicon":68,"../visual/image":69,"./fluidview":35,"lodash":8}],37:[function(require,module,exports){
+},{"../helpers":34,"../visual/faicon":63,"../visual/image":64,"./fluidview":30,"lodash":8}],32:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25165,7 +25115,7 @@ var ListView = DataView.$extend({
 
 module.exports = ListView;
 
-},{"../helpers.js":39,"./dataview":34,"lodash":8}],38:[function(require,module,exports){
+},{"../helpers.js":34,"./dataview":29,"lodash":8}],33:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25289,7 +25239,8 @@ var TableView = DataView.$extend({
 
 module.exports = TableView;
 
-},{"../helpers.js":39,"../widget":76,"./dataview":34,"lodash":8}],39:[function(require,module,exports){
+},{"../helpers.js":34,"../widget":71,"./dataview":29,"lodash":8}],34:[function(require,module,exports){
+(function (global){(function (){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25329,7 +25280,12 @@ module.exports = TableView;
  * @namespace photonui
  */
 
-var uuid = require("uuid");
+var _globalObject;
+try {
+    _globalObject = window;
+} catch (error) {
+    _globalObject = global;
+}
 
 /**
  * Helpers.
@@ -25356,18 +25312,31 @@ Helpers.escapeHtml = function (string) {
 };
 
 /**
- * Generate an UUID version 4 (RFC 4122).
+ * Get a UUID version 4 (RFC 4122).
  *
- * This method is deprecated, please use `photonui.lib.uuid.v4()` instead.
- *
- * @method uuid4
- * @static
- * @deprecated
- * @return {String} The generated UUID
+ * Try to use the browser's secure implementation if available (only
+ * available with HTTPS and on localhost) else use a fallback
+ * implementation.
  */
 Helpers.uuid4 = function () {
-    Helpers.log("warn", "'photonui.Helpers.uuid4()' is deprecated. Use 'photonui.lib.uuid.v4()' instead.");
-    return uuid.v4();
+    if (_globalObject.crypto && _globalObject.crypto.randomUUID) {
+        return _globalObject.crypto.randomUUID();
+    } else {
+        return Helpers.fallbackUuid4();
+    }
+};
+
+/**
+ * Generate a UUID version 4 (RFC 4122), fallback implementation.
+ *
+ * From: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+ */
+Helpers.fallbackUuid4 = function () {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replaceAll(/[xy]/g, function (c) {
+        var r = Math.trunc(Math.random() * 16);
+        var v = c == "x" ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 };
 
 /**
@@ -25536,7 +25505,8 @@ Helpers.getClosest = function (elem, selector) {
 
 module.exports = Helpers;
 
-},{"uuid":13}],40:[function(require,module,exports){
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],35:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -25977,7 +25947,7 @@ Button._buttonMixin = {
 
 module.exports = Button;
 
-},{"../helpers.js":39,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76}],41:[function(require,module,exports){
+},{"../helpers.js":34,"../visual/baseicon.js":61,"../visual/image.js":64,"../widget.js":71}],36:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26159,7 +26129,7 @@ var CheckBox = Widget.$extend({
 
 module.exports = CheckBox;
 
-},{"../widget.js":76}],42:[function(require,module,exports){
+},{"../widget.js":71}],37:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26364,7 +26334,7 @@ ColorPalette.palette = [
 
 module.exports = ColorPalette;
 
-},{"../helpers.js":39,"../nonvisual/color.js":59,"../widget.js":76}],43:[function(require,module,exports){
+},{"../helpers.js":34,"../nonvisual/color.js":54,"../widget.js":71}],38:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -26898,7 +26868,7 @@ var ColorPicker = Widget.$extend({
 
 module.exports = ColorPicker;
 
-},{"../helpers.js":39,"../nonvisual/color.js":59,"../nonvisual/mousemanager.js":62,"../widget.js":76}],44:[function(require,module,exports){
+},{"../helpers.js":34,"../nonvisual/color.js":54,"../nonvisual/mousemanager.js":57,"../widget.js":71}],39:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27116,7 +27086,7 @@ var Field = Widget.$extend({
 
 module.exports = Field;
 
-},{"../widget.js":76,"lodash":8}],45:[function(require,module,exports){
+},{"../widget.js":71,"lodash":8}],40:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2016, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27339,7 +27309,7 @@ var IconButton = Widget.$extend({
 
 module.exports = IconButton;
 
-},{"../helpers.js":39,"../visual/baseicon.js":66,"../visual/image.js":69,"../widget.js":76}],46:[function(require,module,exports){
+},{"../helpers.js":34,"../visual/baseicon.js":61,"../visual/image.js":64,"../widget.js":71}],41:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -27724,7 +27694,7 @@ var NumericField = Field.$extend({
 
 module.exports = NumericField;
 
-},{"./field.js":44}],47:[function(require,module,exports){
+},{"./field.js":39}],42:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28093,7 +28063,7 @@ var Slider = NumericField.$extend({
 
 module.exports = Slider;
 
-},{"../helpers.js":39,"./numericfield.js":46}],48:[function(require,module,exports){
+},{"../helpers.js":34,"./numericfield.js":41}],43:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28153,7 +28123,7 @@ var Switch = CheckBox.$extend({
 
 module.exports = Switch;
 
-},{"./checkbox.js":41}],49:[function(require,module,exports){
+},{"./checkbox.js":36}],44:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28267,7 +28237,7 @@ var TextAreaField = Field.$extend({
 
 module.exports = TextAreaField;
 
-},{"./field.js":44}],50:[function(require,module,exports){
+},{"./field.js":39}],45:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28381,7 +28351,7 @@ var TextField = Field.$extend({
 
 module.exports = TextField;
 
-},{"./field.js":44}],51:[function(require,module,exports){
+},{"./field.js":39}],46:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28474,7 +28444,7 @@ var ToggleButton = CheckBox.$extend({
 
 module.exports = ToggleButton;
 
-},{"./button.js":40,"./checkbox.js":41}],52:[function(require,module,exports){
+},{"./button.js":35,"./checkbox.js":36}],47:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -28845,7 +28815,7 @@ var BoxLayout = Layout.$extend({
 
 module.exports = BoxLayout;
 
-},{"../helpers.js":39,"./layout.js":55}],53:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],48:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29227,7 +29197,7 @@ var FluidLayout = Layout.$extend({
 
 module.exports = FluidLayout;
 
-},{"../helpers.js":39,"./layout.js":55}],54:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],49:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -29864,7 +29834,7 @@ var GridLayout = Layout.$extend({
 
 module.exports = GridLayout;
 
-},{"../helpers.js":39,"./layout.js":55}],55:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],50:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30150,7 +30120,7 @@ var Layout = Container.$extend({
 
 module.exports = Layout;
 
-},{"../container/container.js":25,"../widget.js":76}],56:[function(require,module,exports){
+},{"../container/container.js":20,"../widget.js":71}],51:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30290,7 +30260,7 @@ var Menu = Layout.$extend({
 
 module.exports = Menu;
 
-},{"../helpers.js":39,"./layout.js":55}],57:[function(require,module,exports){
+},{"../helpers.js":34,"./layout.js":50}],52:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30590,7 +30560,7 @@ var TabLayout = Layout.$extend({
 module.exports = TabLayout;
 
 
-},{"../container/tabitem.js":31,"../helpers.js":39,"../widget.js":76,"./layout.js":55}],58:[function(require,module,exports){
+},{"../container/tabitem.js":26,"../helpers.js":34,"../widget.js":71,"./layout.js":50}],53:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -30782,7 +30752,7 @@ var AccelManager = Base.$extend({
 
 module.exports = AccelManager;
 
-},{"../base.js":18,"keyboardjs":3}],59:[function(require,module,exports){
+},{"../base.js":13,"keyboardjs":3}],54:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -31819,7 +31789,7 @@ var Color = Base.$extend({
 
 module.exports = Color;
 
-},{"../base.js":18,"../helpers.js":39,"lodash":8}],60:[function(require,module,exports){
+},{"../base.js":13,"../helpers.js":34,"lodash":8}],55:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32136,7 +32106,7 @@ var FileManager = Base.$extend({
 
 module.exports = FileManager;
 
-},{"../base.js":18}],61:[function(require,module,exports){
+},{"../base.js":13}],56:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -32652,7 +32622,7 @@ var KeyboardManager = Base.$extend({
 
 module.exports = KeyboardManager;
 
-},{"../base.js":18,"../helpers.js":39,"../widget.js":76}],62:[function(require,module,exports){
+},{"../base.js":13,"../helpers.js":34,"../widget.js":71}],57:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33393,7 +33363,7 @@ var MouseManager = Base.$extend({
 
 module.exports = MouseManager;
 
-},{"../base.js":18,"../helpers.js":39,"../widget.js":76}],63:[function(require,module,exports){
+},{"../base.js":13,"../helpers.js":34,"../widget.js":71}],58:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33619,7 +33589,7 @@ SpriteSheet.getSpriteSheet = function (name) {
 
 module.exports = SpriteSheet;
 
-},{"../base.js":18}],64:[function(require,module,exports){
+},{"../base.js":13}],59:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33794,7 +33764,7 @@ var Translation = Base.$extend({
 
 module.exports = Translation;
 
-},{"../base.js":18,"stonejs":12}],65:[function(require,module,exports){
+},{"../base.js":13,"stonejs":12}],60:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33840,7 +33810,6 @@ photonui.lib = {};
 photonui.lib.Class = require("abitbol");
 photonui.lib.KeyboardJS = require("keyboardjs");
 photonui.lib.Stone = require("stonejs");
-photonui.lib.uuid = require("uuid");
 photonui.lib.lodash = require("lodash");
 
 // Base
@@ -33913,7 +33882,7 @@ photonui.IconView = require("./dataview/iconview.js");
 
 module.exports = photonui;
 
-},{"./base.js":18,"./composite/colorbutton.js":19,"./composite/colorpickerdialog.js":20,"./composite/fontselect.js":21,"./composite/popupmenu.js":22,"./composite/select.js":23,"./container/basewindow.js":24,"./container/container.js":25,"./container/dialog.js":26,"./container/expander.js":27,"./container/menuitem.js":28,"./container/popupwindow.js":29,"./container/submenuitem.js":30,"./container/tabitem.js":31,"./container/viewport.js":32,"./container/window.js":33,"./dataview/dataview.js":34,"./dataview/fluidview.js":35,"./dataview/iconview.js":36,"./dataview/listview.js":37,"./dataview/tableview.js":38,"./helpers.js":39,"./interactive/button.js":40,"./interactive/checkbox.js":41,"./interactive/colorpalette.js":42,"./interactive/colorpicker.js":43,"./interactive/field.js":44,"./interactive/iconbutton.js":45,"./interactive/numericfield.js":46,"./interactive/slider.js":47,"./interactive/switch.js":48,"./interactive/textareafield.js":49,"./interactive/textfield.js":50,"./interactive/togglebutton.js":51,"./layout/boxlayout.js":52,"./layout/fluidlayout.js":53,"./layout/gridlayout.js":54,"./layout/layout.js":55,"./layout/menu.js":56,"./layout/tablayout.js":57,"./nonvisual/accelmanager.js":58,"./nonvisual/color.js":59,"./nonvisual/filemanager.js":60,"./nonvisual/keyboardmanager.js":61,"./nonvisual/mousemanager.js":62,"./nonvisual/spritesheet.js":63,"./nonvisual/translation.js":64,"./visual/baseicon.js":66,"./visual/canvas.js":67,"./visual/faicon.js":68,"./visual/image.js":69,"./visual/label.js":70,"./visual/progressbar.js":71,"./visual/separator.js":72,"./visual/spriteicon.js":73,"./visual/template.js":74,"./visual/text.js":75,"./widget.js":76,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12,"uuid":13}],66:[function(require,module,exports){
+},{"./base.js":13,"./composite/colorbutton.js":14,"./composite/colorpickerdialog.js":15,"./composite/fontselect.js":16,"./composite/popupmenu.js":17,"./composite/select.js":18,"./container/basewindow.js":19,"./container/container.js":20,"./container/dialog.js":21,"./container/expander.js":22,"./container/menuitem.js":23,"./container/popupwindow.js":24,"./container/submenuitem.js":25,"./container/tabitem.js":26,"./container/viewport.js":27,"./container/window.js":28,"./dataview/dataview.js":29,"./dataview/fluidview.js":30,"./dataview/iconview.js":31,"./dataview/listview.js":32,"./dataview/tableview.js":33,"./helpers.js":34,"./interactive/button.js":35,"./interactive/checkbox.js":36,"./interactive/colorpalette.js":37,"./interactive/colorpicker.js":38,"./interactive/field.js":39,"./interactive/iconbutton.js":40,"./interactive/numericfield.js":41,"./interactive/slider.js":42,"./interactive/switch.js":43,"./interactive/textareafield.js":44,"./interactive/textfield.js":45,"./interactive/togglebutton.js":46,"./layout/boxlayout.js":47,"./layout/fluidlayout.js":48,"./layout/gridlayout.js":49,"./layout/layout.js":50,"./layout/menu.js":51,"./layout/tablayout.js":52,"./nonvisual/accelmanager.js":53,"./nonvisual/color.js":54,"./nonvisual/filemanager.js":55,"./nonvisual/keyboardmanager.js":56,"./nonvisual/mousemanager.js":57,"./nonvisual/spritesheet.js":58,"./nonvisual/translation.js":59,"./visual/baseicon.js":61,"./visual/canvas.js":62,"./visual/faicon.js":63,"./visual/image.js":64,"./visual/label.js":65,"./visual/progressbar.js":66,"./visual/separator.js":67,"./visual/spriteicon.js":68,"./visual/template.js":69,"./visual/text.js":70,"./widget.js":71,"abitbol":1,"keyboardjs":3,"lodash":8,"stonejs":12}],61:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -33981,7 +33950,7 @@ var BaseIcon = Widget.$extend({
 
 module.exports = BaseIcon;
 
-},{"../widget.js":76}],67:[function(require,module,exports){
+},{"../widget.js":71}],62:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -34262,7 +34231,7 @@ var Canvas = Widget.$extend({
 
 module.exports = Canvas;
 
-},{"../widget.js":76}],68:[function(require,module,exports){
+},{"../widget.js":71}],63:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -34435,7 +34404,7 @@ var FAIcon = BaseIcon.$extend({
 
 module.exports = FAIcon;
 
-},{"./baseicon.js":66}],69:[function(require,module,exports){
+},{"./baseicon.js":61}],64:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -34590,7 +34559,7 @@ var Image_ = Widget.$extend({
 
 module.exports = Image_;
 
-},{"../widget.js":76}],70:[function(require,module,exports){
+},{"../widget.js":71}],65:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -34800,7 +34769,7 @@ var Label = Widget.$extend({
 
 module.exports = Label;
 
-},{"../helpers.js":39,"../widget.js":76}],71:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71}],66:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -35030,7 +34999,7 @@ var ProgressBar = Widget.$extend({
 
 module.exports = ProgressBar;
 
-},{"../widget.js":76}],72:[function(require,module,exports){
+},{"../widget.js":71}],67:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -35171,7 +35140,7 @@ var Separator = Widget.$extend({
 
 module.exports = Separator;
 
-},{"../widget.js":76}],73:[function(require,module,exports){
+},{"../widget.js":71}],68:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -35353,7 +35322,7 @@ var SpriteIcon = BaseIcon.$extend({
 
 module.exports = SpriteIcon;
 
-},{"../nonvisual/spritesheet.js":63,"./baseicon.js":66}],74:[function(require,module,exports){
+},{"../nonvisual/spritesheet.js":58,"./baseicon.js":61}],69:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -35510,7 +35479,7 @@ var Template = Widget.$extend({
 
 module.exports = Template;
 
-},{"../helpers.js":39,"../widget.js":76,"lodash":8}],75:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"lodash":8}],70:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -35656,7 +35625,7 @@ var Text_ = Widget.$extend({
 
 module.exports = Text_;
 
-},{"../helpers.js":39,"../widget.js":76,"stonejs":12}],76:[function(require,module,exports){
+},{"../helpers.js":34,"../widget.js":71,"stonejs":12}],71:[function(require,module,exports){
 /*
  * Copyright (c) 2014-2015, Wanadev <http://www.wanadev.fr/>
  * All rights reserved.
@@ -35695,7 +35664,6 @@ module.exports = Text_;
  */
 
 var Stone = require("stonejs");
-var uuid = require("uuid");
 
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
@@ -35738,7 +35706,7 @@ var Widget = Base.$extend({
 
         // Name must be set before other properties (e.g. needed when setting children)
         if (!this._name) {
-            this.name = params && params.name ? params.name : "widget-" + uuid.v4();
+            this.name = params && params.name ? params.name : "widget-" + Helpers.uuid4();
         }
 
         // Parent constructor
@@ -35770,7 +35738,7 @@ var Widget = Base.$extend({
      *
      * @property name
      * @type String
-     * @default "widget-" + uuid.v4()
+     * @default "widget-" + Helpers.uuid4()
      */
     _name: null,
 
@@ -36189,5 +36157,5 @@ var Widget = Base.$extend({
 
 module.exports = Widget;
 
-},{"./base.js":18,"./container/popupwindow.js":29,"./helpers.js":39,"stonejs":12,"uuid":13}]},{},[65])(65)
+},{"./base.js":13,"./container/popupwindow.js":24,"./helpers.js":34,"stonejs":12}]},{},[60])(60)
 });
