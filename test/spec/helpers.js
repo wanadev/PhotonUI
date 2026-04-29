@@ -19,12 +19,18 @@ describe("photonui.Helpers", function() {
     });
 
     describe("uuid4", function() {
-        it("generates an UUID4 conform to RFC4122", function() {
+        it("can generate a UUID v4 conform to RFC4122", function() {
             var uuid4_1 = photonui.Helpers.uuid4();
             var uuid4_2 = photonui.Helpers.uuid4();
-            expect(uuid4_1).toMatch(/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}/);
-            expect(uuid4_2).toMatch(/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}/);
+            expect(uuid4_1).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+            expect(uuid4_2).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
             expect(uuid4_1).not.toEqual(uuid4_2);
+        });
+    });
+
+    describe("fallbackUuid4", function() {
+        it("can generate a UUID v4 (random)", function() {
+            expect(photonui.Helpers.fallbackUuid4()).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
         });
     });
 

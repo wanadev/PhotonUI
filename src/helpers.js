@@ -37,7 +37,12 @@
  * @namespace photonui
  */
 
-var uuid = require("uuid");
+var _globalObject;
+try {
+    _globalObject = window;
+} catch (error) {
+    _globalObject = global;
+}
 
 /**
  * Helpers.
@@ -64,18 +69,31 @@ Helpers.escapeHtml = function (string) {
 };
 
 /**
- * Generate an UUID version 4 (RFC 4122).
+ * Get a UUID version 4 (RFC 4122).
  *
- * This method is deprecated, please use `photonui.lib.uuid.v4()` instead.
- *
- * @method uuid4
- * @static
- * @deprecated
- * @return {String} The generated UUID
+ * Try to use the browser's secure implementation if available (only
+ * available with HTTPS and on localhost) else use a fallback
+ * implementation.
  */
 Helpers.uuid4 = function () {
-    Helpers.log("warn", "'photonui.Helpers.uuid4()' is deprecated. Use 'photonui.lib.uuid.v4()' instead.");
-    return uuid.v4();
+    if (_globalObject.crypto && _globalObject.crypto.randomUUID) {
+        return _globalObject.crypto.randomUUID();
+    } else {
+        return Helpers.fallbackUuid4();
+    }
+};
+
+/**
+ * Generate a UUID version 4 (RFC 4122), fallback implementation.
+ *
+ * From: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+ */
+Helpers.fallbackUuid4 = function () {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replaceAll(/[xy]/g, function (c) {
+        var r = Math.trunc(Math.random() * 16);
+        var v = c == "x" ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 };
 
 /**

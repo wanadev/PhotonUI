@@ -36,7 +36,6 @@
  */
 
 var Stone = require("stonejs");
-var uuid = require("uuid");
 
 var Base = require("./base.js");
 var Helpers = require("./helpers.js");
@@ -79,7 +78,7 @@ var Widget = Base.$extend({
 
         // Name must be set before other properties (e.g. needed when setting children)
         if (!this._name) {
-            this.name = params && params.name ? params.name : "widget-" + uuid.v4();
+            this.name = params && params.name ? params.name : "widget-" + Helpers.uuid4();
         }
 
         // Parent constructor
@@ -111,7 +110,7 @@ var Widget = Base.$extend({
      *
      * @property name
      * @type String
-     * @default "widget-" + uuid.v4()
+     * @default "widget-" + Helpers.uuid4()
      */
     _name: null,
 

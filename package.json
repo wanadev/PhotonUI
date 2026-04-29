@@ -19,8 +19,7 @@
     "font-awesome": "^4.7.0",
     "keyboardjs": "^2.4.1",
     "lodash": "^4.17.5",
-    "stonejs": "^2.3.0",
-    "uuid": "^3.2.1"
+    "stonejs": "^2.3.0"
   },
   "devDependencies": {
     "browserify-licenses": "^1.4.6",
