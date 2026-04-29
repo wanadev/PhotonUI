@@ -37,6 +37,13 @@
  * @namespace photonui
  */
 
+var _globalObject;
+try {
+    _globalObject = window;
+} catch (error) {
+    _globalObject = global;
+}
+
 /**
  * Helpers.
  *
@@ -69,8 +76,8 @@ Helpers.escapeHtml = function (string) {
  * implementation.
  */
 Helpers.uuid4 = function () {
-    if (globalThis.crypto?.randomUUID) {
-        return globalThis.crypto.randomUUID();
+    if (_globalObject.crypto && _globalObject.crypto.randomUUID) {
+        return _globalObject.crypto.randomUUID();
     } else {
         return Helpers.fallbackUuid4();
     }
@@ -82,8 +89,9 @@ Helpers.uuid4 = function () {
  * From: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
  */
 Helpers.fallbackUuid4 = function () {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replaceAll(/[xy]/g, function(c) {
-        const r = Math.trunc(Math.random()*16), v = c == "x" ? r : (r&0x3|0x8);
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replaceAll(/[xy]/g, function (c) {
+        var r = Math.trunc(Math.random() * 16);
+        var v = c == "x" ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 };
