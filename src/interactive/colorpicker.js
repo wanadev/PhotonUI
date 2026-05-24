@@ -96,7 +96,10 @@ var ColorPicker = Widget.$extend({
     //////////////////////////////////////////
 
     // ====== Public properties ======
-
+    setEnabled: function(enabled){
+        this.$super(enabled);
+        this.__html.preview.disabled = !enabled;
+    },
     /**
      * The value (color in rgb hexadecimal format (e.g. "#ff0000")).
      *
@@ -430,7 +433,9 @@ var ColorPicker = Widget.$extend({
      * @param {Object} mstate
      */
     __onMouseMove: function (manager, mstate) {
-        if (this._pointerOnSquare(mstate) || this._pointerOnCircle(mstate)) {
+        if(!this.enabled){
+            this.__html.canvas.style.cursor = "not-allowed";
+        } else if (this._pointerOnSquare(mstate) || this._pointerOnCircle(mstate)) {
             this.__html.canvas.style.cursor = "crosshair";
         } else {
             this.__html.canvas.style.cursor = "default";
@@ -444,6 +449,9 @@ var ColorPicker = Widget.$extend({
      * @param {Object} mstate
      */
     __onMouseDown: function (manager, mstate) {
+        if(!this.enabled){
+            return;
+        }
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.color.saturation = mstate.x - 50;
@@ -463,6 +471,9 @@ var ColorPicker = Widget.$extend({
      * @param {Object} mstate
      */
     __onMouseUp: function (manager, mstate) {
+        if(!this.enabled){
+            return;
+        }
         this._callCallbacks("value-changed-final", this.color);
     },
 
@@ -473,6 +484,9 @@ var ColorPicker = Widget.$extend({
      * @param {Object} mstate
      */
     __onDragStart: function (manager, mstate) {
+        if(!this.enabled){
+            return;
+        }
         if (this._pointerOnSquare(mstate)) {
             this.__disableSBUpdate = true;
             this.__mouseManager.registerCallback("dragging", "dragging", this.__onDraggingSquare.bind(this));
@@ -490,6 +504,9 @@ var ColorPicker = Widget.$extend({
      * @param {Object} mstate
      */
     __onDraggingSquare: function (manager, mstate) {
+        if(!this.enabled){
+            return;
+        }
         this.color.saturation = mstate.x - 50;
         this.color.brightness = 150 - mstate.y;
         this._callCallbacks("value-changed", this.color);
@@ -502,6 +519,9 @@ var ColorPicker = Widget.$extend({
      * @param {Object} mstate
      */
     __onDraggingCircle: function (manager, mstate) {
+        if(!this.enabled){
+            return;
+        }
         this.color.hue = this._pointerAngle(mstate);
         this._callCallbacks("value-changed", this.color);
     },

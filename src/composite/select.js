@@ -73,7 +73,6 @@ var Select = Widget.$extend({
 
         this._bindEvent("popup", this.html, "click", this.__onClick.bind(this));
         this._bindEvent("mouse-down", this.html, "mousedown", this.__onMouseDown.bind(this));
-
         this.setValue(params.value || this.value, true);
     },
 
@@ -82,6 +81,11 @@ var Select = Widget.$extend({
     //////////////////////////////////////////
 
     // ====== Public properties ======
+
+    setEnabled: function (enabled) {
+        this.$super(enabled);
+        this.__html.select.disabled = !enabled;
+    },
 
     /**
      * The field value.

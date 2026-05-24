@@ -89,5 +89,11 @@
             border-color: @color-highlight-border-disabled
         }
     }
-
+    &.photonui-disabled {
+        input + span {
+            .make-grey(@color-highlight-background-disabled,background);
+            cursor: not-allowed;
+            border: none;
+        }
+    }
 }

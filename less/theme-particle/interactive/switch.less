@@ -96,4 +96,24 @@
         }
     }
 
+    &.photonui-disabled {
+        input + span {
+            &:after{
+                border:none;
+                box-shadow: none;
+            }
+            cursor: not-allowed;
+        }
+        input:checked + span {
+            &:before {
+                .make-grey(@color-highlight-background,background);
+            }
+            &:after {
+                .make-grey(@color-highlight-border,background);
+                border:none;
+                box-shadow: none;
+            }
+        }
+    }
+
 }
